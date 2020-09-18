@@ -1,0 +1,33 @@
+{
+  "text":"Popup",
+  "item":[{
+		"id":"text",
+		"text":"Text",
+		"type":"text"
+  },{
+		"text": "Link to format",
+		"type":"componentSelect",
+		"addid": "linkFormat",
+		"typeFrom":"contentType",
+		"addViews":true,	
+		"limit":1,
+		"inline":true,
+		"addFormats":["list","input"]
+	},{
+		"id":"className",
+		"text":"Class",
+		"type":"gridselect"
+  },{
+		"id":"match",
+		"text":"Show on match",
+		"type":"text"
+  },{
+		"addid":"format",
+		"text":"Format",
+		"type":"componentSelect",
+		"limit":"1",
+		"inline":true,
+		"default":"view",
+		"typeField":"type"
+  }]
+}

@@ -1,0 +1,271 @@
+{
+	"machinename": "settings",
+	"name": "settings",
+	"storage": "memory",
+	"_roles": {
+		"get": [
+			"all"
+		],
+		"search": [
+			"all"
+		],
+		"find": [
+			"all"
+		],
+		"save": [
+			"all"
+		],
+		"delete": [
+			"all"
+		]
+	},
+	"item": [
+		{
+			"type": "group",
+			"item": [
+				{
+					"type": "text",
+					"id": "name",
+					"text": "Name"
+				},
+				{
+					"type": "text",
+					"id": "domain",
+					"text": "Domain"
+				},
+				{
+					"type": "boolean",
+					"id": "noClientCache",
+					"text": "No client cache"
+				}
+			],
+			"id": "client",
+			"text": "Client"
+		},
+		{
+			"type": "int",
+			"id": "port",
+			"text": "Port"
+		},
+		{
+			"type": "boolean",
+			"id": "debug",
+			"text": "Debug"
+		}
+	],
+	"views": [
+		{
+			"name": "hostname",
+			"format": "view",
+			"item": [
+				{
+					"category": "view",
+					"type": "style",
+					"item": [
+						{
+							"category": "view",
+							"type": "viewLink",
+							"format": "dynamicFields",
+							"item": [
+								{
+									"category": "contentTypeField",
+									"type": "text",
+									"id": "client.name",
+									"className": [
+										"pb-0",
+										"text-xl",
+										"p-2"
+									],
+									"format": "view",
+									"toFormat": "view"
+								}
+							],
+							"href": "/"
+						},
+						{
+							"category": "view",
+							"type": "viewLink",
+							"contentType": "contentType",
+							"view": "input",
+							"format": "fields",
+							"item": [
+								{
+									"category": "view",
+									"type": "viewText",
+									"format": "titlePopup",
+									"item": [
+										{
+											"category": "view",
+											"type": "icon",
+											"className": [
+												"w-10",
+												"h-10",
+												"p-2"
+											],
+											"icon": "plus"
+										}
+									],
+									"popup": [
+										{
+											"category": "view",
+											"type": "viewText",
+											"text": "Add contenttype",
+											"className": [
+												"bg-white",
+												"shadow",
+												"border",
+												"p-2",
+												"rounded"
+											]
+										}
+									]
+								}
+							],
+							"className": [
+								"ml-auto"
+							]
+						}
+					],
+					"className": [
+						"ml-1",
+						"flex",
+						"items-center"
+					]
+				}
+			]
+		},
+		{
+			"name": "view",
+			"format": "input",
+			"item": [
+				{
+					"category": "view",
+					"type": "style",
+					"item": [
+						{
+							"category": "contentTypeField",
+							"type": "text",
+							"id": "client.name",
+							"disabled": true
+						},
+						{
+							"category": "contentTypeField",
+							"type": "text",
+							"id": "client.domain",
+							"disabled": true
+						},
+						{
+							"category": "contentTypeField",
+							"type": "boolean",
+							"id": "debug",
+							"disabled": true
+						},
+						{
+							"category": "contentTypeField",
+							"type": "int",
+							"id": "port",
+							"disabled": true
+						},
+						{
+							"category": "view",
+							"type": "bootstrap",
+							"format": "panel",
+							"header": [
+								{
+									"category": "view",
+									"type": "bootstrap",
+									"format": "panelToggle",
+									"item": [
+										{
+											"category": "view",
+											"type": "viewText",
+											"text": "Change settings"
+										}
+									],
+									"icon": true,
+									"className": [
+										"flex",
+										"items-center"
+									]
+								}
+							],
+							"item": [
+								{
+									"category": "contentTypeField",
+									"type": "text",
+									"id": "client.name",
+									"format": "input",
+									"disabled": false
+								},
+								{
+									"category": "contentTypeField",
+									"type": "text",
+									"id": "client.domain",
+									"format": "input",
+									"disabled": false
+								},
+								{
+									"category": "contentTypeField",
+									"type": "boolean",
+									"id": "debug",
+									"format": "input",
+									"disabled": false
+								},
+								{
+									"category": "contentTypeField",
+									"type": "int",
+									"id": "port",
+									"format": "input",
+									"disabled": false
+								},
+								{
+									"category": "view",
+									"type": "viewButton",
+									"sendOnly": true
+								}
+							],
+							"className": [
+								"mt-8"
+							]
+						},
+						{
+							"category": "view",
+							"type": "bootstrap",
+							"format": "panel",
+							"header": [
+								{
+									"category": "view",
+									"type": "bootstrap",
+									"format": "panelToggle",
+									"item": [
+										{
+											"category": "view",
+											"type": "viewText",
+											"text": "Component format"
+										}
+									],
+									"icon": true,
+									"className": [
+										"flex",
+										"items-center"
+									]
+								}
+							],
+							"item": [
+								{
+									"category": "view",
+									"type": "viewInView",
+									"contentType": "componentFormat",
+									"view": "list"
+								}
+							]
+						}
+					],
+					"className": [
+						"p-3"
+					]
+				}
+			]
+		}
+	]
+}

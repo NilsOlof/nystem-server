@@ -1,0 +1,22 @@
+{
+  "item": [
+    {
+      "id": "text",
+      "text": "Text",
+      "type": "text"
+    },
+    {
+      "id": "className",
+      "text": "Class",
+      "type": "gridselect"
+    },
+    {
+      "id": "renderAs",
+      "text": "Render as",
+      "type": "select",
+      "render": "button",
+      "option": ["h1", "h2", "h3", "h4", "h5", "h6", "p", "div", "span"],
+      "limit": 1
+    }
+  ]
+}

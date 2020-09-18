@@ -1,0 +1,9 @@
+{
+  "text":"Vertical tab",
+  "item":[{
+		"text":"Fields",
+		"id":"item",
+		"type":"viewCreator",
+		"expanded":true
+  }]
+}

@@ -1,0 +1,24 @@
+{
+  "text": "Menu cover",
+  "item": [
+    {
+      "id": "className",
+      "text": "Class",
+      "type": "gridselect"
+    },
+    {
+      "id": "match",
+      "text": "Show on match",
+      "type": "text"
+    },
+    {
+      "addid": "format",
+      "text": "Format",
+      "type": "componentSelect",
+      "limit": "1",
+      "inline": true,
+      "default": "view",
+      "typeField": "type"
+    }
+  ]
+}

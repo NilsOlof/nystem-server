@@ -1,0 +1,20 @@
+{
+  "item": [
+    {
+      "id": "className",
+      "text": "Class",
+      "type": "gridselect"
+    },
+    {
+      "id": "icon",
+      "text": "Icon",
+      "type": "boolean"
+    },
+    {
+      "text": "Fields",
+      "id": "item",
+      "type": "viewCreator",
+      "expanded": true
+    }
+  ]
+}

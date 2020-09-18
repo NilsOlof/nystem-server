@@ -1,0 +1,15 @@
+{
+  "item": [
+    {
+      "type": "gridselect",
+      "id": "rowClassName",
+      "text": "Row class"
+    },
+    {
+      "text": "Fields",
+      "id": "item",
+      "type": "viewCreator",
+      "expanded": true
+    }
+  ]
+}

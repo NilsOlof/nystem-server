@@ -1,0 +1,117 @@
+{
+  "item": [
+    {
+      "type": "gridselect",
+      "id": "className",
+      "text": "Class"
+    },
+    {
+      "type": "text",
+      "id": "text",
+      "text": "True text"
+    },
+    {
+      "type": "select",
+      "option": [
+        {
+          "text": "default",
+          "_id": "default"
+        },
+        {
+          "text": "primary",
+          "_id": "primary"
+        },
+        {
+          "text": "info",
+          "_id": "info"
+        },
+        {
+          "_id": "warning",
+          "text": "warning"
+        },
+        {
+          "text": "danger",
+          "_id": "danger"
+        },
+        {
+          "text": "success",
+          "_id": "success"
+        }
+      ],
+      "inline": true,
+      "render": "button",
+      "id": "btnType",
+      "text": "Type",
+      "limit": "1"
+    },
+    {
+      "type": "selectFieldOption",
+      "render": ["button"],
+      "limit": "1",
+      "id": "trueState",
+      "text": "On state",
+      "inline": true
+    },
+    {
+      "type": "selectFieldOption",
+      "inline": true,
+      "id": "trueOnState",
+      "text": "On on state",
+      "render": ["button"]
+    },
+    {
+      "type": "text",
+      "id": "falseText",
+      "text": "False text"
+    },
+    {
+      "type": "select",
+      "option": [
+        {
+          "text": "default",
+          "_id": "default"
+        },
+        {
+          "text": "primary",
+          "_id": "primary"
+        },
+        {
+          "text": "info",
+          "_id": "info"
+        },
+        {
+          "_id": "warning",
+          "text": "warning"
+        },
+        {
+          "text": "danger",
+          "_id": "danger"
+        },
+        {
+          "text": "success",
+          "_id": "success"
+        }
+      ],
+      "inline": true,
+      "render": "button",
+      "id": "falseBtnType",
+      "text": "Type",
+      "limit": "1"
+    },
+    {
+      "type": "selectFieldOption",
+      "id": "falseState",
+      "text": "Off state",
+      "limit": "1",
+      "render": ["button"],
+      "inline": true
+    },
+    {
+      "type": "selectFieldOption",
+      "id": "falseOnState",
+      "text": "Off on state",
+      "render": ["button"],
+      "inline": true
+    }
+  ]
+}

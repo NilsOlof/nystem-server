@@ -1,0 +1,37 @@
+{
+  "viewFields": true,
+  "item": [
+    {
+      "type": "text",
+      "text": "Id",
+      "id": "id",
+      "mandatory": true
+    },
+    {
+      "type": "text",
+      "text": "Label",
+      "id": "text",
+      "mandatory": true
+    },
+    {
+      "type": "boolean",
+      "text": "Expandable",
+      "id": "expandable"
+    },
+    {
+      "type": "boolean",
+      "text": "Expanded",
+      "id": "expanded"
+    },
+    {
+      "type": "boolean",
+      "text": "Item expanded",
+      "id": "itemExpanded"
+    },
+    {
+      "text": "Fields",
+      "type": "dynamicField",
+      "id": "item"
+    }
+  ]
+}

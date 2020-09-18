@@ -1,0 +1,39 @@
+{
+	"item": [
+		{
+			"text": "Label",
+			"type": "text",
+			"id": "text"
+		},
+		{
+			"text": "Wrapper css",
+			"type": "gridselect",
+			"id": "className"
+		},
+		{
+			"text": "Label css",
+			"type": "gridselect",
+			"id": "classNameLabel"
+		},
+		{
+			"text": "Input css",
+			"type": "gridselect",
+			"id": "classNameInput"
+		},
+		{
+			"type": "switchButtons",
+			"item": [
+				{
+					"text": "Disabled",
+					"type": "boolean",
+					"id": "disabled"
+				},
+				{
+					"text": "Mandatory",
+					"type": "boolean",
+					"id": "mandatory"
+				}
+			]
+		}
+	]
+}

@@ -1,0 +1,26 @@
+{
+  "item": [
+    {
+      "type": "text",
+      "text": "Id",
+      "id": "add2id",
+      "mandatory": true
+    },
+    {
+      "type": "text",
+      "text": "Label",
+      "id": "text",
+      "mandatory": true
+    },
+    {
+      "type": "boolean",
+      "text": "Expandable",
+      "id": "expandable"
+    },
+    {
+      "text": "Fields",
+      "type": "dynamicField",
+      "id": "item"
+    }
+  ]
+}

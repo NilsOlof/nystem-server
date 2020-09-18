@@ -1,0 +1,23 @@
+{
+  "item": [
+    {
+      "type": "gridselect",
+      "id": "className",
+      "text": "Class"
+    },
+    {
+      "type": "select",
+      "id": "btnType",
+      "text": "Type",
+      "inline": true,
+      "limit": "1",
+      "option": ["primary", "default", "info", "error", "danger"],
+      "render": "checkbox"
+    },
+    {
+      "type": "text",
+      "id": "icon",
+      "text": "Icon"
+    }
+  ]
+}

@@ -1,0 +1,22 @@
+{
+  "item": [
+    {
+      "id": "className",
+      "text": "Class",
+      "type": "gridselect"
+    },
+    {
+      "id": "icon",
+      "text": "Icon",
+      "type": "text"
+    },
+    {
+      "id": "deg",
+      "text": "Rotate",
+      "type": "select",
+      "render": "button",
+      "option": ["0", "90", "180", "270"],
+      "limit": 1
+    }
+  ]
+}

@@ -1,0 +1,22 @@
+{
+  "text": "Bootstrap",
+  "item": [
+    {
+      "id": "className",
+      "text": "Class",
+      "type": "gridselect"
+    },
+    {
+      "text": "Popup",
+      "id": "popup",
+      "type": "viewCreator",
+      "expanded": true
+    },
+    {
+      "text": "Fields",
+      "id": "item",
+      "type": "viewCreator",
+      "expanded": true
+    }
+  ]
+}

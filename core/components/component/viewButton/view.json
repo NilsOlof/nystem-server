@@ -1,0 +1,27 @@
+{
+  "item": [
+    {
+      "id": "className",
+      "text": "Class",
+      "type": "gridselect"
+    },
+    {
+      "id": "text",
+      "text": "Text",
+      "type": "text"
+    },
+    {
+      "id": "event",
+      "text": "Event",
+      "type": "text"
+    },
+    {
+      "id": "btnType",
+      "text": "Button type",
+      "type": "select",
+      "option": ["default", "primary", "info", "warning", "danger", "success"],
+      "limit": 1,
+      "inline": true
+    }
+  ]
+}

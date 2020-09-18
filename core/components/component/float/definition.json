@@ -1,0 +1,32 @@
+{
+  "text": "Text",
+  "item": [
+    {
+      "type": "text",
+      "text": "Id",
+      "id": "id",
+      "mandatory": true
+    },
+    {
+      "type": "text",
+      "text": "Label",
+      "id": "text",
+      "mandatory": true
+    },
+    {
+      "type": "int",
+      "text": "Max length",
+      "id": "length"
+    },
+    {
+      "type": "int",
+      "text": "Default",
+      "id": "default"
+    },
+    {
+      "type": "boolean",
+      "text": "Mandatory",
+      "id": "mandatory"
+    }
+  ]
+}

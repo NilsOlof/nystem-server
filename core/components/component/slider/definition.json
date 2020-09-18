@@ -1,0 +1,36 @@
+{
+  "item": [
+    {
+      "type": "text",
+      "text": "Id",
+      "id": "id",
+      "mandatory": true
+    },
+    {
+      "type": "text",
+      "text": "Label",
+      "id": "text",
+      "mandatory": true
+    },
+    {
+      "type": "boolean",
+      "text": "Mandatory",
+      "id": "mandatory"
+    },
+    {
+      "type": "int",
+      "id": "min",
+      "text": "Min"
+    },
+    {
+      "type": "int",
+      "id": "max",
+      "text": "Max"
+    },
+    {
+      "type": "int",
+      "id": "precision",
+      "text": "Precision"
+    }
+  ]
+}

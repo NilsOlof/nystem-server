@@ -1,0 +1,25 @@
+{
+  "item": [
+    {
+      "id": "className",
+      "text": "Class",
+      "type": "gridselect"
+    },
+    {
+      "id": "classNameInner",
+      "text": "Class inner",
+      "type": "gridselect"
+    },
+    {
+      "text": "Event",
+      "id": "event",
+      "type": "text"
+    },
+    {
+      "text": "Fields",
+      "id": "item",
+      "type": "viewCreator",
+      "expanded": true
+    }
+  ]
+}

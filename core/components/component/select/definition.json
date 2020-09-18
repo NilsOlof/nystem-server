@@ -1,0 +1,59 @@
+{
+  "item": [
+    {
+      "type": "text",
+      "text": "Id",
+      "id": "id",
+      "mandatory": true
+    },
+    {
+      "type": "text",
+      "text": "Label",
+      "id": "text",
+      "mandatory": true
+    },
+    {
+      "type": "boolean",
+      "text": "Mandatory",
+      "id": "mandatory"
+    },
+    {
+      "type": "int",
+      "text": "Limit",
+      "id": "limit"
+    },
+    {
+      "type": "text",
+      "text": "Default",
+      "id": "default"
+    },
+    {
+      "type": "select",
+      "text": "Render as",
+      "id": "render",
+      "option": ["checkbox", "button"],
+      "limit": 1,
+      "inline": true
+    },
+    {
+      "type": "multigroup",
+      "text": "Option",
+      "id": "option",
+      "itemExpanded": true,
+      "item": [
+        {
+          "type": "text",
+          "text": "Label",
+          "id": "text",
+          "mandatory": true
+        },
+        {
+          "type": "text",
+          "text": "Id",
+          "id": "_id",
+          "mandatory": true
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,71 @@
+{
+  "item": [
+    {
+      "text": "Filter",
+      "type": "multigroup",
+      "id": "filter",
+      "itemExpandable": true,
+      "expandable": true,
+      "expanded": false,
+      "item": [
+        {
+          "id": "and",
+          "text": "And",
+          "type": "matrix",
+          "rowLabel": ["Field", "Value"]
+        }
+      ],
+      "itemExpanded": true
+    },
+    {
+      "id": "count",
+      "text": "Count",
+      "type": "int",
+      "default": 200
+    },
+    {
+      "text": "Sort by",
+      "id": "sortby",
+      "type": "dropReference",
+      "namefield": "text",
+      "field": "id",
+      "limit": 1,
+      "default": {
+        "id": "_chdate",
+        "text": "Change date"
+      }
+    },
+    {
+      "type": "switchButtons",
+      "item": [
+        {
+          "text": "Reverse sort order",
+          "id": "reversesortby",
+          "type": "boolean",
+          "default": true
+        },
+        {
+          "id": "noAutoUpdate",
+          "text": "No auto update",
+          "type": "boolean",
+          "default": true
+        },
+        {
+          "id": "exact",
+          "text": "Exact search",
+          "type": "boolean"
+        },
+        {
+          "id": "addReferencesToCache",
+          "text": "Add refereced items to cache",
+          "type": "boolean"
+        },
+        {
+          "id": "addMediaToCache",
+          "text": "Add media to cache",
+          "type": "boolean"
+        }
+      ]
+    }
+  ]
+}

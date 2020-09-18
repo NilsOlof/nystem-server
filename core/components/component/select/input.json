@@ -1,0 +1,29 @@
+{
+  "item": [
+    {
+      "type": "gridselect",
+      "id": "className",
+      "text": "Class"
+    },
+    {
+      "type": "text",
+      "id": "text",
+      "text": "Text"
+    },
+    {
+      "type": "select",
+      "id": "render",
+      "text": "Render as",
+      "option": ["checkbox", "button", "dropdown"],
+      "limit": "1",
+      "inline": true,
+      "render": "checkbox"
+    },
+    {
+      "type": "boolean",
+      "text": "Inline",
+      "id": "inline",
+      "text": "Inline"
+    }
+  ]
+}

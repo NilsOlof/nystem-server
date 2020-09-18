@@ -1,0 +1,39 @@
+{
+  "item": [
+    {
+      "type": "gridselect",
+      "id": "className",
+      "text": "Class"
+    },
+    {
+      "type": "text",
+      "id": "text",
+      "text": "Text"
+    },
+    {
+      "type": "gridselect",
+      "id": "classNameLabel",
+      "text": "Label class"
+    },
+    {
+      "id": "classNameInput",
+      "text": "Input class",
+      "type": "gridselect"
+    },
+    {
+      "id": "focus",
+      "text": "Focus on load",
+      "type": "boolean"
+    },
+    {
+      "id": "noWrapper",
+      "text": "No wrapper",
+      "type": "boolean"
+    },
+    {
+      "type": "boolean",
+      "id": "saveValue",
+      "text": "Save searchvalue"
+    }
+  ]
+}

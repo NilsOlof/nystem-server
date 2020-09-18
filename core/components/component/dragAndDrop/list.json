@@ -1,0 +1,33 @@
+{
+  "item": [
+    {
+      "id": "className",
+      "text": "Class",
+      "type": "gridselect"
+    },
+    {
+      "type": "text",
+      "id": "valueType",
+      "text": "Value type"
+    },
+    {
+      "text": "Field",
+      "id": "field",
+      "type": "dropReference",
+      "namefield": "text",
+      "field": "id",
+      "limit": 1
+    },
+    {
+      "id": "myDnd",
+      "text": "My DND",
+      "type": "boolean"
+    },
+    {
+      "text": "Fields",
+      "id": "item",
+      "type": "viewCreator",
+      "expanded": true
+    }
+  ]
+}

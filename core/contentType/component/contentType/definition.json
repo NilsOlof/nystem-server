@@ -1,0 +1,188 @@
+{
+  "default": {
+    "text_mandatory": "Field is mandatory",
+    "type": "text"
+  },
+  "item": [
+    {
+      "text": "Name",
+      "mandatory": true,
+      "id": "name",
+      "type": "text"
+    },
+    {
+      "text": "Id in system",
+      "mandatory": true,
+      "id": "machinename",
+      "type": "text"
+    },
+    {
+      "text": "In module",
+      "id": "module",
+      "type": "contentTypeModule",
+      "mandatory": true
+    },
+    {
+      "text": "DB features",
+      "id": "_features",
+      "type": "select",
+      "option": ["date", "access", "password"],
+      "inline": true,
+      "default": ["date", "access"]
+    },
+    {
+      "text": "DB storage",
+      "id": "storage",
+      "type": "select",
+      "option": [
+        {
+          "_id": "data",
+          "text": "In data/db"
+        },
+        {
+          "_id": "module",
+          "text": "In the content type module"
+        },
+        {
+          "_id": "memory",
+          "text": "Memory only"
+        },
+        {
+          "_id": "none",
+          "text": "Init later"
+        },
+        {
+          "_id": "dataThreaded",
+          "text": "Threaded in data/db"
+        },
+        {
+          "_id": "moduleThreaded",
+          "text": "Threaded in the content type module"
+        },
+        {
+          "_id": "memoryThreaded",
+          "text": "Threaded memory only"
+        },
+        {
+          "_id": "noneThreaded",
+          "text": "Threaded init later"
+        },
+        {
+          "_id": "mongoDB",
+          "text": "mongoDB"
+        },
+        {
+          "_id": "noneMongoDB",
+          "text": "Init later as mongoDB"
+        }
+      ],
+      "inline": true,
+      "limit": 1,
+      "default": ["data"]
+    },
+    {
+      "text": "Security",
+      "type": "group",
+      "expandable": true,
+      "id": "_roles",
+      "item": [
+        {
+          "text": "Get",
+          "id": "get",
+          "type": "select",
+          "inline": true,
+          "option": ["all", "user", "config"]
+        },
+        {
+          "text": "Find",
+          "id": "find",
+          "type": "select",
+          "inline": true,
+          "option": ["all", "user", "config"]
+        },
+        {
+          "text": "Search",
+          "id": "search",
+          "type": "select",
+          "inline": true,
+          "option": ["all", "user", "config"]
+        },
+        {
+          "text": "Save",
+          "id": "save",
+          "type": "select",
+          "inline": true,
+          "option": ["all", "user", "config"]
+        },
+        {
+          "text": "Delete",
+          "id": "delete",
+          "type": "select",
+          "inline": true,
+          "option": ["all", "user", "config"]
+        }
+      ]
+    },
+    {
+      "text": "Views",
+      "type": "multigroup",
+      "id": "views",
+      "info": "format",
+      "itemExpandable": true,
+      "expandable": true,
+      "expanded": true,
+      "item": [
+        {
+          "text": "Name",
+          "type": "text",
+          "id": "name",
+          "mandatory": true
+        },
+        {
+          "type": "switchButtons",
+          "item": [
+            {
+              "text": "Focus",
+              "id": "focus",
+              "type": "boolean"
+            },
+            {
+              "id": "noFetch",
+              "text": "No db data",
+              "type": "boolean"
+            },
+            {
+              "id": "autoUpdate",
+              "text": "Auto update",
+              "type": "boolean"
+            },
+            {
+              "id": "addForm",
+              "text": "Add form",
+              "type": "boolean"
+            }
+          ]
+        },
+        {
+          "text": "Format",
+          "type": "select",
+          "id": "format",
+          "limit": 1,
+          "inline": true,
+          "option": ["list", "input", "view"]
+        },
+        {
+          "text": "Fields",
+          "id": "item",
+          "type": "viewCreator",
+          "expanded": true
+        }
+      ]
+    },
+    {
+      "text": "Fields",
+      "type": "dynamicField",
+      "id": "item"
+    }
+  ]
+}

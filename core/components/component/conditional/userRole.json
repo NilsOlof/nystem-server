@@ -1,0 +1,20 @@
+{
+	"item": [
+		{
+			"id": "className",
+			"text": "Class",
+			"type": "gridselect"
+		},
+		{
+			"type": "multilinetext",
+			"id": "role",
+			"text": "Role"
+		},
+		{
+			"text": "Fields",
+			"id": "item",
+			"type": "viewCreator",
+			"expanded": true
+		}
+	]
+}

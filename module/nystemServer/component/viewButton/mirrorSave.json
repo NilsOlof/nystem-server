@@ -1,0 +1,33 @@
+{
+	"item": [
+		{
+			"id": "insertVal",
+			"text": "Insert value in view",
+			"type": "matrix",
+			"rowLabel": [
+				"Field",
+				"Value"
+			]
+		},
+		{
+			"type": "select",
+			"id": "saveOn",
+			"text": "Save on",
+			"optionObj": [
+				{
+					"text": "baseView",
+					"_id": "baseView"
+				},
+				{
+					"text": "baseView.baseView",
+					"_id": "baseView.baseView"
+				},
+				{
+					"text": "baseView.baseView.baseView",
+					"_id": "baseView.baseView.baseView"
+				}
+			],
+			"render": "checkbox"
+		}
+	]
+}

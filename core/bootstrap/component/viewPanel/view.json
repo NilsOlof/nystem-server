@@ -1,0 +1,45 @@
+{
+  "text":"Panel",
+  "item":[{
+		"id":"className",
+		"text":"Class",
+		"type":"gridselect"
+  },{
+		"id":"classNameHead",
+		"text":"Class head",
+		"type":"text"
+  },{
+		"id":"typeClass",
+		"text":"Type",
+		"type":"text"
+  },{
+		"type":"switchButtons",
+		"item":[{
+			"id":"expandable",
+			"text":"Expandable",
+			"type":"boolean"
+		},{
+			"id":"expanded",
+			"text":"Expanded",
+			"type":"boolean"
+		},{
+			"id":"icon",
+			"text":"Icon",
+			"type":"boolean"
+		},{
+			"id":"onClickExpand",
+			"text":"Expand on click",
+			"type":"boolean"
+		}]
+  },{
+		"text":"Header",
+		"id":"header",
+		"type":"viewCreator",
+		"expanded":true
+  },{
+		"text":"Fields",
+		"id":"item",
+		"type":"viewCreator",
+		"expanded":true
+  }]
+}

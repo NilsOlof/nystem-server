@@ -1,0 +1,6 @@
+{
+  "dependencies": {
+    "react-native-fontawesome": "^5.7.0",
+    "font-awesome": "*"
+  }
+}

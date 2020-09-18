@@ -1,0 +1,25 @@
+{
+  "text":"Group",
+  "item":[{
+		"id":"id",
+		"text":"Id",
+		"type":"text"
+  },{
+		"id":"className",
+		"text":"Class",
+		"type":"gridselect"
+	},{
+		"addid":"format",
+		"text":"Format",
+		"type":"componentSelect",
+		"limit":"1",
+		"inline":true,
+		"default":"list",
+		"typeFrom":"group"
+  },{
+		"text":"Fields",
+		"id":"item",
+		"type":"viewCreator",
+		"expanded":true
+  }]
+}

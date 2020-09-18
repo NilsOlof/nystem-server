@@ -1,0 +1,53 @@
+{
+  "item": [
+    {
+      "type": "text",
+      "text": "Id",
+      "id": "id",
+      "mandatory": true
+    },
+    {
+      "type": "text",
+      "text": "Label",
+      "id": "text",
+      "mandatory": true
+    },
+    {
+      "type": "contentTypeSelect",
+      "id": "source",
+      "text": "Content type"
+    },
+    {
+      "text": "Filter",
+      "type": "multigroup",
+      "id": "filter",
+      "itemExpandable": true,
+      "expandable": true,
+      "expanded": false,
+      "item": [
+        {
+          "id": "and",
+          "text": "And",
+          "type": "matrix",
+          "rowLabel": ["Field", "Value"]
+        }
+      ],
+      "itemExpanded": true
+    },
+    {
+      "type": "text",
+      "text": "Namefield",
+      "id": "namefield"
+    },
+    {
+      "type": "int",
+      "text": "Limit",
+      "id": "limit"
+    },
+    {
+      "type": "boolean",
+      "text": "Mandatory",
+      "id": "mandatory"
+    }
+  ]
+}

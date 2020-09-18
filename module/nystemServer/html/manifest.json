@@ -1,0 +1,9 @@
+{
+  "short_name": "Akvavision",
+  "name": "Akvavision",
+  "icons": [],
+  "start_url": "/",
+  "display": "browser",
+  "theme_color": "#ffffff",
+  "background_color": "#000000"
+}

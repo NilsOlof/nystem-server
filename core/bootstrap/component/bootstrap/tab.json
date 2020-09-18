@@ -1,0 +1,33 @@
+{
+  "item": [
+    {
+      "type": "select",
+      "id": "position",
+      "text": "Position",
+      "inline": true,
+      "option": [
+        {
+          "text": "Left",
+          "_id": "tabs-left"
+        },
+        {
+          "text": "Right",
+          "_id": "tabs-right"
+        }
+      ],
+      "limit": "1",
+      "render": "button"
+    },
+    {
+      "type": "boolean",
+      "id": "sideways",
+      "text": "Sideways"
+    },
+    {
+      "text": "Fields",
+      "id": "item",
+      "type": "viewCreator",
+      "expanded": true
+    }
+  ]
+}

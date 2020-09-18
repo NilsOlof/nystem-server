@@ -1,0 +1,5 @@
+{
+  "dependencies": {
+    "nystem": "file:../core/core/nystem"
+  }
+}

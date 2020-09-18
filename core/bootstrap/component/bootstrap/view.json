@@ -1,0 +1,49 @@
+{
+	"item": [
+		{
+			"id": "className",
+			"text": "Class",
+			"type": "gridselect"
+		},
+		{
+			"id": "row",
+			"text": "Row",
+			"type": "boolean"
+		},
+		{
+			"addid": "format",
+			"text": "Format",
+			"type": "componentSelect",
+			"limit": "1",
+			"inline": true,
+			"default": "view",
+			"typeField": "type"
+		},
+		{
+			"id": "renderAs",
+			"text": "Render as",
+			"type": "select",
+			"render": "button",
+			"option": [
+				"h1",
+				"h2",
+				"h3",
+				"h4",
+				"h5",
+				"h6",
+				"p",
+				"span",
+				"div",
+				"section",
+				"nav"
+			],
+			"limit": 1
+		},
+		{
+			"text": "Fields",
+			"id": "item",
+			"type": "viewCreator",
+			"expanded": true
+		}
+	]
+}

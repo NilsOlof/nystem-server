@@ -1,0 +1,28 @@
+{
+  "text": "Multilinetext",
+  "item": [
+    {
+      "type": "text",
+      "text": "Id",
+      "id": "id",
+      "mandatory": true
+    },
+    {
+      "type": "text",
+      "text": "Label",
+      "id": "text",
+      "mandatory": true
+    },
+    {
+      "type": "multilinetext",
+      "text": "Rowlabel",
+      "id": "rowLabel",
+      "mandatory": true
+    },
+    {
+      "type": "boolean",
+      "text": "Mandatory",
+      "id": "mandatory"
+    }
+  ]
+}

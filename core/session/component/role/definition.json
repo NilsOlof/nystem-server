@@ -1,0 +1,28 @@
+{
+  "text": "Password",
+  "item": [
+    {
+      "type": "text",
+      "text": "Id",
+      "id": "id",
+      "mandatory": true
+    },
+    {
+      "type": "text",
+      "text": "Label",
+      "id": "text",
+      "mandatory": true
+    },
+    {
+      "type": "int",
+      "text": "Min password length",
+      "id": "length",
+      "mandatory": true
+    },
+    {
+      "type": "boolean",
+      "text": "Mandatory",
+      "id": "mandatory"
+    }
+  ]
+}

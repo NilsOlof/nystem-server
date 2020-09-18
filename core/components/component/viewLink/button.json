@@ -1,0 +1,58 @@
+{
+	"item": [
+		{
+			"id": "className",
+			"text": "Class",
+			"type": "gridselect"
+		},
+		{
+			"type": "text",
+			"text": "Text",
+			"id": "text"
+		},
+		{
+			"type": "contentTypeSelect",
+			"text": "Content type",
+			"id": "contentType",
+			"limit": 1,
+			"inline": true
+		},
+		{
+			"id": "view",
+			"text": "View",
+			"type": "viewSelect",
+			"contentTypeId": "..contentType",
+			"limit": 1,
+			"inline": true
+		},
+		{
+			"id": "href",
+			"text": "Href",
+			"type": "text"
+		},
+		{
+			"id": "renderType",
+			"text": "Render type",
+			"type": "select",
+			"option": [
+				"default",
+				"primary",
+				"info",
+				"error",
+				"success"
+			],
+			"limit": 1,
+			"inline": true
+		},
+		{
+			"id": "match",
+			"text": "Active on match",
+			"type": "text"
+		},
+		{
+			"type": "text",
+			"id": "add",
+			"text": "Add"
+		}
+	]
+}

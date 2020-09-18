@@ -1,0 +1,10 @@
+{
+	"item": [
+		{
+			"type": "text",
+			"id": "redirectURL",
+			"text": "Redirect URL"
+		}
+	],
+	"modulePath": "C:\\Users\\Nisse\\Dropbox\\nodejs/akvavision/core/session"
+}

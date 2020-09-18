@@ -1,0 +1,31 @@
+{
+  "text": "Conditional",
+  "item": [
+    {
+      "id": "className",
+      "text": "Class",
+      "type": "gridselect"
+    },
+    {
+      "type": "matrix",
+      "text": "Conditions",
+      "rowLabel": ["Field id", "val match regexp"],
+      "id": "condition"
+    },
+    {
+      "addid": "format",
+      "text": "Format",
+      "type": "componentSelect",
+      "limit": "1",
+      "inline": true,
+      "default": "view",
+      "typeField": "type"
+    },
+    {
+      "text": "Fields",
+      "id": "item",
+      "type": "viewCreator",
+      "expanded": true
+    }
+  ]
+}

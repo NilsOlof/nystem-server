@@ -1,0 +1,40 @@
+{
+  "item": [
+    {
+      "id": "className",
+      "text": "Class",
+      "type": "gridselect"
+    },
+    {
+      "type": "boolean",
+      "id": "addId",
+      "text": "Add id"
+    },
+    {
+      "type": "text",
+      "text": "Add",
+      "id": "add"
+    },
+    {
+      "id": "href",
+      "text": "Href",
+      "type": "text"
+    },
+    {
+      "id": "match",
+      "text": "Active on match",
+      "type": "text"
+    },
+    {
+      "type": "boolean",
+      "id": "exact",
+      "text": "Exact"
+    },
+    {
+      "text": "Fields",
+      "id": "item",
+      "type": "viewCreator",
+      "expanded": true
+    }
+  ]
+}

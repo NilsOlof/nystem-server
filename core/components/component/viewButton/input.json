@@ -1,0 +1,37 @@
+{
+  "item": [
+    {
+      "id": "className",
+      "text": "Class",
+      "type": "gridselect"
+    },
+    {
+      "id": "text",
+      "text": "Text",
+      "type": "text"
+    },
+    {
+      "id": "btnType",
+      "text": "Button type",
+      "type": "select",
+      "option": ["default", "primary", "info", "warning", "danger", "success"],
+      "limit": 1,
+      "inline": true
+    },
+    {
+      "type": "boolean",
+      "id": "sendOnly",
+      "text": "Send type"
+    },
+    {
+      "type": "boolean",
+      "id": "noRedirect",
+      "text": "No redirect on create"
+    },
+    {
+      "type": "text",
+      "id": "redirectURL",
+      "text": "Redirect to URL"
+    }
+  ]
+}

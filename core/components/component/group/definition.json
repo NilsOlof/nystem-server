@@ -1,0 +1,22 @@
+{
+  "viewFields": true,
+  "item": [
+    {
+      "type": "text",
+      "text": "Id",
+      "id": "id",
+      "mandatory": true
+    },
+    {
+      "type": "text",
+      "text": "Label",
+      "id": "text",
+      "mandatory": true
+    },
+    {
+      "text": "Fields",
+      "type": "dynamicField",
+      "id": "item"
+    }
+  ]
+}

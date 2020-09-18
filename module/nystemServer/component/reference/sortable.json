@@ -1,0 +1,33 @@
+{
+	"item": [
+		{
+			"type": "gridselect",
+			"id": "className",
+			"text": "Class"
+		},
+		{
+			"type": "text",
+			"id": "renderFormat",
+			"text": "View"
+		},
+		{
+			"type": "boolean",
+			"id": "wrapper",
+			"text": "Wrapper"
+		},
+		{
+			"type": "text",
+			"id": "addFormat",
+			"text": "Add format"
+		},
+		{
+			"type": "matrix",
+			"id": "addTransform",
+			"text": "On add",
+			"rowLabel": [
+				"Field",
+				"Value"
+			]
+		}
+	]
+}

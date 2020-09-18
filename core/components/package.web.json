@@ -1,0 +1,6 @@
+{
+  "dependencies": {
+    "react-beautiful-dnd": "*",
+    "nystem-components": "file:../core/components/nystem-components"
+  }
+}

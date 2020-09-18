@@ -1,0 +1,9 @@
+{
+	"item": [
+		{
+			"type": "boolean",
+			"id": "redirectOnCreate",
+			"text": "Redirect on create"
+		}
+	]
+}

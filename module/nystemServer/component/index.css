@@ -1,0 +1,35 @@
+body {
+  font-family: "Fira Code", monospace;
+  font-size: 13px;
+}
+h1 {
+  font-size: 30px;
+}
+:focus,
+button:focus {
+  outline: none;
+}
+.min-h-8 {
+  min-height: 8rem;
+}
+.min-h-2 {
+  min-height: 2rem;
+}
+.min-w-40 {
+  min-width: 10rem;
+}
+.min-w-32 {
+  min-width: 8rem;
+}
+.surround-parenthesis::before {
+  content: "(";
+}
+.surround-parenthesis::after {
+  content: ")";
+}
+.surround-parenthesis:empty::before {
+  content: "";
+}
+.surround-parenthesis:empty::after {
+  content: "";
+}

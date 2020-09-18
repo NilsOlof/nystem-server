@@ -1,0 +1,37 @@
+{
+  "text":"View in view",
+  "item":[{
+    "type":"contentTypeSelect",
+    "text":"Content type",
+    "id":"contentType",
+    "limit":1,
+    "inline":true
+  },{
+		"id":"view",
+		"text":"View",
+		"type":"viewSelect",
+		"contentTypeId":"..contentType",
+		"limit":1,
+		"inline":true
+  },{
+		"id":"addid",
+		"text":"Sub id",
+		"type":"text"
+	},{
+		"id":"viewId",
+		"text":"Insert id in view",
+		"type":"text"
+	},{
+		"id":"className",
+		"text":"Class",
+		"type":"gridselect"
+	},{
+		"id":"format",
+		"text":"Format",
+		"type":"componentSelect",
+		"limit":"1",
+		"inline":true,
+		"default":"view",
+		"typeFrom":"viewInView"
+  }]
+}

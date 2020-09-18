@@ -1,0 +1,52 @@
+.overlay-menu {
+  display: flex;
+  flex-direction: column;
+  position: absolute;
+  top: 0;
+  left: 0;
+  /* transform: translateX(-100%);*/
+  height: 100vh;
+  background: rgba(255, 255, 255, 0.95);
+  transition: all 250ms;
+  transition-timing-function: ease-out;
+  box-shadow: 0 0 24px 0px rgba(0, 0, 0, 0.5);
+  overflow-y: auto;
+}
+
+.overlay-menu-shim {
+  background: rgba(0, 0, 0, 0);
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  transition: all 500ms;
+  transition-timing-function: ease-out;
+}
+
+.overlay-menu-container--active {
+  transform: translateX(0);
+}
+
+.overlay-menu-container--active .overlay-menu {
+  transform: translateX(0);
+  transition-timing-function: ease-out;
+}
+
+.overlay-menu-container--active .overlay-menu-shim {
+  background: rgba(0, 0, 0, 0.1);
+  transition: all 500ms;
+  transition-timing-function: ease-out;
+}
+
+.overlay-menu-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.25);
+  display: block;
+  /*transform: translateX(-100%);*/
+  z-index: 1000;
+}

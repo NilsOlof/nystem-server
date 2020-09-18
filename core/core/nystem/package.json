@@ -1,0 +1,8 @@
+{
+  "name": "nystem",
+  "version": "0.1.8",
+  "description": "oo",
+  "main": "../../src/core/core/client/nystem.js",
+  "author": "Nisse",
+  "license": "MIT"
+}

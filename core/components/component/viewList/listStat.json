@@ -1,0 +1,39 @@
+{
+  "item": [
+    {
+      "type": "gridselect",
+      "id": "className",
+      "text": "Class"
+    },
+    {
+      "type": "text",
+      "id": "text",
+      "text": "Text"
+    },
+    {
+      "type": "select",
+      "id": "show",
+      "text": "Show",
+      "option": [
+        {
+          "text": "To pos",
+          "_id": "toPos"
+        },
+        {
+          "text": "Current pos",
+          "_id": "currentPos"
+        },
+        {
+          "text": "Search total",
+          "_id": "searchTotal"
+        },
+        {
+          "text": "Total",
+          "_id": "total"
+        }
+      ],
+      "render": "button",
+      "inline": true
+    }
+  ]
+}

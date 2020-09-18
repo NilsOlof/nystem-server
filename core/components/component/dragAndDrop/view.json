@@ -1,0 +1,20 @@
+{
+  "item": [
+    {
+      "type": "text",
+      "id": "valueType",
+      "text": "Value type"
+    },
+    {
+      "id": "myDnd",
+      "text": "My DND",
+      "type": "boolean"
+    },
+    {
+      "text": "Fields",
+      "id": "item",
+      "type": "viewCreator",
+      "expanded": true
+    }
+  ]
+}

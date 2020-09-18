@@ -1,0 +1,48 @@
+{
+  "item": [
+    {
+      "id": "className",
+      "text": "Class",
+      "type": "gridselect"
+    },
+    {
+      "id": "renderAs",
+      "text": "Render as",
+      "type": "select",
+      "render": "button",
+      "option": [
+        "h1",
+        "h2",
+        "h3",
+        "h4",
+        "h5",
+        "h6",
+        "p",
+        "span",
+        "div",
+        "section",
+        "nav"
+      ],
+      "limit": 1
+    },
+    {
+      "type": "multigroup",
+      "text": "Option",
+      "id": "items",
+      "itemExpanded": true,
+      "item": [
+        {
+          "type": "multilinetext",
+          "text": "Paths (regexp)",
+          "id": "paths"
+        },
+        {
+          "text": "Fields",
+          "id": "item",
+          "type": "viewCreator",
+          "expanded": true
+        }
+      ]
+    }
+  ]
+}

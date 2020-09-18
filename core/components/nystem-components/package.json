@@ -1,0 +1,8 @@
+{
+  "name": "nystem-components",
+  "version": "0.0.6",
+  "description": "oo",
+  "main": "../../src/components",
+  "author": "Nisse",
+  "license": "ISC"
+}

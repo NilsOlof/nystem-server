@@ -1,0 +1,14 @@
+{
+	"item": [
+		{
+			"type": "boolean",
+			"id": "atState",
+			"text": "At state"
+		},
+		{
+			"type": "text",
+			"id": "pattern",
+			"text": "Pattern"
+		}
+	]
+}

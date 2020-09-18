@@ -1,0 +1,53 @@
+{
+  "item": [
+    {
+      "id": "className",
+      "text": "Class",
+      "type": "gridselect"
+    },
+    {
+      "type": "text",
+      "text": "Text",
+      "id": "text"
+    },
+    {
+      "type": "contentTypeSelect",
+      "text": "Content type",
+      "id": "contentType",
+      "limit": 1,
+      "inline": true
+    },
+    {
+      "id": "view",
+      "text": "View",
+      "type": "viewSelect",
+      "contentTypeId": "..contentType",
+      "limit": 1,
+      "inline": true
+    },
+    {
+      "id": "renderType",
+      "text": "Render type",
+      "type": "select",
+      "option": ["link", "button"],
+      "limit": 1,
+      "inline": true
+    },
+    {
+      "text": "Fields",
+      "id": "item",
+      "type": "viewCreator",
+      "expanded": true
+    },
+    {
+      "type": "boolean",
+      "id": "addId",
+      "text": "Add id"
+    },
+    {
+      "type": "text",
+      "text": "Add",
+      "id": "add"
+    }
+  ]
+}

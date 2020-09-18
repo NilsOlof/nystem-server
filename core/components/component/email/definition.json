@@ -1,0 +1,28 @@
+{
+  "text": "Email",
+  "extends": "text",
+  "item": [
+    {
+      "type": "text",
+      "text": "Id",
+      "id": "id",
+      "mandatory": true
+    },
+    {
+      "type": "text",
+      "text": "Label",
+      "id": "text",
+      "mandatory": true
+    },
+    {
+      "type": "text",
+      "text": "Default",
+      "id": "default"
+    },
+    {
+      "type": "boolean",
+      "text": "Mandatory",
+      "id": "mandatory"
+    }
+  ]
+}

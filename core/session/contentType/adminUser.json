@@ -1,0 +1,204 @@
+{
+	"_features": [
+		"date",
+		"password",
+		"access"
+	],
+	"_roles": {},
+	"name": "adminUser",
+	"default": {
+		"length": "50",
+		"text_mandatory": "Field is mandatory",
+		"mandatory": true,
+		"type": "text"
+	},
+	"item": [
+		{
+			"id": "name",
+			"text": "Name",
+			"text_mandatory": "Name is mandatory",
+			"mandatory": true,
+			"type": "text"
+		},
+		{
+			"id": "login",
+			"text": "Email",
+			"text_mandatory": "Email is mandatory",
+			"type": "text"
+		},
+		{
+			"id": "password",
+			"text": "Password",
+			"length": "5",
+			"type": "password",
+			"text_mandatory": "Password is mandatory"
+		},
+		{
+			"id": "role",
+			"text": "Role",
+			"text_mandatory": "Role is mandatory",
+			"type": "dropdown",
+			"option": [
+				"user",
+				"config",
+				"super",
+				"ekonomi"
+			],
+			"default": "config"
+		}
+	],
+	"machinename": "adminUser",
+	"storage": "data",
+	"views": [
+		{
+			"id": "3cf7a478aa77c5f24e39a9ca7159d110",
+			"name": "input",
+			"format": "input",
+			"item": [
+				{
+					"id": "name",
+					"type": "text",
+					"category": "contentTypeField",
+					"format": "fallbackTitle"
+				},
+				{
+					"id": "name",
+					"type": "text",
+					"category": "contentTypeField"
+				},
+				{
+					"id": "login",
+					"type": "text",
+					"category": "contentTypeField",
+					"mandatory": true
+				},
+				{
+					"id": "password",
+					"type": "password",
+					"category": "contentTypeField"
+				},
+				{
+					"id": "role",
+					"type": "dropdown",
+					"category": "contentTypeField"
+				},
+				{
+					"type": "viewButton",
+					"category": "view"
+				}
+			],
+			"focus": true
+		},
+		{
+			"id": "f73f550fa89f14f65a3a4bd211ba629e",
+			"name": "list",
+			"format": "list",
+			"item": [
+				{
+					"type": "viewText",
+					"category": "view",
+					"text": "Admin users",
+					"renderAs": "h1"
+				},
+				{
+					"type": "viewLink",
+					"category": "view",
+					"text": "New admin user",
+					"href": "/admin/adminUser/input",
+					"format": "button",
+					"className": [
+						"btn-primary"
+					]
+				},
+				{
+					"category": "view",
+					"type": "database",
+					"format": "search",
+					"sortby": {
+						"id": "_chdate",
+						"text": "Change date"
+					}
+				},
+				{
+					"type": "viewList",
+					"category": "view",
+					"renderFormat": "table",
+					"className": [
+						"table-striped"
+					],
+					"headerFields": [
+						{
+							"id": "_chdate",
+							"type": "date",
+							"category": "contentTypeField",
+							"format": "sortBy"
+						},
+						{
+							"id": "name",
+							"type": "text",
+							"category": "contentTypeField",
+							"format": "sortBy"
+						}
+					],
+					"item": [
+						{
+							"id": "_chdate",
+							"type": "date",
+							"category": "view"
+						},
+						{
+							"id": "name",
+							"type": "text",
+							"category": "contentTypeField",
+							"format": "adminInputLink"
+						}
+					]
+				}
+			]
+		},
+		{
+			"id": "b2038098133a82d5ab11acebe1bd23d3",
+			"name": "login",
+			"format": "input",
+			"item": [
+				{
+					"type": "viewText",
+					"category": "view",
+					"text": "Log in",
+					"renderAs": "h3"
+				},
+				{
+					"id": "login",
+					"type": "text",
+					"category": "contentTypeField"
+				},
+				{
+					"id": "password",
+					"type": "password",
+					"category": "contentTypeField"
+				},
+				{
+					"type": "viewSmallComponent",
+					"category": "view",
+					"format": "errorMsg"
+				},
+				{
+					"type": "viewButton",
+					"category": "view",
+					"format": "login"
+				}
+			]
+		},
+		{
+			"name": "view",
+			"item": [
+				{
+					"category": "contentTypeField",
+					"type": "text",
+					"id": "name",
+					"renderAs": "p"
+				}
+			]
+		}
+	]
+}
