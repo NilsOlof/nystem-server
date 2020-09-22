@@ -1,4 +1,4 @@
-module.exports = function(app) {
+module.exports = function (app) {
   const { utils } = app;
   app.on("init", () => {
     app.database.on("init", ({ collection, contentType, db }) => {
@@ -8,7 +8,7 @@ module.exports = function(app) {
       )
         return;
 
-      collection.on(["get", "search", "find"], 990, query => {
+      collection.on(["get", "search", "find"], 990, (query) => {
         if (!query.data) return;
         query.data = app.utils.clone(query.data);
         if (query.data instanceof Array)
@@ -17,7 +17,7 @@ module.exports = function(app) {
         else delete query.data.password;
       });
 
-      collection.on("save", 990, query => {
+      collection.on("save", 990, (query) => {
         if (!query.data) return;
         if (query.data._id) {
           if (
@@ -40,21 +40,21 @@ module.exports = function(app) {
       });
 
       let loginField = false;
-      collection.contentType.item.forEach(item => {
+      collection.contentType.item.forEach((item) => {
         if (["login", "email"].indexOf(item.id) !== -1) loginField = item.id;
       });
       if (!loginField) return;
 
-      collection.checkPassword = data => collection.on("checkPassword", data);
+      collection.checkPassword = (data) => collection.on("checkPassword", data);
 
-      collection.on("checkPassword", async data => {
+      collection.on("checkPassword", async (data) => {
         const value = data.email || data.login;
         if (!value) return { ...data, error: "missing" };
 
         const query = await collection.find({
           field: loginField,
           value,
-          role: "super"
+          role: "super",
         });
 
         const user = query.data;

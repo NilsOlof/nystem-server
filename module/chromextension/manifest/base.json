@@ -1,0 +1,12 @@
+{
+  "name": "Test guide",
+  "version": "0.1",
+  "description": "Test guide",
+  "icons": {
+    "16": "icons/rec.png",
+    "32": "icons/rec.png",
+    "48": "icons/rec.png",
+    "128": "icons/rec.png"
+  },
+  "manifest_version": 2
+}

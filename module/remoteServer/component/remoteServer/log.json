@@ -1,0 +1,24 @@
+{
+	"item": [
+		{
+			"type": "text",
+			"id": "event",
+			"text": "Event"
+		},
+		{
+			"type": "gridselect",
+			"id": "className",
+			"text": "Class"
+		},
+		{
+			"type": "int",
+			"id": "height",
+			"text": "Height"
+		},
+		{
+			"type": "boolean",
+			"id": "clearOnEvent",
+			"text": "Clear on event"
+		}
+	]
+}

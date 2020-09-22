@@ -1,0 +1,188 @@
+{
+	"name": "Host",
+	"_roles": {
+		"save": "config"
+	},
+	"default": {
+		"length": "50",
+		"text_mandatory": "Field is mandatory",
+		"mandatory": true,
+		"type": "text"
+	},
+	"input": {
+		"add": {
+			"title": "New host"
+		},
+		"edit": {
+			"title": "Edit host"
+		},
+		"message": {
+			"send": "Sending"
+		},
+		"button": "Save"
+	},
+	"list": {
+		"title": "Hosts",
+		"add": "Add host",
+		"fields": [
+			{
+				"format": "link",
+				"text": "Name",
+				"id": "name",
+				"link": "host/form/",
+				"sortable": true
+			},
+			{
+				"format": "list",
+				"text": "Host",
+				"id": "host",
+				"type": "multilinetext",
+				"sortable": true
+			},
+			{
+				"format": "list",
+				"text": "IP Address",
+				"id": "ip",
+				"type": "text",
+				"sortable": true
+			},
+			{
+				"format": "list",
+				"text": "Change date",
+				"id": "_chdate",
+				"type": "date",
+				"sortable": true
+			}
+		]
+	},
+	"item": [
+		{
+			"id": "name",
+			"text": "Name",
+			"type": "text"
+		},
+		{
+			"id": "host",
+			"text": "Host",
+			"type": "multilinetext"
+		},
+		{
+			"id": "ip",
+			"text": "IP Address",
+			"type": "text"
+		}
+	],
+	"machinename": "host",
+	"module": "hosts",
+	"views": [
+		{
+			"id": "916fe9e0e66c842177c0c4977f9a462a",
+			"format": "input",
+			"name": "input",
+			"focus": true,
+			"item": [
+				{
+					"id": "name",
+					"type": "text",
+					"category": "view",
+					"format": "view",
+					"text": "New host",
+					"fallback": "New host",
+					"renderAs": "h3"
+				},
+				{
+					"id": "name",
+					"type": "text",
+					"category": "view",
+					"text": "Name"
+				},
+				{
+					"id": "host",
+					"type": "multilinetext",
+					"category": "view",
+					"text": "Host"
+				},
+				{
+					"id": "ip",
+					"type": "text",
+					"category": "view",
+					"text": "IP"
+				},
+				{
+					"type": "viewButton",
+					"category": "view"
+				}
+			]
+		},
+		{
+			"id": "246238b5b9ba054973725dab0afbe039",
+			"format": "list",
+			"name": "list",
+			"item": [
+				{
+					"type": "viewLink",
+					"category": "view",
+					"className": [
+						"pull-right"
+					],
+					"text": "Add",
+					"href": "/host/input",
+					"renderType": "default",
+					"format": "button"
+				},
+				{
+					"type": "viewText",
+					"category": "view",
+					"text": "Hosts",
+					"format": "h3"
+				},
+				{
+					"type": "viewList",
+					"category": "view",
+					"renderFormat": "table",
+					"reversesortby": true,
+					"autoupdate": true,
+					"item": [
+						{
+							"id": "name",
+							"type": "text",
+							"category": "view",
+							"format": "link",
+							"toFormat": "input"
+						},
+						{
+							"id": "host",
+							"type": "multilinetext",
+							"category": "view"
+						},
+						{
+							"id": "ip",
+							"type": "text",
+							"category": "view"
+						}
+					],
+					"headerFields": [
+						{
+							"id": "name",
+							"type": "text",
+							"category": "view",
+							"format": "sortBy"
+						},
+						{
+							"type": "viewText",
+							"category": "view",
+							"text": "Host",
+							"format": "span"
+						},
+						{
+							"id": "ip",
+							"type": "text",
+							"category": "view",
+							"format": "sortBy"
+						}
+					]
+				}
+			]
+		}
+	]
+}

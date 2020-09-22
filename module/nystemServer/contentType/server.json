@@ -1,0 +1,128 @@
+{
+	"name": "server",
+	"_roles": {
+		"save": []
+	},
+	"default": {
+		"length": "50",
+		"text_mandatory": "Field is mandatory",
+		"mandatory": true,
+		"type": "text"
+	},
+	"item": [
+		{
+			"id": "name",
+			"text": "Name",
+			"type": "text"
+		},
+		{
+			"id": "host",
+			"text": "Host",
+			"type": "multilinetext"
+		},
+		{
+			"id": "path",
+			"text": "Path",
+			"type": "text",
+			"length": "100"
+		},
+		{
+			"type": "int",
+			"id": "port",
+			"text": "Port"
+		},
+		{
+			"id": "showinoverview",
+			"text": "In overview",
+			"type": "boolean",
+			"mandatory": false
+		}
+	],
+	"machinename": "server",
+	"storage": "data",
+	"views": [
+		{
+			"name": "overview",
+			"format": "list",
+			"item": [
+				{
+					"category": "view",
+					"type": "database",
+					"format": "search",
+					"filter": [
+						{
+							"and": [
+								[
+									"showinoverview",
+									"true"
+								]
+							]
+						}
+					],
+					"sortby": {
+						"id": "name",
+						"text": "name"
+					}
+				},
+				{
+					"category": "view",
+					"type": "viewText",
+					"text": "Project",
+					"className": [
+						"p-3",
+						"text-left",
+						"font-bold"
+					]
+				},
+				{
+					"category": "view",
+					"type": "viewList",
+					"item": [
+						{
+							"category": "view",
+							"type": "bootstrap",
+							"format": "panel",
+							"header": [
+								{
+									"category": "view",
+									"type": "bootstrap",
+									"format": "panelToggle",
+									"item": [
+										{
+											"category": "contentTypeField",
+											"type": "text",
+											"id": "name",
+											"renderAs": "div",
+											"className": [
+												""
+											]
+										}
+									],
+									"icon": true,
+									"className": [
+										"flex",
+										"items-center",
+										"content-center",
+										"py-1"
+									]
+								}
+							],
+							"item": [
+								{
+									"category": "view",
+									"type": "viewText",
+									"text": "bla"
+								}
+							]
+						}
+					],
+					"renderFormat": "div",
+					"headerFields": [],
+					"className": [
+						"p-3"
+					]
+				}
+			]
+		}
+	]
+}

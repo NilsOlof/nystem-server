@@ -1,0 +1,19 @@
+{
+	"item": [
+		{
+			"type": "gridselect",
+			"id": "className",
+			"text": "Class"
+		},
+		{
+			"type": "int",
+			"id": "height",
+			"text": "Height"
+		},
+		{
+			"type": "multilinetext",
+			"id": "event",
+			"text": "Event"
+		}
+	]
+}

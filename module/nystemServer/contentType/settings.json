@@ -1,28 +1,84 @@
 {
-	"machinename": "settings",
 	"name": "settings",
-	"storage": "memory",
 	"_roles": {
-		"get": [
-			"all"
-		],
-		"search": [
-			"all"
-		],
-		"find": [
-			"all"
-		],
-		"save": [
-			"all"
-		],
-		"delete": [
-			"all"
+		"save": []
+	},
+	"default": {
+		"length": "50",
+		"text_mandatory": "Field is mandatory",
+		"mandatory": true,
+		"type": "text"
+	},
+	"input": {
+		"add": {
+			"title": "New settings"
+		},
+		"edit": {
+			"title": "Edit settings"
+		},
+		"message": {
+			"send": "Sending"
+		},
+		"button": "Save"
+	},
+	"list": {
+		"title": "Settings",
+		"add": "Add settings",
+		"fields": [
+			{
+				"format": "link",
+				"text": "Computer",
+				"id": "name",
+				"sortable": true,
+				"link": "settings/form/",
+				"type": "text"
+			},
+			{
+				"format": "list",
+				"text": "Base path",
+				"id": "basepath",
+				"type": "text"
+			},
+			{
+				"format": "list",
+				"text": "Create date",
+				"id": "_crdate",
+				"type": "date"
+			}
 		]
 	},
 	"item": [
 		{
-			"type": "group",
+			"id": "name",
+			"text": "Computer",
+			"type": "text"
+		},
+		{
+			"id": "basepath",
+			"text": "Base path",
+			"type": "text"
+		},
+		{
+			"text": "Active",
+			"type": "boolean",
+			"id": "active"
+		},
+		{
+			"type": "text",
+			"id": "runbasepath",
+			"text": "Run base folder"
+		},
+		{
+			"type": "multigroup",
+			"id": "folders",
+			"expanded": true,
+			"itemExpanded": true,
 			"item": [
+				{
+					"type": "text",
+					"id": "id",
+					"text": "Id"
+				},
 				{
 					"type": "text",
 					"id": "name",
@@ -30,29 +86,14 @@
 				},
 				{
 					"type": "text",
-					"id": "domain",
-					"text": "Domain"
-				},
-				{
-					"type": "boolean",
-					"id": "noClientCache",
-					"text": "No client cache"
+					"id": "path",
+					"text": "Path"
 				}
-			],
-			"id": "client",
-			"text": "Client"
-		},
-		{
-			"type": "int",
-			"id": "port",
-			"text": "Port"
-		},
-		{
-			"type": "boolean",
-			"id": "debug",
-			"text": "Debug"
+			]
 		}
 	],
+	"machinename": "settings",
+	"storage": "data",
 	"views": [
 		{
 			"name": "hostname",

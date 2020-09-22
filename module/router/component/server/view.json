@@ -1,0 +1,14 @@
+{
+	"item": [
+		{
+			"type": "text",
+			"id": "event",
+			"text": "Event"
+		},
+		{
+			"type": "gridselect",
+			"id": "className",
+			"text": "Class"
+		}
+	]
+}

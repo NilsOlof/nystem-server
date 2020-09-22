@@ -1,31 +1,34 @@
 {
-	"dependencies": {
-		"mime": "*",
-		"moment": "*",
-		"express": "*",
-		"fs-extra": "*",
-		"websocket": "*"
-	},
-	"main": "server.js",
-	"scripts": {
-		"start": "node server.js",
-		"deploy": "node app.js core/core/deploy.js",
-		"lint": "eslint .",
-		"lint:fix": "eslint . --fix"
-	},
-	"license": "ISC",
-	"devDependencies": {
-		"chokidar": "*",
-		"http-proxy": "*",
-		"babel-eslint": "^10.0.1",
-		"eslint": "^5.15.3",
-		"eslint-config-airbnb-base": "^13.1.0",
-		"eslint-plugin-html": "^5.0.3",
-		"eslint-plugin-import": "^2.16.0",
-		"eslint-plugin-jsx-a11y": "^6.2.1",
-		"eslint-plugin-mocha-no-only": "^1.1.0",
-		"eslint-plugin-react": "^7.12.4",
-		"eslint-plugin-react-hooks": "^1.6.0"
-	},
-	"name": "Nystem server"
+  "dependencies": {
+    "mime": "*",
+    "moment": "*",
+    "express": "*",
+    "fs-extra": "*",
+    "websocket": "*"
+  },
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "deploy": "node app.js core/core/deploy.js",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix"
+  },
+  "license": "ISC",
+  "devDependencies": {
+    "node-fetch": "*",
+    "chokidar": "*",
+    "http-proxy": "*",
+    "babel-eslint": "^10.0.1",
+    "eslint": "^5.15.3",
+    "eslint-config-airbnb-base": "^13.1.0",
+    "eslint-plugin-html": "^5.0.3",
+    "eslint-plugin-import": "^2.16.0",
+    "eslint-plugin-jsx-a11y": "^6.2.1",
+    "eslint-plugin-mocha-no-only": "^1.1.0",
+    "eslint-plugin-react": "^7.12.4",
+    "eslint-plugin-react-hooks": "^1.6.0"
+  },
+  "optionalDependencies": {
+    "node-windows": "*"
+  }
 }

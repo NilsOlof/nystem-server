@@ -1,0 +1,7 @@
+{
+  "browser_action": {
+    "default_icon": "icons/rec.png",
+    "default_title": "Test guide",
+    "default_popup": "popup.html"
+  }
+}

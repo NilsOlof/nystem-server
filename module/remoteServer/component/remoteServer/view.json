@@ -1,0 +1,135 @@
+{
+	"item": [
+		{
+			"id": "className",
+			"text": "Class",
+			"type": "gridselect"
+		},
+		{
+			"id": "text",
+			"text": "Text",
+			"type": "text"
+		},
+		{
+			"type": "text",
+			"id": "confirmText",
+			"text": "Confirm text"
+		},
+		{
+			"type": "text",
+			"id": "workingText",
+			"text": "Working text"
+		},
+		{
+			"type": "text",
+			"id": "doneText",
+			"text": "Done text"
+		},
+		{
+			"type": "text",
+			"id": "lastText",
+			"text": "Last text"
+		},
+		{
+			"type": "text",
+			"id": "event",
+			"mandatory": true,
+			"text": "Event"
+		},
+		{
+			"id": "btnType",
+			"text": "Button type",
+			"type": "select",
+			"option": [
+				"default",
+				"primary",
+				"info",
+				"warning",
+				"danger",
+				"success"
+			],
+			"limit": 1,
+			"inline": true,
+			"render": "button"
+		},
+		{
+			"id": "btnTypeWorking",
+			"text": "Button type working",
+			"type": "select",
+			"option": [
+				"default",
+				"primary",
+				"info",
+				"warning",
+				"danger",
+				"success"
+			],
+			"limit": 1,
+			"inline": true,
+			"render": "button"
+		},
+		{
+			"id": "btnTypeDone",
+			"text": "Button type done",
+			"type": "select",
+			"option": [
+				"default",
+				"primary",
+				"info",
+				"warning",
+				"danger",
+				"success"
+			],
+			"limit": 1,
+			"inline": true,
+			"render": "button"
+		},
+		{
+			"id": "btnTypeLast",
+			"text": "Button type last",
+			"type": "select",
+			"option": [
+				"default",
+				"primary",
+				"info",
+				"warning",
+				"danger",
+				"success"
+			],
+			"limit": 1,
+			"inline": true,
+			"render": "button"
+		},
+		{
+			"id": "btnTypeConfirm",
+			"text": "Button type confirm",
+			"type": "select",
+			"option": [
+				"default",
+				"primary",
+				"info",
+				"warning",
+				"danger",
+				"success"
+			],
+			"limit": 1,
+			"inline": true,
+			"render": "button"
+		},
+		{
+			"type": "boolean",
+			"id": "confirm",
+			"text": "Confirm"
+		},
+		{
+			"type": "boolean",
+			"id": "runOnLoad",
+			"text": "Run on first load"
+		},
+		{
+			"type": "int",
+			"id": "ifLastRunEverySec",
+			"text": "If last run command every nr sec"
+		}
+	]
+}
