@@ -1,14 +1,14 @@
 module.exports = function (app) {
-  var ssh2 = require("ssh2").Client,
-    fs = app.fs,
-    atHost = false;
+  const ssh2 = require("ssh2").Client;
+  const { fs } = app;
+  let atHost = false;
 
   app.on("atHostLoaded", (setAtHost) => {
     atHost = setAtHost;
   });
 
   function addDefault(server) {
-    var sshHost = {};
+    const sshHost = {};
     sshHost.port = server.port ? server.port : 22;
     sshHost.host = server.host ? server.host : "127.0.0.1";
     sshHost.username = server.username ? server.username : "vagrent";
@@ -24,19 +24,19 @@ module.exports = function (app) {
     return sshHost;
   }
 
-  app.connection.on("remoteServer", function (data) {
+  app.connection.on("remoteServer", (data) => {
     if (!data.server) return;
-    if (data.event == "log") {
+    if (data.event === "log") {
       data.log = servers[data.server._id];
       app.connection.emit(data);
     }
     if (data.event == "custom") {
-      var command = commands;
-      var inCommand = data.command.split(".");
-      for (var i = 0; i < inCommand.length; i++)
+      let command = commands;
+      const inCommand = data.command.split(".");
+      for (let i = 0; i < inCommand.length; i++)
         command = command[inCommand[i]];
 
-      command(data.server, function (response) {
+      command(data.server, (response) => {
         app.connection.broadcast({
           type: "remoteServer",
           event: "lastRemoteLog",
@@ -53,7 +53,7 @@ module.exports = function (app) {
       doCommand(
         data.server,
         data.commands,
-        function (command, text) {
+        (command, text) => {
           app.connection.emit({
             id: data.id,
             type: "remoteServer",
@@ -63,7 +63,7 @@ module.exports = function (app) {
             command: command,
           });
         },
-        function (text) {
+        (text) => {
           data.text = text;
           app.connection.emit(data);
         }
@@ -77,56 +77,51 @@ module.exports = function (app) {
       onCommandCallback = function () {};
     }
 
-    if (typeof commands == "string") commands = [commands];
+    if (typeof commands === "string") commands = [commands];
 
     if (!server.username) {
       console.log(server);
       return;
     }
-    var sshHost = addDefault(server);
+    const sshHost = addDefault(server);
 
-    for (var i = 0; i < commands.length; i++)
+    for (let i = 0; i < commands.length; i++)
       commands[i] = app.utils.insertValues(commands[i], server);
-    var fromCommands = JSON.parse(JSON.stringify(commands));
+    const fromCommands = JSON.parse(JSON.stringify(commands));
     console.log({ commands });
-    var SSH2Shell = require("ssh2shell"),
-      SSH = new SSH2Shell({
-        server: sshHost,
-        commands: commands,
-        onCommandComplete: function (command, response, sshObj) {
-          onCommandCallback(
-            command != "stream.end()" ? command : fromCommands[0],
-            response
+    const SSH2Shell = require("ssh2shell");
+    const SSH = new SSH2Shell({
+      server: sshHost,
+      commands: commands,
+      onCommandComplete: function (command, response, sshObj) {
+        onCommandCallback(
+          command != "stream.end()" ? command : fromCommands[0],
+          response
+        );
+        if (!servers[server._id])
+          servers[server._id] = {
+            log: "",
+          };
+        const len = servers[server._id].log.length;
+        if (len > 10000)
+          servers[server._id].log = servers[server._id].log.substring(
+            len - 10000
           );
-          if (!servers[server._id])
-            servers[server._id] = {
-              log: "",
-            };
-          var len = servers[server._id].log.length;
-          if (len > 10000)
-            servers[server._id].log = servers[server._id].log.substring(
-              len - 10000
-            );
-          servers[server._id].log += "\n" + response;
-        },
-        onEnd: function (sessionText, sshObj) {
-          if (onEndCallback) onEndCallback(sessionText);
-        },
-      });
-    SSH.on("commandProcessing", function onCommandProcessing(
-      command,
-      response,
-      sshObj,
-      stream
-    ) {
-      var responsRows = response.split("\n");
-      console.log("command: " + command + "\n");
+        servers[server._id].log += `\n${response}`;
+      },
+      onEnd: function (sessionText, sshObj) {
+        if (onEndCallback) onEndCallback(sessionText);
+      },
+    });
+    SSH.on("commandProcessing", (command, response, sshObj, stream) => {
+      const responsRows = response.split("\n");
+      console.log(`command: ${command}\n`);
       if (
         server.repoPassword &&
         responsRows[responsRows.length - 1].indexOf("Password for 'https://") ==
           0
       )
-        stream.write(server.repoPassword + "\n");
+        stream.write(`${server.repoPassword}\n`);
     });
     SSH.connect();
   }
@@ -137,7 +132,7 @@ module.exports = function (app) {
 
     function upload() {
       console.log(from, to);
-      conn.sftp(function (err, sftp) {
+      conn.sftp((err, sftp) => {
         if (err) {
           callback("Error, problem starting SFTP: %s", err);
           return;
@@ -146,11 +141,11 @@ module.exports = function (app) {
         callback("- SFTP started");
 
         // upload file
-        var readStream = fs.createReadStream(from);
-        var writeStream = sftp.createWriteStream(to);
+        const readStream = fs.createReadStream(from);
+        const writeStream = sftp.createWriteStream(to);
 
         // what to do when transfer finishes
-        writeStream.on("close", function () {
+        writeStream.on("close", () => {
           callback("- file transferred");
           sftp.end();
         });
@@ -161,7 +156,7 @@ module.exports = function (app) {
     }
     function download() {
       console.log(from, to);
-      conn.sftp(function (err, sftp) {
+      conn.sftp((err, sftp) => {
         if (err) {
           callback("Error, problem starting SFTP: %s", err);
           return;
@@ -170,11 +165,11 @@ module.exports = function (app) {
         callback("- SFTP started");
 
         // upload file
-        var readStream = sftp.createReadStream(from);
-        var writeStream = fs.createWriteStream(to);
+        const readStream = sftp.createReadStream(from);
+        const writeStream = fs.createWriteStream(to);
 
         // what to do when transfer finishes
-        writeStream.on("close", function () {
+        writeStream.on("close", () => {
           callback("- file transferred");
           sftp.end();
         });
@@ -185,22 +180,25 @@ module.exports = function (app) {
     }
 
     var conn = new ssh2();
-    var sshHost = addDefault(server);
+    const sshHost = addDefault(server);
 
     conn
       .on("ready", direction == "download" ? download : upload)
       .connect(sshHost);
 
-    conn.on("error", function (err) {
-      callback("Connect error" + err.toString());
+    conn.on("error", (err) => {
+      callback(`Connect error${err.toString()}`);
     });
 
-    conn.on("close", function (err) {});
+    conn.on("close", (err) => {});
   }
 
-  var settings = JSON.parse(app.fs.readFileSync(__dirname + "/settings.json"));
+  const settings = JSON.parse(
+    app.fs.readFileSync(`${__dirname}/settings.json`)
+  );
   var commands = require("./commands.js")(app, settings, doCommand, sftp);
 };
+
 /*
  *
 First time
@@ -228,7 +226,7 @@ E:\downloads\Qemu-2.4.0-windows\Qemu-windows-2.4.0>
 qemu-system-armw.exe -M versatilepb -m 256 -cpu arm1176 -no-reboot -serial stdio -kernel kernel-qemu -hda raspbian.img -append "root=/dev/sda2 panic=1 rootfstype=ext4 rw" -redir tcp:2222::2
 2
 var host = {
-		server: {       
+		server: {
 			host:         "IP Address",
 			port:         "external port number",
 			userName:     "user name",
@@ -245,12 +243,12 @@ var host = {
 			send: function( message ) {
 				//message handler code
 			}
-		}, 
-	
+		},
+
 		//optional event handlers defined for a host that will be called by the default event handlers
 		//of the class
 		onCommandProcessing: function( command, response, sshObj, stream ) {
-		 //optional code to run during the procesing of a command 
+		 //optional code to run during the procesing of a command
 		 //command is the command being run
 		 //response is the text buffer that is still being loaded with each data event
 		 //sshObj is this object and gives access to the current set of commands

@@ -26,7 +26,7 @@ const BooleanInput = ({ model, setValue, value, view, render }) => {
     <InputWrapper model={model} error={error}>
       <Input
         placeholder={model.text}
-        checked={value}
+        checked={value || false}
         onChange={() => setValue(!value)}
         disabled={model.disabled}
         type="checkbox"

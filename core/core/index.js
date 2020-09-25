@@ -121,8 +121,8 @@ require("./package.js")(app).then(() => {
 
   app
     .event("init")
-    .then(() => app.event("load"))
-    .then(() => app.event("start"))
+    .then(() => app.event("load", app))
+    .then(() => app.event("start", app))
     .then(() => {
       console.timeEnd("load"); // eslint-disable-line no-console
       server.listen(app.settings.port, app.settings.host);

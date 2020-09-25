@@ -112,6 +112,14 @@
 									"category": "view",
 									"type": "viewText",
 									"text": "bla"
+								},
+								{
+									"category": "view",
+									"type": "viewInView",
+									"contentType": "serverStatus",
+									"view": "status",
+									"viewId": "{_id}",
+									"format": "empty"
 								}
 							]
 						}

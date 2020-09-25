@@ -30,58 +30,51 @@ module.exports = function (app) {
   const theResthosts = [];
 
   function start(suHosts) {
-    for (const host of hosts) {
-      var oneHost = hosts[host];
-      if (oneHost.indexOf("#node") != -1) {
+    hosts.forEach((host) => {
+      if (host.indexOf("#node") !== -1) {
         var oneHost = oneHost.replace(/[ \t]+?#node/, "").split(/[ \t]+/i);
-        // nodehosts[oneHost[1]] = oneHost[0];
-      } else if (oneHost) theResthosts.push(oneHost);
-    }
+      } else if (host) theResthosts.push(host);
+    });
 
     app.database.host.on("save", (query, queue) => {
       const { oldData } = query;
       if (
         !oldData ||
-        query.data.host != oldData.host ||
-        query.data.ip != oldData.ip
+        query.data.host !== oldData.host ||
+        query.data.ip !== oldData.ip
       ) {
-        app.event("hosts.remove", oldData.host);
+        app.event("hosts.remove", oldData);
         app.event("hosts.add", query.data);
       }
     });
 
     app.on("hosts.add", ({ host, ip }) => {
-      if (!host) return;
-      if (!ip) ip = "127.0.0.1";
-      if (host instanceof Array)
-        for (let i = 0; i < host.length; i++) nodehosts[host[i]] = ip;
-      else nodehosts[host] = ip;
+      host = host instanceof Array ? host : [host];
+      ip = ip || "127.0.0.1";
+      host.forEach((host) => {
+        nodehosts[host] = ip;
+      });
       save();
     });
 
-    app.on("hosts.remove", (host) => {
-      if (host instanceof Array)
-        for (let i = 0; i < host.length; i++) delete nodehosts[host[i]];
-      else delete nodehosts[host];
+    app.on("hosts.remove", ({ host }) => {
+      host = host instanceof Array ? host : [host];
+      host.forEach((host) => {
+        delete nodehosts[host];
+      });
       save();
     });
 
     app.database.host.on("delete", (query) => {
-      app.event("hosts.remove", query.oldData.host);
+      app.event("hosts.remove", query.oldData);
     });
 
-    app.database.host.getAll().then((hostDb) => {
-      hostDb = hostDb.value;
-      if (hostDb)
-        for (let i = 0; i < hostDb.length; i++)
-          app.event("hosts.add", hostDb[i]);
+    app.database.host.search({ role: "super" }).then(({ value }) => {
+      (value || []).forEach((host) => app.event("hosts.add", host));
     });
 
-    app.database.server.getAll().then((hostDb) => {
-      hostDb = hostDb.value;
-      if (hostDb)
-        for (let i = 0; i < hostDb.length; i++)
-          app.event("hosts.add", hostDb[i]);
+    app.database.server.search({ role: "super" }).then(({ value }) => {
+      (value || []).forEach((host) => app.event("hosts.add", host));
     });
 
     let saveTimer = false;
@@ -90,9 +83,10 @@ module.exports = function (app) {
       saveTimer = setTimeout(delayedSave, 300);
     }
     function delayedSave() {
-      let file = `${theResthosts.join("\r\n")}\r\n`;
-      for (const host in nodehosts)
-        file += `${nodehosts[host]} ${host} #node\r\n`;
+      const file = `${theResthosts.join("\r\n")}\r\n${Object.entries(nodehosts)
+        .map(([key, value]) => `${value} ${key} #node\r\n`)
+        .join("")}`;
+
       suHosts.set(file);
     }
   }

@@ -1,0 +1,29 @@
+{
+	"machinename": "serverStatus",
+	"name": "serverStatus",
+	"storage": "memory",
+	"_features": [
+		"access"
+	],
+	"item": [
+		{
+			"type": "boolean",
+			"id": "running",
+			"text": "Running"
+		}
+	],
+	"views": [
+		{
+			"name": "status",
+			"format": "input",
+			"item": [
+				{
+					"category": "contentTypeField",
+					"type": "boolean",
+					"id": "running",
+					"format": "input"
+				}
+			]
+		}
+	]
+}

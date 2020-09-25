@@ -1,4 +1,5 @@
-module.exports = (routerPort) => {
+module.exports = (app) => {
+  const { routerPort } = app.settings;
   console.log("Proxy start");
 
   let routes = {};
@@ -59,27 +60,25 @@ module.exports = (routerPort) => {
 
   console.log("Started router");
 
-  return {
-    add: function (host = [], port, ip) {
-      host = host instanceof Array ? host : [host];
-      ip = ip || "127.0.0.1";
+  app.on("router.add", ({ host = [], port, ip }) => {
+    host = host instanceof Array ? host : [host];
+    ip = ip || "127.0.0.1";
 
-      host.forEach((host) => {
-        routes[host] = `${ip}:${port}`;
-      });
+    host.forEach((host) => {
+      routes[host] = `${ip}:${port}`;
+    });
 
-      loadConfig();
-    },
-    remove: function (host) {
-      host = host instanceof Array ? host : [host];
-      host.forEach((host) => {
-        delete routes[host];
-      });
-      loadConfig();
-    },
-    clear: function () {
-      routes = {};
-      loadConfig();
-    },
-  };
+    loadConfig();
+  });
+  app.on("router.remove", ({ host }) => {
+    host = host instanceof Array ? host : [host];
+    host.forEach((host) => {
+      delete routes[host];
+    });
+    loadConfig();
+  });
+  app.on("router.clear", () => {
+    routes = {};
+    loadConfig();
+  });
 };
