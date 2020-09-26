@@ -32,10 +32,12 @@ const start = function (app) {
     const evHandler = app.addeventhandler();
 
     execService.stdout.on("data", (data) => {
+      data = data.toString();
       evHandler.event("data", { data });
     });
 
     execService.stderr.on("data", (data) => {
+      data = data.toString();
       evHandler.event("data", { type: "error", data });
     });
 
@@ -56,10 +58,11 @@ const start = function (app) {
     return evHandler;
   };
 
-  const servers = {};
+  const logs = {};
 
   const startServer = async (id) => {
-    let log = "";
+    logs[id] = logs[id] || "";
+    let running = true;
 
     const update = async (updatedData) => {
       const { data } = await app.database.serverStatus.get({ id, role });
@@ -83,19 +86,27 @@ const start = function (app) {
         ...query,
       });
 
-      log += query.data;
-      if (log.length > 2000) log = log.substring(log.length - 2000);
-      update({ log });
+      logs[id] += query.data;
+      if (logs[id].length > 2000)
+        logs[id] = logs[id].substring(logs[id].length - 2000);
+
+      update({ log: logs[id] });
     });
 
     service.on("exit", async (query) => {
-      servers[id] = undefined;
-      update({ running: false, ...query });
+      running = false;
+      update({ running, ...query });
     });
 
-    return {
-      kill: () => service.event("stop"),
+    const event = ({ id: inId, data, oldData }) => {
+      if (inId !== id || data.running) return;
+
+      if (running) service.event("stop");
+
+      app.database.serverStatus.off("save", event);
     };
+
+    app.database.serverStatus.on("save", event);
   };
 
   app.database.serverStatus.on("save", (query) => {
@@ -104,8 +115,7 @@ const start = function (app) {
     oldData = oldData || {};
     const { _id, running } = data;
 
-    if (running && !oldData.running) servers[_id] = startServer(_id);
-    if (!running && oldData.running && servers[_id]) servers[_id].kill();
+    if (running && !oldData.running) startServer(_id);
   });
 };
 

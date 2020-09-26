@@ -78,8 +78,9 @@ const useValue = ({ view, propvalue }) => {
 
   view.setValue = useMemo(
     () => (props) => {
-      const out = setViewValue(setValueAtPath({ ...props, current: value }));
-      view.event("change", { value: out, oldValue: value });
+      const out = setValueAtPath({ ...props, current: value });
+      setViewValue(out);
+      view.event("change", { id: props.path, value: out, oldValue: value });
       return out;
     },
     [value, view]

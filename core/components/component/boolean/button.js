@@ -3,11 +3,12 @@ import { Button } from "nystem-components";
 
 const BooleanButton = ({ setValue, model, value }) => (
   <Button
-    style={value ? model.btnType : model.falseBtnType}
+    type={value ? model.btnType : model.falseBtnType}
+    size={model.size}
     className={model.className}
     onClick={() => setValue(!value)}
   >
-    {value ? model.text : model.falseText}
+    {value ? model.text : model.falseText || model.text}
   </Button>
 );
 

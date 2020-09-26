@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from "react";
 import app from "nystem";
 
-const TextareaLog = ({ view, model, value }) => {
+const TextareaLog = ({ view, model, value = "" }) => {
   const [log, setLog] = useState("");
 
   useEffect(() => {
     const parseLog = (log) => {
-      const parsedLog = log
+      const parsedLog = (log || "")
         .replace(/ /g, "&nbsp;")
         // eslint-disable-next-line no-control-regex
         .replace(/\x1b\[((?:\d{1,3};?)+|)m/gim, (match, p1) => {
@@ -18,14 +18,14 @@ const TextareaLog = ({ view, model, value }) => {
     let fullLog = parseLog(value);
     setLog(fullLog);
 
-    const updateLog = ({ log }) => {
-      fullLog += parseLog(log);
+    const updateLog = ({ data }) => {
+      fullLog += parseLog(data);
       setLog(fullLog);
     };
 
-    app.connection.on("serverLog", updateLog);
+    app().connection.on(`serverLog${view.id}`, updateLog);
     return () => {
-      app.connection.off("serverLog", updateLog);
+      app().connection.off(`serverLog${view.id}`, updateLog);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -36,17 +36,8 @@ const TextareaLog = ({ view, model, value }) => {
 
   const className = model.className && model.className.join(" ");
   return (
-    <code
-      ref="wrapper"
-      className={className}
-      style={{ backgroundColor: "black", color: "#B0B0B0" }}
-    >
-      <div
-        ref="log"
-        dangerouslySetInnerHTML={{
-          __html: log,
-        }}
-      />
+    <code>
+      <div className={className} dangerouslySetInnerHTML={{ __html: log }} />
     </code>
   );
 };

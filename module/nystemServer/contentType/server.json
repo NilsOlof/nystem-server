@@ -85,34 +85,51 @@
 							"header": [
 								{
 									"category": "view",
-									"type": "bootstrap",
-									"format": "panelToggle",
+									"type": "style",
 									"item": [
 										{
-											"category": "contentTypeField",
-											"type": "text",
-											"id": "name",
-											"renderAs": "div",
+											"category": "view",
+											"type": "bootstrap",
+											"format": "panelToggle",
+											"item": [
+												{
+													"category": "contentTypeField",
+													"type": "text",
+													"id": "name",
+													"renderAs": "div",
+													"className": [
+														""
+													]
+												}
+											],
+											"icon": true,
 											"className": [
-												""
+												"flex",
+												"items-center",
+												"content-center",
+												"py-1"
 											]
+										},
+										{
+											"category": "view",
+											"type": "viewInView",
+											"contentType": "serverStatus",
+											"view": "control",
+											"className": [
+												"ml-auto"
+											],
+											"format": "empty",
+											"viewId": "{_id}"
 										}
 									],
-									"icon": true,
 									"className": [
 										"flex",
-										"items-center",
-										"content-center",
-										"py-1"
-									]
+										"items-center"
+									],
+									"format": "hideOnNotOverHandle"
 								}
 							],
 							"item": [
-								{
-									"category": "view",
-									"type": "viewText",
-									"text": "bla"
-								},
 								{
 									"category": "view",
 									"type": "viewInView",

@@ -15,21 +15,141 @@
 			"type": "textarea",
 			"id": "log",
 			"text": "Log"
+		},
+		{
+			"type": "boolean",
+			"id": "vscode",
+			"text": "Code editor"
+		},
+		{
+			"type": "boolean",
+			"id": "term",
+			"text": "Term"
+		},
+		{
+			"type": "boolean",
+			"id": "sourcetree",
+			"text": "Sourcetree"
+		},
+		{
+			"type": "boolean",
+			"id": "filexplorer",
+			"text": "File explorer"
+		},
+		{
+			"type": "boolean",
+			"id": "manager",
+			"text": "Manager"
 		}
 	],
 	"views": [
 		{
+			"name": "control",
+			"item": [
+				{
+					"category": "view",
+					"type": "style",
+					"item": [
+						{
+							"category": "view",
+							"type": "style",
+							"format": "hideOnNotOver",
+							"item": [
+								{
+									"category": "contentTypeField",
+									"type": "boolean",
+									"id": "manager",
+									"format": "button",
+									"btnType": "primary",
+									"falseBtnType": "primary",
+									"size": "xs",
+									"className": [
+										"mr-1"
+									]
+								},
+								{
+									"category": "contentTypeField",
+									"type": "boolean",
+									"id": "vscode",
+									"format": "button",
+									"btnType": "success",
+									"falseBtnType": "success",
+									"size": "xs",
+									"className": [
+										"mr-1"
+									]
+								},
+								{
+									"category": "contentTypeField",
+									"type": "boolean",
+									"id": "term",
+									"format": "button",
+									"className": [
+										"mr-1"
+									],
+									"btnType": "primary",
+									"falseBtnType": "primary",
+									"size": "xs"
+								},
+								{
+									"category": "contentTypeField",
+									"type": "boolean",
+									"id": "sourcetree",
+									"format": "button",
+									"btnType": "primary",
+									"falseBtnType": "primary",
+									"size": "xs",
+									"className": [
+										"mr-1"
+									]
+								},
+								{
+									"category": "contentTypeField",
+									"type": "boolean",
+									"id": "filexplorer",
+									"format": "button",
+									"btnType": "primary",
+									"falseBtnType": "primary",
+									"size": "xs",
+									"className": [
+										"mr-1"
+									]
+								}
+							],
+							"className": [
+								""
+							]
+						},
+						{
+							"category": "contentTypeField",
+							"type": "boolean",
+							"id": "running",
+							"format": "button",
+							"text": "Stop",
+							"falseText": "Start",
+							"btnType": "danger",
+							"falseBtnType": "primary",
+							"size": "xs",
+							"className": [
+								"w-16"
+							]
+						}
+					],
+					"className": [
+						"flex"
+					]
+				},
+				{
+					"category": "view",
+					"type": "viewButton",
+					"format": "autoSave"
+				}
+			]
+		},
+		{
 			"name": "status",
 			"format": "input",
 			"item": [
-				{
-					"category": "contentTypeField",
-					"type": "boolean",
-					"id": "running",
-					"format": "button",
-					"text": "Stop",
-					"falseText": "Start"
-				},
 				{
 					"category": "view",
 					"type": "viewInView",
@@ -38,15 +158,16 @@
 					"toField": "_id"
 				},
 				{
-					"category": "view",
-					"type": "viewButton",
-					"format": "autoSave"
-				},
-				{
 					"category": "contentTypeField",
 					"type": "textarea",
 					"id": "log",
-					"format": "view"
+					"format": "log",
+					"height": "200",
+					"className": [
+						"bg-black",
+						"text-gray-400",
+						"p-3"
+					]
 				}
 			]
 		}

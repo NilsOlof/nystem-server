@@ -82,7 +82,40 @@
       "id": "falseBtnType",
       "text": "Type",
       "limit": "1"
+    },
+    {
+      "type": "select",
+      "option": [
+        {
+          "text": "xs",
+          "_id": "xs"
+        },
+        {
+          "text": "sm",
+          "_id": "sm"
+        },
+        {
+          "text": "base",
+          "_id": "base"
+        },
+        {
+          "text": "lg",
+          "_id": "lg"
+        },
+        {
+          "text": "xl",
+          "_id": "xl"
+        },
+        {
+          "text": "2xl",
+          "_id": "2xl"
+        }
+      ],
+      "inline": true,
+      "render": "button",
+      "id": "size",
+      "text": "Size",
+      "limit": "1"
     }
-  ],
-  "modulePath": "C:\\Users\\Nisse\\Dropbox\\nodejs/testguide/core/components"
+  ]
 }
