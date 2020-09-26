@@ -10,6 +10,11 @@
 			"type": "boolean",
 			"id": "running",
 			"text": "Running"
+		},
+		{
+			"type": "textarea",
+			"id": "log",
+			"text": "Log"
 		}
 	],
 	"views": [
@@ -21,7 +26,27 @@
 					"category": "contentTypeField",
 					"type": "boolean",
 					"id": "running",
-					"format": "input"
+					"format": "button",
+					"text": "Stop",
+					"falseText": "Start"
+				},
+				{
+					"category": "view",
+					"type": "viewInView",
+					"format": "setBaseViewValue",
+					"fromField": "_id",
+					"toField": "_id"
+				},
+				{
+					"category": "view",
+					"type": "viewButton",
+					"format": "autoSave"
+				},
+				{
+					"category": "contentTypeField",
+					"type": "textarea",
+					"id": "log",
+					"format": "view"
 				}
 			]
 		}

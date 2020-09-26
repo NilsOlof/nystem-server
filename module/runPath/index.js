@@ -7,8 +7,8 @@ const start = (app) => {
 
   const excludePaths = ["node_modules", "tmp", "yarn.lock"];
 
-  app.on("runServerPath", -10, (server) => {
-    server.runServerPath = server.serverPath.replace(
+  app.on("serverPath", -10, (server) => {
+    server.runbasepath = server.basepath.replace(
       atHost.basepath,
       atHost.runbasepath
     );

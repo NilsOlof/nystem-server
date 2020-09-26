@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import app from "nystem";
 
-const TextLog = ({ view, model, value }) => {
+const TextareaLog = ({ view, model, value }) => {
   const [log, setLog] = useState("");
 
   useEffect(() => {
@@ -51,7 +51,7 @@ const TextLog = ({ view, model, value }) => {
   );
 };
 
-export default TextLog;
+export default TextareaLog;
 
 const colors = {
   0: "#000",

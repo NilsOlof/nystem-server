@@ -1,3 +1,5 @@
+const role = "super";
+
 const start = function (app) {
   app.on("serverPath", (server) => {
     const { atHost } = app.settings;
@@ -14,7 +16,7 @@ const start = function (app) {
       path = pathSplit.slice(0, len - 1).join("/");
     }
 
-    return { basepath: path, runbasepath: path };
+    return { ...server, basepath: path, runbasepath: path };
   });
 
   const runProgram = function (path, program) {
@@ -27,7 +29,7 @@ const start = function (app) {
 
     console.log(`start ${path}/${program} pid:${execService.pid}`);
 
-    const evHandler = app.addEventHandler();
+    const evHandler = app.addeventhandler();
 
     execService.stdout.on("data", (data) => {
       evHandler.event("data", { data });
@@ -60,19 +62,21 @@ const start = function (app) {
     let log = "";
 
     const update = async (updatedData) => {
-      const { data } = await app.database.serverStatus.get({ id });
+      const { data } = await app.database.serverStatus.get({ id, role });
 
       app.database.serverStatus.save({
         data: { ...data, ...updatedData },
-        role: "super",
+        role,
       });
     };
 
-    const { data: server } = await app.database.server.get({ id });
+    const { data: server } = await app.database.server.get({ id, role });
+
     const { runbasepath: path } = await app.event("serverPath", server);
+
     const hasAppJs = await app.fs.exists(`${path}/app.js`);
 
-    const service = runProgram(`${path}/${hasAppJs ? "app" : "server"}.js`);
+    const service = runProgram(path, hasAppJs ? "app.js" : "server.js");
     service.on("data", (query) => {
       app.connection.broadcast({
         type: `serverLog${id}`,

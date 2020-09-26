@@ -1,0 +1,14 @@
+{
+  "item": [
+    {
+      "text": "From field",
+      "type": "text",
+      "id": "fromField"
+    },
+    {
+      "text": "To field",
+      "type": "text",
+      "id": "toField"
+    }
+  ]
+}

@@ -13,7 +13,12 @@ module.exports = (app) => {
       (res, folder) => ({ ...res, [folder.id]: folder.path }),
       {}
     );
-    app.settings.atHost = atHost;
+
+    app.settings.atHost = {
+      ...atHost,
+      runbasepath: atHost.runbasepath.replace(/\\/g, "/"),
+      basepath: atHost.basepath.replace(/\\/g, "/"),
+    };
   });
 
   app.on("start", () => {
@@ -21,7 +26,8 @@ module.exports = (app) => {
 
     app.database.server.on(["delete", "save"], async (query) => {
       if (query.oldData) await app.event("router.remove", query.oldData);
-
+    });
+    app.database.server.on("save", async (query) => {
       await app.event("router.add", query.data);
     });
 
