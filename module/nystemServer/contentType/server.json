@@ -80,71 +80,84 @@
 					"item": [
 						{
 							"category": "view",
-							"type": "bootstrap",
-							"format": "panel",
-							"header": [
+							"type": "style",
+							"item": [
 								{
 									"category": "view",
-									"type": "style",
-									"item": [
+									"type": "bootstrap",
+									"format": "panel",
+									"header": [
 										{
 											"category": "view",
-											"type": "bootstrap",
-											"format": "panelToggle",
+											"type": "style",
 											"item": [
 												{
-													"category": "contentTypeField",
-													"type": "text",
-													"id": "name",
-													"renderAs": "div",
+													"category": "view",
+													"type": "bootstrap",
+													"format": "panelToggle",
+													"item": [
+														{
+															"category": "contentTypeField",
+															"type": "text",
+															"id": "name",
+															"renderAs": "div",
+															"className": [
+																""
+															]
+														}
+													],
+													"icon": true,
+													"className": [
+														"flex",
+														"items-center",
+														"content-center",
+														"py-1",
+														"",
+														"flex-grow"
+													]
+												},
+												{
+													"category": "view",
+													"type": "viewInView",
+													"contentType": "serverStatus",
+													"view": "control",
 													"className": [
 														""
-													]
+													],
+													"format": "empty",
+													"viewId": "{_id}"
 												}
 											],
-											"icon": true,
 											"className": [
 												"flex",
-												"items-center",
-												"content-center",
-												"py-1"
+												"items-center"
 											]
-										},
+										}
+									],
+									"item": [
 										{
 											"category": "view",
 											"type": "viewInView",
 											"contentType": "serverStatus",
-											"view": "control",
-											"className": [
-												"ml-auto"
-											],
-											"format": "empty",
-											"viewId": "{_id}"
+											"view": "status",
+											"viewId": "{_id}",
+											"format": "empty"
 										}
 									],
-									"className": [
-										"flex",
-										"items-center"
-									],
-									"format": "hideOnNotOverHandle"
+									"typeClass": "defaultWithoutPadding"
 								}
 							],
-							"item": [
-								{
-									"category": "view",
-									"type": "viewInView",
-									"contentType": "serverStatus",
-									"view": "status",
-									"viewId": "{_id}",
-									"format": "empty"
-								}
+							"format": "hideOnNotOverHandle",
+							"className": [
+								""
 							]
 						}
 					],
 					"renderFormat": "div",
 					"headerFields": [],
 					"className": [
-						"p-3"
+						"p-3",
+						"max-w-4xl"
 					]
 				}
 			]

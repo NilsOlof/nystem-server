@@ -49,6 +49,10 @@
           "_id": "primary"
         },
         {
+          "text": "Default without padding",
+          "_id": "defaultWithoutPadding"
+        },
+        {
           "text": "Compact",
           "_id": "compact"
         }

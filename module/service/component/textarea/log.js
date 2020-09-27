@@ -30,14 +30,12 @@ const TextareaLog = ({ view, model, value = "" }) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const scrollStop = () => {
-    document.body.scrollTop = 0;
-  };
-
   const className = model.className && model.className.join(" ");
   return (
     <code>
-      <div className={className} dangerouslySetInnerHTML={{ __html: log }} />
+      <div className="flex flex-col-reverse max-h-128 overflow-auto min-h-8 ">
+        <div className={className} dangerouslySetInnerHTML={{ __html: log }} />
+      </div>
     </code>
   );
 };

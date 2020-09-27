@@ -166,7 +166,8 @@
 					"className": [
 						"bg-black",
 						"text-gray-400",
-						"p-3"
+						"p-3",
+						""
 					]
 				}
 			]

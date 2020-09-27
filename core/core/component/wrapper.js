@@ -55,16 +55,18 @@ const Wrapper = (
   },
   ref
 ) => {
-  model = model || {};
-  className = className || model.className;
+  className = className instanceof Array ? className.join(" ") : className;
 
-  className = className instanceof Array ? className : [className];
-
-  if (!className.join("") && !renderAs && !onClick && !style)
+  if (
+    !className &&
+    !renderAs &&
+    !onClick &&
+    !style &&
+    !Object.keys(props).length
+  )
     return children || null;
 
   if (!tags[renderAs] || renderAs === "input") renderAs = "div";
-  className = className.join(" ");
 
   if (typeClass[renderAs])
     className = `${className || ""} ${typeClass[renderAs]}`;

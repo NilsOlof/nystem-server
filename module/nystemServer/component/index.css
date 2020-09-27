@@ -21,6 +21,12 @@ button:focus {
 .min-w-32 {
   min-width: 8rem;
 }
+.max-h-64 {
+  max-height: 16rem;
+}
+.max-h-128 {
+  max-height: 32rem;
+}
 .surround-parenthesis::before {
   content: "(";
 }

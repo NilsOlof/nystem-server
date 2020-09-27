@@ -13,6 +13,11 @@ const types = {
     body: "p-3 bg-white rounded",
     header: "text-white pointer p-1 pl-3",
   },
+  defaultWithoutPadding: {
+    wrapper: "mb-3 border shadow rounded",
+    body: "",
+    header: "bg-gray-200 pointer p-1 pl-3",
+  },
   compact: {
     wrapper: "mb-1",
     body: "pl-3",
