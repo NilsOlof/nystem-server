@@ -1,0 +1,20 @@
+{
+  "item": [
+    {
+      "id": "className",
+      "text": "Class",
+      "type": "gridselect"
+    },
+    {
+      "id": "limit",
+      "text": "Limit",
+      "type": "int"
+    },
+    {
+      "text": "Fields",
+      "id": "item",
+      "type": "viewCreator",
+      "expanded": true
+    }
+  ]
+}

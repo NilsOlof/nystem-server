@@ -42,6 +42,26 @@
 	"storage": "data",
 	"views": [
 		{
+			"name": "link",
+			"format": "view",
+			"item": [
+				{
+					"category": "contentTypeField",
+					"type": "multilinetext",
+					"id": "host",
+					"format": "fields",
+					"limit": "1",
+					"item": [
+						{
+							"category": "view",
+							"type": "viewText",
+							"text": "Site"
+						}
+					]
+				}
+			]
+		},
+		{
 			"name": "overview",
 			"format": "list",
 			"item": [
@@ -66,12 +86,35 @@
 				},
 				{
 					"category": "view",
-					"type": "viewText",
-					"text": "Project",
+					"type": "style",
+					"item": [
+						{
+							"category": "view",
+							"type": "icon",
+							"className": [
+								"w-8",
+								"h-8",
+								"p-2"
+							],
+							"icon": "menu"
+						},
+						{
+							"category": "view",
+							"type": "viewText",
+							"text": "Project",
+							"className": [
+								"pl-1"
+							]
+						}
+					],
 					"className": [
-						"p-3",
+						"flex",
+						"px-4",
 						"text-left",
-						"font-bold"
+						"font-bold",
+						"pt-2",
+						"pb-0",
+						"items-center"
 					]
 				},
 				{

@@ -1,14 +1,19 @@
 {
-	"item": [
-		{
-			"type": "text",
-			"id": "event",
-			"text": "Event"
-		},
-		{
-			"type": "gridselect",
-			"id": "className",
-			"text": "Class"
-		}
-	]
+  "item": [
+    {
+      "type": "text",
+      "id": "event",
+      "text": "Event"
+    },
+    {
+      "type": "gridselect",
+      "id": "wrapperClass",
+      "text": "Wrapper class"
+    },
+    {
+      "type": "gridselect",
+      "id": "className",
+      "text": "Class"
+    }
+  ]
 }

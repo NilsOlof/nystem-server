@@ -10,7 +10,7 @@ const StyleHideOnNotOver = ({ model, path, children }) => {
   return (
     <Wrapper
       className={className}
-      style={{ visibility: over ? "visible" : "hidden" }}
+      style={{ opacity: over ? 1 : 0, transition: "opacity 0.2s ease-out" }}
     >
       {children || <ContentTypeRender path={path} items={item} />}
     </Wrapper>

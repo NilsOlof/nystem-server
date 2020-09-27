@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { Wrapper } from "nystem-components";
 import app from "nystem";
 
 const TextareaLog = ({ view, model, value = "" }) => {
@@ -33,9 +34,9 @@ const TextareaLog = ({ view, model, value = "" }) => {
   const className = model.className && model.className.join(" ");
   return (
     <code>
-      <div className="flex flex-col-reverse max-h-128 overflow-auto min-h-8 ">
+      <Wrapper className={model.wrapperClass}>
         <div className={className} dangerouslySetInnerHTML={{ __html: log }} />
-      </div>
+      </Wrapper>
     </code>
   );
 };
