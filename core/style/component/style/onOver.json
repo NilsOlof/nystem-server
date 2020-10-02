@@ -6,6 +6,16 @@
       "type": "gridselect"
     },
     {
+      "id": "classNameOut",
+      "text": "Class out",
+      "type": "gridselect"
+    },
+    {
+      "id": "classNameOver",
+      "text": "Class over",
+      "type": "gridselect"
+    },
+    {
       "text": "Fields",
       "id": "item",
       "type": "viewCreator",

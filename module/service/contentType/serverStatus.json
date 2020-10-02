@@ -53,19 +53,20 @@
 						{
 							"category": "view",
 							"type": "style",
-							"format": "hideOnNotOver",
 							"item": [
 								{
 									"category": "contentTypeField",
 									"type": "boolean",
 									"id": "manager",
 									"format": "button",
-									"btnType": "primary",
+									"btnType": "danger",
 									"falseBtnType": "primary",
 									"size": "xs",
 									"className": [
 										"mr-1"
-									]
+									],
+									"text": "Stop manager",
+									"falseText": "Manager"
 								},
 								{
 									"category": "contentTypeField",
@@ -135,7 +136,18 @@
 								}
 							],
 							"className": [
-								"flex"
+								"flex",
+								"transition",
+								"transition-opacity",
+								"duration-500",
+								"ease-in-out"
+							],
+							"format": "onOver",
+							"classNameOver": [
+								"opacity-100"
+							],
+							"classNameOut": [
+								"opacity-0"
 							]
 						},
 						{

@@ -1,5 +1,5 @@
 {
-	"name": "Host",
+	"name": "host",
 	"_roles": {
 		"save": "config"
 	},
@@ -73,7 +73,6 @@
 		}
 	],
 	"machinename": "host",
-	"module": "hosts",
 	"views": [
 		{
 			"id": "916fe9e0e66c842177c0c4977f9a462a",
@@ -120,21 +119,49 @@
 			"name": "list",
 			"item": [
 				{
-					"type": "viewLink",
 					"category": "view",
-					"className": [
-						"pull-right"
-					],
-					"text": "Add",
-					"href": "/host/input",
-					"renderType": "default",
-					"format": "button"
+					"type": "database",
+					"format": "search"
 				},
 				{
-					"type": "viewText",
 					"category": "view",
-					"text": "Hosts",
-					"format": "h3"
+					"type": "style",
+					"item": [
+						{
+							"type": "viewText",
+							"category": "view",
+							"text": "Hosts",
+							"format": "h3",
+							"renderAs": "h4",
+							"className": [
+								"flex-grow"
+							]
+						},
+						{
+							"type": "viewLink",
+							"category": "view",
+							"className": [
+								"bg-blue-500",
+								"hover:bg-blue-500",
+								"text-white",
+								"rounded",
+								"shadow-sm",
+								"px-3",
+								"py-2",
+								"btn-primary",
+								"btn",
+								"my-3",
+								"block"
+							],
+							"text": "Add",
+							"href": "/host/input",
+							"renderType": "default",
+							"format": "button"
+						}
+					],
+					"className": [
+						"flex"
+					]
 				},
 				{
 					"type": "viewList",
@@ -148,17 +175,29 @@
 							"type": "text",
 							"category": "view",
 							"format": "link",
-							"toFormat": "input"
+							"toFormat": "input",
+							"className": [
+								"p-2",
+								"block"
+							]
 						},
 						{
 							"id": "host",
 							"type": "multilinetext",
-							"category": "view"
+							"category": "view",
+							"className": [
+								"p-2",
+								"block"
+							]
 						},
 						{
 							"id": "ip",
 							"type": "text",
-							"category": "view"
+							"category": "view",
+							"className": [
+								"p-2",
+								"block"
+							]
 						}
 					],
 					"headerFields": [
@@ -166,19 +205,31 @@
 							"id": "name",
 							"type": "text",
 							"category": "view",
-							"format": "sortBy"
+							"format": "sortBy",
+							"className": [
+								"p-2",
+								"block"
+							]
 						},
 						{
 							"type": "viewText",
 							"category": "view",
 							"text": "Host",
-							"format": "span"
+							"format": "span",
+							"className": [
+								"p-2",
+								"block"
+							]
 						},
 						{
 							"id": "ip",
 							"type": "text",
 							"category": "view",
-							"format": "sortBy"
+							"format": "sortBy",
+							"className": [
+								"p-2",
+								"block"
+							]
 						}
 					]
 				}

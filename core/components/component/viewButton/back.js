@@ -5,18 +5,7 @@ import { withRouter } from "react-router";
 
 const ViewButtonBack = ({ children, model, history }) => {
   model = model || {};
-  const { className, renderAs, text } = model;
-
-  if (children)
-    return (
-      <Wrapper
-        className={className}
-        onClick={() => history.go(-1)}
-        renderAs={renderAs || "div"}
-      >
-        {children}
-      </Wrapper>
-    );
+  const { className, text } = model;
 
   if (model.icon)
     return (
@@ -28,9 +17,9 @@ const ViewButtonBack = ({ children, model, history }) => {
     );
 
   return (
-    <Button className={className} onClick={() => history.go(-1)}>
+    <Button type="primary" className={className} onClick={() => history.go(-1)}>
       <Icon icon="arrow-left" className="w-6 h-6" />
-      <Wrapper>{app().t(text)}</Wrapper>
+      <Wrapper>{children || app().t(text)}</Wrapper>
     </Button>
   );
 };

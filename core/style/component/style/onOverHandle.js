@@ -4,7 +4,7 @@ import { Wrapper, ContentTypeRender } from "nystem-components";
 
 export const HideOnNotOverContext = React.createContext();
 
-const StyleHideOnNotOverHandle = ({ model, path }) => {
+const StyleOnOverHandle = ({ model, path }) => {
   const [over, setOver] = useState(false);
   const { item, className } = model;
 
@@ -20,4 +20,4 @@ const StyleHideOnNotOverHandle = ({ model, path }) => {
     </Wrapper>
   );
 };
-export default StyleHideOnNotOverHandle;
+export default StyleOnOverHandle;

@@ -7,7 +7,7 @@ const start = (app) => {
     const extra = path ? { cwd: path } : {};
     const execService = spawn(program, args, { ...extra, detached: false });
 
-    console.log(`start ${path}/${program} pid:${execService.pid}`);
+    console.log(`start ${path}/${program} pid:${execService.pid}`, args);
 
     const evHandler = app.addeventhandler();
 
@@ -41,10 +41,14 @@ const start = (app) => {
   const programRunner = ({ field, callWin, call }) => {
     const start = async (id) => {
       const { data: server } = await app.database.server.get({ id, role });
-      const paths = await app.event("serverPath", server);
+      const paths = { ...server, ...(await app.event("serverPath", server)) };
 
-      const ev = process.platform !== "win32" ? call(paths) : callWin(paths);
+      const ev =
+        process.platform !== "win32" ? await call(paths) : await callWin(paths);
+
       if (!ev) return;
+
+      ev.on("data", ({ data }) => console.log(data));
 
       const stopped = async ({ data, oldData }) => {
         if (!data[field] && oldData[field]) {
@@ -118,12 +122,26 @@ const start = (app) => {
     },
     callWin: ({ basepath }) => {
       console.log("Open sourcetree", basepath.replace(/\//g, "\\"));
-      runProgram(
+      return runProgram(
         "C:/Users/Nisse/AppData/Local/SourceTree/SourceTree.exe",
         ["-f", basepath.replace(/\//g, "\\")],
         basepath
       );
     },
+  });
+
+  const startManager = async ({ basepath, port }) => {
+    console.log("Open manager", basepath.replace(/\//g, "\\"));
+    const { runbasepath: cmdPath } = await app.event("serverPath", {
+      path: "nystem-contenttype-manager",
+    });
+    return runProgram("node", ["app.js", "server.js", basepath, port], cmdPath);
+  };
+
+  programRunner({
+    field: "manager",
+    call: startManager,
+    callWin: startManager,
   });
 };
 

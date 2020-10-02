@@ -42,6 +42,187 @@
 	"storage": "data",
 	"views": [
 		{
+			"name": "input",
+			"format": "input",
+			"item": [
+				{
+					"type": "bootstrap",
+					"category": "view",
+					"row": true,
+					"format": "view",
+					"item": [
+						{
+							"category": "view",
+							"type": "style",
+							"className": [
+								"flex"
+							],
+							"item": [
+								{
+									"category": "view",
+									"type": "viewButton",
+									"format": "back",
+									"className": [
+										"mr-1",
+										"my-3"
+									],
+									"btnType": "primary"
+								},
+								{
+									"type": "viewText",
+									"category": "view",
+									"renderAs": "h1",
+									"text": "Server settings"
+								}
+							]
+						},
+						{
+							"id": "name",
+							"type": "text",
+							"category": "contentTypeField",
+							"mandatory": true
+						},
+						{
+							"id": "host",
+							"type": "multilinetext",
+							"category": "contentTypeField"
+						},
+						{
+							"category": "contentTypeField",
+							"type": "int",
+							"id": "port"
+						},
+						{
+							"id": "path",
+							"type": "text",
+							"category": "contentTypeField",
+							"mandatory": true
+						},
+						{
+							"category": "contentTypeField",
+							"type": "select",
+							"id": "type"
+						},
+						{
+							"category": "contentTypeField",
+							"type": "boolean",
+							"id": "showinoverview",
+							"text": "In overview"
+						},
+						{
+							"category": "view",
+							"type": "conditional",
+							"condition": [
+								[
+									"type",
+									"formania"
+								]
+							],
+							"item": [
+								{
+									"category": "view",
+									"type": "switchButtons",
+									"item": [
+										{
+											"id": "autostart",
+											"type": "boolean",
+											"category": "contentTypeField",
+											"text": "Auto start"
+										},
+										{
+											"id": "autorestart",
+											"type": "boolean",
+											"category": "contentTypeField",
+											"text": "Auto restart"
+										},
+										{
+											"category": "contentTypeField",
+											"type": "boolean",
+											"id": "oldViewSys",
+											"text": "Old view sys"
+										}
+									]
+								},
+								{
+									"category": "contentTypeField",
+									"type": "text",
+									"id": "adminUserName"
+								},
+								{
+									"category": "contentTypeField",
+									"type": "password",
+									"id": "adminUserPassword"
+								}
+							]
+						},
+						{
+							"category": "view",
+							"type": "conditional",
+							"condition": [
+								[
+									"type",
+									"wordpress"
+								],
+								[
+									"type",
+									"drupal"
+								],
+								[
+									"type",
+									"nodeVagrant"
+								]
+							],
+							"item": [
+								{
+									"category": "contentTypeField",
+									"type": "text",
+									"id": "siteName"
+								},
+								{
+									"category": "contentTypeField",
+									"type": "text",
+									"id": "sitePath"
+								},
+								{
+									"category": "view",
+									"type": "conditional",
+									"item": [
+										{
+											"category": "contentTypeField",
+											"type": "text",
+											"id": "database"
+										}
+									],
+									"condition": [
+										[
+											"type",
+											"wordpress"
+										],
+										[
+											"type",
+											"drupal"
+										]
+									]
+								},
+								{
+									"category": "contentTypeField",
+									"type": "multilinetext",
+									"id": "vagrantHosts"
+								}
+							]
+						},
+						{
+							"type": "viewButton",
+							"category": "view"
+						}
+					],
+					"className": [
+						"col-sm-10"
+					]
+				}
+			]
+		},
+		{
 			"name": "link",
 			"format": "view",
 			"item": [
@@ -60,6 +241,197 @@
 					]
 				}
 			]
+		},
+		{
+			"name": "list",
+			"item": [
+				{
+					"category": "view",
+					"type": "style",
+					"className": [
+						"flex",
+						"items-end"
+					],
+					"item": [
+						{
+							"type": "viewText",
+							"category": "view",
+							"text": "Servers",
+							"renderAs": "h4",
+							"className": [
+								"flex-grow"
+							]
+						},
+						{
+							"category": "view",
+							"type": "viewList",
+							"format": "search",
+							"text": "Search",
+							"className": [
+								"pull-right"
+							]
+						},
+						{
+							"type": "viewLink",
+							"category": "view",
+							"className": [
+								"bg-blue-500",
+								"hover:bg-blue-500",
+								"text-white",
+								"rounded",
+								"shadow-sm",
+								"px-3",
+								"py-2"
+							],
+							"text": "Add",
+							"href": "/server/input",
+							"renderType": "primary",
+							"format": "button"
+						}
+					]
+				},
+				{
+					"category": "view",
+					"type": "database",
+					"format": "search"
+				},
+				{
+					"type": "viewList",
+					"category": "view",
+					"renderFormat": "table",
+					"autoupdate": true,
+					"reversesortby": true,
+					"item": [
+						{
+							"id": "name",
+							"type": "text",
+							"category": "contentTypeField",
+							"format": "link",
+							"toFormat": "input",
+							"className": [
+								"font-bold",
+								"p-1",
+								"block"
+							]
+						},
+						{
+							"id": "path",
+							"type": "text",
+							"category": "contentTypeField",
+							"className": [
+								"p-1"
+							]
+						},
+						{
+							"id": "port",
+							"type": "text",
+							"category": "contentTypeField"
+						},
+						{
+							"id": "showinoverview",
+							"type": "boolean",
+							"category": "contentTypeField",
+							"format": "view"
+						}
+					],
+					"headerFields": [
+						{
+							"id": "name",
+							"type": "text",
+							"category": "contentTypeField",
+							"format": "sortBy",
+							"text": "Name",
+							"className": [
+								"",
+								"p-1",
+								"block"
+							]
+						},
+						{
+							"category": "contentTypeField",
+							"type": "text",
+							"id": "path",
+							"format": "sortBy"
+						},
+						{
+							"category": "contentTypeField",
+							"type": "int",
+							"id": "port",
+							"format": "sortBy"
+						},
+						{
+							"category": "view",
+							"type": "viewText",
+							"text": "Overview"
+						}
+					],
+					"sortby": {
+						"id": "_chdate",
+						"text": "Change date"
+					},
+					"filter": [],
+					"className": [
+						"table-striped"
+					],
+					"rowClassName": [
+						""
+					]
+				}
+			]
+		},
+		{
+			"name": "menu",
+			"format": "view",
+			"item": [
+				{
+					"category": "view",
+					"type": "style",
+					"item": [
+						{
+							"category": "view",
+							"type": "viewLink",
+							"format": "fields",
+							"contentType": "settings",
+							"view": "menu",
+							"item": [
+								{
+									"category": "view",
+									"type": "icon",
+									"className": [
+										"w-8",
+										"h-8",
+										"p-2"
+									],
+									"icon": "menu"
+								}
+							]
+						},
+						{
+							"category": "view",
+							"type": "viewLink",
+							"format": "link",
+							"text": "Project",
+							"href": "/",
+							"className": [
+								"pl-1"
+							]
+						}
+					],
+					"className": [
+						"flex",
+						"px-4",
+						"text-left",
+						"font-bold",
+						"pt-2",
+						"pb-0",
+						"items-center"
+					]
+				}
+			]
+		},
+		{
+			"name": "menupage",
+			"format": "view"
 		},
 		{
 			"name": "overview",
@@ -83,39 +455,6 @@
 						"id": "name",
 						"text": "name"
 					}
-				},
-				{
-					"category": "view",
-					"type": "style",
-					"item": [
-						{
-							"category": "view",
-							"type": "icon",
-							"className": [
-								"w-8",
-								"h-8",
-								"p-2"
-							],
-							"icon": "menu"
-						},
-						{
-							"category": "view",
-							"type": "viewText",
-							"text": "Project",
-							"className": [
-								"pl-1"
-							]
-						}
-					],
-					"className": [
-						"flex",
-						"px-4",
-						"text-left",
-						"font-bold",
-						"pt-2",
-						"pb-0",
-						"items-center"
-					]
 				},
 				{
 					"category": "view",
@@ -190,7 +529,7 @@
 									"typeClass": "defaultWithoutPadding"
 								}
 							],
-							"format": "hideOnNotOverHandle",
+							"format": "onOverHandle",
 							"className": [
 								""
 							]

@@ -1,6 +1,6 @@
 import {
-  Inserter,
   Wrapper,
+  Inserter,
   DragAndDropContext,
   SessionRole,
 } from "nystem-components";
@@ -20,7 +20,14 @@ const Index = () => (
         />
       </SessionRole>
       <SessionRole userrole="logged-in">
+        <Inserter match="*" source="/server/menu" />
         <Inserter match="/" source="/server/overview" />
+        <Inserter match="/menu" source="/settings/menu" />
+        <Wrapper className="px-6">
+          <Inserter match="/server/*" />
+          <Inserter match="/host/*" />
+          <Inserter match="/settings/*" />
+        </Wrapper>
       </SessionRole>
     </DragAndDropContext>
   </Router>

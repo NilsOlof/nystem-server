@@ -176,6 +176,237 @@
 			]
 		},
 		{
+			"name": "input",
+			"format": "input",
+			"item": [
+				{
+					"id": "name",
+					"type": "text",
+					"category": "view",
+					"format": "view",
+					"renderAs": "h1",
+					"fallback": "Settings"
+				},
+				{
+					"id": "name",
+					"type": "text",
+					"category": "view",
+					"text": "Computer name match (in lower case)"
+				},
+				{
+					"id": "basepath",
+					"type": "text",
+					"category": "view",
+					"text": "Base path"
+				},
+				{
+					"category": "contentTypeField",
+					"type": "text",
+					"id": "runbasepath"
+				},
+				{
+					"category": "contentTypeField",
+					"type": "multigroup",
+					"id": "folders"
+				},
+				{
+					"type": "viewButton",
+					"category": "view"
+				}
+			]
+		},
+		{
+			"name": "list",
+			"format": "list",
+			"item": [
+				{
+					"category": "view",
+					"type": "database",
+					"format": "search"
+				},
+				{
+					"category": "view",
+					"type": "style",
+					"item": [
+						{
+							"type": "viewText",
+							"category": "view",
+							"text": "Computers",
+							"renderAs": "h4",
+							"className": [
+								"flex-grow"
+							]
+						},
+						{
+							"type": "viewLink",
+							"category": "view",
+							"text": "Add",
+							"href": "/settings/input",
+							"renderType": "default",
+							"format": "button",
+							"className": [
+								"bg-blue-500",
+								"hover:bg-blue-500",
+								"text-white",
+								"rounded",
+								"shadow-sm",
+								"px-3",
+								"py-2",
+								"btn-primary",
+								"btn",
+								"my-3",
+								"block"
+							]
+						}
+					],
+					"className": [
+						"flex"
+					]
+				},
+				{
+					"type": "viewList",
+					"category": "view",
+					"renderFormat": "table",
+					"autoupdate": true,
+					"reversesortby": true,
+					"item": [
+						{
+							"id": "name",
+							"type": "text",
+							"category": "view",
+							"format": "link",
+							"className": [
+								"p-2",
+								"block"
+							]
+						},
+						{
+							"id": "basepath",
+							"type": "text",
+							"category": "view",
+							"className": [
+								"p-2",
+								"block"
+							]
+						}
+					],
+					"headerFields": [
+						{
+							"id": "name",
+							"type": "text",
+							"category": "view",
+							"format": "sortBy",
+							"className": [
+								"p-2",
+								"block"
+							]
+						},
+						{
+							"id": "basepath",
+							"type": "text",
+							"category": "view",
+							"format": "sortBy",
+							"className": [
+								"p-2",
+								"block"
+							]
+						}
+					],
+					"sortby": {
+						"id": "_chdate",
+						"text": "Change date"
+					},
+					"className": [
+						"table-striped"
+					]
+				}
+			]
+		},
+		{
+			"name": "menu",
+			"format": "view",
+			"item": [
+				{
+					"category": "view",
+					"type": "viewLink",
+					"format": "link",
+					"href": "/",
+					"text": "Overview",
+					"className": [
+						"border",
+						"p-2",
+						"m-2",
+						"block",
+						"w-32",
+						"text-center",
+						"bg-gray-200",
+						"shadow",
+						"hover:bg-gray-100",
+						"ml-0"
+					],
+					"match": "/dsfdsf"
+				},
+				{
+					"category": "view",
+					"type": "viewLink",
+					"text": "Servers",
+					"contentType": "server",
+					"view": "list",
+					"renderType": "link",
+					"className": [
+						"border",
+						"p-2",
+						"m-2",
+						"block",
+						"w-32",
+						"text-center",
+						"bg-gray-200",
+						"shadow",
+						"hover:bg-gray-100",
+						"ml-0"
+					]
+				},
+				{
+					"category": "view",
+					"type": "viewLink",
+					"text": "Hosts",
+					"contentType": "host",
+					"view": "list",
+					"className": [
+						"border",
+						"p-2",
+						"m-2",
+						"block",
+						"w-32",
+						"text-center",
+						"bg-gray-200",
+						"shadow",
+						"hover:bg-gray-100",
+						"ml-0"
+					]
+				},
+				{
+					"category": "view",
+					"type": "viewLink",
+					"contentType": "settings",
+					"view": "list",
+					"text": "Settings",
+					"className": [
+						"border",
+						"p-2",
+						"m-2",
+						"block",
+						"w-32",
+						"text-center",
+						"bg-gray-200",
+						"shadow",
+						"hover:bg-gray-100",
+						"ml-0"
+					]
+				}
+			]
+		},
+		{
 			"name": "view",
 			"format": "input",
 			"item": [
