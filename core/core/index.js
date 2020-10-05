@@ -106,7 +106,9 @@ require("./package.js")(app).then(() => {
   require("./utils.js")(app);
 
   app.uuid = app.utils.generateGUID;
+  app.on("settings", () => app.settings);
   const { debug } = app.settings;
+
   app.filePaths.forEach((path) => {
     const pathpart = path.split("/");
     if (pathpart.length !== 3) return;

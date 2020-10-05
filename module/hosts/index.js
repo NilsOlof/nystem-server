@@ -1,11 +1,6 @@
 module.exports = function (app) {
   if (!app.atHost.setHosts) return false;
 
-  const os = require("os").platform();
-  const settings = JSON.parse(
-    app.fs.readFileSync(`${__dirname}/settings.json`, "utf8")
-  );
-  const path = settings[os];
   let hosts = [];
   let suHosts;
 
@@ -86,8 +81,8 @@ module.exports = function (app) {
       const file = `${theResthosts.join("\r\n")}\r\n${Object.entries(nodehosts)
         .map(([key, value]) => `${value} ${key} #node\r\n`)
         .join("")}`;
-
-      suHosts.set(file);
+      console.log({ file });
+      // suHosts.set(file);
     }
   }
 };

@@ -413,8 +413,18 @@
 							"text": "Project",
 							"href": "/",
 							"className": [
-								"pl-1"
+								"pl-1",
+								"flex-grow"
 							]
+						},
+						{
+							"category": "view",
+							"type": "viewImage",
+							"className": [
+								"w-10",
+								"h-10"
+							],
+							"filename": "logo2.svg"
 						}
 					],
 					"className": [

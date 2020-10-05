@@ -1,5 +1,5 @@
-module.exports = (app) => {
-  const { routerPort } = app.settings;
+module.exports = async (ev) => {
+  const { routerPort } = await ev.event("settings");
   console.log("Proxy start");
 
   let routes = {};
@@ -51,7 +51,7 @@ module.exports = (app) => {
     if (proxy[host]) proxy[host].ws(req, socket, head);
   });
 
-  proxyServer.listen(routerPort || 8080);
+  proxyServer.listen(routerPort || 80);
 
   proxyServer.on("error", (e) => {
     // Handle your error here
@@ -60,7 +60,7 @@ module.exports = (app) => {
 
   console.log("Started router");
 
-  app.on("router.add", ({ host = [], port, ip }) => {
+  ev.on("router.add", ({ host = [], port, ip }) => {
     host = host instanceof Array ? host : [host];
     ip = ip || "127.0.0.1";
 
@@ -70,14 +70,14 @@ module.exports = (app) => {
 
     loadConfig();
   });
-  app.on("router.remove", ({ host }) => {
+  ev.on("router.remove", ({ host }) => {
     host = host instanceof Array ? host : [host];
     host.forEach((host) => {
       delete routes[host];
     });
     loadConfig();
   });
-  app.on("router.clear", () => {
+  ev.on("router.clear", () => {
     routes = {};
     loadConfig();
   });

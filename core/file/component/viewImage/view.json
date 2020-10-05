@@ -1,0 +1,25 @@
+{
+  "text":"View image",
+	"item": [
+		{
+			"id": "filename",
+			"text": "Filename",
+			"type": "text"
+		},
+		{
+			"id": "className",
+			"text": "Class",
+			"type": "gridselect"
+		},
+		{
+			"type": "int",
+			"id": "width",
+			"text": "Width"
+		},
+		{
+			"type": "int",
+			"id": "height",
+			"text": "Height"
+		}
+	]
+}

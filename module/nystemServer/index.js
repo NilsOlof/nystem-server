@@ -143,6 +143,8 @@ const start = (app) => {
     call: startManager,
     callWin: startManager,
   });
+
+  app.event("favicon", { path: "/files/image/original/logo2.svg" });
 };
 
 module.exports = (app) => app.on("start", start);
