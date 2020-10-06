@@ -1,24 +1,6 @@
 const role = "super";
 
 const start = function (app) {
-  app.on("serverPath", (server) => {
-    const { atHost } = app.settings;
-
-    let path = app.utils
-      .insertValues(server.path, atHost.folders)
-      .replace(/\\/g, "/");
-
-    if (path[0] !== "/" && path[1] !== ":") path = `${atHost.basepath}/${path}`;
-
-    if (app.fs.existsSync(path) && !app.fs.lstatSync(path).isDirectory()) {
-      const pathSplit = path.split("/");
-      const len = pathSplit.length;
-      path = pathSplit.slice(0, len - 1).join("/");
-    }
-
-    return { ...server, basepath: path, runbasepath: path };
-  });
-
   const runProgram = function (path, program) {
     const { spawn } = require("child_process");
 
@@ -119,4 +101,24 @@ const start = function (app) {
   });
 };
 
-module.exports = (app) => app.on("start", start);
+module.exports = (app) => {
+  app.on("serverPath", (server) => {
+    const { atHost } = app.settings;
+
+    let path = app.utils
+      .insertValues(server.path, atHost.folders)
+      .replace(/\\/g, "/");
+
+    if (path[0] !== "/" && path[1] !== ":") path = `${atHost.basepath}/${path}`;
+
+    if (app.fs.existsSync(path) && !app.fs.lstatSync(path).isDirectory()) {
+      const pathSplit = path.split("/");
+      const len = pathSplit.length;
+      path = pathSplit.slice(0, len - 1).join("/");
+    }
+
+    return { ...server, basepath: path, runbasepath: path };
+  });
+
+  app.on("start", start);
+};

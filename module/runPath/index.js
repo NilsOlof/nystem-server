@@ -1,6 +1,6 @@
 const fs = require("fs-extra");
 
-const start = (app) => {
+const start = async (app) => {
   const { atHost } = app.settings;
 
   if (!atHost.runbasepath) return;
@@ -13,50 +13,33 @@ const start = (app) => {
       atHost.runbasepath
     );
   });
-  return;
-  app
-    .event("requireSu", {
-      path: `${__dirname}/mksymlink.js`,
-      keys: ["set"],
-    })
-    .then((doCall) => doCall())
-    .then((mksymlink) => {
-      app.database.server.search({ role: "super" }).then(({ value = [] }) => {
-        value.forEach((data) =>
-          app.event("serverPath", data).then((server) => {
-            if (server.runServerPath !== server.serverPath) {
-              if (!fs.existsSync(server.serverPath)) return;
 
-              if (!fs.existsSync(server.runServerPath))
-                fs.ensureDirSync(server.runServerPath);
+  await app.event("requireSu.start", { path: `${__dirname}/mksymlink.js` });
+  const { data = [] } = await app.database.server.search({ role: "super" });
 
-              const paths = fs.readdirSync(server.serverPath);
+  (data || []).forEach(async (data) => {
+    const server = await app.event("serverPath", data);
+    const { basepath, runbasepath } = server;
 
-              paths.forEach((path) => {
-                if (fs.existsSync(`${server.runServerPath}/${path}`)) return;
-                if (excludePaths.indexOf(path) !== -1) return;
+    if (runbasepath === basepath || !fs.existsSync(basepath)) return;
+    if (!fs.existsSync(runbasepath)) fs.ensureDirSync(runbasepath);
+    const paths = fs.readdirSync(basepath);
 
-                mksymlink.set({
-                  path: `${server.serverPath}/${path}`,
-                  topath: `${server.runServerPath}/${path}`,
-                });
-              });
+    paths.forEach((path) => {
+      if (fs.existsSync(`${runbasepath}/${path}`)) return;
+      if (excludePaths.indexOf(path) !== -1) return;
 
-              if (!fs.existsSync(`${server.runServerPath}/app.js`)) {
-                fs.copy(
-                  `${app.__dirname}/app.js`,
-                  `${server.runServerPath}/app.js`
-                );
-                fs.copy(
-                  `${app.__dirname}/server.js`,
-                  `${server.serverPath}/server.js`
-                );
-              }
-            }
-          })
-        );
+      app.event("mkSymLink", {
+        path: `${basepath}/${path}`,
+        topath: `${runbasepath}/${path}`,
       });
     });
+
+    if (!fs.existsSync(`${runbasepath}/app.js`)) {
+      fs.copy(`${__dirname}/app.js`, `${runbasepath}/app.js`);
+      fs.copy(`${app.__dirname}/server.js`, `${basepath}/server.js`);
+    }
+  });
 };
 
 module.exports = (app) => app.on("start", start);
