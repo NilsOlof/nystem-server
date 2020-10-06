@@ -9,6 +9,7 @@ const log = (error, stdout, stderr) => {
 
 const start = (app) => {
   server(app);
+
   let startCallback = false;
   app.on("requireSu.worker.started", () => {
     if (startCallback) startCallback();
@@ -16,12 +17,11 @@ const start = (app) => {
   });
 
   app.on("log", ({ log }) => {
-    console.log("log", log);
+    console.log("Worker", log);
   });
-
   app.on("requireSu.start", (query) => ({ ...query, settings: app.settings }));
 
-  const command = `node ${__dirname}\\worker.js`;
+  const command = `node ${app.__dirname}/app.js ${__dirname}/worker.js`;
 
   if (os === "win32") require("node-windows").elevate(command, {}, log);
   else require("child_process").exec(`sudo ${command}`, {}, log);

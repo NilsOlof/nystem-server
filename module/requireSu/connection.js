@@ -94,6 +94,13 @@ module.exports = {
         if (on) send({ on, event, data: await callbacks[on](data) });
       }
     );
+    client.on("end", () => {
+      process.exit();
+    });
+
+    client.on("error", (err) => {
+      process.exit();
+    });
 
     return {
       ...ev,
