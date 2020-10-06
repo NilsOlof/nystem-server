@@ -1,9 +1,9 @@
+const { spawn } = require("child_process");
+
 const role = "super";
 
 const start = (app) => {
   const runProgram = function (program, args, path) {
-    const { spawn } = require("child_process");
-
     const extra = path ? { cwd: path } : {};
     const execService = spawn(program, args, { ...extra, detached: false });
 

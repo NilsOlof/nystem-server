@@ -70,6 +70,7 @@ module.exports = async (ev) => {
 
     loadConfig();
   });
+
   ev.on("router.remove", ({ host }) => {
     host = host instanceof Array ? host : [host];
     host.forEach((host) => {
@@ -77,6 +78,7 @@ module.exports = async (ev) => {
     });
     loadConfig();
   });
+
   ev.on("router.clear", () => {
     routes = {};
     loadConfig();

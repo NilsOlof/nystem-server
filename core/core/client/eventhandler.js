@@ -183,7 +183,7 @@ module.exports = function addEventHandler(context, mapevents, name) {
           callbacksStack[event][pos - 1],
           callbacksStack[event]
         );
-      }, 2000);
+      }, 5000);
       let pos = 0;
       let oldData = data;
 

@@ -1,6 +1,6 @@
 const net = require("net");
 
-const port = 6666;
+const port = 64655;
 const commandSeparator = "%%%%";
 
 const uuid = () => {
@@ -18,7 +18,9 @@ const commandParser = (socket, callback) => {
     messageQueue += data.toString();
     const commands = messageQueue.split(commandSeparator);
 
-    commands.forEach((command) => callback(JSON.parse(command)));
+    commands
+      .filter((command) => command)
+      .forEach((command) => callback(JSON.parse(command)));
 
     messageQueue = commands[commands.length - 1];
   });
@@ -36,16 +38,27 @@ module.exports = {
     const start = (socket) => {
       const send = commandParser(
         socket,
-        async ({ id, prio, off, on, event, data }) => {
+        async ({ id, prio, off, on, event, data, callback }) => {
+          if (callback) {
+            callbacks[callback](data);
+            delete callbacks[callback];
+            return;
+          }
+
           if (id) {
             send({ id, event, data: await app.event(event, data) });
             return;
           }
 
           if (on) {
-            const callback = async (data) => send({ id: on, event, data });
+            const callback = (data) =>
+              new Promise((resolve) => {
+                const callback = uuid();
+                send({ on, event, data, callback });
+                callbacks[callback] = resolve;
+              });
 
-            app.on(event, prio, callback);
+            app.on(event, callback, prio);
             callbacks[on] = callback;
           }
 
@@ -65,17 +78,22 @@ module.exports = {
 
     const client = net.connect({ port }, () => {});
 
-    const send = commandParser(client, async ({ id, on, event, data }) => {
-      if (id) {
-        callbacks[id](data);
-        delete callbacks[id];
-      }
+    const send = commandParser(
+      client,
+      async ({ id, on, event, data, callback }) => {
+        if (callback) {
+          send({ callback, data: await callbacks[on](data) });
+          return;
+        }
 
-      if (on) {
-        data = await callbacks[on](data);
-        send({ on, event, data });
+        if (id) {
+          callbacks[id](data);
+          delete callbacks[id];
+        }
+
+        if (on) send({ on, event, data: await callbacks[on](data) });
       }
-    });
+    );
 
     return {
       ...ev,

@@ -21,8 +21,8 @@ module.exports = (app) => {
     };
   });
 
-  app.on("start", () => {
-    require("./proxy")(app);
+  app.on("start", async () => {
+    await app.event("requireSu.start", { path: `${__dirname}/proxy.js` });
 
     app.database.server.on(["delete", "save"], async (query) => {
       if (query.oldData) await app.event("router.remove", query.oldData);
@@ -33,8 +33,8 @@ module.exports = (app) => {
 
     app.database.server
       .search({ role: "super" })
-      .then(({ value = [] }) =>
-        value.forEach((server) => app.event("router.add", server))
+      .then(({ data = [] }) =>
+        data.forEach((server) => app.event("router.add", server))
       );
   });
 };

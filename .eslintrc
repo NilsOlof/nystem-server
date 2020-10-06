@@ -68,13 +68,11 @@
     "function-paren-newline": 0,
     "lines-between-class-members": 0,
     "comma-dangle": 0,
-    "quotes": [
-      2,
-      "double"
-    ],
+    "quotes": 0,
     "object-curly-newline": 0,
     "indent": 0,
-    "operator-linebreak": 0
+    "operator-linebreak": 0,
+    "no-path-concat": 0
   },
   "settings": {
     "react": {

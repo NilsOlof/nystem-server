@@ -13,7 +13,7 @@ const start = (app) => {
       atHost.runbasepath
     );
   });
-
+  return;
   app
     .event("requireSu", {
       path: `${__dirname}/mksymlink.js`,

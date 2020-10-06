@@ -71,7 +71,7 @@ process.on("SIGTERM", () => {
 });
 app.filePaths = pathFinder(app.__dirname);
 
-require("./package.js")(app).then(() => {
+require("./package.js")(app).then(async () => {
   const express = require("express")();
   const server = http.createServer(express);
 
@@ -121,12 +121,11 @@ require("./package.js")(app).then(() => {
     if (!debug && pathpart[2] === "prod.js") require(path)(app);
   });
 
-  app
-    .event("init")
-    .then(() => app.event("load", app))
-    .then(() => app.event("start", app))
-    .then(() => {
-      console.timeEnd("load"); // eslint-disable-line no-console
-      server.listen(app.settings.port, app.settings.host);
-    });
+  await app.event("init", app);
+  await app.event("load", app);
+  await app.event("start", app);
+
+  console.timeEnd("load"); // eslint-disable-line no-console
+  server.listen(app.settings.port, app.settings.host);
+  await app.event("started", app);
 });
