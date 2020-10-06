@@ -13,7 +13,7 @@ const start = async (app) => {
     .filter((row) => row.indexOf("#node") === -1);
 
   console.log(theResthosts);
-  return;
+
   app.database.host.on("save", (query, queue) => {
     const { oldData } = query;
     if (
@@ -47,12 +47,12 @@ const start = async (app) => {
     app.event("hosts.remove", query.oldData);
   });
 
-  app.database.host.search({ role: "super" }).then(({ value }) => {
-    (value || []).forEach((host) => app.event("hosts.add", host));
+  app.database.host.search({ role: "super" }).then(({ data }) => {
+    (data || []).forEach((host) => app.event("hosts.add", host));
   });
 
-  app.database.server.search({ role: "super" }).then(({ value }) => {
-    (value || []).forEach((host) => app.event("hosts.add", host));
+  app.database.server.search({ role: "super" }).then(({ data }) => {
+    (data || []).forEach((host) => app.event("hosts.add", host));
   });
 
   let saveTimer = false;
@@ -61,11 +61,11 @@ const start = async (app) => {
     saveTimer = setTimeout(delayedSave, 300);
   }
   function delayedSave() {
-    const file = `${theResthosts.join("\r\n")}\r\n${Object.entries(nodehosts)
+    const data = `${theResthosts.join("\r\n")}\r\n${Object.entries(nodehosts)
       .map(([key, value]) => `${value} ${key} #node\r\n`)
       .join("")}`;
-    console.log({ file });
-    // suHosts.set(file);
+
+    app.event("hosts.set", { data });
   }
 };
 
