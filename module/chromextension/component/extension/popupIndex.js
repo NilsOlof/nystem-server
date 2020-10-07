@@ -11,9 +11,9 @@ import {
 import React from "react";
 import app from "nystem";
 
+const url = "hepp";
+
 const ExtensionPopupIndex = () => {
-  app().event("addStyle", "/style/youtubequeue.scss");
-  const url = `http://${app().settings.domain}/image/`;
   return (
     <Wrapper>
       <RouterState match="/popup.html" redirect="/" save="storage" />

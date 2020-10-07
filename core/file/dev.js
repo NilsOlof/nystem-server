@@ -4,7 +4,7 @@ module.exports = function (app) {
 
     app.writeFileChanged(
       `${app.__dirname}/web/.env`,
-      `BROWSER=none\nSKIP_PREFLIGHT_CHECK=true\nDOMAIN=localhost:${
+      `BROWSER=none\nSKIP_PREFLIGHT_CHECK=true\nINLINE_RUNTIME_CHUNK=false\nDOMAIN=localhost:${
         app.settings.port + 5000
       }\nPORT=${app.settings.port + 5000}\n`
     );

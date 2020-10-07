@@ -9,10 +9,7 @@ const start = async (app) => {
   const theResthosts = hosts
     .split(/\r\n/)
     .filter((row) => row)
-    .filter((row) => row.indexOf(".adobe.") === -1)
     .filter((row) => row.indexOf("#node") === -1);
-
-  console.log(theResthosts);
 
   app.database.host.on("save", (query, queue) => {
     const { oldData } = query;

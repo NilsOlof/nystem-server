@@ -2,7 +2,6 @@ module.exports = function (app) {
   if (!app.settings.chromextension) return;
 
   const { fs } = app;
-  const fetch = require("node-fetch");
 
   const manifest = JSON.parse(
     fs.readFileSync(`${__dirname}/manifest/manifest.json`, "utf8")
