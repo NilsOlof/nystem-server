@@ -1,5 +1,5 @@
-module.exports = function(app) {
-  const fs = app.fs;
+module.exports = function (app) {
+  const { fs } = app;
 
   function generate(filename, destination, packages) {
     if (!fs.existsSync(destination)) return;
@@ -7,18 +7,20 @@ module.exports = function(app) {
     packages = packages || [];
 
     app.filePaths
-      .filter(path => {
+      .filter((path) => {
         const pathpart = path.split("/");
         return pathpart.length === 3 && pathpart[2] === filename;
       })
-      .forEach(path => packages.push(app.readFile(app.__dirname + "/" + path)));
+      .forEach((path) =>
+        packages.push(app.readFile(`${app.__dirname}/${path}`))
+      );
 
-    return Promise.all(packages).then(packages => {
-      let packagejson = packages
-        .map(data => JSON.parse(data))
+    return Promise.all(packages).then((packages) => {
+      const packagejson = packages
+        .map((data) => JSON.parse(data))
         .reduce((prev, data) => {
           if (!prev) return data;
-          Object.keys(data).forEach(key => {
+          Object.keys(data).forEach((key) => {
             prev[key] =
               prev[key] && typeof data[key] !== "string"
                 ? Object.assign(data[key], prev[key])
@@ -26,8 +28,9 @@ module.exports = function(app) {
           });
           return prev;
         }, false);
+
       app.writeFileChanged(
-        destination + "/package.json",
+        `${destination}/package.json`,
         JSON.stringify(packagejson, null, "  ")
       );
     });
@@ -35,9 +38,9 @@ module.exports = function(app) {
 
   const basePackage = generate("package.json", app.__dirname);
 
-  if (fs.existsSync(app.__dirname + "/web"))
-    generate("package.web.json", app.__dirname + "/web", [
-      app.readFile(app.__dirname + "/web/package.json")
+  if (fs.existsSync(`${app.__dirname}/web`))
+    generate("package.web.json", `${app.__dirname}/web`, [
+      app.readFile(`${app.__dirname}/web/package.json`),
     ]);
 
   app.packages = { generate };

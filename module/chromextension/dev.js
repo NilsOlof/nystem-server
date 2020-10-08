@@ -15,6 +15,7 @@ module.exports = function (app) {
 
   const compileAndCopy = () => {
     update();
+    require("./manifest.js")(app);
     [16, 24, 32, 48, 128, 512].forEach((size) => {
       fetch(`${host}/icon/${size}.png`)
         .then((res) => res.buffer())
