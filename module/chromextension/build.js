@@ -2,34 +2,38 @@ const fetch = require("node-fetch");
 
 module.exports = async (app) => {
   const { fs } = app;
-  const extPath = `${__dirname}/extension/`;
+  const extPath = `${app.__dirname}/files/extension`;
   const host = `http://localhost:${app.settings.port}`;
 
   const getScripts = (html) => {
-    const scriptexp = /<script src="([^"]+)"><\/script>/gim;
+    const scriptexp = / (href|src)="([^"]+)\.(js|json)"/gim;
     let match = scriptexp.exec(html);
     const result = [];
     while (match != null) {
-      result.push(match[1]);
+      result.push(`${match[2]}.${match[3]}`);
       match = scriptexp.exec(html);
     }
     return result;
   };
 
-  const entrypoints = require("./entrypointsArr.json");
+  const entrypoints = require("./entrypoints.json");
 
-  const indexHtml = await fetch(host);
+  const indexHtml = await fetch(host).then((response) => response.text());
 
   const files = await Promise.all(
-    getScripts(indexHtml).map(async (path) => ({
-      path,
-      contents: await fetch(`${host}/${path}`),
-    }))
+    getScripts(indexHtml)
+      .filter((path) => !path.includes("manifest.json"))
+      .map(async (path) => ({
+        path,
+        contents: await fetch(`${host}/${path}`).then((res) => res.buffer()),
+      }))
   );
 
-  files.forEach(({ path, contents }) =>
-    fs.writeFile(`${extPath}${path}`, contents)
-  );
+  files.forEach(async ({ path, contents }) => {
+    await fs.ensureFile(`${extPath}${path}`);
+    fs.writeFile(`${extPath}${path}`, contents);
+  });
+
   const bundle = files.reduce(
     (result, { contents }) => `${result}\n${contents}`,
     ""
@@ -39,7 +43,7 @@ module.exports = async (app) => {
 
   entrypoints.forEach(async (filename) => {
     if (["content"].includes(filename))
-      await fs.writeFile(`${extPath}${filename}.js`, bundle);
-    await fs.writeFile(`${extPath}${filename}.html`, indexHtml);
+      await fs.writeFile(`${extPath}/${filename}.js`, bundle);
+    await fs.writeFile(`${extPath}/${filename}.html`, indexHtml);
   });
 };

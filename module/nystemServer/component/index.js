@@ -3,6 +3,7 @@ import {
   Inserter,
   DragAndDropContext,
   SessionRole,
+  ExtensionView,
 } from "nystem-components";
 import { BrowserRouter as Router } from "react-router-dom";
 import React from "react";
@@ -12,6 +13,7 @@ import "./index.css";
 const Index = () => (
   <Router>
     <DragAndDropContext>
+      <ExtensionView>Hello</ExtensionView>
       <SessionRole userrole="logged-out">
         <Inserter
           className="p-8 text-left"
