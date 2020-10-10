@@ -40,7 +40,7 @@ const ViewButtonAutoSave = ({ view }) => {
       view.off("change", handleChange);
       if (saveDelay) clearTimeout(saveDelay);
     };
-  }, []);
+  }, [view]);
 
   return null;
 };
