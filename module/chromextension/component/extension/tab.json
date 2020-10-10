@@ -1,0 +1,25 @@
+{
+  "item": [
+    {
+      "id": "className",
+      "text": "Class",
+      "type": "gridselect"
+    },
+    {
+      "id": "match",
+      "text": "Match",
+      "type": "text"
+    },
+    {
+      "id": "invert",
+      "text": "Invert",
+      "type": "boolean"
+    },
+    {
+      "text": "Fields",
+      "id": "item",
+      "type": "viewCreator",
+      "expanded": true
+    }
+  ]
+}

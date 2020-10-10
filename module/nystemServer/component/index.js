@@ -21,6 +21,7 @@ const Index = () => (
       </SessionRole>
       <SessionRole userrole="logged-in">
         <Inserter match="*" source="/server/menu" />
+        <Inserter match="*" source="/server/extension" />
         <Inserter match="/" source="/server/overview" />
         <Inserter match="/menu" source="/settings/menu" />
         <Wrapper className="px-6">

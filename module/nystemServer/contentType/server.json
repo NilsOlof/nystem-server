@@ -42,6 +42,97 @@
 	"storage": "data",
 	"views": [
 		{
+			"name": "extension",
+			"item": [
+				{
+					"category": "view",
+					"type": "extension",
+					"item": [
+						{
+							"category": "view",
+							"type": "extension",
+							"format": "tab",
+							"item": [
+								{
+									"category": "view",
+									"type": "extension",
+									"format": "search",
+									"field": "host",
+									"extract": "(\\/\\/)([^\\/]+)",
+									"item": [
+										{
+											"category": "view",
+											"type": "router",
+											"format": "redirect",
+											"to": "/"
+										}
+									]
+								},
+								{
+									"category": "view",
+									"type": "style",
+									"item": [
+										{
+											"category": "contentTypeField",
+											"type": "text",
+											"id": "name",
+											"renderAs": "div",
+											"className": [
+												"flex-grow",
+												"pt-3",
+												"pl-2"
+											]
+										},
+										{
+											"category": "view",
+											"type": "viewInView",
+											"contentType": "serverStatus",
+											"view": "controlnohide",
+											"className": [
+												""
+											],
+											"format": "empty",
+											"viewId": "{_id}"
+										}
+									],
+									"className": [
+										"flex",
+										"items-center",
+										"p-1",
+										"pt-0"
+									]
+								},
+								{
+									"category": "view",
+									"type": "viewInView",
+									"contentType": "serverStatus",
+									"view": "status",
+									"viewId": "{_id}",
+									"format": "empty"
+								}
+							],
+							"match": "localhost"
+						},
+						{
+							"category": "view",
+							"type": "extension",
+							"format": "tab",
+							"match": "localhost",
+							"invert": true,
+							"item": [
+								{
+									"category": "view",
+									"type": "router",
+									"format": "redirect",
+									"to": "/"
+								}
+							]
+						}
+					]
+				}
+			]
+		},
+		{
 			"name": "input",
 			"format": "input",
 			"item": [
@@ -410,7 +501,7 @@
 							"category": "view",
 							"type": "viewLink",
 							"format": "link",
-							"text": "Project",
+							"text": "Nystem server",
 							"href": "/",
 							"className": [
 								"pl-1",

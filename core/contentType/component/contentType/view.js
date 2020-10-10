@@ -13,6 +13,8 @@ import { ViewContextProvider } from "./context";
 import "./view.css";
 
 const setValueAtPath = ({ path, current, value }) => {
+  if (!path) return value;
+
   const parts = path.split(".");
   const out = { ...current };
   let at = out;

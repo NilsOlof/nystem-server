@@ -1,6 +1,7 @@
 import React from "react";
 import app from "nystem";
 import { ContentTypeView } from "nystem-components";
+
 class ReferenceDynamicForm extends React.Component {
   constructor(props) {
     super(props);
@@ -9,16 +10,16 @@ class ReferenceDynamicForm extends React.Component {
     this.localValue = {};
     const self = this;
     const state = {};
-    app().require(["dynamicForm", "fieldDefinitions"], function() {
+    app().require(["dynamicForm", "fieldDefinitions"], function () {
       app().dynamicForm.generate(
         self.props.view.contentType,
         self.model.source,
         self.model.transformContentType,
         self.props.view.value,
-        function(id) {
+        function (id) {
           if (typeof state.value !== "undefined")
             self.setState({
-              value: id
+              value: id,
             });
           else state.value = id;
         }

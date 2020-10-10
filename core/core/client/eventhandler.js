@@ -37,30 +37,28 @@ if (
       document.head.appendChild(scriptEl);
     });
 
-  addScript("https://unpkg.com/source-map@0.7.3/dist/source-map.js").then(
-    async () => {
-      window.sourceMap.SourceMapConsumer.initialize({
-        "lib/mappings.wasm": "/mappings.wasm",
-      });
-      try {
-        const consumer = await new window.sourceMap.SourceMapConsumer(
-          await fetch("/static/js/main.chunk.js.map").then((res) => res.json())
-        );
-        translate = (str) => {
-          if (!str || !str.includes(":")) return str;
+  addScript("./source-map.js").then(async () => {
+    window.sourceMap.SourceMapConsumer.initialize({
+      "lib/mappings.wasm": "/mappings.wasm",
+    });
+    try {
+      const consumer = await new window.sourceMap.SourceMapConsumer(
+        await fetch("/static/js/main.chunk.js.map").then((res) => res.json())
+      );
+      translate = (str) => {
+        if (!str || !str.includes(":")) return str;
 
-          let [source, line, column] = str.split(/[ :]/);
+        let [source, line, column] = str.split(/[ :]/);
 
-          ({ source, line, column } = consumer.originalPositionFor({
-            line: parseInt(line, 10),
-            column: parseInt(column, 10),
-          }));
-          return `${source} ${line}:${column}`;
-        };
-        // eslint-disable-next-line no-empty
-      } catch (e) {}
-    }
-  );
+        ({ source, line, column } = consumer.originalPositionFor({
+          line: parseInt(line, 10),
+          column: parseInt(column, 10),
+        }));
+        return `${source} ${line}:${column}`;
+      };
+      // eslint-disable-next-line no-empty
+    } catch (e) {}
+  });
 }
 
 if (typeof window !== "undefined") window.addEventHandlers = {};
