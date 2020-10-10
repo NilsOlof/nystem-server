@@ -501,7 +501,7 @@
 							"category": "view",
 							"type": "viewLink",
 							"format": "link",
-							"text": "Project",
+							"text": "Nystem server",
 							"href": "/",
 							"className": [
 								"pl-1",
