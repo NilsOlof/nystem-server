@@ -143,29 +143,11 @@
 					"format": "view",
 					"item": [
 						{
-							"category": "view",
-							"type": "style",
-							"className": [
-								"flex"
-							],
-							"item": [
-								{
-									"category": "view",
-									"type": "viewButton",
-									"format": "back",
-									"className": [
-										"mr-1",
-										"my-3"
-									],
-									"btnType": "primary"
-								},
-								{
-									"type": "viewText",
-									"category": "view",
-									"renderAs": "h1",
-									"text": "Server settings"
-								}
-							]
+							"category": "contentTypeField",
+							"type": "text",
+							"id": "name",
+							"format": "view",
+							"renderAs": "h4"
 						},
 						{
 							"id": "name",
@@ -191,116 +173,9 @@
 						},
 						{
 							"category": "contentTypeField",
-							"type": "select",
-							"id": "type"
-						},
-						{
-							"category": "contentTypeField",
 							"type": "boolean",
 							"id": "showinoverview",
 							"text": "In overview"
-						},
-						{
-							"category": "view",
-							"type": "conditional",
-							"condition": [
-								[
-									"type",
-									"formania"
-								]
-							],
-							"item": [
-								{
-									"category": "view",
-									"type": "switchButtons",
-									"item": [
-										{
-											"id": "autostart",
-											"type": "boolean",
-											"category": "contentTypeField",
-											"text": "Auto start"
-										},
-										{
-											"id": "autorestart",
-											"type": "boolean",
-											"category": "contentTypeField",
-											"text": "Auto restart"
-										},
-										{
-											"category": "contentTypeField",
-											"type": "boolean",
-											"id": "oldViewSys",
-											"text": "Old view sys"
-										}
-									]
-								},
-								{
-									"category": "contentTypeField",
-									"type": "text",
-									"id": "adminUserName"
-								},
-								{
-									"category": "contentTypeField",
-									"type": "password",
-									"id": "adminUserPassword"
-								}
-							]
-						},
-						{
-							"category": "view",
-							"type": "conditional",
-							"condition": [
-								[
-									"type",
-									"wordpress"
-								],
-								[
-									"type",
-									"drupal"
-								],
-								[
-									"type",
-									"nodeVagrant"
-								]
-							],
-							"item": [
-								{
-									"category": "contentTypeField",
-									"type": "text",
-									"id": "siteName"
-								},
-								{
-									"category": "contentTypeField",
-									"type": "text",
-									"id": "sitePath"
-								},
-								{
-									"category": "view",
-									"type": "conditional",
-									"item": [
-										{
-											"category": "contentTypeField",
-											"type": "text",
-											"id": "database"
-										}
-									],
-									"condition": [
-										[
-											"type",
-											"wordpress"
-										],
-										[
-											"type",
-											"drupal"
-										]
-									]
-								},
-								{
-									"category": "contentTypeField",
-									"type": "multilinetext",
-									"id": "vagrantHosts"
-								}
-							]
 						},
 						{
 							"type": "viewButton",

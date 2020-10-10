@@ -37,7 +37,7 @@ if (
       document.head.appendChild(scriptEl);
     });
 
-  addScript("./source-map.js").then(async () => {
+  addScript("/source-map.js").then(async () => {
     window.sourceMap.SourceMapConsumer.initialize({
       "lib/mappings.wasm": "/mappings.wasm",
     });

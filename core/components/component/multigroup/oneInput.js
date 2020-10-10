@@ -22,7 +22,7 @@ const MultigroupOneInput = ({ value, model, focus, path, setValue }) => {
   return (
     <Panel
       type="default"
-      expanded={focus}
+      expanded={model.itemExpanded}
       expandable={model.itemExpandable}
       icon={model.itemExpandable}
       header={
