@@ -31,7 +31,8 @@ module.exports = function (app) {
 
   app.on("debugModeFileChange", (event) => {
     const parts = event.path.split("/");
-    if (parts[3] !== "component" && parts[3] !== "style") return;
+    if (!["component", "style", "contentType"].includes(parts[3])) return;
+
     timer = setTimeout(update, 1000);
   });
 };

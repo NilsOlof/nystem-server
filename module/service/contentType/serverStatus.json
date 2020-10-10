@@ -78,7 +78,9 @@
 									"size": "xs",
 									"className": [
 										"mr-1"
-									]
+									],
+									"text": "Code",
+									"falseText": "Code"
 								},
 								{
 									"category": "contentTypeField",
@@ -114,7 +116,9 @@
 									"size": "xs",
 									"className": [
 										"mr-1"
-									]
+									],
+									"text": "File",
+									"falseText": "File"
 								},
 								{
 									"category": "view",
@@ -208,6 +212,124 @@
 			"format": "view"
 		},
 		{
+			"name": "controlnohide",
+			"item": [
+				{
+					"category": "view",
+					"type": "style",
+					"item": [
+						{
+							"category": "contentTypeField",
+							"type": "boolean",
+							"id": "manager",
+							"format": "button",
+							"btnType": "danger",
+							"falseBtnType": "primary",
+							"size": "xs",
+							"className": [
+								"mr-1"
+							],
+							"text": "Stop manager",
+							"falseText": "Manager"
+						},
+						{
+							"category": "contentTypeField",
+							"type": "boolean",
+							"id": "vscode",
+							"format": "button",
+							"btnType": "success",
+							"falseBtnType": "success",
+							"size": "xs",
+							"className": [
+								"mr-1"
+							],
+							"text": "Code",
+							"falseText": "Code"
+						},
+						{
+							"category": "contentTypeField",
+							"type": "boolean",
+							"id": "term",
+							"format": "button",
+							"className": [
+								"mr-1"
+							],
+							"btnType": "primary",
+							"falseBtnType": "primary",
+							"size": "xs"
+						},
+						{
+							"category": "contentTypeField",
+							"type": "boolean",
+							"id": "sourcetree",
+							"format": "button",
+							"btnType": "primary",
+							"falseBtnType": "primary",
+							"size": "xs",
+							"className": [
+								"mr-1"
+							]
+						},
+						{
+							"category": "contentTypeField",
+							"type": "boolean",
+							"id": "filexplorer",
+							"format": "button",
+							"btnType": "primary",
+							"falseBtnType": "primary",
+							"size": "xs",
+							"className": [
+								"mr-1"
+							],
+							"text": "File",
+							"falseText": "File"
+						},
+						{
+							"category": "view",
+							"type": "viewInView",
+							"contentType": "server",
+							"view": "link",
+							"viewId": "{id}",
+							"format": "view",
+							"className": [
+								"bg-blue-500",
+								"hover:bg-blue-500",
+								"text-white",
+								"rounded",
+								"shadow-sm",
+								"py-1",
+								"px-2",
+								"mr-1"
+							]
+						},
+						{
+							"category": "contentTypeField",
+							"type": "boolean",
+							"id": "running",
+							"format": "button",
+							"text": "Stop",
+							"falseText": "Start",
+							"btnType": "danger",
+							"falseBtnType": "primary",
+							"size": "xs",
+							"className": [
+								"w-16"
+							]
+						}
+					],
+					"className": [
+						"flex",
+						"mt-3"
+					]
+				},
+				{
+					"category": "view",
+					"type": "viewButton",
+					"format": "autoSave"
+				}
+			]
+		},
+		{
 			"name": "status",
 			"format": "input",
 			"item": [
@@ -227,7 +349,8 @@
 					"className": [
 						"bg-black",
 						"text-gray-400",
-						"p-3"
+						"p-3",
+						"h-100"
 					],
 					"wrapperClass": [
 						"flex",

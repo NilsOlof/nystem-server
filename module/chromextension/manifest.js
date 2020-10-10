@@ -5,8 +5,9 @@ module.exports = async (app) => {
     fs.readFile(`${__dirname}/manifest/${path}.json`, "utf-8");
 
   const parts = await Promise.all(
-    ["base", ...require("./entrypoints.json")] // ["base", "popup", "content", "background"]
-      .map(async (path) => JSON.parse(await getPart(path)))
+    ["base", ...require("./features.json")].map(async (path) =>
+      JSON.parse(await getPart(path))
+    )
   );
 
   const mergeKey = (d1, d2) => {
@@ -33,7 +34,7 @@ module.exports = async (app) => {
 
   fs.writeFile(
     `${app.__dirname}/files/extension/manifest.json`,
-    JSON.stringify(parts.reduce(mergeKey, {})).replace(
+    JSON.stringify(parts.reduce(mergeKey, {}), null, "  ").replace(
       /"\{name\}"/g,
       `"${app.settings.client.name}"`
     )

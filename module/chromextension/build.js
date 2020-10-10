@@ -16,7 +16,9 @@ module.exports = async (app) => {
     return result;
   };
 
-  const entrypoints = require("./entrypoints.json");
+  const entrypoints = require("./features.json").filter((item) =>
+    ["popup", "background", "content"].includes(item)
+  );
 
   const indexHtml = await fetch(host).then((response) => response.text());
 
@@ -38,8 +40,6 @@ module.exports = async (app) => {
     (result, { contents }) => `${result}\n${contents}`,
     ""
   );
-
-  // ["popup", "background", "content"]
 
   entrypoints.forEach(async (filename) => {
     if (["content"].includes(filename))
