@@ -1,5 +1,5 @@
 import React, { useContext } from "react";
-import { Wrapper, ContentTypeRender, Icon } from "nystem-components";
+import { Wrapper, ContentTypeRender } from "nystem-components";
 
 import { HideOnNotOverContext } from "./onOverHandle";
 
