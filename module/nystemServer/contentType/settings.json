@@ -89,7 +89,8 @@
 					"id": "path",
 					"text": "Path"
 				}
-			]
+			],
+			"text": "Folders"
 		}
 	],
 	"machinename": "settings",
@@ -207,7 +208,8 @@
 				{
 					"category": "contentTypeField",
 					"type": "multigroup",
-					"id": "folders"
+					"id": "folders",
+					"itemExpanded": true
 				},
 				{
 					"type": "viewButton",

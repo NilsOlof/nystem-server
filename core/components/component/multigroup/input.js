@@ -42,7 +42,12 @@ const MultigroupInput = ({ value, setValue, model, path, view }) => {
       header={
         <Wrapper className="flex items-center">
           <BootstrapPanelToggle
-            model={{ ...model, icon: true, className: "flex items-center" }}
+            model={{
+              ...model,
+              icon: true,
+              className: "flex items-center",
+              item: [],
+            }}
           >
             {model.text}
           </BootstrapPanelToggle>
