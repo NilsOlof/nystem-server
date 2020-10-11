@@ -132,8 +132,9 @@ const start = (app) => {
 
   const startManager = async ({ basepath, port }) => {
     console.log("Open manager", basepath.replace(/\//g, "\\"));
+
     const { runbasepath: cmdPath } = await app.event("serverPath", {
-      path: "nystem-contenttype-manager",
+      path: "{localdeploy}nystemmanager",
     });
     return runProgram("node", ["app.js", "server.js", basepath, port], cmdPath);
   };
