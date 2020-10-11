@@ -209,7 +209,8 @@
 					"category": "contentTypeField",
 					"type": "multigroup",
 					"id": "folders",
-					"itemExpanded": true
+					"itemExpanded": false,
+					"field": "name"
 				},
 				{
 					"type": "viewButton",

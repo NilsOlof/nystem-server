@@ -11,6 +11,11 @@
       "text": "Row class name"
     },
     {
+      "type": "text",
+      "text": "Header field",
+      "id": "field"
+    },
+    {
       "type": "boolean",
       "text": "Expandable",
       "id": "expandable"

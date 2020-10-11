@@ -28,9 +28,12 @@ function pathFinder(basePath) {
 
 let app = {
   fs,
-  __dirname: process.env.NODE__DIRNAME || __dirname.replace("/core/core", ""),
+  __dirname:
+    process.env.NODE__DIRNAME ||
+    __dirname.replace(/\\/g, "/").replace("/core/core", ""),
   pathFinder,
 };
+app.__dirname = app.__dirname.replace(/\\/g, "/");
 
 app.writeFileChanged = (fileName, data) =>
   new Promise((resolve, reject) => {

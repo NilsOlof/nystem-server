@@ -4,9 +4,11 @@ module.exports = (app) => {
 
   app.on("start", 10, async () => {
     const { data = [] } = await app.database.settings.search({ role: "super" });
-    const atHost = data.find(
-      (setting) => hostname.toLowerCase().indexOf(setting.name) !== -1
-    );
+    const atHost = {
+      ...data.find(
+        (setting) => hostname.toLowerCase().indexOf(setting.name) !== -1
+      ),
+    };
 
     const { folders = [] } = atHost;
     atHost.folders = folders.reduce(
