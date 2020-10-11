@@ -7,9 +7,9 @@ import {
   Wrapper,
 } from "nystem-components";
 
-const MultigroupOneInput = ({ value, model, focus, path, setValue }) => {
-  const field = model.item && model.item[0] && model.item[0].id;
-  let text = value[field] || "";
+const MultigroupOneInput = ({ value, model, view, path, setValue }) => {
+  let text = view.getValue(`${path}.${model.field}`);
+
   if (text instanceof Array) text = text.join(" ");
 
   const onClose = (id) => {
