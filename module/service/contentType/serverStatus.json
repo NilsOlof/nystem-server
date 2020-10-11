@@ -349,8 +349,7 @@
 					"className": [
 						"bg-black",
 						"text-gray-400",
-						"p-3",
-						"h-100"
+						"p-3"
 					],
 					"wrapperClass": [
 						"flex",
@@ -358,7 +357,8 @@
 						"max-h-128",
 						"overflow-auto",
 						"min-h-8",
-						"bg-black"
+						"bg-black",
+						"h-100"
 					]
 				}
 			]

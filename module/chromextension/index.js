@@ -61,7 +61,7 @@ module.exports = function (app) {
       fetch(`${host}/icon/${size}.png`)
         .then((res) => res.buffer())
         .then((buffer) => {
-          fs.outputFile(`${extPath}icon/${size}.png`, buffer);
+          fs.outputFile(`${extPath}/icon/${size}.png`, buffer);
         });
     });
   };
