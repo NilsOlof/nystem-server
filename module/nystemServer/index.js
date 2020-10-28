@@ -50,7 +50,7 @@ const start = (app) => {
 
       ev.on("data", ({ data }) => console.log(data));
 
-      const stopped = async ({ data, oldData }) => {
+      const stopped = async ({ data, oldData = {} }) => {
         if (!data[field] && oldData[field]) {
           ev.event("stop");
           app.database.serverStatus.off("save", stopped);
