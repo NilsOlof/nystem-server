@@ -1,5 +1,6 @@
 const start = async (app) => {
-  if (!app.atHost.setHosts) return false;
+  if (!app.atHost.setHosts) return;
+
   await app.event("requireSu.start", { path: `${__dirname}/hosts.js` });
 
   const nodehosts = {};

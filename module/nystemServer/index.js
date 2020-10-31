@@ -51,7 +51,7 @@ const start = (app) => {
       ev.on("data", ({ data }) => console.log(data));
 
       const stopped = async ({ data, oldData = {} }) => {
-        if (!data[field] && oldData[field]) {
+        if (data._id === id && !data[field] && oldData[field]) {
           ev.event("stop");
           app.database.serverStatus.off("save", stopped);
         }
@@ -59,7 +59,11 @@ const start = (app) => {
 
       ev.on("exit", async () => {
         const { data } = await app.database.serverStatus.get({ id, role });
-        app.database.serverStatus.save({
+        await app.database.serverStatus.save({
+          data: { ...data, [field]: false },
+          role,
+        });
+        await app.database.serverStatus.save({
           data: { ...data, [field]: false },
           role,
         });
