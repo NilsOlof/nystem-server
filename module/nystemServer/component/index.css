@@ -49,3 +49,19 @@ body {
 .h-100 {
   height: 26rem;
 }
+.is-out .hide-on-false {
+  opacity: 0;
+}
+
+.is-open .hide-on-false {
+  opacity: 100;
+}
+.h-7 {
+  height: 1.75rem;
+}
+.w-7 {
+  width: 1.75rem;
+}
+.grayscale {
+  filter: sepia(100%) opacity(50%);
+}

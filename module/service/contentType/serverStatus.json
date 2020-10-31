@@ -51,151 +51,193 @@
 					"type": "style",
 					"item": [
 						{
-							"category": "view",
-							"type": "style",
+							"type": "bootstrap",
 							"item": [
-								{
-									"category": "contentTypeField",
-									"type": "boolean",
-									"id": "manager",
-									"format": "button",
-									"btnType": "danger",
-									"falseBtnType": "primary",
-									"size": "xs",
-									"className": [
-										"mr-1"
-									],
-									"text": "Stop manager",
-									"falseText": "Manager"
-								},
-								{
-									"category": "contentTypeField",
-									"type": "boolean",
-									"id": "vscode",
-									"format": "button",
-									"btnType": "success",
-									"falseBtnType": "success",
-									"size": "xs",
-									"className": [
-										"mr-1"
-									],
-									"text": "Code",
-									"falseText": "Code"
-								},
-								{
-									"category": "contentTypeField",
-									"type": "boolean",
-									"id": "term",
-									"format": "button",
-									"className": [
-										"mr-1"
-									],
-									"btnType": "primary",
-									"falseBtnType": "primary",
-									"size": "xs"
-								},
-								{
-									"category": "contentTypeField",
-									"type": "boolean",
-									"id": "sourcetree",
-									"format": "button",
-									"btnType": "primary",
-									"falseBtnType": "primary",
-									"size": "xs",
-									"className": [
-										"mr-1"
-									]
-								},
-								{
-									"category": "contentTypeField",
-									"type": "boolean",
-									"id": "filexplorer",
-									"format": "button",
-									"btnType": "primary",
-									"falseBtnType": "primary",
-									"size": "xs",
-									"className": [
-										"mr-1"
-									],
-									"text": "File",
-									"falseText": "File"
-								},
 								{
 									"category": "view",
-									"type": "viewInView",
-									"contentType": "server",
-									"view": "link",
-									"viewId": "{id}",
-									"format": "view",
-									"className": [
-										"bg-blue-500",
-										"hover:bg-blue-500",
-										"text-white",
-										"rounded",
-										"shadow-sm",
-										"py-1",
-										"px-2",
-										"mr-1"
-									]
-								}
-							],
-							"className": [
-								"flex",
-								"transition",
-								"transition-opacity",
-								"duration-500",
-								"ease-in-out"
-							],
-							"format": "onOver",
-							"classNameOver": [
-								"opacity-100"
-							],
-							"classNameOut": [
-								"opacity-0"
-							]
-						},
-						{
-							"category": "view",
-							"type": "viewText",
-							"format": "titlePopup",
-							"item": [
-								{
-									"category": "contentTypeField",
-									"type": "boolean",
-									"id": "running",
-									"format": "button",
-									"text": "Stop",
-									"falseText": "Start",
-									"btnType": "danger",
-									"falseBtnType": "primary",
-									"size": "xs",
-									"className": [
-										"w-16"
-									]
-								}
-							],
-							"popup": [
-								{
-									"category": "contentTypeField",
-									"type": "textarea",
-									"id": "log",
-									"format": "log",
-									"className": [
-										"bg-black",
-										"text-gray-400",
-										"p-3"
+									"type": "style",
+									"item": [
+										{
+											"category": "contentTypeField",
+											"type": "boolean",
+											"id": "manager",
+											"format": "button",
+											"btnType": "danger",
+											"falseBtnType": "primary",
+											"size": "xs",
+											"className": [
+												"mr-1",
+												"transition",
+												"transition-opacity",
+												"duration-500",
+												"ease-in-out"
+											],
+											"text": "cog",
+											"falseText": "cog:hide-on-false"
+										},
+										{
+											"category": "contentTypeField",
+											"type": "boolean",
+											"id": "vscode",
+											"format": "button",
+											"btnType": "success",
+											"falseBtnType": "success",
+											"size": "xs",
+											"className": [
+												"mr-1",
+												"transition",
+												"transition-opacity",
+												"duration-500",
+												"ease-in-out"
+											],
+											"text": "code",
+											"falseText": "code:hide-on-false"
+										},
+										{
+											"category": "contentTypeField",
+											"type": "boolean",
+											"id": "term",
+											"format": "button",
+											"className": [
+												"mr-1",
+												"transition",
+												"transition-opacity",
+												"duration-500",
+												"ease-in-out"
+											],
+											"btnType": "primary",
+											"falseBtnType": "primary",
+											"size": "xs",
+											"text": "wallet",
+											"falseText": "wallet:hide-on-false"
+										},
+										{
+											"category": "contentTypeField",
+											"type": "boolean",
+											"id": "sourcetree",
+											"format": "button",
+											"btnType": "primary",
+											"falseBtnType": "primary",
+											"size": "xs",
+											"className": [
+												"mr-1",
+												"transition",
+												"transition-opacity",
+												"duration-500",
+												"ease-in-out"
+											],
+											"text": "location",
+											"falseText": "location:hide-on-false"
+										},
+										{
+											"category": "contentTypeField",
+											"type": "boolean",
+											"id": "filexplorer",
+											"format": "button",
+											"btnType": "primary",
+											"falseBtnType": "primary",
+											"size": "xs",
+											"className": [
+												"mr-1",
+												"transition",
+												"transition-opacity",
+												"duration-500",
+												"ease-in-out"
+											],
+											"text": "folder",
+											"falseText": "folder:hide-on-false"
+										},
+										{
+											"category": "view",
+											"type": "viewInView",
+											"contentType": "server",
+											"view": "link",
+											"viewId": "{id}",
+											"format": "view",
+											"className": [
+												"py-2",
+												"transition",
+												"transition-opacity",
+												"duration-500",
+												"ease-in-out",
+												"hide-on-false",
+												"bg-blue-500",
+												"hover:bg-blue-500",
+												"text-white",
+												"rounded",
+												"shadow-sm",
+												"py-1",
+												"px-2",
+												"mr-1"
+											]
+										},
+										{
+											"category": "view",
+											"type": "viewText",
+											"format": "titlePopup",
+											"item": [
+												{
+													"category": "contentTypeField",
+													"type": "boolean",
+													"id": "running",
+													"format": "button",
+													"text": "pause",
+													"falseText": "play:hide-on-false",
+													"btnType": "danger",
+													"falseBtnType": "primary",
+													"size": "xs",
+													"className": [
+														"py-2",
+														"transition",
+														"transition-opacity",
+														"duration-500",
+														"ease-in-out"
+													]
+												}
+											],
+											"popup": [
+												{
+													"category": "contentTypeField",
+													"type": "textarea",
+													"id": "log",
+													"format": "log",
+													"className": [
+														"bg-black",
+														"text-gray-400",
+														"p-3"
+													],
+													"wrapperClass": [
+														"flex",
+														"flex-col-reverse",
+														"max-h-128",
+														"overflow-hidden",
+														"bg-black",
+														"w-64",
+														"rounded",
+														"shadow"
+													]
+												}
+											],
+											"className": [
+												""
+											]
+										}
 									],
-									"wrapperClass": [
-										"flex",
-										"flex-col-reverse",
-										"max-h-128",
-										"overflow-hidden",
-										"bg-black",
-										"w-64",
-										"rounded",
-										"shadow"
+									"className": [
+										"flex"
+									],
+									"format": "onOver",
+									"classNameOver": [
+										"is-over"
+									],
+									"classNameOut": [
+										"is-out"
 									]
 								}
+							],
+							"format": "panelOpen",
+							"classNameOpen": [
+								"is-open"
 							]
 						}
 					],
@@ -229,8 +271,8 @@
 							"className": [
 								"mr-1"
 							],
-							"text": "Stop manager",
-							"falseText": "Manager"
+							"text": "cog",
+							"falseText": "cog"
 						},
 						{
 							"category": "contentTypeField",
@@ -243,8 +285,8 @@
 							"className": [
 								"mr-1"
 							],
-							"text": "Code",
-							"falseText": "Code"
+							"text": "code",
+							"falseText": "code"
 						},
 						{
 							"category": "contentTypeField",
@@ -256,7 +298,9 @@
 							],
 							"btnType": "primary",
 							"falseBtnType": "primary",
-							"size": "xs"
+							"size": "xs",
+							"text": "wallet",
+							"falseText": "wallet"
 						},
 						{
 							"category": "contentTypeField",
@@ -268,7 +312,9 @@
 							"size": "xs",
 							"className": [
 								"mr-1"
-							]
+							],
+							"text": "location",
+							"falseText": "location"
 						},
 						{
 							"category": "contentTypeField",
@@ -281,8 +327,8 @@
 							"className": [
 								"mr-1"
 							],
-							"text": "File",
-							"falseText": "File"
+							"text": "folder",
+							"falseText": "folder"
 						},
 						{
 							"category": "view",
@@ -297,7 +343,7 @@
 								"text-white",
 								"rounded",
 								"shadow-sm",
-								"py-1",
+								"py-2",
 								"px-2",
 								"mr-1"
 							]
@@ -307,19 +353,19 @@
 							"type": "boolean",
 							"id": "running",
 							"format": "button",
-							"text": "Stop",
-							"falseText": "Start",
+							"text": "pause",
+							"falseText": "play",
 							"btnType": "danger",
 							"falseBtnType": "primary",
 							"size": "xs",
 							"className": [
-								"w-16"
+								"w-8",
+								"h-8"
 							]
 						}
 					],
 					"className": [
-						"flex",
-						"mt-3"
+						"flex"
 					]
 				},
 				{

@@ -1,0 +1,25 @@
+{
+  "item": [
+    {
+      "id": "className",
+      "text": "Class",
+      "type": "gridselect"
+    },
+    {
+      "id": "classNameOpen",
+      "text": "Class if open",
+      "type": "gridselect"
+    },
+    {
+      "id": "classNameClosed",
+      "text": "Class if closed",
+      "type": "gridselect"
+    },
+    {
+      "text": "Fields",
+      "id": "item",
+      "type": "viewCreator",
+      "expanded": true
+    }
+  ]
+}

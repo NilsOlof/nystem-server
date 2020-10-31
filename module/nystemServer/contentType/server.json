@@ -137,6 +137,83 @@
 			"format": "input",
 			"item": [
 				{
+					"category": "view",
+					"type": "style",
+					"item": [
+						{
+							"category": "view",
+							"type": "bootstrap",
+							"format": "panel",
+							"header": [
+								{
+									"category": "view",
+									"type": "style",
+									"item": [
+										{
+											"category": "view",
+											"type": "bootstrap",
+											"format": "panelToggle",
+											"item": [
+												{
+													"category": "contentTypeField",
+													"type": "text",
+													"id": "name",
+													"renderAs": "div",
+													"className": [
+														""
+													],
+													"format": "view"
+												}
+											],
+											"icon": true,
+											"className": [
+												"flex",
+												"items-center",
+												"content-center",
+												"py-1",
+												"",
+												"flex-grow"
+											]
+										},
+										{
+											"category": "view",
+											"type": "viewInView",
+											"contentType": "serverStatus",
+											"view": "controlnohide",
+											"className": [
+												""
+											],
+											"format": "empty",
+											"viewId": "{_id}"
+										}
+									],
+									"className": [
+										"flex",
+										"items-center"
+									]
+								}
+							],
+							"item": [
+								{
+									"category": "view",
+									"type": "viewInView",
+									"contentType": "serverStatus",
+									"view": "status",
+									"viewId": "{_id}",
+									"format": "empty"
+								}
+							],
+							"typeClass": "defaultWithoutPadding",
+							"stateStore": "byUrl"
+						}
+					],
+					"format": "onOverHandle",
+					"className": [
+						"p-3",
+						"max-w-4xl"
+					]
+				},
+				{
 					"type": "bootstrap",
 					"category": "view",
 					"row": true,
@@ -183,7 +260,7 @@
 						}
 					],
 					"className": [
-						"col-sm-10"
+						"px-4"
 					]
 				}
 			]
@@ -200,10 +277,16 @@
 					"limit": "1",
 					"item": [
 						{
-							"category": "view",
-							"type": "viewText",
-							"text": "Site"
+							"type": "icon",
+							"icon": "link",
+							"className": [
+								"w-4",
+								"h-4"
+							]
 						}
+					],
+					"className": [
+						""
 					]
 				}
 			]
@@ -216,7 +299,9 @@
 					"type": "style",
 					"className": [
 						"flex",
-						"items-end"
+						"items-center",
+						"max-w-xl",
+						"pl-4"
 					],
 					"item": [
 						{
@@ -234,7 +319,7 @@
 							"format": "search",
 							"text": "Search",
 							"className": [
-								"pull-right"
+								""
 							]
 						},
 						{
@@ -276,7 +361,8 @@
 							"toFormat": "input",
 							"className": [
 								"font-bold",
-								"p-1",
+								"py-1",
+								"px-2",
 								"block"
 							]
 						},
@@ -285,19 +371,31 @@
 							"type": "text",
 							"category": "contentTypeField",
 							"className": [
-								"p-1"
+								"",
+								"py-1",
+								"px-2"
 							]
 						},
 						{
 							"id": "port",
 							"type": "text",
-							"category": "contentTypeField"
+							"category": "contentTypeField",
+							"className": [
+								"",
+								"py-1",
+								"px-2"
+							]
 						},
 						{
 							"id": "showinoverview",
 							"type": "boolean",
 							"category": "contentTypeField",
-							"format": "view"
+							"format": "view",
+							"className": [
+								"",
+								"py-1",
+								"px-2"
+							]
 						}
 					],
 					"headerFields": [
@@ -309,7 +407,8 @@
 							"text": "Name",
 							"className": [
 								"",
-								"p-1",
+								"py-1",
+								"px-2",
 								"block"
 							]
 						},
@@ -317,18 +416,33 @@
 							"category": "contentTypeField",
 							"type": "text",
 							"id": "path",
-							"format": "sortBy"
+							"format": "sortBy",
+							"className": [
+								"",
+								"py-1",
+								"px-2"
+							]
 						},
 						{
 							"category": "contentTypeField",
 							"type": "int",
 							"id": "port",
-							"format": "sortBy"
+							"format": "sortBy",
+							"className": [
+								"",
+								"py-1",
+								"px-2"
+							]
 						},
 						{
 							"category": "view",
 							"type": "viewText",
-							"text": "Overview"
+							"text": "Overview",
+							"className": [
+								"",
+								"py-1",
+								"px-2"
+							]
 						}
 					],
 					"sortby": {
@@ -384,13 +498,34 @@
 							]
 						},
 						{
-							"category": "view",
-							"type": "viewImage",
-							"className": [
-								"w-10",
-								"h-10"
+							"type": "connection",
+							"item": [
+								{
+									"category": "view",
+									"type": "viewImage",
+									"className": [
+										"w-10",
+										"h-10",
+										"grayscale"
+									],
+									"filename": "logo2.svg"
+								}
 							],
-							"filename": "logo2.svg"
+							"offline": true
+						},
+						{
+							"type": "connection",
+							"item": [
+								{
+									"category": "view",
+									"type": "viewImage",
+									"className": [
+										"w-10",
+										"h-10"
+									],
+									"filename": "logo2.svg"
+								}
+							]
 						}
 					],
 					"className": [
@@ -400,7 +535,8 @@
 						"font-bold",
 						"pt-2",
 						"pb-0",
-						"items-center"
+						"items-center",
+						"max-w-4xl"
 					]
 				}
 			]

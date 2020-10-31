@@ -24,11 +24,9 @@ const ConnectionView = ({ model = {}, offline, className, path, children }) => {
 
   if ((connected && offline) || (!connected && !offline)) return null;
 
-  if (children) return <Wrapper className={className}>{children}</Wrapper>;
-
   return (
     <Wrapper className={className}>
-      <ContentTypeRender path={path} items={model.item} />
+      {children || <ContentTypeRender path={path} items={model.item} />}
     </Wrapper>
   );
 };
