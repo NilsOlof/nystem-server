@@ -29,7 +29,8 @@ const start = function (app) {
     });
 
     evHandler.on("stop", () => {
-      execService.kill("SIGINT");
+      execService.stdin.write("exit");
+      setTimeout(() => execService.kill("SIGINT"), 100);
     });
 
     app.on("exit", () => {

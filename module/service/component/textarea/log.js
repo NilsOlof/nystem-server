@@ -25,7 +25,12 @@ const TextareaLog = ({ view, model, value = "" }) => {
     };
 
     app().connection.on(`serverLog${view.id}`, updateLog);
+    const clearLog = () => {
+      setLog("");
+    };
+    view.on("clearlog", clearLog);
     return () => {
+      view.off("clearlog", clearLog);
       app().connection.off(`serverLog${view.id}`, updateLog);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps

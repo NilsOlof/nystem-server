@@ -387,6 +387,26 @@
 					"toField": "_id"
 				},
 				{
+					"type": "style",
+					"item": [
+						{
+							"type": "viewButton",
+							"format": "view",
+							"text": "Clear",
+							"event": "clearlog",
+							"btnType": "default",
+							"className": [
+								"opacity-10",
+								"absolute",
+								"right-0"
+							]
+						}
+					],
+					"className": [
+						"relative"
+					]
+				},
+				{
 					"category": "contentTypeField",
 					"type": "textarea",
 					"id": "log",
@@ -404,7 +424,9 @@
 						"overflow-auto",
 						"min-h-8",
 						"bg-black",
-						"h-100"
+						"h-100",
+						"scrollbar",
+						"scrollbar-dark"
 					]
 				}
 			]

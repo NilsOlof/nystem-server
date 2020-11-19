@@ -65,3 +65,35 @@ body {
 .grayscale {
   filter: sepia(100%) opacity(50%);
 }
+.scrollbar::-webkit-scrollbar,
+body::-webkit-scrollbar {
+  width: 14px; /* width of the entire scrollbar */
+}
+.scrollbar::-webkit-scrollbar-track,
+body::-webkit-scrollbar-track {
+  background: white; /* color of the tracking area */
+}
+.scrollbar::-webkit-scrollbar-thumb,
+body::-webkit-scrollbar-thumb {
+  background-color: #a7a5a5; /* color of the scroll thumb */
+  border-radius: 20px; /* roundness of the scroll thumb */
+  border: 3px solid white; /* creates padding around scroll thumb */
+}
+body {
+  overflow-y: scroll;
+}
+.scrollbar-dark::-webkit-scrollbar-thumb {
+  background-color: #a7a5a5; /* color of the scroll thumb */
+  border-radius: 20px; /* roundness of the scroll thumb */
+  border: 3px solid black; /* creates padding around scroll thumb */
+}
+.scrollbar-dark::-webkit-scrollbar-track {
+  background: black; /* color of the tracking area */
+}
+.opacity-10 {
+  opacity: 0.3;
+}
+.opacity-10 button {
+  border-bottom-left-radius: 10px;
+  padding: 8px;
+}
