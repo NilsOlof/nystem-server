@@ -506,7 +506,8 @@
 									"className": [
 										"w-10",
 										"h-10",
-										"grayscale"
+										"grayscale",
+										"mb-1"
 									],
 									"filename": "logo2.svg"
 								}
@@ -521,7 +522,8 @@
 									"type": "viewImage",
 									"className": [
 										"w-10",
-										"h-10"
+										"h-10",
+										"mb-1"
 									],
 									"filename": "logo2.svg"
 								}

@@ -1,16 +1,16 @@
 import React from "react";
 import app from "nystem";
-import { Button } from "nystem-components";
+import { Button, Wrapper } from "nystem-components";
 
 const ViewButtonView = ({ model, view }) => (
-  <div className={model.className}>
+  <Wrapper className={model.className}>
     <Button
       type={model.btnType}
       onClick={() => view.event(model.event || "submit", view.value)}
     >
       {app().t(model.text || "...")}
     </Button>
-  </div>
+  </Wrapper>
 );
 
 export default ViewButtonView;

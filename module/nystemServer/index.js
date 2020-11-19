@@ -31,7 +31,7 @@ const start = (app) => {
     });
 
     app.on("exit", () => {
-      execService.kill("SIGTERM");
+      execService.kill("SIGINT");
       console.log(`Kill ${path}/${program}`);
     });
 
@@ -58,6 +58,7 @@ const start = (app) => {
       };
 
       ev.on("exit", async () => {
+        console.log(`Stop ${field}`);
         const { data } = await app.database.serverStatus.get({ id, role });
         await app.database.serverStatus.save({
           data: { ...data, [field]: false },

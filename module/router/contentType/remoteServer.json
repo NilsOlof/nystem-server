@@ -290,77 +290,6 @@
 			]
 		},
 		{
-			"name": "inServerMenu",
-			"format": "list",
-			"item": [
-				{
-					"category": "view",
-					"type": "viewButton",
-					"format": "newItemWithVal",
-					"contentType": "remoteServer",
-					"goToFormat": "edit",
-					"insertVal": [
-						[
-							"server",
-							"{_id}"
-						],
-						[
-							"name",
-							"New remote server"
-						]
-					],
-					"className": [
-						"pull-right"
-					]
-				},
-				{
-					"category": "view",
-					"type": "viewText",
-					"text": "Remotes",
-					"renderAs": "h4"
-				},
-				{
-					"category": "view",
-					"type": "viewList",
-					"autoupdate": true,
-					"renderFormat": "list",
-					"item": [
-						{
-							"category": "contentTypeField",
-							"type": "text",
-							"id": "name",
-							"format": "linkWidthMatch",
-							"toFormat": "view",
-							"match": [
-								"/remoteServer/*/{_id}"
-							],
-							"noWrapper": true
-						}
-					],
-					"sortby": {
-						"id": "name",
-						"text": "name"
-					},
-					"className": [
-						"nav",
-						"nav-tabs",
-						"tabs-left"
-					],
-					"filter": [
-						{
-							"and": [
-								[
-									"server",
-									"{_id}"
-								]
-							]
-						}
-					]
-				}
-			],
-			"noFetch": true
-		},
-		{
 			"name": "input",
 			"focus": true,
 			"format": "input",
@@ -499,6 +428,77 @@
 					"type": "viewButton"
 				}
 			]
+		},
+		{
+			"name": "inServerMenu",
+			"format": "list",
+			"item": [
+				{
+					"category": "view",
+					"type": "viewButton",
+					"format": "newItemWithVal",
+					"contentType": "remoteServer",
+					"goToFormat": "edit",
+					"insertVal": [
+						[
+							"server",
+							"{_id}"
+						],
+						[
+							"name",
+							"New remote server"
+						]
+					],
+					"className": [
+						"pull-right"
+					]
+				},
+				{
+					"category": "view",
+					"type": "viewText",
+					"text": "Remotes",
+					"renderAs": "h4"
+				},
+				{
+					"category": "view",
+					"type": "viewList",
+					"autoupdate": true,
+					"renderFormat": "list",
+					"item": [
+						{
+							"category": "contentTypeField",
+							"type": "text",
+							"id": "name",
+							"format": "linkWidthMatch",
+							"toFormat": "view",
+							"match": [
+								"/remoteServer/*/{_id}"
+							],
+							"noWrapper": true
+						}
+					],
+					"sortby": {
+						"id": "name",
+						"text": "name"
+					},
+					"className": [
+						"nav",
+						"nav-tabs",
+						"tabs-left"
+					],
+					"filter": [
+						{
+							"and": [
+								[
+									"server",
+									"{_id}"
+								]
+							]
+						}
+					]
+				}
+			],
+			"noFetch": true
 		},
 		{
 			"name": "list",
