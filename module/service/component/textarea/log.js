@@ -27,6 +27,7 @@ const TextareaLog = ({ view, model, value = "" }) => {
     app().connection.on(`serverLog${view.id}`, updateLog);
     const clearLog = () => {
       setLog("");
+      fullLog = "";
     };
     view.on("clearlog", clearLog);
     return () => {

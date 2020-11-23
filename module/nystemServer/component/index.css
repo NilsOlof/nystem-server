@@ -90,6 +90,9 @@ body {
 .scrollbar-dark::-webkit-scrollbar-track {
   background: black; /* color of the tracking area */
 }
+.scrollbar-dark::-webkit-scrollbar-corner {
+  background-color: black;
+}
 .opacity-10 {
   opacity: 0.3;
 }
