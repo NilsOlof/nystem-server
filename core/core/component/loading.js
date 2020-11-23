@@ -1,5 +1,5 @@
 import React from "react";
-import "./loading.scss";
+import "./loading.css";
 
 class Loading extends React.Component {
   state = { inDelay: true };

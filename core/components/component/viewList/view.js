@@ -6,7 +6,7 @@ import {
   ViewListRender,
 } from "nystem-components";
 
-import "./table.scss";
+import "./table.css";
 
 const ViewListView = ({ model, view }) => {
   const { search } = useContext(DatabaseSearchContext);
