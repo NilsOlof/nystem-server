@@ -1,7 +1,7 @@
 import React from "react";
 import { ContentTypeView } from "nystem-components";
 
-import "./table.scss";
+import "./table.css";
 
 const ViewListRender = ({ model, view, value }) => {
   const { rowClassName = [] } = model;
