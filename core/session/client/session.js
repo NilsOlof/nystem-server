@@ -57,10 +57,13 @@ module.exports = function (app) {
     app.event("login", user);
   });
 
-  window.addEventListener("storage", ({ key }) => {
-    if (key !== sessionKey) return;
+  const reload = ({ key, id }) => {
+    if ((key || id) !== sessionKey) return;
     window.location.reload();
-  });
+  };
+  window.addEventListener("storage", reload);
+  app.storage.on("removeItem", -1000, reload);
+  app.storage.on("setItem", -1000, reload);
 
   session.on("logout", () => {
     app.storage.removeItem({ id: sessionKey });
@@ -74,6 +77,10 @@ module.exports = function (app) {
     });
 
     app.event("logout");
+  });
+
+  app.connection.on("logout", () => {
+    app.storage.removeItem({ id: sessionKey });
   });
 
   app.on("init", () =>

@@ -1,0 +1,23 @@
+{
+  "text": "Text",
+  "item": [
+    {
+      "id": "className",
+      "text": "Class",
+      "type": "gridselect"
+    },
+    {
+      "id": "cutPoint",
+      "text": "Cut at",
+      "type": "int"
+    },
+    {
+      "id": "renderAs",
+      "text": "Render as",
+      "type": "select",
+      "render": "button",
+      "option": ["h1", "h2", "h3", "h4", "p", "div", "span"],
+      "limit": 1
+    }
+  ]
+}

@@ -1,5 +1,4 @@
 import React, { useEffect, useRef } from "react";
-import * as reactBeautifulDnd from "react-beautiful-dnd";
 import app from "nystem";
 import * as mDnd from "./myDnd";
 
@@ -17,20 +16,13 @@ const DragAndDropContext = ({ children }) => {
   }, []);
 
   return (
-    <reactBeautifulDnd.DragDropContext
+    <mDnd.DragDropContext
       onDragEnd={(e) => {
         app().event("dragAndDropOnDragEnd", { ...modifiers.current, ...e });
       }}
     >
-      <mDnd.DragDropContext
-        onDragEnd={(e) => {
-          console.log(e);
-          app().event("dragAndDropOnDragEnd", { ...modifiers.current, ...e });
-        }}
-      >
-        {children}
-      </mDnd.DragDropContext>
-    </reactBeautifulDnd.DragDropContext>
+      {children}
+    </mDnd.DragDropContext>
   );
 };
 export default DragAndDropContext;

@@ -1,15 +1,15 @@
 import React, { useState, useEffect } from "react";
 import { Wrapper, Input } from "nystem-components";
 import app from "nystem";
-import moment from "moment";
+import moment from "my-moment";
 
-const parseVal = val => {
+const parseVal = (val) => {
   if (val > 100) val /= 100;
 
   const parts = val
     .toString()
     .split(/[^0-9]/)
-    .filter(part => part);
+    .filter((part) => part);
 
   const min = parseFloat(`.${parts[1] || 0}`) * 100;
   return `${parts[0]}:${min < 10 ? `0${min}` : min}`;
@@ -27,10 +27,10 @@ const DateInputTime = ({ model, focus, setValue, value }) => {
     <Wrapper className="flex">
       <Input
         placeholder={app().t("Time")}
-        className={["w-40", ...inputClassName]}
+        className={["w-40", inputClassName]}
         value={inputVal}
         maxLength={length}
-        onChange={value => setInputVal(value)}
+        onChange={(value) => setInputVal(value)}
         disabled={disabled}
         type="text"
         focus={focus}

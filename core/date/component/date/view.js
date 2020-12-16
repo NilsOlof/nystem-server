@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from "react";
-import moment from "moment";
+import moment from "my-moment";
 import app from "nystem";
 import { Wrapper } from "nystem-components";
 

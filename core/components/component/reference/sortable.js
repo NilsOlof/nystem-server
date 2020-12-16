@@ -3,14 +3,14 @@ import {
   ContentTypeView,
   InputWrapper,
   Wrapper,
-  DragAndDropView
+  DragAndDropSortable,
 } from "nystem-components";
 
-const ReferenceSortable = ({ model, view, value = [], setValue }) => {
+const ReferenceSortable = ({ model, view, value = [], setValue, path }) => {
   value = value instanceof Array ? value : [value];
   const { renderFormat, className, source, itemClassName } = model;
 
-  const option = item => ({
+  const option = (item) => ({
     key: item,
     noForm: true,
     contentType: source,
@@ -19,13 +19,13 @@ const ReferenceSortable = ({ model, view, value = [], setValue }) => {
     id: item,
     params: view.params,
     className: itemClassName,
-    onReference: item => view.event(item.event, { ...item, model })
+    onReference: (item) => view.event(item.event, { ...item, model, path }),
   });
 
   if (model.wrapper)
     return (
       <InputWrapper model={model}>
-        <DragAndDropView
+        <DragAndDropSortable
           Component={ContentTypeView}
           items={value.map(option)}
           setValue={setValue}
@@ -35,7 +35,7 @@ const ReferenceSortable = ({ model, view, value = [], setValue }) => {
 
   return (
     <Wrapper className={className}>
-      <DragAndDropView
+      <DragAndDropSortable
         Component={ContentTypeView}
         items={value.map(option)}
         setValue={setValue}

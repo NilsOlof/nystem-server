@@ -1,0 +1,21 @@
+{
+  "item": [
+    {
+      "text": "Class",
+      "type": "gridselect",
+      "id": "className"
+    },
+    {
+      "text": "Fields true",
+      "id": "itemTrue",
+      "type": "viewCreator",
+      "expanded": true
+    },
+    {
+      "text": "Fields false",
+      "id": "itemFalse",
+      "type": "viewCreator",
+      "expanded": true
+    }
+  ]
+}

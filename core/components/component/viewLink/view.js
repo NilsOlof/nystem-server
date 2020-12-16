@@ -12,6 +12,7 @@ const ViewLinkView = ({ model, value }) => {
     add,
     addId,
     btnType,
+    size,
   } = model;
 
   let href = `/${contentType}/${toView}`;
@@ -21,6 +22,7 @@ const ViewLinkView = ({ model, value }) => {
     return (
       <Button
         type={btnType}
+        size={size}
         to={(add || "") + href}
         className={className}
         Component={Link}

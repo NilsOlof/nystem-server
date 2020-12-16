@@ -1,15 +1,24 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 
 const byType = {
   text:
-    "appearance-none block bg-grey-lighter text-grey-darker border border-grey-lighter rounded py-2 px-3",
+    "appearance-none block bg-grey-lighter text-grey-darker border border-grey-lighter rounded py-1 px-3 shadow-sm",
   password:
-    "appearance-none block bg-grey-lighter text-grey-darker border border-grey-lighter rounded py-2 px-3",
+    "appearance-none block bg-grey-lighter text-grey-darker border border-grey-lighter rounded py-1 px-3 shadow-sm",
   checkbox: "m-4",
 };
 
-const Input = ({ selectAllOnFocus, type, value, ...props }) => {
-  const ref = useRef(null);
+const Input = ({ selectAllOnFocus, type, value, ...props }, parentRef) => {
+  const localRef = useRef(null);
+  const [val, setVal] = useState(value);
+  const ref = parentRef || localRef;
+
+  const valRef = useRef();
+  valRef.current = val;
+  useEffect(() => {
+    if (valRef.current === value) return;
+    setVal(value);
+  }, [value]);
 
   useEffect(() => {
     if (props.focus) ref.current.focus();
@@ -31,19 +40,39 @@ const Input = ({ selectAllOnFocus, type, value, ...props }) => {
   if (!className && ["text", "password"].includes(type))
     className = "sm:w-1/2 w-full";
 
+  if (className && className.includes("floatlabel"))
+    return (
+      <input
+        ref={ref}
+        {...elementProps}
+        className={` ${className}`}
+        onChange={(e) => props.onChange(e.target.value)}
+        onFocus={(ev) => {
+          if (selectAllOnFocus) ref.current.select();
+          if (elementProps.onFocus) return elementProps.onFocus(ev);
+        }}
+        type={type}
+        value={value}
+      />
+    );
+
   return (
     <input
       ref={ref}
       {...elementProps}
       className={`${byType[type]} ${className}`}
-      onChange={(e) => props.onChange(e.target.value)}
+      onChange={(e) => {
+        setVal(e.target.value);
+        props.onChange(e.target.value);
+      }}
       onFocus={(ev) => {
         if (selectAllOnFocus) ref.current.select();
         if (elementProps.onFocus) return elementProps.onFocus(ev);
       }}
       type={type}
-      value={value}
+      value={val}
     />
   );
 };
-export default Input;
+
+export default React.forwardRef(Input);

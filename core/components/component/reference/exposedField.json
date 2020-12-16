@@ -16,6 +16,11 @@
       "text": "Text field id"
     },
     {
+      "type": "text",
+      "id": "saveId",
+      "text": "Save id"
+    },
+    {
       "type": "select",
       "id": "render",
       "text": "Render as",

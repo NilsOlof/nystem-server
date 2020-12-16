@@ -1,5 +1,10 @@
 module.exports = (app) => {
   const addListner = ({ source, collection, fieldId }) => {
+    if (!app.database[source] || !app.database[source].on) {
+      console.error("Missing reference", source);
+      return;
+    }
+
     app.database[source].on("delete", (query) => {
       const { _id } = query.data;
       collection

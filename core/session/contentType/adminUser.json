@@ -51,7 +51,6 @@
 	"storage": "data",
 	"views": [
 		{
-			"id": "3cf7a478aa77c5f24e39a9ca7159d110",
 			"name": "input",
 			"format": "input",
 			"item": [
@@ -90,7 +89,6 @@
 			"focus": true
 		},
 		{
-			"id": "f73f550fa89f14f65a3a4bd211ba629e",
 			"name": "list",
 			"format": "list",
 			"item": [
@@ -157,7 +155,6 @@
 			]
 		},
 		{
-			"id": "b2038098133a82d5ab11acebe1bd23d3",
 			"name": "login",
 			"format": "input",
 			"item": [
@@ -165,17 +162,29 @@
 					"type": "viewText",
 					"category": "view",
 					"text": "Log in",
-					"renderAs": "h3"
+					"className": [
+						"my-4"
+					]
 				},
 				{
 					"id": "login",
 					"type": "text",
-					"category": "contentTypeField"
+					"category": "contentTypeField",
+					"format": "input",
+					"nolabel": true,
+					"classNameInput": [
+						"my-4"
+					]
 				},
 				{
 					"id": "password",
 					"type": "password",
-					"category": "contentTypeField"
+					"category": "contentTypeField",
+					"format": "input",
+					"nolabel": true,
+					"classNameInput": [
+						"my-4"
+					]
 				},
 				{
 					"type": "viewSmallComponent",
@@ -185,7 +194,12 @@
 				{
 					"type": "viewButton",
 					"category": "view",
-					"format": "login"
+					"format": "login",
+					"size": "sm",
+					"className": [
+						"my-4",
+						"w-32"
+					]
 				}
 			]
 		},

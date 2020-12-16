@@ -1,0 +1,24 @@
+{
+  "item": [
+    {
+      "text": "Label",
+      "type": "text",
+      "id": "text"
+    },
+    {
+      "text": "Class",
+      "type": "gridselect",
+      "id": "className"
+    },
+    {
+      "text": "Label class",
+      "type": "gridselect",
+      "id": "classNameLabel"
+    },
+    {
+      "text": "Info class",
+      "type": "gridselect",
+      "id": "classNameInfo"
+    }
+  ]
+}

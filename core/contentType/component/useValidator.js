@@ -12,12 +12,18 @@ const UseValidator = ({ validate, view, model, value }) => {
       if (error) errors = [...(errors || []), error];
       return errors ? { errors } : undefined;
     };
+
+    const clearErrorValidation = () => {
+      setValidated(false);
+    };
     if (!view) return;
     view.on("validate", validator);
+    view.on("clearErrorValidation", clearErrorValidation);
 
     return () => {
       if (!view) return;
       view.off("validate", validator);
+      view.off("clearErrorValidation", clearErrorValidation);
     };
   }, [view, validate, value, model]);
 

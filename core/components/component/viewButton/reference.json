@@ -30,7 +30,12 @@
       "id": "event",
       "text": "Event",
       "type": "select",
-      "option": ["referenceAdd", "referenceRemove"],
+      "option": [
+        "referenceAdd",
+        "referenceRemove",
+        "exposedReferenceAdd",
+        "exposedReferenceRemove"
+      ],
       "limit": 1,
       "inline": true
     },

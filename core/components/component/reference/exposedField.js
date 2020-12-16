@@ -1,40 +1,31 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import app from "nystem";
 import { SelectExposedField } from "nystem-components";
 
-class ReferenceExposedField extends React.Component {
-  constructor(props) {
-    super(props);
-    this.model = props.model;
-    this.state = {
-      value: props.value,
-      option: []
-    };
-  }
-  componentDidMount() {
+const ReferenceExposedField = ({ model, view, path }) => {
+  const [option, setOption] = useState();
+
+  useEffect(() => {
     app()
-      .database[this.model.source].search({
+      .database[model.source].search({
         autoUpdate: true,
-        filter: app().parseFilter(
-          this.model.filter,
-          this.props.getValue,
-          this.props.path
-        ),
-        count: 100
+        filter: app().parseFilter(model.filter, view.getValue, path),
+        count: 100,
       })
-      .then(({ data: option }) => this.setState({ option }));
-  }
+      .then(({ data: option }) => setOption(option));
+  }, [model.filter, model.source, path, view.getValue]);
 
-  render() {
-    const model = app().utils.clone(this.props.model);
-    delete model.source;
+  if (!option || option.length === 0) return null;
 
-    model.option = this.state.option.map(item => ({
-      ...item,
-      text: item[model.textField || "name"]
-    }));
-    if (!this.state.option || this.state.option.length === 0) return null;
-    return <SelectExposedField model={model} view={this.props.view} />;
-  }
-}
+  const selectModel = app().utils.clone(model);
+  delete selectModel.source;
+
+  selectModel.option = option.map((item) => ({
+    ...item,
+    text: item[model.textField || "name"],
+  }));
+
+  return <SelectExposedField model={selectModel} view={view} />;
+};
+
 export default ReferenceExposedField;

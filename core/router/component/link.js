@@ -9,7 +9,7 @@ const toClassString = (className, match) => {
 
 const Link = ({ to, className, match, children, exact }) => (
   <Route
-    exact={exact}
+    exact={Boolean(exact)}
     path={match || (typeof to === "object" ? to.pathname : to)}
   >
     {({ location, match }) => (

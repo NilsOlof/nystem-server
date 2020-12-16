@@ -1,9 +1,7 @@
 import React, { useEffect, useRef, useCallback, useState } from "react";
 import { Icon, Wrapper } from "nystem-components";
 import app from "nystem";
-import Pikaday from "pikaday";
-import "pikaday/css/pikaday.css";
-import moment from "moment";
+import moment from "my-moment";
 
 const ClearButton = ({ setValue }) => (
   <Icon
@@ -25,7 +23,7 @@ const DateInputDate = ({ model, onBlur, focus, setValue, value }) => {
   const inputEl = useRef(null);
 
   const setFromPicker = useCallback(
-    function() {
+    function () {
       const formVal = this.getMoment().format(dateFormat);
       setValue(moment(formVal).valueOf());
     },
@@ -37,13 +35,16 @@ const DateInputDate = ({ model, onBlur, focus, setValue, value }) => {
   }, [value]);
 
   useEffect(() => {
-    // eslint-disable-next-line no-new
-    new Pikaday({
-      field: inputEl.current,
-      format: dateFormat,
-      onSelect: setFromPicker,
-      firstDay: 1
-    });
+    const start = async () => {
+      const { pikaday } = await import("../../client/pikaday");
+      pikaday({
+        field: inputEl.current,
+        format: dateFormat,
+        onSelect: setFromPicker,
+        firstDay: 1,
+      });
+    };
+    start();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -57,7 +58,7 @@ const DateInputDate = ({ model, onBlur, focus, setValue, value }) => {
         }
         value={inputVal}
         maxLength={length}
-        onChange={e => setInputVal(e.target.value)}
+        onChange={(e) => setInputVal(e.target.value)}
         disabled={disabled}
         type="text"
         focus={focus}

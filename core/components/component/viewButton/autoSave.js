@@ -7,8 +7,8 @@ const ViewButtonAutoSave = ({ view }) => {
     let saveDelay = false;
 
     const saveToDb = async () => {
-      const { errors } = await view.event("validate");
-      if (!saveIds.length || errors) return;
+      const { errors = [] } = await view.event("validate");
+      if (!saveIds.length || errors.length) return;
 
       const reduceById = (res, id) => ({ ...res, [id]: view.getValue(id) });
 

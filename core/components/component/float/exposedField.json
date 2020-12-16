@@ -1,14 +1,24 @@
 {
-	"item": [
-		{
-			"type": "gridselect",
-			"id": "className",
-			"text": "Class"
-		},
-		{
-			"type": "text",
-			"id": "text",
-			"text": "Text"
-		}
-	]
+  "item": [
+    {
+      "type": "gridselect",
+      "id": "className",
+      "text": "Class"
+    },
+    {
+      "type": "text",
+      "id": "text",
+      "text": "Text"
+    },
+    {
+      "type": "text",
+      "id": "saveIdFrom",
+      "text": "Save id from"
+    },
+    {
+      "type": "text",
+      "id": "saveIdTo",
+      "text": "Save id to"
+    }
+  ]
 }

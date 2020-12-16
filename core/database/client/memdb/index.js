@@ -34,9 +34,11 @@ module.exports = (app) => {
         `database ${contentType.machinename}`
       );
 
-      collection.on("init", (query) => {
+      collection.on("init", () => {
         const { dbArray, dbIndex } = db;
         dbArray.forEach((item) => {
+          if (dbIndex[item._id])
+            dbArray.splice(dbArray.indexOf(dbIndex[item._id]), 1);
           dbIndex[item._id] = item;
         });
       });

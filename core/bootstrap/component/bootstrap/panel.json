@@ -61,6 +61,11 @@
       "render": "button"
     },
     {
+      "text": "Visibility hidden",
+      "id": "visibilityHidden",
+      "type": "boolean"
+    },
+    {
       "text": "Header",
       "id": "header",
       "type": "viewCreator",

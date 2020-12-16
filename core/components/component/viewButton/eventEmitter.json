@@ -1,50 +1,77 @@
 {
-	"item": [
-		{
-			"id": "className",
-			"text": "Class",
-			"type": "gridselect"
-		},
-		{
-			"id": "text",
-			"text": "Text",
-			"type": "text"
-		},
-		{
-			"type": "text",
-			"id": "event",
-			"mandatory": true,
-			"text": "Connection event"
-		},
-		{
-			"type": "text",
-			"id": "subEvent",
-			"text": "Event"
-		},
-		{
-			"id": "btnType",
-			"text": "Button type",
-			"type": "select",
-			"option": [
-				"default",
-				"primary",
-				"info",
-				"warning",
-				"danger",
-				"success"
-			],
-			"limit": 1,
-			"inline": true
-		},
-		{
-			"type": "boolean",
-			"id": "confirm",
-			"text": "Confirm"
-		},
-		{
-			"type": "boolean",
-			"id": "saveCtrlS",
-			"text": "key s to save"
-		}
-	]
+  "item": [
+    {
+      "id": "className",
+      "text": "Class",
+      "type": "gridselect"
+    },
+    {
+      "id": "text",
+      "text": "Text",
+      "type": "text"
+    },
+    {
+      "type": "text",
+      "id": "event",
+      "mandatory": true,
+      "text": "Connection event"
+    },
+    {
+      "type": "text",
+      "id": "subEvent",
+      "text": "Event"
+    },
+    {
+      "id": "btnType",
+      "text": "Button type",
+      "type": "select",
+      "option": ["default", "primary", "info", "warning", "danger", "success"],
+      "limit": 1,
+      "inline": true
+    },
+    {
+      "type": "boolean",
+      "id": "confirm",
+      "text": "Confirm"
+    },
+    {
+      "type": "boolean",
+      "id": "saveCtrlS",
+      "text": "key s to save"
+    },
+    {
+      "type": "select",
+      "option": [
+        {
+          "text": "xs",
+          "_id": "xs"
+        },
+        {
+          "text": "sm",
+          "_id": "sm"
+        },
+        {
+          "text": "base",
+          "_id": "base"
+        },
+        {
+          "text": "lg",
+          "_id": "lg"
+        },
+        {
+          "text": "xl",
+          "_id": "xl"
+        },
+        {
+          "text": "2xl",
+          "_id": "2xl"
+        }
+      ],
+      "inline": true,
+      "render": "button",
+      "id": "size",
+      "text": "Size",
+      "limit": "1"
+    }
+  ]
 }

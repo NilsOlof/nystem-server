@@ -1,6 +1,6 @@
-module.exports = function () {};
-
 const http = require("http");
+
+module.exports = () => {};
 
 let fs;
 try {
@@ -63,15 +63,6 @@ app.readFile = (fileName) =>
     });
   });
 
-process.on("EXIT", () => {
-  app.event("exit");
-});
-process.on("SIGINT", () => {
-  process.exit();
-});
-process.on("SIGTERM", () => {
-  process.exit();
-});
 app.filePaths = pathFinder(app.__dirname);
 
 require("./package.js")(app).then(async () => {
@@ -84,8 +75,6 @@ require("./package.js")(app).then(async () => {
   });
 
   app = { ...app, server, express };
-
-  process.on("unhandledRejection", (r) => console.log("unhandledRejection", r)); // eslint-disable-line no-console
 
   console.time("load"); // eslint-disable-line no-console
 
@@ -107,6 +96,7 @@ require("./package.js")(app).then(async () => {
   app.addeventhandler = require("./client/eventhandler");
   app.addeventhandler(app);
   require("./utils.js")(app);
+  require("./exit.js")(app);
 
   app.uuid = app.utils.generateGUID;
   app.on("settings", () => app.settings);

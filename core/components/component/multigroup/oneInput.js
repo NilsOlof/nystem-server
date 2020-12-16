@@ -8,7 +8,7 @@ import {
 } from "nystem-components";
 
 const MultigroupOneInput = ({ value, model, view, path, setValue }) => {
-  let text = view.getValue(`${path}.${model.field}`);
+  let text = view.getValue(`${path}.${model.field || "text"}`);
 
   if (text instanceof Array) text = text.join(" ");
 

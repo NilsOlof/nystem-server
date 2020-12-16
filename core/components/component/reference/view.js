@@ -1,7 +1,7 @@
 import React from "react";
 import { ContentTypeView, InputWrapper, Wrapper } from "nystem-components";
 
-const ReferenceView = ({ model, view, value = [] }) => {
+const ReferenceView = ({ model, view, value = [], path }) => {
   value = value instanceof Array ? value : [value];
   const { renderFormat, className, source, itemClassName } = model;
 
@@ -14,7 +14,7 @@ const ReferenceView = ({ model, view, value = [] }) => {
       id={item}
       params={view.params}
       className={itemClassName}
-      onReference={(item) => view.event(item.event, { ...item, model })}
+      onReference={(item) => view.event(item.event, { ...item, model, path })}
     />
   );
 

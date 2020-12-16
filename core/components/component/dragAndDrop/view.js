@@ -1,11 +1,10 @@
 import React, { useState, useEffect } from "react";
-import * as reactBeautifulDnd from "react-beautiful-dnd";
 import { ContentTypeRender } from "nystem-components";
 import app from "nystem";
 import * as myDnd from "./myDnd";
 
 const DragAndDropView = ({ value, model, path }) => {
-  const { Droppable, Draggable } = model.myDnd ? myDnd : reactBeautifulDnd;
+  const { Droppable, Draggable } = myDnd;
   const [droppableId] = useState(app().uuid());
 
   useEffect(() => {
@@ -23,8 +22,8 @@ const DragAndDropView = ({ value, model, path }) => {
     };
   }, [value, droppableId]);
 
+  if (!model) return null;
   const { item } = model;
-
   return (
     <Droppable
       droppableId={droppableId}
@@ -35,7 +34,12 @@ const DragAndDropView = ({ value, model, path }) => {
         // console.log(provided);
         return (
           <div {...provided.droppableProps} ref={provided.innerRef}>
-            <Draggable key={droppableId} draggableId={droppableId} index={0}>
+            <Draggable
+              key={droppableId}
+              draggableId={droppableId}
+              index={0}
+              minHeight={model.minHeight}
+            >
               {(provided, snapshot) => {
                 // console.log(provided.draggableProps.style);
                 return (

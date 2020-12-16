@@ -1,4 +1,4 @@
-module.exports = function(app) {
+module.exports = function (app) {
   // Clear all caches
   app.express.get("/clearcache", (req, res) => {
     app.cacheTimeStart = new Date();
@@ -12,7 +12,7 @@ module.exports = function(app) {
 
   // Return not updated (304) if cache not cleared and not debug
   // otherwise return false and process request
-  app.isCached = function(type, req, res, debug) {
+  app.isCached = function (type, req, res, debug) {
     const age = debug ? 1 : 180;
     res.setHeader("Cache-Control", `max-age=${age}, must-revalidate`);
     res.setHeader("Expires", new Date(Date.now() + age * 1000).toUTCString());
@@ -38,7 +38,7 @@ module.exports = function(app) {
     }
     let acceptEncoding = req.headers["accept-encoding"];
     const s = new stream.Readable();
-    s._read = function() {
+    s._read = function () {
       if (sent) this.push(null);
       else this.push(data);
       sent = true;
@@ -59,7 +59,7 @@ module.exports = function(app) {
 
   let pipeFileCache = {};
   // Stream file
-  app.pipeFile = function(path, res) {
+  app.pipeFile = function (path, res) {
     if (!fs.existsSync(`${app.__dirname}/${path}`)) return false;
     if (!app.atHost.debug) {
       if (!pipeFileCache[path])
@@ -68,10 +68,10 @@ module.exports = function(app) {
       return true;
     }
     const fileStream = fs.createReadStream(`${app.__dirname}/${path}`);
-    fileStream.on("error", err => {
+    fileStream.on("error", (err) => {
       console.log(err.errno);
     });
-    fileStream.on("data", data => {
+    fileStream.on("data", (data) => {
       res.write(data);
     });
     fileStream.on("end", () => {

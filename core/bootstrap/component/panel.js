@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import { Wrapper } from "nystem-components";
+import { Wrapper, PanelContext } from "nystem-components";
 import app from "nystem";
 
 const types = {
@@ -31,8 +31,6 @@ const addClick = (doFunction) => ({
   tabIndex: "0",
 });
 
-export const PanelContext = React.createContext();
-
 const Panel = ({ body, header, className, ...props }) => {
   const [expanded, setSexpanded] = useState(props.expanded);
   const panelElement = useRef(null);
@@ -49,12 +47,10 @@ const Panel = ({ body, header, className, ...props }) => {
   }, [expanded, props.stateStore]);
 
   const type = types[props.type || "default"];
-  className = className || [];
-  className = className instanceof Array ? className : [className];
   const isExpanded = expanded || props.forceExpanded;
 
   return (
-    <Wrapper ref={panelElement} className={[type.wrapper, ...className]}>
+    <Wrapper ref={panelElement} className={[type.wrapper, className]}>
       <Wrapper className={type.header}>
         <PanelContext.Provider
           value={{ toggleExpand: addClick(toggleExpand), expanded: isExpanded }}
@@ -62,7 +58,11 @@ const Panel = ({ body, header, className, ...props }) => {
           {header}
         </PanelContext.Provider>
       </Wrapper>
-      {isExpanded ? <Wrapper className={type.body}>{body}</Wrapper> : null}
+      {isExpanded ? (
+        <Wrapper className={type.body}>{body}</Wrapper>
+      ) : props.visibilityHidden ? (
+        <Wrapper className={[type.body, "hidden"]}>{body}</Wrapper>
+      ) : null}
     </Wrapper>
   );
 };

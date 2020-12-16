@@ -5,16 +5,14 @@ module.exports = function (app) {
   const requestSessions = {};
   let sessions = {};
 
-  app.session = app.addeventhandler({}, ["add", "login"], "session");
+  app.session = app.addeventhandler({}, ["add", "login", "logout"], "session");
 
   // Load old sessions from disc
   const filePath = `${app.__dirname}/data/db/sessionStore.json`;
   if (app.fs.existsSync(filePath))
     sessions = JSON.parse(app.fs.readFileSync(filePath));
 
-  function saveDB() {
-    app.fs.writeFile(filePath, JSON.stringify(sessions));
-  }
+  const saveDB = () => app.writeFileChanged(filePath, JSON.stringify(sessions));
 
   app.connection.on("login", (query) => {
     if (query.sessionid) {
@@ -37,7 +35,13 @@ module.exports = function (app) {
             return;
           }
           if (!error) {
-            user = { ...user, sessionid: app.uuid(), contentType };
+            user = {
+              role: user.role,
+              _id: user._id,
+              sessionid: app.uuid(),
+              contentType,
+              _crdate: Date.now(),
+            };
             console.log(`New session ${user.sessionid}`);
             requestSessions[query.id] = user;
             sessions[user.sessionid] = user;
@@ -63,7 +67,23 @@ module.exports = function (app) {
   };
 
   app.connection.on("logout", logout);
-  app.session.on("logout", logout);
+
+  const getKeys = (expr, store) =>
+    Object.entries(store)
+      .filter(([, value]) => expr(value))
+      .map(([key]) => key);
+
+  app.session.on("logout", ({ _id: id, ...data }) => {
+    if (id) {
+      getKeys((val) => val._id === id, sessions).forEach((key) => {
+        delete sessions[key];
+        saveDB();
+      });
+      getKeys((val) => val._id === id, requestSessions).forEach((key) =>
+        logout({ id: key, type: "logout" })
+      );
+    } else logout(data);
+  });
 
   app.connection.on("disconnect", (data) => {
     if (requestSessions[data.id]) delete requestSessions[data.id];
@@ -95,7 +115,7 @@ module.exports = function (app) {
     if (!app.settings.autologin) return;
 
     const req = data.request;
-    const ip = req.remoteAddress;
+    let ip = req.remoteAddress;
     if (ip === "127.0.0.1" && req.httpRequest.headers["x-forwarded-for"])
       ip = req.httpRequest.headers["x-forwarded-for"];
     if (!ip || app.settings.autologin.IP.indexOf(ip) === -1) return;
@@ -105,11 +125,15 @@ module.exports = function (app) {
       .then(({ user: data }) => app.session.login({ id: data.id, user }));
   });
 
-  app.express.post("/login", (req, res) => {
-    res.end("");
-  });
+  const sessionTimeout =
+    1000 * 60 * 60 * 24 * (app.settings.sessionTimeout || 60);
+  if (app.settings.sessionTimeout !== -1)
+    setInterval(() => {
+      const limit = Date.now() - sessionTimeout;
 
-  app.express.post("/logut", (req, res) => {
-    res.end("");
-  });
+      getKeys((val) => val._crdate < limit, sessions).forEach((key) => {
+        delete sessions[key];
+        saveDB();
+      });
+    }, 1000 * 60 * 5);
 };

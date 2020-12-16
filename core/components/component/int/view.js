@@ -1,4 +1,7 @@
 import React from "react";
 import { TextView } from "nystem-components";
-let IntView = props => <TextView {...props} />;
+
+const IntView = ({ value, ...props }) => (
+  <TextView {...props} value={value === 0 ? "0" : value} />
+);
 export default IntView;

@@ -28,14 +28,6 @@
       "id": "default"
     },
     {
-      "type": "select",
-      "text": "Render as",
-      "id": "render",
-      "option": ["checkbox", "button"],
-      "limit": 1,
-      "inline": true
-    },
-    {
       "type": "multigroup",
       "text": "Option",
       "id": "option",

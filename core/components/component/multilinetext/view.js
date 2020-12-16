@@ -1,20 +1,29 @@
 import React from "react";
+import { Wrapper, ContentTypeRender } from "nystem-components";
+import app from "nystem";
 
-const MultilinetextView = ({ value }) => {
+const MultilinetextView = ({ value, path, model, view }) => {
   if (!value) return null;
 
   value = value instanceof Array ? value : [value];
-
+  const { className, id } = model;
   return (
-    <div>
-      {value.map((item, index) => (
-        <div key={index}>
-          <a href={`http://${item}`} rel="noopener noreferrer" target="_blank">
-            {item}
-          </a>
-        </div>
+    <Wrapper className={className}>
+      {value.map((nul, index) => (
+        <ContentTypeRender
+          key={index}
+          path={path.replace(new RegExp(`.?${id}$`, "i"), "")}
+          items={
+            app().replaceInModel({
+              model,
+              viewFormat: view.viewFormat,
+              fn: ({ model: item }) =>
+                item.id === id ? { ...item, id: `${item.id}.${index}` } : item,
+            }).item
+          }
+        />
       ))}
-    </div>
+    </Wrapper>
   );
 };
 export default MultilinetextView;

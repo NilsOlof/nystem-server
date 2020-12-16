@@ -1,3 +1,4 @@
+// eslint-disable-next-line import/extensions
 import indexScripts from "../../../indexScripts";
 import contentType from "../../../contentype.json";
 import addeventhandler from "./eventhandler";
@@ -18,4 +19,4 @@ app.on("init", () => {
 });
 
 export default () => app;
-app.event("init");
+app.event("init").then(() => app.event("start"));

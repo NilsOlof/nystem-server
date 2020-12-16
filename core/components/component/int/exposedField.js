@@ -1,5 +1,6 @@
 import React from "react";
 import { InputWrapper, IntInput } from "nystem-components";
+
 class IntExposedField extends React.Component {
   constructor(props) {
     super(props);
@@ -13,12 +14,12 @@ class IntExposedField extends React.Component {
       const state = {};
       const modelId = this.model.id;
 
-      state.from = this.props.view.searchProp.filter.get(this.id + "_from");
+      state.from = this.props.view.searchProp.filter.get(`${this.id}_from`);
       if (state.from !== "undefined" && state.from[modelId])
         state.from = state.from[modelId].substring(1);
       else delete state.from;
 
-      state.to = this.props.view.searchProp.filter.get(this.id + "_to");
+      state.to = this.props.view.searchProp.filter.get(`${this.id}_to`);
       if (state.to !== "undefined" && state.to[modelId])
         state.to = state.to[modelId].substring(1);
       else delete state.to;
@@ -29,12 +30,12 @@ class IntExposedField extends React.Component {
     if (this.updateCounter > 0) this.updateCounter--;
     if (this.state.className === "" || this.updateCounter > 0) return;
     this.setState({
-      className: "has-success"
+      className: "has-success",
     });
-    this.delayTimer = setTimeout(function() {
+    this.delayTimer = setTimeout(() => {
       if (self.isMounted())
         self.setState({
-          className: ""
+          className: "",
         });
     }, 1000);
   }
@@ -43,20 +44,20 @@ class IntExposedField extends React.Component {
     const self = this;
     clearTimeout(this.delayTimer);
     const state = {
-      className: "has-warning"
+      className: "has-warning",
     };
     state[id] = value;
     this.setState(state);
-    this.delayTimer = setTimeout(function() {
+    this.delayTimer = setTimeout(() => {
       self.updateCounter++;
       if (value)
-        if (id === "to") value = "<" + value;
-        else value = ">" + value;
+        if (id === "to") value = `<${value}`;
+        else value = `>${value}`;
 
       self.props.view.searchProp.filter.add(
         self.model.id,
         value,
-        self.id + "_" + id
+        `${self.id}_${id}`
       );
     }, 200);
   }
@@ -66,22 +67,22 @@ class IntExposedField extends React.Component {
     clearTimeout(this.delayTimer);
   }
   render() {
-    /*const model = this.props.model;
+    /* const model = this.props.model;
     const className = model.className && !this.props.wrapper
       ? model.className.join(" ")
-      : "";*/
+      : ""; */
     const modelFrom = {
       id: "from",
       placeholder: "From",
-      clearButton: true
+      clearButton: true,
     };
     const modelTo = {
       id: "to",
       placeholder: "To",
-      clearButton: true
+      clearButton: true,
     };
     const style = {
-      width: "100px"
+      width: "100px",
     };
     return (
       <InputWrapper model={this.model} error={this.state.error}>

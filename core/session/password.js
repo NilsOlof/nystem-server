@@ -17,6 +17,14 @@ module.exports = function (app) {
         else delete query.data.password;
       });
 
+      collection.on("save", ({ data = {}, oldData = {}, session = {} }) => {
+        if (data.role === oldData.role && data.password === oldData.password)
+          return;
+        if (session._id === data._id) return;
+
+        app.session.logout(data);
+      });
+
       collection.on("save", 990, (query) => {
         if (!query.data) return;
         if (query.data._id) {

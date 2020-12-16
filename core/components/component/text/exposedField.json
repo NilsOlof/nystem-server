@@ -2,11 +2,6 @@
   "item": [
     {
       "type": "text",
-      "id": "id",
-      "text": "Id"
-    },
-    {
-      "type": "text",
       "id": "text",
       "text": "Text"
     },
@@ -16,9 +11,9 @@
       "text": "Class"
     },
     {
-      "type": "boolean",
-      "id": "saveValue",
-      "text": "Save searchvalue"
+      "type": "text",
+      "id": "saveId",
+      "text": "Save searchvalue as query id"
     }
   ]
 }

@@ -1,32 +1,33 @@
 {
-	"item": [
-		{
-			"type": "gridselect",
-			"id": "className",
-			"text": "Class"
-		},
-		{
-			"type": "text",
-			"id": "text",
-			"text": "Text"
-		},
-		{
-			"type": "select",
-			"id": "render",
-			"text": "Render as",
-			"limit": "1",
-			"inline": true,
-			"render": "checkbox",
-			"option": [
-				"button",
-				"checkbox",
-				"dropdown"
-			]
-		},
-		{
-			"type": "int",
-			"id": "limit",
-			"text": "Limit"
-		}
-	]
+  "item": [
+    {
+      "type": "gridselect",
+      "id": "className",
+      "text": "Class"
+    },
+    {
+      "type": "text",
+      "id": "text",
+      "text": "Text"
+    },
+    {
+      "type": "text",
+      "id": "saveId",
+      "text": "Save id"
+    },
+    {
+      "type": "select",
+      "id": "render",
+      "text": "Render as",
+      "limit": "1",
+      "inline": true,
+      "render": "checkbox",
+      "option": ["button", "checkbox", "dropdown"]
+    },
+    {
+      "type": "int",
+      "id": "limit",
+      "text": "Limit"
+    }
+  ]
 }

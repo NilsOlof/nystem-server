@@ -62,6 +62,8 @@ module.exports = (app) => {
     });
 
     collection.on("updates", (query) => {
+      if (collection.contentType.staticContent) return { ...query, ids: [] };
+
       const ids = [];
       const { dbArray } = db;
       let i = dbArray.length - 1;

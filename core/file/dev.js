@@ -1,6 +1,8 @@
 module.exports = function (app) {
   app.on("start", () => {
     if (!app.fs.existsSync(`${app.__dirname}/web`)) return;
+    require("./htmlFolder")(app);
+    require("./manifest")(app);
 
     app.writeFileChanged(
       `${app.__dirname}/web/.env`,
@@ -8,29 +10,6 @@ module.exports = function (app) {
         app.settings.port + 5000
       }\nPORT=${app.settings.port + 5000}\n`
     );
-
-    const readAndCopy = async (path) => {
-      const destPath = path.split("/").slice(3).join("/");
-      const dest = `${app.__dirname}/web/public/${destPath}`;
-      const src = `${app.__dirname}/${path}`;
-
-      await app.writeFileChanged(dest, app.readFile(src));
-    };
-
-    const updateFiles = async () => {
-      const htmlFiles = app.filePaths.filter(
-        (path) => path.split("/")[2] === "html"
-      );
-      for (const path of htmlFiles) await readAndCopy(path);
-    };
-    updateFiles();
-
-    app.on("debugModeFileChange", ({ path, type }) => {
-      const pathSplit = path.split("/");
-      if (pathSplit[3] !== "html") return;
-
-      readAndCopy(path.slice(1));
-    });
 
     const http = require("http");
     const httpProxy = require("http-proxy");
@@ -97,7 +76,10 @@ module.exports = function (app) {
       stdio: [process.stdin, process.stdout, process.stderr],
       detached: false,
     };
+    // require("child_process").exec(`open -a Terminal "${runbasepath}"`);
 
-    spawn(os.platform() === "win32" ? "npm.cmd" : "npm", args, opt);
+    const runPathWin = `${__dirname}/openReactApp.cmd`;
+    const ex = spawn(os.platform() === "win32" ? runPathWin : "npm", args, opt);
+    app.on("exit", () => ex.kill());
   }
 };

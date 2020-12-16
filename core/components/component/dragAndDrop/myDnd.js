@@ -1,4 +1,6 @@
-import React, { useState, useRef, useEffect, useContext } from "react";
+// Same as react-beautiful-dnd but more levels than 2
+
+import React, { useState, useRef, useEffect, useContext, useMemo } from "react";
 import app from "nystem";
 
 const MyDragAndDropContext = React.createContext();
@@ -46,10 +48,13 @@ export const Droppable = ({ droppableId, type, children, isDropDisabled }) => {
     innerRef,
   };
 
-  const parents = [
-    ...context.parents,
-    ...(context.droppableId ? [context.droppableId] : []),
-  ];
+  const parents = useMemo(
+    () => [
+      ...context.parents,
+      ...(context.droppableId ? [context.droppableId] : []),
+    ],
+    [context.droppableId, context.parents]
+  );
 
   useEffect(() => {
     if (isDropDisabled) return;
@@ -119,7 +124,7 @@ export const Droppable = ({ droppableId, type, children, isDropDisabled }) => {
   );
 };
 
-export const Draggable = ({ draggableId, index, children }) => {
+export const Draggable = ({ draggableId, index, children, minHeight = 0 }) => {
   const [style, setStyle] = useState(null);
 
   const innerRef = useRef();
@@ -218,6 +223,8 @@ export const Draggable = ({ draggableId, index, children }) => {
       ...styleDraggableItem,
       ...baseProps,
     };
+    style.height = style.height < minHeight ? minHeight : style.height;
+
     const movingState = {
       x: e.clientX - style.left,
       y: e.clientY - style.top,

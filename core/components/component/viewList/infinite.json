@@ -1,0 +1,25 @@
+{
+  "item": [
+    {
+      "id": "className",
+      "text": "Class",
+      "type": "gridselect"
+    },
+    {
+      "id": "searchDelay",
+      "text": "Search delay",
+      "type": "int"
+    },
+    {
+      "id": "slotLimit",
+      "text": "Slot limit",
+      "type": "int"
+    },
+    {
+      "text": "Fields",
+      "id": "item",
+      "type": "viewCreator",
+      "expanded": true
+    }
+  ]
+}

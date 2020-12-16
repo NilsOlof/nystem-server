@@ -8,33 +8,33 @@ class ErrorManager extends React.Component {
     this.disconnectEvent = this.disconnectEvent.bind(this);
     this.errorEvent = this.errorEvent.bind(this);
     this.connectEvent = this.connectEvent.bind(this);
-    //window.onerror = this.errorEvent;
+    // window.onerror = this.errorEvent;
     app().connection.on("disconnect", this.disconnectEvent);
     app().connection.on("connect", this.connectEvent);
     this.state = {
       error: false,
-      offline: false
+      offline: false,
     };
   }
   disconnectEvent() {
     this.setState({
-      offline: true
+      offline: true,
     });
   }
   connectEvent() {
     if (this.state)
       this.setState({
-        offline: false
+        offline: false,
       });
   }
   errorEvent(error, url, line) {
     const self = this;
     console.log(error);
-    console.log("URL: " + url);
-    console.log("Line Number: " + line);
+    console.log(`URL: ${url}`);
+    console.log(`Line Number: ${line}`);
     this.setState({ error: "An error occured. Reload?" });
     if (this.errorTimer) clearTimeout(this.errorTimer);
-    this.errorTimer = setTimeout(function() {
+    this.errorTimer = setTimeout(() => {
       self.setState({ error: false });
     }, 5000);
   }

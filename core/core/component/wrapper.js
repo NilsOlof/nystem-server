@@ -55,7 +55,13 @@ const Wrapper = (
   },
   ref
 ) => {
-  className = className instanceof Array ? className.join(" ") : className;
+  className =
+    className instanceof Array
+      ? className
+          .flat(Infinity)
+          .filter((item) => item)
+          .join(" ")
+      : className;
 
   if (
     !className &&

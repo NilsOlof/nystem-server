@@ -1,85 +1,69 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect } from "react";
 import app from "nystem";
 import SearchContext from "./searchContext";
 
 const DatabaseSearchContextProvider = ({ children, view }) => {
   const [search, setSearchState] = useState({});
   const [loading, setLoading] = useState(false);
-  const { contentType } = search;
-
-  const setSearch = useCallback(
-    async (search) => {
-      const { contentType } = search;
-      setLoading(true);
-      const searchResult = await app().database[contentType].search({
-        ...search,
-        data: undefined,
-      });
-
-      view
-        .event("search", searchResult)
-        .then((searchResult) => setSearchState(searchResult));
-
-      setLoading(false);
-
-      return searchResult;
-    },
-    [view]
-  );
-
-  const setFilter = useCallback(
-    async ({ value, modelId, id }) => {
-      if (!Object.keys(search).length) return;
-
-      const { filter = {} } = search;
-      let { $and = [] } = filter;
-      const old = ($and.find((obj) => obj.__id === id) || {})[modelId] || "";
-      if (old === value) return;
-
-      $and = $and.filter((obj) => obj.__id !== id);
-      if (value !== undefined)
-        $and.push({
-          __id: id,
-          [modelId]: value,
-        });
-
-      return setSearch({ ...search, filter: { ...filter, $and } });
-    },
-    [setSearch, search]
-  );
 
   useEffect(() => {
-    if (!contentType || search.noAutoUpdate) return;
+    const { contentType } = view;
+    let search = {};
+    let timer = false;
+    let active = false;
 
-    const doSearch = async () => {
-      setLoading(true);
+    const setSearchDebounce = async (newSearch) => {
+      if (!active) {
+        setLoading(true);
+        view.on("search", 200, doSearch);
+        if (!newSearch.noAutoUpdate)
+          app().database[contentType].on("update", -1000, setSearch);
+        app().on(["login", "logout"], -1000, setSearch);
+        active = true;
+      }
+      if (newSearch) search = { ...newSearch, isDirty: true };
+      if (!timer && search.delay !== -1)
+        timer = setTimeout(() => setSearch(), 0);
+    };
 
-      const searchResult = await app().database[contentType].search({
+    const setSearch = async () => {
+      timer = false;
+
+      const searchResult = await view.event("search", {
         ...search,
         data: undefined,
       });
-
-      view
-        .event("search", searchResult)
-        .then((searchResult) => setSearchState(searchResult));
+      setSearchState({ ...searchResult, isDirty: false });
 
       setLoading(false);
+      return searchResult;
     };
 
-    app().database[contentType].on("update", -1000, doSearch);
-    app().on(["login", "logout"], -1000, doSearch);
     const getSearch = () => search;
     view.on("getSearch", getSearch);
 
+    view.on("setSearch", -500, setSearchDebounce);
+
+    const doSearch = (search) =>
+      app().database[contentType].search({
+        ...search,
+        data: undefined,
+      });
+
     return () => {
-      app().database[contentType].off("update", doSearch);
-      app().off(["login", "logout"], doSearch);
+      view.off("setSearch", setSearchDebounce);
+
+      if (active) {
+        view.off("search", doSearch);
+        app().database[contentType].off("update", setSearch);
+        app().off(["login", "logout"], setSearch);
+      }
       view.off("getSearch", getSearch);
     };
-  }, [search, contentType, setSearch, view]);
+  }, [view]);
 
   return (
-    <SearchContext.Provider value={{ loading, search, setSearch, setFilter }}>
+    <SearchContext.Provider value={{ loading, search }}>
       {children}
     </SearchContext.Provider>
   );
