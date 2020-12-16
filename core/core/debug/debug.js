@@ -1,4 +1,4 @@
-module.exports = function(app) {
+module.exports = function (app) {
   function getStackTrace(row) {
     const obj = {};
     Error.captureStackTrace(obj, getStackTrace);
@@ -7,7 +7,7 @@ module.exports = function(app) {
   }
 
   app.debug = {
-    getStackTrace
+    getStackTrace,
   };
 
   let chokidar;
@@ -23,13 +23,14 @@ module.exports = function(app) {
 
     const update = {
       type: "debugModeUpdateOnChange",
-      fileEvent: type
+      fileEvent: type,
+      path,
     };
     if (path[1] === "style") update.event = "styleChange";
 
     if (path[1] === "contentType") update.event = "contentTypeChange";
 
-    if (path[1] === "component" && path[path.length - 1].indexOf(".jsx") !== -1)
+    if (path[1] === "component" && path[path.length - 1].indexOf(".js") !== -1)
       update.event = "componentChange";
 
     if (update.event) {
@@ -40,9 +41,9 @@ module.exports = function(app) {
 
   function fileWatchService(path, basePath) {
     const watcher = chokidar.watch(basePath + path, {
-      ignored: /[\/\\]\./,
+      ignored: /[/\\]\./,
       persistent: true,
-      ignoreInitial: true
+      ignoreInitial: true,
     });
 
     basePath = basePath.replace(/\\/g, "/");
@@ -54,10 +55,10 @@ module.exports = function(app) {
     }
 
     watcher
-      .on("add", path => parse({ path, type: "add" }))
-      .on("change", path => parse({ path, type: "change" }))
-      .on("unlink", path => parse({ path, type: "unlink" }))
-      .on("error", function(error) {
+      .on("add", (path) => parse({ path, type: "add" }))
+      .on("change", (path) => parse({ path, type: "change" }))
+      .on("unlink", (path) => parse({ path, type: "unlink" }))
+      .on("error", (error) => {
         console.error("Error happened", error);
       });
   }

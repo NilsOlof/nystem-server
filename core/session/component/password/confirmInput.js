@@ -20,7 +20,7 @@ const PasswordConfirmInput = ({ model, value, view, setValue }) => {
       <div>
         <Input
           placeholder={app().t(model.text)}
-          className={[...(model.classNameInput || []), "confirm-input"]}
+          className={[model.classNameInput, "confirm-input"]}
           value={value1}
           onChange={(svalue) => {
             setValidated(true);
@@ -35,7 +35,7 @@ const PasswordConfirmInput = ({ model, value, view, setValue }) => {
       <div>
         <Input
           placeholder={app().t("Repeat")}
-          className={[...(model.classNameInput || []), "confirm-input"]}
+          className={[model.classNameInput, "confirm-input"]}
           value={value2}
           onChange={(svalue) => {
             setValidated(true);

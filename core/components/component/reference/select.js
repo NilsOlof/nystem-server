@@ -12,7 +12,7 @@ const ReferenceSelect = ({ model, setValue, value, view, path }) => {
         .database[model.source].search({
           autoUpdate: true,
           filter: app().parseFilter(model.filter, view.getValue, path),
-          count: 100
+          count: 100,
         })
         .then(({ data, offline }) => {
           if (offline) {
@@ -21,7 +21,7 @@ const ReferenceSelect = ({ model, setValue, value, view, path }) => {
           } else app().connection.off("connect", loadOption);
 
           setOption(
-            data.map(item => ({ _id: item._id, text: item[namefield] }))
+            data.map((item) => ({ _id: item._id, text: item[namefield] }))
           );
         });
     };

@@ -8,11 +8,13 @@ const ViewListRender = ({ model, view, value }) => {
   value = model.value || value;
 
   function createItem(item) {
+    const id = ["number", "string"].includes(typeof item) ? item : item._id;
+
     const settings = {
       view: model,
       contentType: view.contentType,
-      id: item._id,
-      key: item._id,
+      id,
+      key: id,
       noForm: true,
       baseView: view,
       params: view.params,

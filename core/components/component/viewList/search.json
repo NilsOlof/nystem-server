@@ -31,6 +31,11 @@
       "type": "boolean"
     },
     {
+      "type": "int",
+      "id": "delay",
+      "text": "Search delay"
+    },
+    {
       "type": "boolean",
       "id": "saveValue",
       "text": "Save searchvalue"

@@ -1,6 +1,6 @@
 {
   "dependencies": {
-    "moment": "*",
-    "pikaday": "*"
+    "pikaday": "*",
+    "my-moment": "file:../core/date/my-moment"
   }
 }

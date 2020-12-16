@@ -1,8 +1,6 @@
 import React from "react";
 import { Panel, ContentTypeRender } from "nystem-components";
 
-export const BootstrapPanelContext = React.createContext();
-
 const BootstrapPanel = ({ model, path }) => {
   const { item, header, typeClass } = model;
 

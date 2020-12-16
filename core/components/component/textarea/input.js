@@ -1,14 +1,15 @@
 import React from "react";
 import { InputWrapper } from "nystem-components";
 import app from "nystem";
+
 class TextareaInput extends React.Component {
   constructor(props) {
     super(props);
     this.model = props.model;
     const state = {
-      value: props.value
+      value: props.value,
     };
-    ["handleChange", "valid"].forEach(func => {
+    ["handleChange", "valid"].forEach((func) => {
       this[func] = this[func].bind(this);
     });
     if (props.validated)
@@ -17,17 +18,17 @@ class TextareaInput extends React.Component {
   }
   handleChange() {
     this.validated = true;
-    const value = this.refs.input.value;
+    const { value } = this.refs.input;
     this.setState({
       value: value,
-      error: this.model.mandatory && !value ? this.errormsg : false
+      error: this.model.mandatory && !value ? this.errormsg : false,
     });
     this.props.setValue(this.model.id, value);
   }
   valid() {
     if (this.model.mandatory && !this.state.value) {
       this.setState({
-        error: this.model.text_mandatory ? this.model.text_mandatory : true
+        error: this.model.text_mandatory ? this.model.text_mandatory : true,
       });
       return false;
     }
@@ -37,12 +38,12 @@ class TextareaInput extends React.Component {
   UNSAFE_componentWillReceiveProps(nextProps) {
     if (this.props.value !== nextProps.value)
       this.setState({
-        value: nextProps.value
+        value: nextProps.value,
       });
   }
   render() {
     const height = {};
-    if (this.model.height) height.height = this.model.height + "px";
+    if (this.model.height) height.height = `${this.model.height}px`;
     return (
       <InputWrapper model={this.model} error={this.state.error}>
         <textarea

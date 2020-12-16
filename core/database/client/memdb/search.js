@@ -1,24 +1,38 @@
-const sortFuncInt = key => (a, b) => {
-  const x = a[key];
-  const y = b[key];
-  if (x === undefined) return y === undefined ? 0 : 1;
-  if (y === undefined) return -1;
-  return x < y ? -1 : x > y ? 1 : 0;
+const sortFuncInt = (key, reverse) => {
+  const up = reverse ? 1 : -1;
+  const down = reverse ? -1 : 1;
+
+  return (a, b) => {
+    const x = a[key];
+    const y = b[key];
+
+    if (x === undefined) return y === undefined ? 0 : down;
+    if (y === undefined) return up;
+    return x < y ? up : x > y ? down : 0;
+  };
 };
 
-const sortFuncText = key => (a, b) => {
-  let x = a[key];
-  let y = b[key];
-  if (x === undefined) return y === undefined ? 0 : 1;
-  if (y === undefined) return -1;
-  x = x.toString().toLowerCase();
-  y = y.toString().toLowerCase();
-  return x < y ? -1 : x > y ? 1 : 0;
+const sortFuncText = (key, reverse) => {
+  const up = reverse ? 1 : -1;
+  const down = reverse ? -1 : 1;
+
+  return (a, b) => {
+    let x = a[key];
+    let y = b[key];
+    if (x === undefined) return y === undefined ? 0 : up;
+    if (y === undefined) return down;
+    x = x.toString().toLowerCase();
+    y = y.toString().toLowerCase();
+
+    return x < y ? up : x > y ? down : 0;
+  };
 };
 
 const sortByFunc = (array, sortBys) => {
-  const sortFuncs = sortBys.map(({ type, key }) =>
-    ["int", "date"].indexOf(type) ? sortFuncInt(key) : sortFuncText(key)
+  const sortFuncs = sortBys.map(({ type, key, reverse }) =>
+    ["int", "date"].includes(type)
+      ? sortFuncInt(key, reverse)
+      : sortFuncText(key, reverse)
   );
   return array.sort((a, b) => {
     let res;
@@ -44,7 +58,7 @@ function field2IdType(contentType) {
 function setSearchDefaults(query, contentType) {
   const items = contentType.item || [];
   query.sortby = !query.sortby
-    ? items.find(item => item.id === "title")
+    ? items.find((item) => item.id === "title")
       ? "title"
       : "name"
     : query.sortby;
@@ -67,22 +81,18 @@ function getFilterArray(filter) {
   return [filter];
 }
 
-module.exports = app => {
+module.exports = (app) => {
   app.database.on("init", ({ collection, db }) => {
     const { contentType } = collection;
     const fieldByType = field2IdType(contentType);
 
-    collection.on(
-      "init",
-      () => {
-        const { dbArray } = db;
-        sortByFunc(dbArray, [{ type: "int", key: "_chdate" }]);
-      },
-      10
-    );
+    collection.on("init", 10, () => {
+      const { dbArray } = db;
+      sortByFunc(dbArray, [{ type: "int", key: "_chdate" }]);
+    });
 
     const addFields2All = (add2id, searchFor, oneSearchField, oneSearchValue) =>
-      contentType.item.forEach(oneField => {
+      contentType.item.forEach((oneField) => {
         if (oneField.id && oneField.type !== "date") {
           oneSearchField.push(add2id + oneField.id);
           oneSearchValue.push(searchFor);
@@ -99,7 +109,7 @@ module.exports = app => {
       const searchField = [];
       const searchValue = [];
 
-      getFilterArray(query.filter).forEach(filter => {
+      getFilterArray(query.filter).forEach((filter) => {
         const oneSearchField = [];
         const oneSearchValue = [];
         if (filter.$all && filter.$all !== "")
@@ -110,10 +120,11 @@ module.exports = app => {
             oneSearchValue
           );
 
+        const exact = filter.__exact || query.exact;
         Object.entries(filter).forEach(([field, value]) => {
-          if (field !== "$all" && field !== "__id") {
+          if (!["$all", "__id", "__exact"].includes(field)) {
             oneSearchField.push(field);
-            if (query.exact) oneSearchValue.push(createRegExp(`^${value}$`));
+            if (exact) oneSearchValue.push(createRegExp(`^${value}$`));
             else if (value instanceof Array) {
               oneSearchValue.push(createRegExp(value.join("|")));
             } else if (!value) oneSearchValue.push("false");
@@ -134,11 +145,12 @@ module.exports = app => {
 
     function createRegExp(expression, id) {
       if (fieldByType[id] === "boolean") return expression;
-      return new RegExp(expression.replace(/\*/g, "\\*"), "i");
+      return new RegExp(expression.toString().replace(/\*/g, "\\*"), "i");
     }
 
     function search(query) {
-      if (query.data) return;
+      if (query.data !== undefined) return;
+
       const { dbArray } = db;
       query.total = dbArray.length;
       setSearchDefaults(query, contentType);
@@ -180,10 +192,20 @@ module.exports = app => {
       }
 
       let sortBy =
-        query.sortby && query.sortby !== "_chdate" ? query.sortby : false;
+        query.sortby instanceof Array
+          ? query.sortby
+          : [query.sortby || "_chdate"];
+
+      let reverse =
+        query.reverse instanceof Array
+          ? query.reverse
+          : [query.reverse || false];
+
+      if (sortBy[0] === "_chdate" && sortBy.length === 1) sortBy = false;
+      if (reverse[0] === false && reverse.length === 1) reverse = false;
 
       if (!query.filter || !filterResult(query)) {
-        if (sortBy || (query.reverse && result.length <= query.count)) {
+        if (sortBy || (reverse && result.length <= query.count)) {
           result = new Array(dbArray.length);
           let i = dbArray.length;
           while (i--) result[i] = dbArray[i];
@@ -192,24 +214,22 @@ module.exports = app => {
 
       query.searchTotal = result.length;
 
-      if (sortBy) {
-        sortBy = sortBy instanceof Array ? sortBy : [sortBy];
+      if (sortBy)
         sortByFunc(
           result,
-          sortBy.map(key => ({ type: fieldByType[key], key }))
+          sortBy.map((key, index) => ({
+            type: fieldByType[key],
+            key,
+            reverse: reverse[index],
+          }))
         );
+      else if (reverse[0]) {
+        if (result === dbArray) result = [...result];
+        result.reverse();
       }
-
-      if (result.length > query.count) {
-        if (query.reverse) {
-          result = result.slice(
-            result.length - query.position - query.count,
-            result.length - query.position
-          );
-          result.reverse();
-        } else
-          result = result.slice(query.position, query.position + query.count);
-      } else if (query.reverse) result.reverse();
+      if (result.length <= query.position) result = [];
+      else if (result.length > query.count)
+        result = result.slice(query.position, query.position + query.count);
 
       query.data = result.length ? result : false;
     }

@@ -1,21 +1,30 @@
+const getKey = (data) => JSON.stringify(data);
+
 module.exports = (app) => {
   if (app.settings.noClientCache) return;
 
   app.database.on("init", ({ collection, db }) => {
+    if (collection.contentType.noClientCache) return;
+
     const insertItem = (item) => {
       const { dbIndex, dbArray } = db;
       if (dbIndex[item._id]) return;
+
       dbIndex[item._id] = item;
 
       const chdate = item._chdate;
+      let pos = dbArray.length - 1;
 
-      if (!item.chdate) dbArray.push(item);
-      else
-        for (let i = 0; i < dbArray.length; i++)
-          if (dbArray[i]._chdate < chdate) {
-            dbArray.splice(i, 0, item);
-            break;
-          }
+      if (chdate)
+        while (
+          pos >= 0 &&
+          (!dbArray[pos]._chdate || dbArray[pos]._chdate > chdate)
+        )
+          pos -= 1;
+
+      if (pos === dbArray.length - 1) dbArray.push(item);
+      else dbArray.splice(pos + 1, 0, item);
+
       collection.event("saveStorage");
     };
 
@@ -29,8 +38,7 @@ module.exports = (app) => {
 
     collection.on("search", 2000, (query) => {
       const inCache =
-        allInCache ||
-        searchCache[JSON.stringify({ ...query, data: undefined })];
+        allInCache || searchCache[getKey({ ...query, data: undefined })];
 
       return { ...query, inCache };
     });
@@ -42,7 +50,7 @@ module.exports = (app) => {
 
       query.data.forEach(insertItem);
 
-      const key = JSON.stringify({ ...query, data: undefined });
+      const key = getKey({ ...query, data: undefined });
       if (!searchCache[key]) searchCache[key] = true;
     });
 

@@ -12,12 +12,9 @@ class Loading extends React.Component {
   render() {
     const { inDelay } = this.state;
     return inDelay ? null : (
-      <div className="cssload-loader">
-        <div className="cssload-inner cssload-one" />
-        <div className="cssload-inner cssload-two" />
-        <div className="cssload-inner cssload-three" />
-      </div>
+      <div className="loading m-2 rounded-lg shadow h-2" />
     );
   }
 }
+
 export default Loading;

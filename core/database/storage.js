@@ -37,9 +37,10 @@ module.exports = (app) => {
         clearTimeout(delayTimer30);
         delayTimer3 = false;
         delayTimer30 = false;
-        const data = app.debug
-          ? JSON.stringify(db.dbArray, null, "\t")
-          : JSON.stringify(db.dbArray);
+        const data =
+          app.debug && !app.settings.spacelessDb
+            ? JSON.stringify(db.dbArray, null, "\t")
+            : JSON.stringify(db.dbArray);
 
         fs.writeFile(`${dbFile}temp.json`, data, (err) => {
           if (!err) {

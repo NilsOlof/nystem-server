@@ -1,0 +1,30 @@
+{
+  "item": [
+    {
+      "type": "text",
+      "id": "valueType",
+      "text": "Value type"
+    },
+    {
+      "type": "text",
+      "id": "setValue",
+      "text": "Set value"
+    },
+    {
+      "id": "myDnd",
+      "text": "My DND",
+      "type": "boolean"
+    },
+    {
+      "id": "minHeight",
+      "text": "Min height",
+      "type": "int"
+    },
+    {
+      "text": "Fields",
+      "id": "item",
+      "type": "viewCreator",
+      "expanded": true
+    }
+  ]
+}

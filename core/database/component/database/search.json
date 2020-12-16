@@ -36,14 +36,14 @@
       }
     },
     {
+      "id": "delay",
+      "text": "Delay",
+      "type": "int",
+      "default": 200
+    },
+    {
       "type": "switchButtons",
       "item": [
-        {
-          "text": "Reverse sort order",
-          "id": "reversesortby",
-          "type": "boolean",
-          "default": true
-        },
         {
           "id": "noAutoUpdate",
           "text": "No auto update",
@@ -59,6 +59,24 @@
           "id": "subView",
           "text": "subView",
           "type": "boolean"
+        },
+        {
+          "text": "Reverse sort",
+          "id": "reversesortby",
+          "type": "boolean",
+          "default": true
+        },
+        {
+          "text": "Reverse sort 2",
+          "id": "reversesortby2",
+          "type": "boolean",
+          "default": true
+        },
+        {
+          "text": "Reverse sort 3",
+          "id": "reversesortby3",
+          "type": "boolean",
+          "default": true
         }
       ]
     }

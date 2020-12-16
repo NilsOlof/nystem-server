@@ -35,9 +35,10 @@ module.exports = (app) => {
       !connected ? { ...query, offline: true } : send("delete", query)
     );
 
-    collection.on("save", 700, (query) =>
-      !connected ? { ...query, offline: true } : send("save", query)
-    );
+    collection.on("save", 2700, (query) => {
+      console.log("sennd", query);
+      return !connected ? { ...query, offline: true } : send("save", query);
+    });
 
     collection.on("search", 1700, (query) =>
       query.inCache

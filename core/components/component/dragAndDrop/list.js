@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useRef } from "react";
-import * as reactBeautifulDnd from "react-beautiful-dnd";
 import { ContentTypeRender, Wrapper } from "nystem-components";
 import app from "nystem";
 import * as myDnd from "./myDnd";
@@ -7,7 +6,7 @@ import * as myDnd from "./myDnd";
 export const DragAndDropListContext = React.createContext();
 
 const DragAndDropList = ({ value = [], model, path, view }) => {
-  const { Droppable, Draggable } = model.myDnd ? myDnd : reactBeautifulDnd;
+  const { Droppable, Draggable } = myDnd;
   const [droppableId] = useState(app().uuid());
 
   const ids = useRef([]);
@@ -16,8 +15,12 @@ const DragAndDropList = ({ value = [], model, path, view }) => {
     return ids.current[pos];
   };
 
-  const { field, valueType } = model;
+  const { valueType } = model;
+  let { field } = model;
+  if (field instanceof Array) [field] = field;
+  if (!field) field = { id: "item" };
   const valuePath = path ? `${path}.${field.id}` : field.id;
+
   value = view.getValue(valuePath);
   value = value || [];
 
@@ -68,13 +71,18 @@ const DragAndDropList = ({ value = [], model, path, view }) => {
     };
   }, [droppableId, valuePath, view]);
 
+  if (!(value instanceof Array)) return null;
+
   const { className = [] } = model;
 
   return (
     <Droppable droppableId={droppableId} type={valueType}>
       {(provided, snapshot) => (
         <Wrapper
-          className={["min-h-2 p-3 border shadow rounded", ...className]}
+          className={[
+            "min-h-2-5 px-2 py-1 border shadow rounded",
+            ...className,
+          ]}
           {...provided.droppableProps}
           ref={provided.innerRef}
         >
@@ -83,6 +91,7 @@ const DragAndDropList = ({ value = [], model, path, view }) => {
               key={getId(index)}
               draggableId={getId(index)}
               index={index}
+              minHeight={model.minHeight}
             >
               {(provided, snapshot) => (
                 <div

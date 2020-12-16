@@ -6,15 +6,16 @@ const SelectView = ({ model, value }) => {
   const { className, renderAs, option } = model;
   let val = value || model.fallback;
 
-  for (let i = 0; option && i < option.length; i++)
-    if (option[i]._id === val) {
-      val = option[i].text;
-      break;
-    }
+  val =
+    option
+      .map((item) =>
+        typeof item === "string" ? { _id: item, text: item } : item
+      )
+      .find(({ _id }) => value === _id) || {};
 
   return (
     <Wrapper renderAs={renderAs} className={className}>
-      {app().t(val)}
+      {app().t(val.text)}
     </Wrapper>
   );
 };

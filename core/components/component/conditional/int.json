@@ -1,0 +1,26 @@
+{
+  "item": [
+    {
+      "id": "className",
+      "text": "Class",
+      "type": "gridselect"
+    },
+    {
+      "type": "matrix",
+      "text": "Conditions",
+      "rowLabel": ["Field id", "val <12 or >12"],
+      "id": "condition"
+    },
+    {
+      "type": "boolean",
+      "id": "invert",
+      "text": "Invert"
+    },
+    {
+      "text": "Fields",
+      "id": "item",
+      "type": "viewCreator",
+      "expanded": true
+    }
+  ]
+}

@@ -2,15 +2,19 @@ import React, { useState } from "react";
 import { InputWrapper, Input, Icon, UseValidator } from "nystem-components";
 import app from "nystem";
 import validate from "./validate";
+import "./input.css";
 
 const ClearButton = ({ value, setValue }) =>
   !value ? null : (
-    <Icon
-      onClick={() => setValue("")}
-      className="absolute w-4 right-0 top-0 m-3"
-      icon="close"
-      aria-hidden="true"
-    />
+    <>
+      <Icon
+        onClick={() => setValue("")}
+        className="w-8 h-8 p-2 relative left-12 cursor-pointer"
+        icon="close"
+        aria-hidden="true"
+      />
+      <div className="flex-grow" />
+    </>
   );
 
 const TextInput = ({ model, view, focus, setValue, value }, ref) => {
@@ -42,7 +46,7 @@ const TextInput = ({ model, view, focus, setValue, value }, ref) => {
       id={id}
       model={{
         ...model,
-        classNameInput: "relative flex-grow",
+        classNameInput: "relative flex-grow flex",
       }}
       error={error}
     >

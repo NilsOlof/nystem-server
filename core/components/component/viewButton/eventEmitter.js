@@ -1,26 +1,29 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback, useMemo } from "react";
 import app from "nystem";
 import { Button } from "nystem-components";
 
 const ViewButtonEventEmitter = ({ model, view }) => {
-  const buttonStates = {
-    default: {
-      text: model.text ? model.text : "Send",
-      type: model.btnType ? model.btnType : "secondary"
-    },
-    confirm: {
-      text: "Are you sure?",
-      type: "danger"
-    },
-    saving: {
-      text: "Sending ...",
-      type: "warning"
-    },
-    success: {
-      text: "Sent",
-      type: "success"
-    }
-  };
+  const buttonStates = useMemo(
+    () => ({
+      default: {
+        text: model.text ? model.text : "Send",
+        type: model.btnType ? model.btnType : "secondary",
+      },
+      confirm: {
+        text: "Are you sure?",
+        type: "danger",
+      },
+      saving: {
+        text: "Sending ...",
+        type: "warning",
+      },
+      success: {
+        text: "Sent",
+        type: "success",
+      },
+    }),
+    [model.btnType, model.text]
+  );
 
   const [error, setError] = useState(false);
   const [button, setButton] = useState(buttonStates.default);
@@ -36,9 +39,9 @@ const ViewButtonEventEmitter = ({ model, view }) => {
         type: model.event,
         event: model.subEvent,
         value: view.value,
-        contentType: view.contentType
+        contentType: view.contentType,
       })
-      .then(data => {
+      .then((data) => {
         setButton(buttonStates.success);
         setSavedTimer(setTimeout(() => setButton(buttonStates.default), 1000));
         if (data.redirectToPath) app().router.click(data.redirectToPath);
@@ -46,18 +49,19 @@ const ViewButtonEventEmitter = ({ model, view }) => {
   }, [buttonStates, model, view.contentType, view.value]);
 
   const handleSubmit = useCallback(
-    event => {
+    async (event) => {
       if (app().settings.debug) console.log(view.value);
       if (event) event.preventDefault();
+      const { errors = [] } = await view.event("validate");
+      if (errors.length) {
+        setError("Correct validation errors");
+        return;
+      }
 
-      if (view.valid()) {
-        if (model.confirm && button !== buttonStates.confirm) {
-          setButton(buttonStates.confirm);
-          setSavedTimer(
-            setTimeout(() => setButton(buttonStates.default), 1000)
-          );
-        } else sendEvent();
-      } else setError("Correct validation errors");
+      if (model.confirm && button !== buttonStates.confirm) {
+        setButton(buttonStates.confirm);
+        setSavedTimer(setTimeout(() => setButton(buttonStates.default), 1000));
+      } else sendEvent();
     },
     [button, buttonStates, model.confirm, sendEvent, view]
   );
@@ -97,6 +101,7 @@ const ViewButtonEventEmitter = ({ model, view }) => {
         onClick={handleSubmit}
         className={model.className}
         type={model.btnType}
+        size={model.size}
       >
         {app().t(button.text)}
       </Button>

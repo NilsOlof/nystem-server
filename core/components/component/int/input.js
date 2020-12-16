@@ -10,7 +10,7 @@ const IntInput = ({ model, view, focus, setValue, value, className }) => {
   const componentClassName = [
     className,
     ...(model.className || []),
-    "textInput"
+    "textInput",
   ];
   if (clearButton) componentClassName.push("flex");
 
@@ -25,14 +25,18 @@ const IntInput = ({ model, view, focus, setValue, value, className }) => {
     >
       <Input
         placeholder={app().t(text)}
-        className={inputClassName}
-        value={value || ""}
+        className={model.classNameInput}
+        value={!value && value !== 0 ? "" : value}
         maxLength={length}
-        onChange={value => setValue(value.replace(/[^0-9]/gim, ""))}
+        onChange={(value) => {
+          const intVal = value.replace(/[^0-9]/gim, "");
+          setValue(intVal ? parseInt(intVal, 10) : undefined);
+        }}
         disabled={disabled}
         type="text"
         focus={focus}
         onBlur={() => setValidated(true)}
+        selectAllOnFocus={model.selectAllOnFocus}
       />
     </InputWrapper>
   );

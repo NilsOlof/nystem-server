@@ -17,7 +17,12 @@ const ViewButtonBack = ({ children, model, history }) => {
     );
 
   return (
-    <Button type="primary" className={className} onClick={() => history.go(-1)}>
+    <Button
+      size={model.size}
+      type={model.btnType}
+      className={className}
+      onClick={() => history.go(-1)}
+    >
       <Icon icon="arrow-left" className="w-6 h-6" />
       <Wrapper>{children || app().t(text)}</Wrapper>
     </Button>

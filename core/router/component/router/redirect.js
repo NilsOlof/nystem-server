@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { useHistory } from "react-router-dom";
 
-const RouterRedirect = ({ model, view, path }) => {
+const RouterRedirect = ({ to, model = {}, view, path }) => {
   const history = useHistory();
 
   useEffect(() => {
@@ -12,8 +12,9 @@ const RouterRedirect = ({ model, view, path }) => {
         return view.getValue(p1.replace("..", path));
       });
 
-    history.replace(insertVal(model.to));
-  }, [history, model, path, view]);
+    history.replace(insertVal(model.to || to));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return null;
 };

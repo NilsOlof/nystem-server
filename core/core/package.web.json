@@ -1,7 +1,7 @@
 {
   "dependencies": {
     "nystem": "file:../core/core/nystem",
-    "react": "16.8.3",
-    "react-dom": "16.8.3"
+    "react": "*",
+    "react-dom": "*"
   }
 }

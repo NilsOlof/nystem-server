@@ -1,13 +1,14 @@
 import React from "react";
 import * as components from "nystem-components";
 import app from "nystem";
+
 class FlatgroupInput extends React.Component {
   constructor(props) {
     super(props);
     this.model = props.model;
     if (!this.model.add2id) this.model.add2id = "";
     this.state = {
-      value: props.value || {}
+      value: props.value || {},
     };
   }
   setValue(id, value) {
@@ -18,7 +19,7 @@ class FlatgroupInput extends React.Component {
   valid() {
     let valid = true;
     for (let i = 0; i < this.model.item.length; i++)
-      if (!this.refs["component" + i].valid()) valid = false;
+      if (!this.refs[`component${i}`].valid()) valid = false;
     return valid;
   }
   UNSAFE_componentWillReceiveProps(nextProps) {
@@ -32,27 +33,27 @@ class FlatgroupInput extends React.Component {
       if (!groupVal) {
         if (!self.model.add2id) return self.state.value;
         groupVal = {};
-        for (const item in self.state.value) {
-          const startWith = new RegExp("^" + self.model.add2id, "i");
+        for (const item of self.state.value) {
+          const startWith = new RegExp(`^${self.model.add2id}`, "i");
           if (startWith.test(item))
             groupVal[item.replace(startWith, "")] = self.state.value[item];
         }
       }
       return groupVal;
     }
-    const createItem = function(item, index) {
+    const createItem = function (item, index) {
       const value = item.id
         ? self.state.value[self.model.add2id + item.id]
         : getGroupVal();
       return React.createElement(
-        components[app().capFirst(item.type) + "Input"],
+        components[`${app().capFirst(item.type)}Input`],
         {
-          ref: "component" + index,
+          ref: `component${index}`,
           model: item,
           value: value,
           setValue: self.setValue,
           validated: self.props.validated,
-          add: self.props.add
+          add: self.props.add,
         }
       );
     };

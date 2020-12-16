@@ -1,5 +1,6 @@
 import React from "react";
 import app from "nystem";
+
 class ErrorMsg extends React.Component {
   constructor(props) {
     super(props);
@@ -10,12 +11,10 @@ class ErrorMsg extends React.Component {
   }
   render() {
     const error =
-        this.state.error === true ? "Required field" : this.state.error,
-      defaultType = "danger",
-      className = ["alert"];
-    className.push(
-      "alert-" + (this.props.type ? this.props.type : defaultType)
-    );
+      this.state.error === true ? "Required field" : this.state.error;
+    const defaultType = "danger";
+    const className = ["alert"];
+    className.push(`alert-${this.props.type ? this.props.type : defaultType}`);
     if (this.props.className) className.push(this.props.className);
     if (error)
       return (

@@ -1,12 +1,18 @@
 import React, { useMemo, useEffect } from "react";
-import { InputWrapper, UseValidator, Button, Wrapper } from "nystem-components";
+import {
+  InputWrapper,
+  UseValidator,
+  Button,
+  Wrapper,
+  Select,
+} from "nystem-components";
 import validate from "./validate";
 
-const normalizeOption = ({ option }) =>
+const normalizeOption = ({ option, optionObj }) =>
   !option
-    ? []
+    ? optionObj || []
     : option.map((item) =>
-        typeof item === "string"
+        typeof item === "string" || typeof item === "number"
           ? {
               _id: item,
               text: item,
@@ -14,12 +20,12 @@ const normalizeOption = ({ option }) =>
           : item
       );
 
-const renderButton = ({ option, handleChange, value }) => (
-  <Wrapper>
+const renderButton = ({ option, handleChange, value, model }) => (
+  <Wrapper className={model.classNameInput}>
     {option.map(({ text, _id }) => (
       <Button
         onClick={() => handleChange(_id)}
-        className="mr-2 my-1"
+        className={[model.classNameItem, "mr-2 my-1"]}
         key={_id}
         type={value.indexOf(_id) !== -1 ? "primary" : "secondary"}
         size="xs"
@@ -50,7 +56,7 @@ const renderCheckbox = ({ option, handleChange, value, limit, inline }) => (
 
 const renderDropdown = ({ option, handleChange, value, placeholder }) => (
   // eslint-disable-next-line jsx-a11y/no-onchange
-  <select
+  <Select
     className="sm:w-1/2 w-full p-2 border"
     onChange={(e) => handleChange(e.target.value)}
     value={value[0]}
@@ -63,7 +69,7 @@ const renderDropdown = ({ option, handleChange, value, placeholder }) => (
         {text}
       </option>
     ))}
-  </select>
+  </Select>
 );
 
 const renderTypes = {
@@ -106,6 +112,7 @@ const SelectInput = ({ model, value, view, setValue }) => {
     limit,
     inline,
     placeholder,
+    model,
   });
 
   return model.noWrapper ? (

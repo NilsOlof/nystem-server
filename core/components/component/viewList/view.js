@@ -10,6 +10,7 @@ import "./table.css";
 
 const ViewListView = ({ model, view }) => {
   const { search } = useContext(DatabaseSearchContext);
+
   const value = (search && search.data) || [];
   const { emptyFields, className = [], headerFields, renderFormat } = model;
 

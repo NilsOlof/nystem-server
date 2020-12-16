@@ -62,11 +62,15 @@ const ViewButtonInput = ({ view, model, value, history, location }) => {
 
   const handleSubmit = useCallback(async () => {
     if (button !== "default") return;
-    if (app().settings.debug) console.log(value);
 
-    const { errors } = await view.event("validate");
-    if (errors) {
+    const { errors = [] } = await view.event("validate");
+    if (errors.length) {
       setError("Correct validation errors", errors);
+      setSavedTimer(
+        setTimeout(() => {
+          setSavedTimer(false);
+        }, 1000)
+      );
       return;
     }
     setError(false);
@@ -135,21 +139,29 @@ const ViewButtonInput = ({ view, model, value, history, location }) => {
   return (
     <>
       <Wrapper className={model.className}>
-        <Button onClick={handleSubmit} type={buttonStates[button].type}>
+        <Button
+          size={model.size}
+          onClick={handleSubmit}
+          type={buttonStates[button].type}
+        >
           {app().t(buttonStates[button].text)}
         </Button>
         {button === "default" && !model.sendOnly && view.value._id && (
           <>
-            <Button onClick={handleCancel} type="warning">
+            <Button size={model.size} onClick={handleCancel} type="warning">
               Cancel
             </Button>
-            <Button onClick={handleDelete} type="danger">
+            <Button size={model.size} onClick={handleDelete} type="danger">
               {app().t("Delete")}
             </Button>
           </>
         )}
       </Wrapper>
-      {error && <Wrapper className="red">{error}</Wrapper>}
+      {error && (
+        <Wrapper className={`red py-2 px-1 ${savedTimer ? "font-bold" : ""}`}>
+          {error}
+        </Wrapper>
+      )}
     </>
   );
 };

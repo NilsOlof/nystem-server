@@ -1,7 +1,10 @@
 import React, { useContext } from "react";
-import { Wrapper, ContentTypeRender, Icon } from "nystem-components";
-
-import { PanelContext } from "../panel";
+import {
+  Wrapper,
+  ContentTypeRender,
+  Icon,
+  PanelContext,
+} from "nystem-components";
 
 const BootstrapPanelToggle = ({ model, path, children }) => {
   const { className, item } = model;

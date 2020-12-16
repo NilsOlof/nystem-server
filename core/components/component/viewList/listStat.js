@@ -41,7 +41,7 @@ const ViewListListStat = ({ model }) => {
       ? settings.searchTotal
       : settings.position + settings.count; */
   return (
-    <Wrapper className={[...(model.className || []), "control-label"]}>
+    <Wrapper className={[model.className, "control-label"]}>
       <Wrapper>{model.text}</Wrapper>
       <Wrapper>{text}</Wrapper>
       {total()}

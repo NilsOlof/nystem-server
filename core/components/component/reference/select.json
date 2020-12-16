@@ -11,6 +11,11 @@
       "text": "Text"
     },
     {
+      "type": "text",
+      "id": "namefield",
+      "text": "Name field"
+    },
+    {
       "type": "select",
       "id": "render",
       "text": "Render as",
@@ -22,8 +27,7 @@
     {
       "type": "boolean",
       "text": "Inline",
-      "id": "inline",
-      "text": "Inline"
+      "id": "inline"
     }
   ]
 }

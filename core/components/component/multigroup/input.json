@@ -1,40 +1,20 @@
 {
-  "item": [
-    {
-      "id": "className",
-      "text": "Class",
-      "type": "gridselect"
-    },
-    {
-      "type": "gridselect",
-      "id": "rowClassName",
-      "text": "Row class name"
-    },
-    {
-      "type": "text",
-      "text": "Header field",
-      "id": "field"
-    },
-    {
-      "type": "boolean",
-      "text": "Expandable",
-      "id": "expandable"
-    },
-    {
-      "type": "boolean",
-      "text": "Expanded",
-      "id": "expanded"
-    },
-    {
-      "type": "boolean",
-      "text": "Item expanded",
-      "id": "itemExpanded"
-    },
-    {
-      "text": "Fields",
-      "id": "item",
-      "type": "viewCreator",
-      "expanded": true
-    }
-  ]
+	"item": [
+		{
+			"id": "className",
+			"text": "Class",
+			"type": "gridselect"
+		},
+		{
+			"type": "gridselect",
+			"id": "rowClassName",
+			"text": "Row class name"
+		},
+		{
+			"text": "Fields",
+			"id": "item",
+			"type": "viewCreator",
+			"expanded": true
+		}
+	]
 }

@@ -45,6 +45,8 @@ module.exports = (app) => {
     });
 
     collection.on(["save", "delete"], -1000, (query) => {
+      if (!query.offline) return;
+
       if (timer03) clearTimeout(timer03);
       timer03 = setTimeout(updateEvent, timeoutTimes[0]);
       if (!timer20) timer20 = setTimeout(updateEvent, timeoutTimes[1]);
@@ -52,22 +54,24 @@ module.exports = (app) => {
     });
 
     const delItem = (id) => {
-      const { dbArray, dbIndex } = db;
-      const item = dbIndex[id];
-      if (!item) return;
-
-      delete dbIndex[id];
-      const pos = dbArray.indexOf(item);
-      dbArray.splice(pos, 1);
+      // Not working, strange...
+      // dbArray.splice(dbArray.indexOf(dbIndex[id]),1);
+      db.dbArray = db.dbArray.filter((i) => i._id !== id);
+      delete db.dbIndex[id];
     };
-    collection.on("update", ({ ids, offline }) => {
-      if (!offline)
-        if (ids) ids.forEach(delItem);
-        else {
-          db.dbArray = [];
-          db.dbIndex = {};
-        }
 
+    collection.on("update", ({ ids, offline }) => {
+      if (offline) return;
+      if (ids) {
+        ids.forEach(delItem);
+        return;
+      }
+
+      db.dbArray = [];
+      db.dbIndex = {};
+    });
+
+    collection.on("update", -1000, ({ ids }) => {
       Object.values(updateSearch).forEach((query) =>
         collection.search({ ...query, data: false, onData: false })
       );
@@ -83,21 +87,14 @@ module.exports = (app) => {
             .then((query) => updateGet[id][callbackId](query))
         );
       });
+
       collection.event("saveStorage");
     });
 
-    const sortFuncInt = (key) => (a, b) => {
-      const x = a[key];
-      const y = b[key];
-      if (x === undefined) return y === undefined ? 0 : 1;
-      if (y === undefined) return -1;
-      return x < y ? -1 : x > y ? 1 : 0;
-    };
     collection.on("updates", 1000, () => {
       const { dbArray } = db;
       const i = dbArray.length - 1;
-      dbArray.sort(sortFuncInt("_chdate"));
-      dbArray.reverse();
+
       if (i === -1 || !dbArray[i]._chdate) return;
 
       return { date: dbArray[i]._chdate };

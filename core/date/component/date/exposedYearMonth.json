@@ -1,14 +1,59 @@
 {
-	"item": [
-		{
-			"type": "gridselect",
-			"id": "className",
-			"text": "Class"
-		},
-		{
-			"type": "text",
-			"id": "text",
-			"text": "Text"
-		}
-	]
+  "item": [
+    {
+      "type": "gridselect",
+      "id": "className",
+      "text": "Class"
+    },
+    {
+      "type": "text",
+      "id": "text",
+      "text": "Text"
+    },
+    {
+      "type": "int",
+      "id": "from",
+      "text": "From year"
+    },
+    {
+      "type": "int",
+      "id": "to",
+      "text": "To year"
+    },
+    {
+      "type": "text",
+      "id": "saveIdFrom",
+      "text": "Save id from"
+    },
+    {
+      "type": "text",
+      "id": "saveIdTo",
+      "text": "Save id to"
+    },
+    {
+      "type": "switchButtons",
+      "item": [
+        {
+          "text": "Show month",
+          "type": "boolean",
+          "id": "month"
+        },
+        {
+          "text": "Show day",
+          "type": "boolean",
+          "id": "day"
+        },
+        {
+          "text": "No label",
+          "type": "boolean",
+          "id": "nolabel"
+        },
+        {
+          "text": "UTC",
+          "type": "boolean",
+          "id": "utc"
+        }
+      ]
+    }
+  ]
 }

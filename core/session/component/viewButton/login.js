@@ -7,9 +7,9 @@ const ViewButtonLogin = ({ view, model, history }) => {
   const [saveButton, setSaveButton] = useState("Log in");
 
   const handleSubmit = async () => {
-    const { errors } = await view.event("validate");
+    const { errors = [] } = await view.event("validate");
 
-    if (!errors) {
+    if (!errors.length) {
       view.value.contentType = view.contentType;
 
       app()
@@ -29,7 +29,12 @@ const ViewButtonLogin = ({ view, model, history }) => {
   };
 
   return (
-    <Button className={model.className} type="default" onClick={handleSubmit}>
+    <Button
+      className={model.className}
+      type={model.btnType}
+      size={model.size}
+      onClick={handleSubmit}
+    >
       {saveButton}
     </Button>
   );

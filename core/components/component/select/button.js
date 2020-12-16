@@ -1,60 +1,28 @@
 import React from "react";
 import { Button } from "nystem-components";
 
-class SelectButton extends React.Component {
-  constructor(props) {
-    super(props);
-    this.model = props.model;
-    const state = {
-      value: props.value
-    };
-    if (props.validated)
-      props.setValue(this.model.id, state.value, this.valid());
-    this.state = state;
+const SelectButton = ({ model, setValue, value }) => {
+  const { trueState, trueOnState, falseState, btnType, falseOnState } = model;
+
+  const handleChange = (e) =>
+    setValue(trueOnState.indexOf(value) ? trueState : falseState);
+
+  let text = "";
+  let type = false;
+
+  if (trueOnState.indexOf(value) !== -1) {
+    ({ text } = model);
+    type = btnType;
+  } else if (falseOnState.indexOf(value) !== -1) {
+    text = model.falseText;
+    type = model.falseBtnType;
   }
-  handleChange = e => {
-    const { model } = this;
-    e.preventDefault();
-    this.props.setValue(
-      this.model.id,
-      model.trueOnState.indexOf(this.state.value)
-        ? model.trueState
-        : model.falseState
-    );
-  };
-  valid = () => {
-    if (this.model.mandatory && !this.state.value) {
-      this.setState({
-        error: this.model.text_mandatory ? this.model.text_mandatory : true
-      });
-      return false;
-    }
-    if (this.state.error) delete this.state.error;
-    return true;
-  };
-  UNSAFE_componentWillReceiveProps(nextProps) {
-    if (this.props.value !== nextProps.value)
-      this.setState({
-        value: nextProps.value
-      });
-  }
-  render() {
-    const { model } = this;
-    let className = this.model.className ? ` ${model.className.join(" ")}` : "";
-    let text = "";
-    let type = false;
-    if (model.trueOnState.indexOf(this.state.value) !== -1) {
-      text = model.text;
-      type = model.btnType;
-    } else if (model.falseOnState.indexOf(this.state.value) !== -1) {
-      text = model.falseText;
-      type = model.falseBtnType;
-    }
-    return (
-      <Button type={type} className={className} onClick={this.handleChange}>
-        {text || "..."}
-      </Button>
-    );
-  }
-}
+
+  return (
+    <Button type={type} className={model.className} onClick={handleChange}>
+      {text || "..."}
+    </Button>
+  );
+};
+
 export default SelectButton;

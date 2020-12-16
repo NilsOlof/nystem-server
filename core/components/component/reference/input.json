@@ -50,6 +50,11 @@
       "type": "text"
     },
     {
+      "type": "boolean",
+      "id": "reverse",
+      "text": "Reverse"
+    },
+    {
       "text": "Inline add view",
       "id": "inlineAdd",
       "type": "viewSelect"

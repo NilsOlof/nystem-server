@@ -1,8 +1,6 @@
 import React from "react";
-import { Panel, ContentTypeRender } from "nystem-components";
 import { useLocation } from "react-router-dom";
-
-export const BootstrapPanelContext = React.createContext();
+import { Panel, ContentTypeRender } from "nystem-components";
 
 const BootstrapPanelOpenByPath = ({ model, path, value, view }) => {
   const { item, header, typeClass } = model;

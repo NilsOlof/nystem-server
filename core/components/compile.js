@@ -1,4 +1,4 @@
-module.exports = function(app) {
+module.exports = function (app) {
   const { fs } = app;
 
   if (!app.fs.existsSync(`${app.__dirname}/web`)) return;
@@ -9,7 +9,7 @@ module.exports = function(app) {
   }
 
   function changeComponentNames(components, setStrings) {
-    setStrings.forEach(key => {
+    setStrings.forEach((key) => {
       const path = components[key];
       let src = fs.readFileSync(`${app.__dirname}/${path}`, "utf-8");
       const match = /export default ([a-z0-9]+);/gim.exec(src);
@@ -36,7 +36,7 @@ module.exports = function(app) {
   app.on("getComponents", () => {
     const paths = app.filePaths;
     const components = { core: {}, module: {} };
-    paths.forEach(fullpath => {
+    paths.forEach((fullpath) => {
       const path = fullpath.split("/");
       const component = {};
       const type = path.shift();
@@ -52,54 +52,58 @@ module.exports = function(app) {
   });
 
   function compile() {
-    app.event("getComponents").then(components => {
+    app.event("getComponents").then((components) => {
       components = { ...components.core, ...components.module };
       let setStrings = Object.keys(components);
       setStrings = setStrings.filter(
-        key => components[key].indexOf(".native.js") === -1
+        (key) => components[key].indexOf(".native.js") === -1
       );
       changeComponentNames(components, setStrings);
     });
   }
 
   compile();
-  app.on("debugModeUpdateOnChange", update => {
-    if (update.event !== "componentChange" || update.fileEvent === "change")
+
+  let lastTime = Date.now();
+
+  app.on("debugModeUpdateOnChange", (update) => {
+    if (
+      update.event !== "componentChange" ||
+      (update.fileEvent === "change" && lastTime + 1000 * 10 > Date.now())
+    )
       return;
+
+    lastTime = Date.now();
+    console.log("compile");
     compile();
   });
 
-  let cache = false;
-  app.on(
-    "getComponents",
-    components => {
-      components = { ...components.core, ...components.module };
-      let setStrings = Object.keys(components);
-      setStrings = setStrings.filter(key => {
-        const pos = key.indexOf(".");
-        if (pos !== -1) {
-          delete components[key];
-          return false;
-        }
-        return true;
-      });
-      cache = components;
-      let importsString = setStrings
-        .map(key => `import ${key} from "./${components[key]}";`)
-        .join("\n");
-      const importsString2 = setStrings.join(", ");
+  app.on("getComponents", -100, (components) => {
+    components = { ...components.core, ...components.module };
+    let setStrings = Object.keys(components);
+    setStrings = setStrings.filter((key) => {
+      const pos = key.indexOf(".");
+      if (pos !== -1) {
+        delete components[key];
+        return false;
+      }
+      return true;
+    });
 
-      importsString = `${importsString}\nexport { ${importsString2} }`;
+    let importsString = setStrings
+      .map((key) => `import ${key} from "./${components[key]}";`)
+      .join("\n");
+    const importsString2 = setStrings.join(", ");
 
-      app.writeFileChanged(
-        `${app.__dirname}/web/src/components.js`,
-        importsString
-      );
-      app.writeFileChanged(
-        `${app.__dirname}/web/src/components.jsconfig.js`,
-        importsString.replace(/"\.\//g, '"../../')
-      );
-    },
-    -100
-  );
+    importsString = `${importsString}\nexport { ${importsString2} }`;
+
+    app.writeFileChanged(
+      `${app.__dirname}/web/src/components.js`,
+      importsString
+    );
+    app.writeFileChanged(
+      `${app.__dirname}/web/src/components.jsconfig.js`,
+      importsString.replace(/"\.\//g, '"../../')
+    );
+  });
 };

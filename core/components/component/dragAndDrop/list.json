@@ -24,6 +24,11 @@
       "type": "boolean"
     },
     {
+      "id": "minHeight",
+      "text": "Min height",
+      "type": "int"
+    },
+    {
       "text": "Fields",
       "id": "item",
       "type": "viewCreator",

@@ -5,6 +5,8 @@ const ReferenceFirst = ({ model, view, value = [] }) => {
   value = value instanceof Array ? value[0] : value;
   const { renderFormat, className, source, itemClassName } = model;
 
+  if (!value) return null;
+
   const option = (item, index) => (
     <ContentTypeView
       key={item}

@@ -11,6 +11,7 @@ const replaceExports = (content) => {
 module.exports = function (app) {
   if (!app.fs.existsSync(`${app.__dirname}/web`)) return;
   require("./debug/debug.js")(app);
+  require("./debug/debugEvLog.js")(app);
 
   const { fs } = app;
 
