@@ -3,7 +3,7 @@
     "pngjs": "*",
     "sharp": "*",
     "mime": "*",
-    "moment": "*",
+    "my-moment": "file:./core/date/my-moment",
     "express": "*",
     "fs-extra": "*",
     "websocket": "*"
