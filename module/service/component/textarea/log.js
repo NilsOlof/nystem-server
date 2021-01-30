@@ -4,8 +4,10 @@ import app from "nystem";
 
 const TextareaLog = ({ view, model, value = "" }) => {
   const [log, setLog] = useState("");
+  const hasVal = !!value;
 
   useEffect(() => {
+    if (!hasVal) return;
     const parseLog = (log) => {
       const parsedLog = (log || "")
         .replace(/ /g, "&nbsp;")
@@ -35,7 +37,7 @@ const TextareaLog = ({ view, model, value = "" }) => {
       app().connection.off(`serverLog${view.id}`, updateLog);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [hasVal]);
 
   const className = model.className && model.className.join(" ");
   return (
