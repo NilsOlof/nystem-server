@@ -1,32 +1,11 @@
 "use strict";
 
-const myMoment = (val) => {
-  const at = new Date(val || Date.now());
-
-  return {
-    startOf: () =>
-      myMoment(Date.UTC(at.getFullYear(), at.getMonth(), at.getDate())),
-    valueOf: () => at.getTime(),
-    format: (format) => {
-      if (!typeByFormat[format]) console.error("Missing format", format);
-
-      return typeByFormat[format].format(at);
-    },
-  };
-};
-
 const typeByFormat = {
   "YYYY-MM-DD": new Intl.DateTimeFormat("sv-SE", {
     year: "numeric",
     month: "numeric",
     day: "numeric",
   }),
-  YYYY: new Intl.DateTimeFormat("sv-SE", { year: "numeric" }),
-  YY: new Intl.DateTimeFormat("sv-SE", { year: "2-digit" }),
-  M: new Intl.DateTimeFormat("sv-SE", { month: "numeric" }),
-  D: new Intl.DateTimeFormat("sv-SE", { day: "numeric" }),
-  MM: new Intl.DateTimeFormat("sv-SE", { month: "2-digit" }),
-  DD: new Intl.DateTimeFormat("sv-SE", { day: "2-digit" }),
   "YYYY-MM-DD HH:mm": new Intl.DateTimeFormat("sv-SE", {
     year: "numeric",
     month: "numeric",
@@ -42,6 +21,36 @@ const typeByFormat = {
     hour: "numeric",
     minute: "numeric",
   }),
+  YYYY: new Intl.DateTimeFormat("sv-SE", { year: "numeric" }),
+  YY: new Intl.DateTimeFormat("sv-SE", { year: "2-digit" }),
+  MM: new Intl.DateTimeFormat("sv-SE", { month: "2-digit" }),
+  DD: new Intl.DateTimeFormat("sv-SE", { day: "2-digit" }),
+  M: new Intl.DateTimeFormat("sv-SE", { month: "numeric" }),
+  D: new Intl.DateTimeFormat("sv-SE", { day: "numeric" }),
+  HH: new Intl.DateTimeFormat("sv-SE", { hour: "2-digit" }),
+  mm: new Intl.DateTimeFormat("sv-SE", { minute: "2-digit" }),
+  H: new Intl.DateTimeFormat("sv-SE", { hour: "numeric" }),
+  m: new Intl.DateTimeFormat("sv-SE", { minute: "numeric" }),
+  dddd: new Intl.DateTimeFormat("en-GB", { weekday: "long" }),
+};
+
+const finderRegExp = new RegExp(Object.keys(typeByFormat).join("|"), "gi");
+const replacer = (at) => (format) => typeByFormat[format].format(at);
+
+const myMoment = (val) => {
+  const at = new Date(val || Date.now());
+
+  return {
+    startOf: () =>
+      myMoment(Date.UTC(at.getFullYear(), at.getMonth(), at.getDate())),
+    valueOf: () => at.getTime(),
+    format: (format) => {
+      if (!typeByFormat[format])
+        return format.replace(finderRegExp, replacer(at));
+
+      return typeByFormat[format].format(at);
+    },
+  };
 };
 
 module.exports = myMoment;
@@ -74,4 +83,25 @@ const dateTimeFormats = {
   timeDay: "ddd D/M H:mm",
   day: "dddd",
 };
+
+{
+  weekday: 'narrow' | 'short' | 'long',
+  era: 'narrow' | 'short' | 'long',
+  year: 'numeric' | '2-digit',
+  month: 'numeric' | '2-digit' | 'narrow' | 'short' | 'long',
+  day: 'numeric' | '2-digit',
+  hour: 'numeric' | '2-digit',
+  minute: 'numeric' | '2-digit',
+  second: 'numeric' | '2-digit',
+  timeZoneName: 'short' | 'long',
+
+  // Time zone to express it in
+  timeZone: 'Asia/Shanghai',
+  // Force 12-hour or 24-hour
+  hour12: true | false,
+
+  // Rarely-used options
+  hourCycle: 'h11' | 'h12' | 'h23' | 'h24',
+  formatMatcher: 'basic' | 'best fit'
+}
 */

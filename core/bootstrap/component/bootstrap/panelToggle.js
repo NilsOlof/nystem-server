@@ -15,7 +15,7 @@ const BootstrapPanelToggle = ({ model, path, children }) => {
       {model.icon && (
         <Icon
           icon={expanded ? "cheveron-down" : "cheveron-right"}
-          className="w-8 h-8 p-1 pl-0 pointer"
+          className={model.iconClassName || "w-6 h-6 pl-0 pointer"}
         />
       )}
       {children || <ContentTypeRender path={path} items={item} />}

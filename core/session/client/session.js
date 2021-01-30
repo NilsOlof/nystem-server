@@ -32,7 +32,7 @@ module.exports = function (app) {
         const { user } = query;
 
         if (user && !query.error) loginEvent(user);
-        else {
+        else if (session.user !== autoLoginUser) {
           session.user = autoLoginUser;
           try {
             app.storage.removeItem({ id: sessionKey });

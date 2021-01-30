@@ -14,6 +14,7 @@ module.exports = (app) => {
       const [, , folder, file] = path.split("/");
       return folder === "html" && !exclude.includes(file);
     });
+    // eslint-disable-next-line no-restricted-syntax
     for (const path of htmlFiles) await readAndCopy(path);
   };
   updateFiles();
@@ -43,7 +44,13 @@ module.exports = (app) => {
 
     await app.writeFileChanged(
       `${app.__dirname}/web/public/index.html`,
-      content.replace("<head>", `<head>\n${headFiles.join("\n")}`)
+      content
+        .replace("<head>", `<head>\n${headFiles.join("\n")}`)
+        .replace(/\{name\}/gi, app.settings.client.name || "")
+        .replace(
+          /\{description\}/gi,
+          app.settings.client.description || app.settings.client.name
+        )
     );
   };
   updateIndexHTML();

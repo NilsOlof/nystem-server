@@ -1,8 +1,20 @@
-import React, { useContext } from "react";
+import React, { useContext, useState, useEffect } from "react";
 import { Button, DatabaseSearchContext } from "nystem-components";
 
-const DatabaseShowMoreButton = ({ model }) => {
-  const { search, setSearch } = useContext(DatabaseSearchContext);
+const DatabaseShowMoreButton = ({ model, view }) => {
+  const { search } = useContext(DatabaseSearchContext);
+  const [count, setCount] = useState();
+
+  useEffect(() => {
+    if (!count) return;
+
+    const onSearch = (search) => ({ ...search, count });
+    view.on("setSearch", onSearch);
+    view.event("setSearch");
+    return () => {
+      view.off("setSearch", onSearch);
+    };
+  }, [count, view]);
 
   if (search.count > search.searchTotal) return null;
 
@@ -11,10 +23,7 @@ const DatabaseShowMoreButton = ({ model }) => {
       className={model.className}
       type="lsdkfh"
       onClick={() => {
-        setSearch({
-          ...search,
-          count: search.count + parseInt(model.amount, 10),
-        });
+        setCount((count || search.count || 0) + parseInt(model.amount, 10));
       }}
     >
       {model.text}

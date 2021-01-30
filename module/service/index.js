@@ -63,10 +63,12 @@ const start = function (app) {
     const hasAppJs = await app.fs.exists(`${path}/app.js`);
 
     const service = runProgram(path, hasAppJs ? "app.js" : "server.js");
-    service.on("data", (query) => {
+
+    const onData = (dataType) => (query) => {
       app.connection.broadcast({
         type: `serverLog${id}`,
         ...query,
+        dataType,
       });
 
       logs[id] += query.data;
@@ -74,7 +76,9 @@ const start = function (app) {
         logs[id] = logs[id].substring(logs[id].length - 2000);
 
       update({ log: logs[id] });
-    });
+    };
+    service.on("data", onData("data"));
+    service.on("error", onData("error"));
 
     service.on("exit", async (query) => {
       running = false;

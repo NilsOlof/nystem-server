@@ -1,4 +1,5 @@
-import React, { useMemo, useEffect } from "react";
+import React, { useMemo, useEffect, useState } from "react";
+import app from "nystem";
 import {
   InputWrapper,
   UseValidator,
@@ -54,7 +55,7 @@ const renderCheckbox = ({ option, handleChange, value, limit, inline }) => (
   </Wrapper>
 );
 
-const renderDropdown = ({ option, handleChange, value, placeholder }) => (
+const renderDropdown = ({ id, option, handleChange, value, placeholder }) => (
   // eslint-disable-next-line jsx-a11y/no-onchange
   <Select
     className="sm:w-1/2 w-full p-2 border"
@@ -79,6 +80,7 @@ const renderTypes = {
 };
 
 const SelectInput = ({ model, value, view, setValue }) => {
+  const [id] = useState(app().uuid);
   const [error, setValidated] = UseValidator({ view, validate, value, model });
 
   const { placeholder, inline, render } = model;
@@ -113,12 +115,13 @@ const SelectInput = ({ model, value, view, setValue }) => {
     inline,
     placeholder,
     model,
+    id,
   });
 
   return model.noWrapper ? (
     out
   ) : (
-    <InputWrapper model={model} error={error}>
+    <InputWrapper id={id} model={model} error={error}>
       {out}
     </InputWrapper>
   );

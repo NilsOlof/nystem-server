@@ -1,3 +1,4 @@
+/* eslint-disable no-continue */
 import React, { useCallback } from "react";
 import { Wrapper, ContentTypeRender } from "nystem-components";
 

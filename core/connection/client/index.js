@@ -1,16 +1,7 @@
+const httpsfallbackM = require("./httpsfallback");
+
 module.exports = function (app) {
-  let URL = app.settings.domain;
-  if (app.settings.native)
-    URL = app.settings.secure ? `wss://${URL}` : `ws://${URL}`;
-  else {
-    if (!URL) {
-      URL = window.location.href.replace("http://", "");
-      URL = URL.substring(0, URL.indexOf("/"));
-    }
-    URL = `${
-      window.location.href.indexOf("https://") !== -1 ? "wss" : "ws"
-    }://${URL}`;
-  }
+  const URL = `ws${app.settings.secure ? "s" : ""}://${app.settings.domain}`;
 
   app.webSocket = new WebSocket(URL);
   let { webSocket } = app;
@@ -19,7 +10,7 @@ module.exports = function (app) {
   let reconnect = false;
 
   let closed = false;
-  let failCount = 13;
+  let failCount = 1;
   const log = (text) => {
     if (isOnline) failCount = 0;
     if (failCount++ < 10) console.log(text);
@@ -27,7 +18,12 @@ module.exports = function (app) {
 
   function openconnection() {
     log(`openconnection ${URL}`);
+
     webSocket = webSocket || new WebSocket(URL);
+    webSocket.onerror = () => {
+      log(`error ${URL}`);
+    };
+
     function connected() {
       isOnline = true;
       connection.event("connect", { type: "connect" });
@@ -37,16 +33,14 @@ module.exports = function (app) {
     }
     if (webSocket.readyState === 1) connected();
     webSocket.onopen = connected;
-    webSocket.onclose = function () {
-      log(`close ${URL}`);
+    webSocket.onclose = function (e) {
+      log(`close ${URL} ${e.code}`);
       webSocket = false;
       isOnline = false;
       if (!closed) setTimeout(openconnection, 1000);
       connection.event("disconnect", { type: "close" });
     };
-    webSocket.onerror = function (error) {
-      log(`error ${URL}`);
-    };
+
     webSocket.onmessage = function (message) {
       const data = JSON.parse(message.data);
       if (callbacks[data.callbackid]) {
@@ -79,46 +73,43 @@ module.exports = function (app) {
   connection.on(
     "emit",
     (data) =>
-      new Promise((resolve, reject) => {
+      new Promise((resolve) => {
         let counter = 0;
         function send() {
           if (webSocket.readyState > 0) {
-            if (msg.length > 64000) {
-              for (; msg.length > 64000; ) {
+            if (msg.length > 64000)
+              while (msg.length > 64000) {
                 webSocket.send(msg.substring(0, 64000));
                 msg = msg.substring(64000);
               }
-            }
+
             webSocket.send(msg);
             clearTimeout(data.timeout);
           } else {
             if (counter === 1 && callbacks[data.callbackid])
-              callbacks[data.callbackid](
-                Object.assign({}, data, { offline: true })
-              );
+              callbacks[data.callbackid]({ ...data, offline: true });
             counter++;
-            if (counter !== 300) setTimeout(send, 200);
+            if (counter !== 3) setTimeout(send, 200);
             else {
-              callbacks[data.callbackid](
-                Object.assign({}, data, { timeout: true })
-              );
+              callbacks[data.callbackid]({ ...data, timeout: true });
               delete callbacks[data.callbackid];
             }
           }
         }
+
         if (!data.noCallback) {
           data.callbackid = app.uuid();
           callbacks[data.callbackid] = resolve;
         } else resolve();
+
         let msg = JSON.stringify(data);
         send();
       })
   );
 
-  connection.on("broadcast", (data) => {
-    data.broadcast = true;
-    return connection.emit(data);
-  });
+  connection.on("broadcast", (data) =>
+    connection.emit({ ...data, broadcast: true })
+  );
 
   connection.on("close", () => {
     webSocket.close();
@@ -140,5 +131,8 @@ module.exports = function (app) {
           else connection.on("connect", cont);
         })
     );
+
   openconnection();
+
+  httpsfallbackM(app);
 };

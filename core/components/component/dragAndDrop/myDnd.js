@@ -223,6 +223,7 @@ export const Draggable = ({ draggableId, index, children, minHeight = 0 }) => {
       ...styleDraggableItem,
       ...baseProps,
     };
+    minHeight = parseInt(minHeight, 10);
     style.height = style.height < minHeight ? minHeight : style.height;
 
     const movingState = {

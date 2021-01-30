@@ -1,10 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { ContentTypeRender } from "nystem-components";
 import app from "nystem";
-import * as myDnd from "./myDnd";
+import { Droppable, Draggable } from "./myDnd";
 
 const DragAndDropFixedVal = ({ value, model, path }) => {
-  const { Droppable, Draggable } = myDnd;
   const [droppableId] = useState(app().uuid());
 
   useEffect(() => {

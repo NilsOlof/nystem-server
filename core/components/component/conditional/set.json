@@ -1,0 +1,24 @@
+{
+  "item": [
+    {
+      "type": "text",
+      "id": "condId",
+      "text": "Condtion id"
+    },
+    {
+      "type": "text",
+      "id": "condVal",
+      "text": "Conditional value"
+    },
+    {
+      "type": "text",
+      "id": "setId",
+      "text": "Set id"
+    },
+    {
+      "type": "text",
+      "id": "setValue",
+      "text": "Set value"
+    }
+  ]
+}

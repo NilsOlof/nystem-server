@@ -28,11 +28,9 @@ module.exports = (app) => {
     deferredPrompt.prompt();
 
     deferredPrompt.userChoice.then((choiceResult) => {
-      if (choiceResult.outcome === "accepted") {
+      if (choiceResult.outcome === "accepted")
         console.log("User accepted the install prompt");
-      } else {
-        console.log("User dismissed the install prompt");
-      }
+      else console.log("User dismissed the install prompt");
     });
   });
 
@@ -46,9 +44,10 @@ module.exports = (app) => {
   }));
 
   app.on("clearCacheAndReload", () => {
-    window.caches.delete("nystem");
     window.localStorage.clear();
-    window.location.reload();
+    window.caches.delete("nystem").then(() => {
+      window.location.reload();
+    });
   });
 
   app.connection.on("connect", () => {

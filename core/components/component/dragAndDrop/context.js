@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from "react";
 import app from "nystem";
-import * as mDnd from "./myDnd";
+import { DragDropContext } from "./myDnd";
 
 const DragAndDropContext = ({ children }) => {
   const modifiers = useRef({});
@@ -16,13 +16,13 @@ const DragAndDropContext = ({ children }) => {
   }, []);
 
   return (
-    <mDnd.DragDropContext
+    <DragDropContext
       onDragEnd={(e) => {
         app().event("dragAndDropOnDragEnd", { ...modifiers.current, ...e });
       }}
     >
       {children}
-    </mDnd.DragDropContext>
+    </DragDropContext>
   );
 };
 export default DragAndDropContext;

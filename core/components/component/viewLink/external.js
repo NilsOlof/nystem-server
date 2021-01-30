@@ -11,11 +11,13 @@ const ViewLinkExternal = ({ view, path, model }) => {
   };
 
   const { className, item, href } = model;
+  let link = insertVal(href);
+  if (!/https?:\/\//im.test(link)) link = `https://${link}`;
 
   return (
     <Wrapper
       className={className}
-      href={`https://${insertVal(href).replace(/https?:\/\//, "")}`}
+      href={link}
       target="_blank"
       renderAs="a"
       rel="noopener"

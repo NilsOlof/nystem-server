@@ -1,12 +1,11 @@
 import React, { useState, useEffect, useRef } from "react";
 import { ContentTypeRender, Wrapper } from "nystem-components";
 import app from "nystem";
-import * as myDnd from "./myDnd";
+import { Droppable, Draggable } from "./myDnd";
 
 export const DragAndDropListContext = React.createContext();
 
 const DragAndDropList = ({ value = [], model, path, view }) => {
-  const { Droppable, Draggable } = myDnd;
   const [droppableId] = useState(app().uuid());
 
   const ids = useRef([]);

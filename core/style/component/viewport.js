@@ -9,7 +9,7 @@ const breakpoints = {
   xl: 1200,
 };
 
-const Viewport = ({ comp }) => {
+const Viewport = ({ children }) => {
   const [state, setState] = useState({
     density: window.devicePixelRatio,
     width: window.innerWidth,
@@ -50,9 +50,7 @@ const Viewport = ({ comp }) => {
   }, []);
 
   return state.reload ? null : (
-    <ViewportContextProvider value={state}>
-      {React.createElement(comp)}
-    </ViewportContextProvider>
+    <ViewportContextProvider value={state}>{children}</ViewportContextProvider>
   );
 };
 

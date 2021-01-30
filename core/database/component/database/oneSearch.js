@@ -9,23 +9,21 @@ const DatabaseOneSearch = ({ noAutoUpdate, contentType, search: inSearch }) => {
   const [loading, setLoading] = useState(false);
 
   const setSearch = useCallback(
-    (search) => {
-      setLoading(true);
+    (search, loading) => {
+      if (loading) setLoading(true);
 
       db.search({ ...search, data: undefined }).then((search) => {
         setSearchState(search);
-        setLoading(false);
+        if (loading) setLoading(false);
       });
-
-      // if (!noAutoUpdate) db.on("update", setSearch);
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [db, searchString]
   );
 
   useEffect(() => {
-    setSearch(inSearch);
-
+    setSearch(inSearch, true);
+    if (!noAutoUpdate) db.on("update", () => setSearch(search));
     return () => {
       if (!noAutoUpdate) db.off("update", setSearch);
     };

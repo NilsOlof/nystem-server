@@ -2,6 +2,20 @@ const { exec, spawn } = require("child_process");
 const fs = require("fs-extra");
 const os = require("os");
 
+const addPreload = (html) => {
+  let out = "";
+  const files = /<(link|script)[^>]+"(\/static\/(css|js)[^"]+)/gim;
+  let match = files.exec(html);
+  while (match != null) {
+    const [, type, src] = match;
+    out += `<link rel="preload" href="${src}" as="${
+      type === "link" ? "style" : "script"
+    }">`;
+    match = files.exec(html);
+  }
+  return html.replace("<head>", `<head>${out}`);
+};
+
 const runCommandExec = (command, cwd) =>
   new Promise((resolve, reject) =>
     exec(command, { cwd: cwd ? folder + cwd : null }, (error, stdout, stderr) =>
@@ -97,6 +111,13 @@ const deploy = async () => {
     await fs.copy(
       `${folderAsUnix}/web/src/contentype.json`,
       `${folderAsUnix}/build/contentype.json`
+    );
+
+    await fs.writeFile(
+      `${folderAsUnix}/build/index.html`,
+      addPreload(
+        await fs.readFile(`${folderAsUnix}/web/build/index.html`, "utf8")
+      )
     );
 
     console.log("Copy done, adding to git");

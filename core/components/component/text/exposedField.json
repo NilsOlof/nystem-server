@@ -11,6 +11,11 @@
       "text": "Class"
     },
     {
+      "type": "boolean",
+      "id": "exact",
+      "text": "Exact"
+    },
+    {
       "type": "text",
       "id": "saveId",
       "text": "Save searchvalue as query id"

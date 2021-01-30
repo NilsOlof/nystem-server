@@ -6,11 +6,6 @@
       "text": "Value type"
     },
     {
-      "id": "myDnd",
-      "text": "My DND",
-      "type": "boolean"
-    },
-    {
       "id": "minHeight",
       "text": "Min height",
       "type": "int"

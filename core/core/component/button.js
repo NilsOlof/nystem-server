@@ -11,6 +11,8 @@ const types = {
   info: "btn",
   error: "btn",
   default: "bg-gray-200 hover:bg-gray-300 text-gray-900 border border-gray-300",
+  light: "bg-gray-200 hover:bg-gray-300 text-gray-900 border border-gray-300",
+  dark: "bg-gray-400 hover:bg-gray-300 text-gray-900 border border-gray-700",
   primaryDisabled: "bg-blue-400 cursor-not-allowed",
   secondaryDisabled: "bg-gray-600 text-white cursor-not-allowed",
   dangerDisabled: "bg-red-400 text-white cursor-not-allowed",

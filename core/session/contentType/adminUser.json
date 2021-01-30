@@ -77,11 +77,6 @@
 					"category": "contentTypeField"
 				},
 				{
-					"id": "role",
-					"type": "dropdown",
-					"category": "contentTypeField"
-				},
-				{
 					"type": "viewButton",
 					"category": "view"
 				}
@@ -201,7 +196,9 @@
 						"w-32"
 					]
 				}
-			]
+			],
+			"focus": true,
+			"addForm": true
 		},
 		{
 			"name": "view",

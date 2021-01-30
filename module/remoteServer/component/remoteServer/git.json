@@ -1,9 +1,0 @@
-{
-	"item": [
-		{
-			"type": "gridselect",
-			"id": "className",
-			"text": "Class"
-		}
-	]
-}

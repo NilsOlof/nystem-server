@@ -11,21 +11,6 @@
       "text": "Row class name"
     },
     {
-      "type": "boolean",
-      "text": "Expandable",
-      "id": "expandable"
-    },
-    {
-      "type": "boolean",
-      "text": "Expanded",
-      "id": "expanded"
-    },
-    {
-      "type": "boolean",
-      "text": "Item expanded",
-      "id": "itemExpanded"
-    },
-    {
       "text": "Fields",
       "id": "item",
       "type": "viewCreator",
