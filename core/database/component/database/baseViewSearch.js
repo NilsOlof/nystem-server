@@ -1,29 +1,41 @@
-import { useEffect, useContext } from "react";
+import { useEffect, useContext, useState } from "react";
 import { DatabaseSearchContext } from "nystem-components";
 
 const DatabaseBaseViewSearch = ({ view }) => {
+  const [baseFilter, setBaseFilter] = useState({});
   const { search } = useContext(DatabaseSearchContext);
 
   useEffect(() => {
     const updateSearch = ({ filter }) => {
-      if (filter) view.event("setSearch", { ...search, filter });
+      setBaseFilter(filter);
     };
-    view.baseView.on("search", updateSearch);
+    view.baseView.on("search", -100, updateSearch);
     return () => {
       view.baseView.off("search", updateSearch);
     };
-  }, [view.baseView, search, view]);
+  }, [view]);
 
   useEffect(() => {
     if (!search.contentType || search.filter) return;
 
-    const updateSearch = ({ filter }) => {
-      if (filter) view.event("setSearch", { ...search, filter });
-    };
     setTimeout(() => {
-      view.baseView.event("getSearch").then(updateSearch);
+      view.baseView
+        .event("getSearch")
+        .then(({ filter }) => setBaseFilter(filter));
     }, 0);
-  }, [view.baseView, search, view]);
+  }, [search, view]);
+
+  useEffect(() => {
+    if (!baseFilter) return;
+
+    const onSearch = (search) => ({ ...search, filter: baseFilter });
+
+    view.on("setSearch", 10, onSearch);
+    view.event("setSearch");
+    return () => {
+      view.off("setSearch", onSearch);
+    };
+  }, [baseFilter, view]);
 
   return null;
 };

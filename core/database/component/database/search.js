@@ -57,7 +57,7 @@ const DatabaseSearch = ({ view, model, path, children }) => {
 
     const onSearch = () => ({ ...options, filter: getFilter() });
     view.on("setSearch", 1000, onSearch);
-    view.on("change", -10, onChange);
+    view.on("change", -1000, onChange);
 
     setTimeout(() => {
       view.event("setSearch", options);

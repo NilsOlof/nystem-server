@@ -1,1 +1,20 @@
-{}
+{
+  "item": [
+    {
+      "id": "className",
+      "text": "Class",
+      "type": "gridselect"
+    },
+    {
+      "text": "Match",
+      "id": "match",
+      "type": "text"
+    },
+    {
+      "text": "Fields",
+      "id": "item",
+      "type": "viewCreator",
+      "expanded": true
+    }
+  ]
+}

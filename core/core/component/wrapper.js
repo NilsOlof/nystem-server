@@ -27,6 +27,8 @@ const tags = [
   "th",
   "td",
   "sup",
+  "main",
+  "header",
 ].reduce((prev, tag) => {
   prev[tag] = true;
   return prev;

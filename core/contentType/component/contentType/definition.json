@@ -17,16 +17,6 @@
       "type": "text"
     },
     {
-      "text": "No client cache",
-      "id": "noClientCache",
-      "type": "boolean"
-    },
-    {
-      "text": "Static data content",
-      "id": "staticContent",
-      "type": "boolean"
-    },
-    {
       "text": "In module",
       "id": "module",
       "type": "contentTypeModule",
@@ -89,6 +79,21 @@
       "inline": true,
       "limit": 1,
       "default": ["data"]
+    },
+    {
+      "type": "switchButtons",
+      "item": [
+        {
+          "text": "No client cache",
+          "id": "noClientCache",
+          "type": "boolean"
+        },
+        {
+          "text": "Static data content",
+          "id": "staticContent",
+          "type": "boolean"
+        }
+      ]
     },
     {
       "text": "Security",

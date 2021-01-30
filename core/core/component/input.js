@@ -8,7 +8,7 @@ const byType = {
   checkbox: "m-4",
 };
 
-const Input = ({ selectAllOnFocus, type, value, ...props }, parentRef) => {
+const Input = ({ type, value, ...props }, parentRef) => {
   const localRef = useRef(null);
   const [val, setVal] = useState(value);
   const ref = parentRef || localRef;
@@ -24,54 +24,52 @@ const Input = ({ selectAllOnFocus, type, value, ...props }, parentRef) => {
     if (props.focus) ref.current.focus();
   }, [props.focus, ref]);
 
-  const elementProps = { ...props };
-  delete elementProps.focus;
-  delete elementProps.renderAs;
-  delete elementProps.accessibilityLabel;
-  delete elementProps.accessible;
-  delete elementProps.translate;
-  delete elementProps.accessibilityTraits;
-  delete elementProps.accessibilityTraits;
-
   let { className } = props;
-  className = className instanceof Array ? className.join(" ") : className;
+  className =
+    className instanceof Array
+      ? className
+          .flat(Infinity)
+          .filter((item) => item)
+          .join(" ")
+      : className;
 
   type = type || "text";
   if (!className && ["text", "password"].includes(type))
     className = "sm:w-1/2 w-full";
 
-  if (className && className.includes("floatlabel"))
-    return (
-      <input
-        ref={ref}
-        {...elementProps}
-        className={` ${className}`}
-        onChange={(e) => props.onChange(e.target.value)}
-        onFocus={(ev) => {
-          if (selectAllOnFocus) ref.current.select();
-          if (elementProps.onFocus) return elementProps.onFocus(ev);
-        }}
-        type={type}
-        value={value}
-      />
-    );
+  const elementProps = {
+    ...props,
+    ref,
+    onChange: (e) => {
+      setVal(e.target.value);
+      props.onChange(e.target.value);
+    },
+    onFocus: (ev) => {
+      if (props.selectAllOnFocus) ref.current.select();
+      if (props.onFocus) return props.onFocus(ev);
+    },
+    className: `${byType[type]} ${className}`,
+    type,
+    value: val,
+    focus: undefined,
+    renderAs: undefined,
+    accessibilityLabel: undefined,
+    accessible: undefined,
+    translate: undefined,
+    accessibilityTraits: undefined,
+    selectAllOnFocus: undefined,
+  };
 
-  return (
-    <input
-      ref={ref}
-      {...elementProps}
-      className={`${byType[type]} ${className}`}
-      onChange={(e) => {
-        setVal(e.target.value);
-        props.onChange(e.target.value);
-      }}
-      onFocus={(ev) => {
-        if (selectAllOnFocus) ref.current.select();
-        if (elementProps.onFocus) return elementProps.onFocus(ev);
-      }}
-      type={type}
-      value={val}
-    />
+  Object.keys(elementProps)
+    .filter((key) => elementProps[key] === undefined)
+    .forEach((key) => {
+      delete elementProps[key];
+    });
+
+  return type === "textarea" ? (
+    <textarea {...elementProps} />
+  ) : (
+    <input {...elementProps} />
   );
 };
 

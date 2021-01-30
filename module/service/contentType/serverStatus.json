@@ -224,7 +224,8 @@
 										}
 									],
 									"className": [
-										"flex"
+										"flex",
+										"py-1"
 									],
 									"format": "onOver",
 									"classNameOver": [
@@ -238,6 +239,9 @@
 							"format": "panelOpen",
 							"classNameOpen": [
 								"is-open"
+							],
+							"className": [
+								""
 							]
 						}
 					],
@@ -365,7 +369,8 @@
 						}
 					],
 					"className": [
-						"flex"
+						"flex",
+						"py-1"
 					]
 				},
 				{

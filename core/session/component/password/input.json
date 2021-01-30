@@ -37,6 +37,11 @@
           "text": "No label",
           "type": "boolean",
           "id": "nolabel"
+        },
+        {
+          "text": "No autoComplete",
+          "type": "boolean",
+          "id": "noAutoComplete"
         }
       ]
     }

@@ -1,0 +1,14 @@
+{
+  "item": [
+    {
+      "type": "text",
+      "id": "field",
+      "text": "Field"
+    },
+    {
+      "type": "text",
+      "id": "value",
+      "text": "Set value"
+    }
+  ]
+}

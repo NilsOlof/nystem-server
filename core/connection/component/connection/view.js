@@ -11,8 +11,9 @@ const ConnectionView = ({ model = {}, offline, className, path, children }) => {
 
     app().connection.on("connect", update);
     app().connection.on("disconnect", update);
-    if (connected !== isConnected()) setConnectedState(isConnected());
-
+    setTimeout(() => {
+      if (connected !== isConnected()) setConnectedState(isConnected());
+    }, 60);
     return () => {
       app().connection.off("connect", update);
       app().connection.off("disconnect", update);

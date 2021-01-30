@@ -22,26 +22,7 @@ const TextInput = ({ model, view, focus, setValue, value }, ref) => {
   const { disabled, length, text, clearButton, classNameInput = [] } = model;
   const [id] = useState(app().uuid);
 
-  const contents = (
-    <Input
-      id={id}
-      ref={ref}
-      placeholder={model.placeholder || app().t(text)}
-      className={classNameInput}
-      value={value || ""}
-      maxLength={length}
-      onChange={(value) => setValue(value)}
-      disabled={disabled}
-      type="text"
-      focus={model.focus || focus}
-      onBlur={() => setValidated(true)}
-      selectAllOnFocus={model.selectAllOnFocus}
-    />
-  );
-
-  return model.noWrapper ? (
-    contents
-  ) : (
+  return (
     <InputWrapper
       id={id}
       model={{
@@ -50,7 +31,20 @@ const TextInput = ({ model, view, focus, setValue, value }, ref) => {
       }}
       error={error}
     >
-      {contents}
+      <Input
+        id={id}
+        ref={ref}
+        placeholder={model.placeholder || app().t(text)}
+        className={classNameInput}
+        value={value || ""}
+        maxLength={length}
+        onChange={(value) => setValue(value)}
+        disabled={disabled}
+        type="text"
+        focus={model.focus || focus}
+        onBlur={() => setValidated(true)}
+        selectAllOnFocus={model.selectAllOnFocus}
+      />
       {clearButton ? <ClearButton value={value} setValue={setValue} /> : null}
     </InputWrapper>
   );

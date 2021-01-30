@@ -28,7 +28,7 @@ const EmailInput = ({ model, view, focus, setValue, value, className }) => {
         className={classNameInput}
         value={value || ""}
         maxLength={length}
-        onChange={(value) => setValue(value)}
+        onChange={(value) => setValue(value.toLowerCase())}
         disabled={disabled}
         type="text"
         focus={focus}

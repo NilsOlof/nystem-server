@@ -60,5 +60,4 @@ const ViewListView = ({ model, view }) => {
     </Wrapper>
   );
 };
-
 export default ViewListView;

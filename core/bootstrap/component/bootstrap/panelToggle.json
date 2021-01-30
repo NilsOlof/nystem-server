@@ -6,6 +6,11 @@
       "type": "gridselect"
     },
     {
+      "id": "iconClassName",
+      "text": "Icon class",
+      "type": "gridselect"
+    },
+    {
       "id": "icon",
       "text": "Icon",
       "type": "boolean"

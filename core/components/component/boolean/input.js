@@ -1,9 +1,11 @@
-import React from "react";
+import React, { useState } from "react";
 import { InputWrapper, Input, Button, UseValidator } from "nystem-components";
+import app from "nystem";
 import validate from "./validate";
 
 const BooleanInput = ({ model, setValue, value, view, render }) => {
   const [error, setValidated] = UseValidator({ view, validate, value, model });
+  const [id] = useState(app().uuid);
 
   const handleChangeButton = (e) => {
     setValidated(true);
@@ -23,8 +25,10 @@ const BooleanInput = ({ model, setValue, value, view, render }) => {
     );
 
   return (
-    <InputWrapper model={model} error={error}>
+    <InputWrapper id={id} model={model} error={error}>
       <Input
+        id={id}
+        className={model.classNameInput}
         placeholder={model.text}
         checked={value || false}
         onChange={() => setValue(!value)}

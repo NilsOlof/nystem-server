@@ -29,7 +29,7 @@ const FloatInput = ({ model, view, focus, setValue, value, className }) => {
         value={!value && value !== 0 ? "" : value}
         maxLength={length}
         onChange={(value) => {
-          const val = value.replace(/[^0-9.]/gim, "");
+          const val = value.replace(/[^0-9.-]/gim, "");
           setValue(val ? parseFloat(val) : undefined);
         }}
         disabled={disabled}

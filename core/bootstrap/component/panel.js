@@ -59,7 +59,7 @@ const Panel = ({ body, header, className, ...props }) => {
         </PanelContext.Provider>
       </Wrapper>
       {isExpanded ? (
-        <Wrapper className={type.body}>{body}</Wrapper>
+        <Wrapper className={props.bodyClassName || type.body}>{body}</Wrapper>
       ) : props.visibilityHidden ? (
         <Wrapper className={[type.body, "hidden"]}>{body}</Wrapper>
       ) : null}

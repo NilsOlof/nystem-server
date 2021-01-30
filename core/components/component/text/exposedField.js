@@ -4,7 +4,7 @@ import { TextInput, UseSearch, RouterUseQueryStore } from "nystem-components";
 const TextExposedField = ({ model, view }) => {
   const [className, setClassName] = useState("");
   const [value, setValue, ref] = RouterUseQueryStore(model.saveId);
-  UseSearch({ view, id: model.id, value });
+  UseSearch({ view, id: model.id, value, exact: model.exact || undefined });
 
   useEffect(() => {
     if (!value) {
@@ -32,6 +32,7 @@ const TextExposedField = ({ model, view }) => {
       ref={ref}
       model={{
         ...model,
+        mandatory: false,
         clearButton: true,
         classNameInput: [
           !model.noWrapper && "w-full",

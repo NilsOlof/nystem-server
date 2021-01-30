@@ -1,9 +1,8 @@
 import React, { useState, useEffect } from "react";
 import app from "nystem";
-import * as myDnd from "./myDnd";
+import { Droppable, Draggable } from "./myDnd";
 
 const DragAndDropSortable = ({ Component, items = [], setValue }) => {
-  const { Droppable, Draggable } = myDnd;
   const [droppableId] = useState(app().uuid());
   useEffect(() => {
     if (!items.length) return;

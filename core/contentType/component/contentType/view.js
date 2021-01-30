@@ -31,9 +31,6 @@ const setValueAtPath = ({ path, current, value }) => {
 };
 
 const getId = ({ path = "", id = "" }) => {
-  if (id.includes(".") && path.includes("."))
-    id = id.substring(id.lastIndexOf(".") + 1);
-
   if (path && id) return `${path}.${id}`;
   if (id) return id;
   return path;
@@ -88,9 +85,9 @@ const useValue = ({ view, propvalue }) => {
 
     view.on("change", 1000, changeData);
 
-    const setData = ({ value: newValue }) => {
+    const setData = async ({ value: newValue }) => {
       value = newValue;
-      setValue({ ...value });
+      await setValue({ ...value });
 
       if (!firstData) {
         // eslint-disable-next-line no-multi-assign
@@ -98,7 +95,7 @@ const useValue = ({ view, propvalue }) => {
         setLoading(false);
       }
     };
-    view.on("change", -1000, setData);
+    view.on("change", -999, setData);
 
     const saveData = (data) => {
       savedData = data;
@@ -202,7 +199,7 @@ const ContentTypeView = ({
   const context = { contentType, model, view, value };
   const items = view.item ? view.item.slice(itemFrom, itemTo) : [];
 
-  if (!renderAs) renderAs = !addForm ? undefined : "form";
+  if (!renderAs) renderAs = !(addForm || view.addForm) ? undefined : "form";
 
   return (
     <ViewContextProvider value={context}>

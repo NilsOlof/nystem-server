@@ -1,6 +1,7 @@
 import React from "react";
 import app from "nystem";
 import { Wrapper } from "nystem-components";
+import "./inputWrapper.css";
 
 const InputWrapper = ({
   model,
@@ -57,6 +58,16 @@ const InputWrapper = ({
     ) : null;
 
   const className = pClassName || model.className;
+
+  if (model.noWrapper)
+    return (
+      <>
+        <label htmlFor={id} className="label-hidden">
+          {model.text}
+        </label>
+        {children}
+      </>
+    );
 
   if (model.nolabel)
     return (
