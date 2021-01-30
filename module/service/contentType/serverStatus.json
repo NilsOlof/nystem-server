@@ -427,7 +427,8 @@
 						"h-100",
 						"scrollbar",
 						"scrollbar-dark"
-					]
+					],
+					"event": "log"
 				}
 			]
 		}
