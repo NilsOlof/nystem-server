@@ -1,0 +1,1 @@
+{"version":3,"sources":["core/date/client/pikaday.js"],"names":["pikaday","option","Pikaday"],"mappings":"2FAAA,0EAGO,MAAMA,EAAWC,GAAW,IAAIC,IAAQD","file":"static/js/4.47b676f3.chunk.js","sourcesContent":["import Pikaday from \"pikaday\";\r\nimport \"pikaday/css/pikaday.css\";\r\n\r\nexport const pikaday = (option) => new Pikaday(option);\r\n"],"sourceRoot":""}
