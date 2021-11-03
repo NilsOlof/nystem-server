@@ -37,11 +37,11 @@ const DragAndDropSortable = ({ Component, items = [], setValue }) => {
 
   return (
     <Droppable droppableId={droppableId} type={items[0].contentType}>
-      {(provided, snapshot) => (
+      {(provided) => (
         <div {...provided.droppableProps} ref={provided.innerRef}>
           {items.map((item, index) => (
             <Draggable key={item.id} draggableId={item.id} index={index}>
-              {(provided, snapshot) => (
+              {(provided) => (
                 <div
                   ref={provided.innerRef}
                   {...provided.draggableProps}

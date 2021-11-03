@@ -5,12 +5,12 @@ const UseValidator = ({ validate, view, model, value }) => {
   const error = isValidated && validate({ value, model });
 
   useEffect(() => {
-    const validator = async ({ errors }) => {
-      setValidated(true);
+    const validator = async ({ errors, silent }) => {
+      if (!silent) setValidated(true);
 
       const error = await Promise.resolve(validate({ value, model }) || false);
       if (error) errors = [...(errors || []), error];
-      return errors ? { errors } : undefined;
+      return errors ? { errors, silent } : undefined;
     };
 
     const clearErrorValidation = () => {

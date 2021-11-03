@@ -1,0 +1,94 @@
+{
+  "item": [
+    {
+      "type": "gridselect",
+      "id": "className",
+      "text": "Class"
+    },
+    {
+      "type": "select",
+      "option": [
+        {
+          "text": "light",
+          "_id": "light"
+        },
+        {
+          "text": "primary",
+          "_id": "primary"
+        },
+        {
+          "text": "info",
+          "_id": "info"
+        },
+        {
+          "_id": "warning",
+          "text": "warning"
+        },
+        {
+          "text": "danger",
+          "_id": "danger"
+        },
+        {
+          "text": "success",
+          "_id": "success"
+        }
+      ],
+      "inline": true,
+      "render": "button",
+      "id": "btnType",
+      "text": "Type",
+      "limit": "1"
+    },
+    {
+      "type": "select",
+      "option": [
+        {
+          "text": "Undo",
+          "_id": "undo"
+        },
+        {
+          "text": "Redo",
+          "_id": "redo"
+        }
+      ],
+      "inline": true,
+      "render": "button",
+      "id": "action",
+      "text": "Type"
+    },
+    {
+      "type": "select",
+      "option": [
+        {
+          "text": "xs",
+          "_id": "xs"
+        },
+        {
+          "text": "sm",
+          "_id": "sm"
+        },
+        {
+          "text": "base",
+          "_id": "base"
+        },
+        {
+          "text": "lg",
+          "_id": "lg"
+        },
+        {
+          "text": "xl",
+          "_id": "xl"
+        },
+        {
+          "text": "2xl",
+          "_id": "2xl"
+        }
+      ],
+      "inline": true,
+      "render": "button",
+      "id": "size",
+      "text": "Size",
+      "limit": "1"
+    }
+  ]
+}

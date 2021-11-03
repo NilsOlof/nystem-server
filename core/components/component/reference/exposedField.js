@@ -19,6 +19,7 @@ const ReferenceExposedField = ({ model, view, path }) => {
 
   const selectModel = app().utils.clone(model);
   delete selectModel.source;
+  delete selectModel.mandatory;
 
   selectModel.option = option.map((item) => ({
     ...item,

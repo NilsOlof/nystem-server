@@ -1,4 +1,4 @@
-module.exports = function (app) {
+module.exports = (app) => {
   const { fs } = app;
   // Load and and merge contentypes into one JSON
   app.on("getContentTypes", () => {
@@ -52,7 +52,8 @@ module.exports = function (app) {
 
   app.on("init", saveContentTypes, 1000);
 
-  const isComponentFormat = /(core|module)\/[^/]+\/component\/([^/]+)\/([^/]+)\.json/im;
+  const isComponentFormat =
+    /(core|module)\/[^/]+\/component\/([^/]+)\/([^/]+)\.json/im;
   app.on("getComponentDefinitions", () =>
     app.filePaths
       .map((path) => ({
@@ -83,12 +84,16 @@ module.exports = function (app) {
       return result;
     }, {});
 
+  if (!app.fs.existsSync(`${app.__dirname}/web`)) return;
+
   app.event("getComponentDefinitions").then((data) => {
     const viewCreatorFields = objectMap(data, (format) => {
       if (!format.item) return false;
 
       const fields = format.item
-        .filter((item) => ["viewCreator", "dynamicField"].includes(item.type))
+        .filter((item) =>
+          ["viewCreator", "dynamicField", "dropReference"].includes(item.type)
+        )
         .map((item) => item.id);
 
       return fields.length ? fields : false;

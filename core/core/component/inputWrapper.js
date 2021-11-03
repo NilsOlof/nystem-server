@@ -16,7 +16,7 @@ const InputWrapper = ({
     const classNameLabel = [...(model.classNameLabel || [])];
     if (!model.floatlabel)
       classNameLabel.push(
-        "mr-3 font-semibold sm:w-40 w-1/4 text-right align-top mt-2"
+        "mr-3 font-semibold sm:w-40 w-1/4 text-right align-top mt-1 flex-shrink-0"
       );
 
     if (!model.text) return null;
@@ -38,7 +38,7 @@ const InputWrapper = ({
   function errorMsg() {
     error = error === true ? "Required field" : error;
 
-    const className = ["text-red-600 mr-3 sm:w-40 w-1/4 text-right align-top"];
+    const className = ["sm:ml-48 mt-2 align-top block text-red-600"];
     if (pClassName) className.push(pClassName);
 
     if (error)
@@ -52,7 +52,7 @@ const InputWrapper = ({
 
   const info = () =>
     model.info ? (
-      <span className="mr-3 sm:w-40 w-1/4 text-right align-top">
+      <span className="sm:ml-48 mt-2 align-top block text-gray-500">
         {app().t(model.info)}
       </span>
     ) : null;
@@ -61,12 +61,12 @@ const InputWrapper = ({
 
   if (model.noWrapper)
     return (
-      <>
+      <Wrapper className={className}>
         <label htmlFor={id} className="label-hidden">
           {model.text}
         </label>
-        {children}
-      </>
+        <Wrapper className={model.classNameInput}>{children}</Wrapper>
+      </Wrapper>
     );
 
   if (model.nolabel)

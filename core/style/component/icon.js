@@ -32,3 +32,5 @@ const Icon = ({ icon, className, renderAs, deg, ...props }) => {
   );
 };
 export default Icon;
+
+// https://www.zondicons.com/icons.html

@@ -1,5 +1,5 @@
 import React, { useContext } from "react";
-import { ContentTypeRender, Icon } from "nystem-components";
+import { ContentTypeRender, Icon, Wrapper } from "nystem-components";
 import { DragAndDropListContext } from "./list";
 
 const DragAndDropHandle = ({ model, path }) => {
@@ -7,10 +7,10 @@ const DragAndDropHandle = ({ model, path }) => {
   const dragHandleProps = useContext(DragAndDropListContext);
 
   return (
-    <div className={className.join(" ")} {...dragHandleProps}>
+    <Wrapper className={className} {...dragHandleProps}>
       {model.icon && <Icon icon="move" className="w-8 h-8 py-2" />}
-      <ContentTypeRender path={path} items={item} />
-    </div>
+      {item && <ContentTypeRender path={path} items={item} />}
+    </Wrapper>
   );
 };
 

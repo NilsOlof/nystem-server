@@ -38,7 +38,7 @@ class ErrorManager extends React.Component {
       self.setState({ error: false });
     }, 5000);
   }
-  errorReload(error, url, line) {
+  errorReload() {
     window.location.reload();
   }
   componentWillUnmount() {

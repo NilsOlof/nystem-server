@@ -9,6 +9,11 @@
       "type": "text",
       "id": "value",
       "text": "Set value"
+    },
+    {
+      "type": "multilinetext",
+      "id": "arrValue",
+      "text": "Set value in array"
     }
   ]
 }

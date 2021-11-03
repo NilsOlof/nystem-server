@@ -4,7 +4,7 @@ import { Button } from "nystem-components";
 const SelectButton = ({ model, setValue, value }) => {
   const { trueState, trueOnState, falseState, btnType, falseOnState } = model;
 
-  const handleChange = (e) =>
+  const handleChange = () =>
     setValue(trueOnState.indexOf(value) ? trueState : falseState);
 
   let text = "";

@@ -35,14 +35,14 @@
       "item": [
         {
           "type": "text",
-          "text": "Label",
-          "id": "text",
+          "text": "Id",
+          "id": "_id",
           "mandatory": true
         },
         {
           "type": "text",
-          "text": "Id",
-          "id": "_id",
+          "text": "Label",
+          "id": "text",
           "mandatory": true
         }
       ]

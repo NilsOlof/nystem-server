@@ -1,0 +1,24 @@
+{
+  "item": [
+    {
+      "id": "fieldFormat",
+      "text": "Format",
+      "type": "text"
+    },
+    {
+      "id": "field",
+      "text": "Header field",
+      "type": "select",
+      "render": "button",
+      "option": [
+        "title",
+        "description",
+        "og:title",
+        "og:description",
+        "og:url",
+        "og:image"
+      ],
+      "limit": 1
+    }
+  ]
+}

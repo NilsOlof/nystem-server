@@ -45,7 +45,8 @@ const runGitCommand = (command) =>
 
 const dirname = process.env.NODE__DIRNAME || __dirname;
 const folder = dirname.replace(/\\/g, "/");
-const folderAsUnix = folder.replace(/\//g, "\\");
+const folderAsUnix =
+  process.platform === "win32" ? folder.replace(/\//g, "\\") : folder;
 
 let gitFolder = __dirname.replace(/\\/g, "/");
 gitFolder = `${gitFolder.substring(0, gitFolder.lastIndexOf("/core/core"))}/`;

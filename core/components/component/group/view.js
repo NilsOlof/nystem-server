@@ -1,9 +1,12 @@
 import React from "react";
 import { Wrapper, ContentTypeRender } from "nystem-components";
 
-const GroupView = ({ model, path }) => (
+const GroupView = ({ view, model, path }) => (
   <Wrapper className={model.className}>
-    <ContentTypeRender items={model.item} path={path} />
+    <ContentTypeRender
+      items={model.item}
+      path={view.getValuePath(path, model.id)}
+    />
   </Wrapper>
 );
 export default GroupView;

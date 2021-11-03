@@ -1,4 +1,4 @@
-import React, { useMemo, useEffect, useState } from "react";
+import React, { useRef, useMemo, useEffect, useState } from "react";
 import app from "nystem";
 import {
   InputWrapper,
@@ -21,7 +21,7 @@ const normalizeOption = ({ option, optionObj }) =>
           : item
       );
 
-const renderButton = ({ option, handleChange, value, model }) => (
+const RenderButton = ({ option, handleChange, value, model }) => (
   <Wrapper className={model.classNameInput}>
     {option.map(({ text, _id }) => (
       <Button
@@ -37,28 +37,50 @@ const renderButton = ({ option, handleChange, value, model }) => (
   </Wrapper>
 );
 
-const renderCheckbox = ({ option, handleChange, value, limit, inline }) => (
-  <Wrapper className="flex flex-wrap items-center">
-    {option.map(({ text, _id }) => (
-      <span className={`px-2 my-1 checkbox ${inline}`} key={_id}>
-        <label>
-          <input
-            onChange={() => handleChange(_id)}
-            type={limit === 1 ? "radio" : "checkbox"}
-            checked={value.indexOf(_id) !== -1 ? "checked" : false}
-            className="p-1 mr-2"
-          />
-          {text}
-        </label>
-      </span>
-    ))}
-  </Wrapper>
-);
+const RenderCheckbox = ({
+  model,
+  option,
+  handleChange,
+  value,
+  limit,
+  inline,
+}) => {
+  const ref = useRef();
+  useEffect(() => {
+    if (!ref.current || !model.focus) return;
+    ref.current.focus();
+  }, [model.focus, option.length]);
 
-const renderDropdown = ({ id, option, handleChange, value, placeholder }) => (
+  return (
+    <Wrapper className={inline && "flex flex-wrap items-center"}>
+      {option.map(({ text, _id }, index) => (
+        <Wrapper className={["px-2", "my-1"]} key={_id}>
+          <label>
+            <input
+              ref={index === 0 ? ref : undefined}
+              onChange={() => handleChange(_id)}
+              type={limit === 1 ? "radio" : "checkbox"}
+              checked={value.indexOf(_id) !== -1 ? "checked" : false}
+              className="p-1 mr-2"
+            />
+            {text}
+          </label>
+        </Wrapper>
+      ))}
+    </Wrapper>
+  );
+};
+
+const RenderDropdown = ({
+  option,
+  handleChange,
+  value,
+  placeholder,
+  model,
+}) => (
   // eslint-disable-next-line jsx-a11y/no-onchange
   <Select
-    className="sm:w-1/2 w-full p-2 border"
+    className={model.classNameInput || "sm:w-1/2 w-full p-2 border"}
     onChange={(e) => handleChange(e.target.value)}
     value={value[0]}
   >
@@ -74,14 +96,22 @@ const renderDropdown = ({ id, option, handleChange, value, placeholder }) => (
 );
 
 const renderTypes = {
-  dropdown: renderDropdown,
-  button: renderButton,
-  checkbox: renderCheckbox,
+  dropdown: RenderDropdown,
+  button: RenderButton,
+  checkbox: RenderCheckbox,
 };
 
 const SelectInput = ({ model, value, view, setValue }) => {
   const [id] = useState(app().uuid);
   const [error, setValidated] = UseValidator({ view, validate, value, model });
+
+  useEffect(() => {
+    if (!view || view.value._id || value.length || !model.default) return;
+
+    setTimeout(() => {
+      setValue(model.default);
+    }, 0);
+  }, [view, value, model, setValue]);
 
   const { placeholder, inline, render } = model;
 
@@ -107,22 +137,18 @@ const SelectInput = ({ model, value, view, setValue }) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const out = renderTypes[render || "checkbox"]({
-    option,
-    handleChange,
-    value,
-    limit,
-    inline,
-    placeholder,
-    model,
-    id,
-  });
-
-  return model.noWrapper ? (
-    out
-  ) : (
+  return (
     <InputWrapper id={id} model={model} error={error}>
-      {out}
+      {renderTypes[render || "checkbox"]({
+        option,
+        handleChange,
+        value,
+        limit,
+        inline,
+        placeholder,
+        model,
+        id,
+      })}
     </InputWrapper>
   );
 };

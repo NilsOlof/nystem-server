@@ -1,4 +1,4 @@
-module.exports = function (app) {
+module.exports = (app) => {
   const { fs } = app;
 
   if (!app.fs.existsSync(`${app.__dirname}/web`)) return;
@@ -95,7 +95,7 @@ module.exports = function (app) {
       .join("\n");
     const importsString2 = setStrings.join(", ");
 
-    importsString = `${importsString}\nexport { ${importsString2} }`;
+    importsString = `/* eslint-disable */\n${importsString}\nexport { ${importsString2} }`;
 
     app.writeFileChanged(
       `${app.__dirname}/web/src/components.js`,

@@ -20,13 +20,13 @@ class Role extends React.Component {
     return false;
   }
   isVisible(props) {
-    const user = app().session.user;
-    let role =
+    const { user } = app().session;
+    const role =
       user && user.role ? ["logged-in"].concat(user.role) : ["logged-out"];
     return this.contains(props.role.split(" "), role);
   }
   sessionChange() {
-    let visible = this.isVisible(this.props);
+    const visible = this.isVisible(this.props);
     if (visible !== this.state.visible) this.setState({ visible });
   }
 

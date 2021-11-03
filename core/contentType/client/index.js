@@ -49,17 +49,20 @@ const replaceInModel = ({
   ];
 
   dynamicFields.forEach((key) => {
-    if (model[key])
-      model[key] = model[key]
-        .map((item) =>
-          replaceInModel({
-            model: item,
-            viewFormat,
-            fn,
-            path: fullId || path,
-          })
-        )
-        .filter((model) => !!model);
+    if (!model[key]) return;
+
+    model[key] = model[key] instanceof Array ? model[key] : [model[key]];
+
+    model[key] = model[key]
+      .map((item) =>
+        replaceInModel({
+          model: item,
+          viewFormat,
+          fn,
+          path: fullId || path,
+        })
+      )
+      .filter((model) => !!model);
   });
 
   return model;
@@ -99,13 +102,24 @@ const populateViews = ({ app }) => {
 
     const fields = flattenFields({ item, viewCreatorFields });
 
+    Object.entries(fields).forEach(([key, value]) => {
+      if (key.indexOf("."))
+        fields[key.substring(0, key.indexOf(".") + 1) + key] = value;
+    });
+
     const populatedViews = views.map((view) =>
       replaceInModel({
         model: { ...view, type: "contentType", id: undefined },
-        fn: ({ model: view, fullId, format }) =>
-          fullId && fields[fullId]
-            ? { format, ...fields[fullId], ...view }
-            : { format, ...view },
+        fn: ({ model: view, fullId, format }) => {
+          if (!fullId) return { format, ...view };
+
+          if (fields[fullId]) return { format, ...fields[fullId], ...view };
+
+          const partId = fullId.split(".").pop();
+          if (fields[partId]) return { format, ...fields[partId], ...view };
+
+          return { format, ...view };
+        },
         viewFormat: view.format || "view",
       })
     );

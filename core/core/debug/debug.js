@@ -1,4 +1,4 @@
-module.exports = function (app) {
+module.exports = (app) => {
   function getStackTrace(row) {
     const obj = {};
     Error.captureStackTrace(obj, getStackTrace);

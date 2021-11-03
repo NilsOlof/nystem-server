@@ -33,7 +33,7 @@ const TextExposedField = ({ model, view }) => {
       model={{
         ...model,
         mandatory: false,
-        clearButton: true,
+        clearButton: !model.noClearButton,
         classNameInput: [
           !model.noWrapper && "w-full",
           className,

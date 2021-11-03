@@ -11,6 +11,11 @@
       "text": "Row class name"
     },
     {
+      "type": "int",
+      "id": "limit",
+      "text": "Limit rows to"
+    },
+    {
       "text": "Fields",
       "id": "item",
       "type": "viewCreator",

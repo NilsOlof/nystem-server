@@ -6,6 +6,16 @@
       "type": "gridselect"
     },
     {
+      "id": "activeClass",
+      "text": "Active class",
+      "type": "gridselect"
+    },
+    {
+      "id": "inactiveClass",
+      "text": "Inactive class",
+      "type": "gridselect"
+    },
+    {
       "id": "text",
       "text": "Text",
       "type": "text"
@@ -14,12 +24,18 @@
       "type": "text",
       "id": "event",
       "mandatory": true,
-      "text": "Connection event"
+      "text": "Event"
     },
     {
       "type": "text",
       "id": "subEvent",
-      "text": "Event"
+      "text": "SubEvent"
+    },
+    {
+      "id": "fields",
+      "text": "Fields",
+      "type": "matrix",
+      "rowLabel": ["Pick", "Save to"]
     },
     {
       "id": "btnType",
@@ -43,35 +59,41 @@
       "type": "select",
       "option": [
         {
-          "text": "xs",
-          "_id": "xs"
+          "text": "connection",
+          "_id": "connection"
         },
         {
-          "text": "sm",
-          "_id": "sm"
+          "text": "view",
+          "_id": "view"
         },
         {
-          "text": "base",
-          "_id": "base"
+          "text": "baseView",
+          "_id": "baseView"
         },
         {
-          "text": "lg",
-          "_id": "lg"
+          "text": "baseViewBaseView",
+          "_id": "baseViewBaseView"
         },
         {
-          "text": "xl",
-          "_id": "xl"
+          "text": "baseViewBaseViewBaseView",
+          "_id": "baseViewBaseViewBaseView"
         },
         {
-          "text": "2xl",
-          "_id": "2xl"
+          "text": "app",
+          "_id": "app"
         }
       ],
       "inline": true,
       "render": "button",
-      "id": "size",
-      "text": "Size",
+      "id": "eventType",
+      "text": "Event type",
       "limit": "1"
+    },
+    {
+      "text": "Fields",
+      "id": "item",
+      "type": "viewCreator",
+      "expanded": true
     }
   ]
 }

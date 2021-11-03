@@ -13,6 +13,21 @@
           "text": "And",
           "type": "matrix",
           "rowLabel": ["Field", "Value"]
+        },
+        {
+          "type": "switchButtons",
+          "item": [
+            {
+              "id": "exact",
+              "text": "Exact search",
+              "type": "boolean"
+            },
+            {
+              "id": "removeifempty",
+              "text": "Remove if empty value",
+              "type": "boolean"
+            }
+          ]
         }
       ],
       "itemExpanded": true

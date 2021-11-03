@@ -108,10 +108,13 @@ module.exports = (app) => {
     function getFilter(query) {
       const searchField = [];
       const searchValue = [];
+      const searchInvert = [];
 
       getFilterArray(query.filter).forEach((filter) => {
         const oneSearchField = [];
         const oneSearchValue = [];
+        const oneSearchInvert = [];
+
         if (filter.$all && filter.$all !== "")
           addFields2All(
             "",
@@ -121,9 +124,15 @@ module.exports = (app) => {
           );
 
         const exact = filter.__exact || query.exact;
-        Object.entries(filter).forEach(([field, value]) => {
+        Object.entries(filter).forEach(([field, value], index) => {
           if (!["$all", "__id", "__exact"].includes(field)) {
             oneSearchField.push(field);
+
+            if (value[0] === "!") {
+              oneSearchInvert[index] = true;
+              value = value.substring(1);
+            }
+
             if (exact) oneSearchValue.push(createRegExp(`^${value}$`));
             else if (value instanceof Array) {
               oneSearchValue.push(createRegExp(value.join("|")));
@@ -137,10 +146,11 @@ module.exports = (app) => {
         if (oneSearchField.length > 0) {
           searchField.push(oneSearchField);
           searchValue.push(oneSearchValue);
+          searchInvert.push(oneSearchInvert);
         }
       });
       if (searchField.length === 0) return {};
-      return { searchField, searchValue };
+      return { searchField, searchValue, searchInvert };
     }
 
     function createRegExp(expression, id) {
@@ -157,7 +167,7 @@ module.exports = (app) => {
       let result = [];
 
       function filterResult(query) {
-        const { searchField, searchValue } = getFilter(query);
+        const { searchField, searchValue, searchInvert } = getFilter(query);
         if (!searchField) return false;
 
         for (let pos = 0; pos < dbArray.length; pos++) {
@@ -168,17 +178,21 @@ module.exports = (app) => {
             for (let field = 0; field < searchField[i].length; field++) {
               let val = thisItem[searchField[i][field]];
               const matchVal = searchValue[i][field];
-              if (val && val.toString() === "[object Object]") {
+              if (val && val.toString() === "[object Object]")
                 val = JSON.stringify(val);
-              }
-              if (
+
+              const addOne =
                 (matchVal === "false" && !val) ||
                 (matchVal === "true" && val) ||
                 (matchVal[0] === "<" &&
                   parseFloat(val) < parseFloat(matchVal.substring(1))) ||
                 (matchVal[0] === ">" &&
                   parseFloat(val) > parseFloat(matchVal.substring(1))) ||
-                (val && matchVal.test && matchVal.test(val))
+                (val && matchVal.test && matchVal.test(val));
+
+              if (
+                (addOne && !searchInvert[i][field]) ||
+                (!addOne && searchInvert[i][field])
               ) {
                 add = true;
                 break;

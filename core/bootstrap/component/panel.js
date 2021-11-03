@@ -25,12 +25,6 @@ const types = {
   },
 };
 
-const addClick = (doFunction) => ({
-  onClick: doFunction,
-  role: "button",
-  tabIndex: "0",
-});
-
 const Panel = ({ body, header, className, ...props }) => {
   const [expanded, setSexpanded] = useState(props.expanded);
   const panelElement = useRef(null);
@@ -47,19 +41,16 @@ const Panel = ({ body, header, className, ...props }) => {
   }, [expanded, props.stateStore]);
 
   const type = types[props.type || "default"];
-  const isExpanded = expanded || props.forceExpanded;
 
   return (
     <Wrapper ref={panelElement} className={[type.wrapper, className]}>
       <Wrapper className={type.header}>
-        <PanelContext.Provider
-          value={{ toggleExpand: addClick(toggleExpand), expanded: isExpanded }}
-        >
+        <PanelContext.Provider value={{ toggleExpand, expanded }}>
           {header}
         </PanelContext.Provider>
       </Wrapper>
-      {isExpanded ? (
-        <Wrapper className={props.bodyClassName || type.body}>{body}</Wrapper>
+      {expanded ? (
+        <Wrapper className={type.body}>{body}</Wrapper>
       ) : props.visibilityHidden ? (
         <Wrapper className={[type.body, "hidden"]}>{body}</Wrapper>
       ) : null}

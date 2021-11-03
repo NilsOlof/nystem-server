@@ -26,7 +26,7 @@ module.exports = (app) => {
 
     collection.on("updates", 500, (query) => {
       const { dbArray } = db;
-      let { date } = query;
+      const { date } = query;
       if (!date) return;
 
       let i = dbArray.length - 1;

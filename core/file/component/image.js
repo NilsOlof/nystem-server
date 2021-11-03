@@ -1,17 +1,21 @@
 import React from "react";
+import app from "nystem";
 
-const Image = ({ alt, className, ...props }) => (
+const add = (path) => {
+  if (/^https?:/im.test(path)) return path;
+
+  const { domain, secure } = app().settings;
+  if (!domain) return `.${path}`;
+
+  return `http${secure ? "s" : ""}://${domain}${path}`;
+};
+
+const Image = ({ className, alt, src, ...props }) => (
   <img
     alt={alt}
-    className={
-      className instanceof Array
-        ? className
-            .flat(Infinity)
-            .filter((item) => item)
-            .join(" ")
-        : className
-    }
     {...props}
+    className={className instanceof Array ? className.join(" ") : className}
+    src={add(src)}
   />
 );
 

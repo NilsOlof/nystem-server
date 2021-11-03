@@ -1,27 +1,36 @@
-module.exports = function (app) {
-  app.connection.on("emit", async (data) => {
-    if (haveConnected === true) return;
-    // console.log("f emit");
-    data = fetch("/httpsfallback", {
+module.exports = (app) => {
+  const onEmit = async (body) => {
+    const response = await fetch("/httpsfallback", {
       method: "post",
-      body: JSON.stringify(data),
-    }).then((response) => response.json());
+      body: JSON.stringify(body),
+    });
+
+    const data = await response.json();
+
+    app.connection.event(data.type, data);
     return data;
+  };
+
+  let state = "notconnected";
+  app.connection.on("connection", ({ connected, fallback }) => {
+    if (!connected || fallback) return;
+
+    if (state === "fallback") app.connection.off("sendSocket", onEmit);
+    state = "connected";
   });
 
-  let haveConnected = false;
-  app.connection.on("connect", (data) => {
-    // console.log("f connect");
-    haveConnected = true;
-  });
+  app.connection.on("error", async () => {
+    if (state === "connected" || state === "fallback") return;
+    state = "fallback";
 
-  app.connection.on("disconnect", (data) => {
-    haveConnected = false;
-  });
+    const response = await fetch("/httpsfallback", {
+      method: "post",
+      body: "li",
+    });
 
-  /*
-  setTimeout(() => {
-    app.connection.event("connect", { type: "connect" });
-  }, 1000);
-  */
+    if ((await response.text()) !== "li") return;
+
+    app.connection.on("emit", onEmit);
+    app.connection.event("connection", { connected: true, fallback: true });
+  });
 };

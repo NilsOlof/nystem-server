@@ -22,14 +22,14 @@ export default (app) => {
       return text;
     },
     translate: function (text) {
-      return text.replace(/t\('([^']+)'\)/g, (str, p1, offset, s) => {
+      return text.replace(/t\('([^']+)'\)/g, (str, p1) => {
         if (translations[lang] && translations[lang][p1])
           return translations[lang][p1];
         return p1;
       });
     },
     insertValues: function (text, data) {
-      return text.replace(/{([a-z0-9_.]+)}/gi, (str, p1, offset, s) => {
+      return text.replace(/{([a-z0-9_.]+)}/gi, (str, p1) => {
         return data[p1] ? data[p1] : `{${p1}}`;
       });
     },
@@ -49,7 +49,7 @@ export default (app) => {
       function guidGenerator() {
         const buf = new Uint16Array(8);
         window.crypto.getRandomValues(buf);
-        const S4 = function (num) {
+        const S4 = (num) => {
           let ret = num.toString(16);
           while (ret.length < 4) {
             ret = `0${ret}`;

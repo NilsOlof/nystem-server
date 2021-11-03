@@ -3,22 +3,18 @@ import app from "nystem";
 import { Wrapper, ContentTypeRender } from "nystem-components";
 
 const ConnectionView = ({ model = {}, offline, className, path, children }) => {
-  const isConnected = () => app().connection.connected();
-  const [connected, setConnectedState] = useState(isConnected());
+  const [connected, setConnectedState] = useState();
 
   useEffect(() => {
-    const update = () => setConnectedState(isConnected());
+    const update = ({ connected }) => setConnectedState(connected);
 
-    app().connection.on("connect", update);
-    app().connection.on("disconnect", update);
-    setTimeout(() => {
-      if (connected !== isConnected()) setConnectedState(isConnected());
-    }, 60);
+    app().connection.on("connection", update);
+    setConnectedState(app().connection.connected);
+
     return () => {
-      app().connection.off("connect", update);
-      app().connection.off("disconnect", update);
+      app().connection.off("connection", update);
     };
-  }, [connected]);
+  }, []);
 
   className = className || model.className;
   offline = offline || model.offline;

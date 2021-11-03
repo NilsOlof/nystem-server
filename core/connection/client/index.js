@@ -1,138 +1,120 @@
 const httpsfallbackM = require("./httpsfallback");
 
-module.exports = function (app) {
-  const URL = `ws${app.settings.secure ? "s" : ""}://${app.settings.domain}`;
-
-  app.webSocket = new WebSocket(URL);
-  let { webSocket } = app;
-  const callbacks = {};
-  let isOnline = false;
-  let reconnect = false;
-
-  let closed = false;
-  let failCount = 1;
-  const log = (text) => {
-    if (isOnline) failCount = 0;
-    if (failCount++ < 10) console.log(text);
-  };
-
-  function openconnection() {
-    log(`openconnection ${URL}`);
-
-    webSocket = webSocket || new WebSocket(URL);
-    webSocket.onerror = () => {
-      log(`error ${URL}`);
-    };
-
-    function connected() {
-      isOnline = true;
-      connection.event("connect", { type: "connect" });
-      console.log("Connected");
-      if (reconnect) window.location.reload();
-      if (app.settings.debug) reconnect = true;
-    }
-    if (webSocket.readyState === 1) connected();
-    webSocket.onopen = connected;
-    webSocket.onclose = function (e) {
-      log(`close ${URL} ${e.code}`);
-      webSocket = false;
-      isOnline = false;
-      if (!closed) setTimeout(openconnection, 1000);
-      connection.event("disconnect", { type: "close" });
-    };
-
-    webSocket.onmessage = function (message) {
-      const data = JSON.parse(message.data);
-      if (callbacks[data.callbackid]) {
-        try {
-          callbacks[data.callbackid](data);
-        } catch (e) {
-          log("err", callbacks[data.callbackid], e);
-        }
-        delete callbacks[data.callbackid];
-      }
-      connection.event(data.type, data);
-    };
-  }
-
-  app.on("unmount", () => {
-    closed = true;
-    webSocket.close();
-  });
-
-  setInterval(() => {
-    if (isOnline) webSocket.send("li");
-  }, 15000);
-
-  const connection = app.addeventhandler(
-    { connected: () => isOnline },
-    ["emit", "broadcast", "close"],
-    "connection"
-  );
-
-  connection.on(
-    "emit",
-    (data) =>
-      new Promise((resolve) => {
-        let counter = 0;
-        function send() {
-          if (webSocket.readyState > 0) {
-            if (msg.length > 64000)
-              while (msg.length > 64000) {
-                webSocket.send(msg.substring(0, 64000));
-                msg = msg.substring(64000);
-              }
-
-            webSocket.send(msg);
-            clearTimeout(data.timeout);
-          } else {
-            if (counter === 1 && callbacks[data.callbackid])
-              callbacks[data.callbackid]({ ...data, offline: true });
-            counter++;
-            if (counter !== 3) setTimeout(send, 200);
-            else {
-              callbacks[data.callbackid]({ ...data, timeout: true });
-              delete callbacks[data.callbackid];
-            }
-          }
-        }
-
-        if (!data.noCallback) {
-          data.callbackid = app.uuid();
-          callbacks[data.callbackid] = resolve;
-        } else resolve();
-
-        let msg = JSON.stringify(data);
-        send();
-      })
-  );
+module.exports = (app) => {
+  if (!app.settings.domain) return;
+  app.connection = app.addeventhandler({}, ["emit", "broadcast"], "connection");
+  const { connection } = app;
 
   connection.on("broadcast", (data) =>
     connection.emit({ ...data, broadcast: true })
   );
 
-  connection.on("close", () => {
-    webSocket.close();
+  const callbacks = {};
+  const emitSocket = (callback) => (data) =>
+    new Promise((resolve) => {
+      if (!data.noCallback) {
+        data.callbackid = app.uuid();
+        callbacks[data.callbackid] = resolve;
+      } else resolve();
+
+      let message = JSON.stringify(data);
+
+      while (message.length > 64000) {
+        callback(message.substring(0, 64000));
+        message = message.substring(64000);
+      }
+      callback(message);
+    });
+
+  const receiveSocket = (message) => {
+    const data = JSON.parse(message);
+
+    if (callbacks[data.callbackid]) {
+      try {
+        callbacks[data.callbackid](data);
+      } catch (e) {
+        console.log("err", callbacks[data.callbackid], e);
+      }
+      delete callbacks[data.callbackid];
+    }
+    connection.event(data.type, data);
+  };
+
+  const openconnection = () => {
+    console.log(`openconnection ${url}`);
+    let timer = false;
+    const sendSocket = emitSocket((message) => webSocket.send(message));
+
+    const webSocket = new WebSocket(url);
+
+    webSocket.onerror = (error) => {
+      connection.event("error", { error });
+    };
+    webSocket.onclose = (error) => {
+      connection.event("connection", { error, connected: false });
+      if (!timer) return;
+      clearInterval(timer);
+      connection.off("emit", sendSocket);
+    };
+
+    webSocket.onopen = () => {
+      connection.on("emit", sendSocket);
+      connection.event("connection", { connected: true });
+      timer = setInterval(() => webSocket.send("li"), 15000);
+    };
+
+    webSocket.onmessage = (message) => receiveSocket(message.data);
+  };
+
+  let delay = 0;
+  const url = `ws${app.settings.secure ? "s" : ""}://${app.settings.domain}`;
+  connection.on("connection", ({ connected, fallback }) => {
+    if (fallback) return;
+
+    if (connected === true) delay = 0;
+    if (connected !== false) return;
+
+    setTimeout(openconnection, 1000 * delay);
+    if (delay < 50) delay += app.settings.debug ? 1 : 5;
+  });
+  openconnection();
+
+  connection.connected = false;
+  connection.on("connection", 100, (query) => {
+    if (typeof query.connected === "undefined")
+      query.connected = connection.connected;
+
+    connection.connected = query.connected;
   });
 
-  app.connection = connection;
+  connection.on("connection", ({ wait, connected }) => {
+    if (!wait || connected) return;
+
+    return new Promise((resolve) => {
+      const onConnect = ({ connected }) => {
+        if (!connected) return;
+        connection.off("connection", onConnect);
+        resolve({ connected: true });
+      };
+      connection.on("connection", onConnect);
+    });
+  });
 
   if (app.settings.waitOnConnect)
-    app.on(
-      "loaded",
-      1000,
-      () =>
-        new Promise((resolve) => {
-          const cont = () => {
-            resolve();
-            connection.off("connect", cont);
-          };
-          if (isOnline) resolve();
-          else connection.on("connect", cont);
-        })
+    app.on("loaded", 1000, () =>
+      connection.event("connection", { wait: true })
     );
 
-  openconnection();
+  if (app.settings.debug) {
+    let state = "notconnected";
+    connection.on("connection", ({ connected, fallback }) => {
+      if (fallback) return;
+
+      if (state === "disconnected" && connected) window.location.reload();
+      if (state === "connected" && !connected) state = "disconnected";
+      if (state === "notconnected" && connected) state = "connected";
+    });
+  }
 
   httpsfallbackM(app);
 };

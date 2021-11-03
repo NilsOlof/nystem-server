@@ -1,4 +1,4 @@
-module.exports = function (app) {
+module.exports = (app) => {
   const { utils } = app;
   app.on("init", () => {
     app.database.on("init", ({ collection, contentType, db }) => {

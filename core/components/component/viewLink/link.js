@@ -1,9 +1,10 @@
 import React from "react";
 import app from "nystem";
 import { Link, Icon } from "nystem-components";
+
 class ViewLinkLink extends React.Component {
   render() {
-    const model = this.props.model;
+    const { model } = this.props;
     const className = model.className ? model.className.join(" ") : "";
     const href =
       model.href && this.props.view.id

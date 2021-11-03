@@ -7,6 +7,11 @@ module.exports = (app) =>
     });
 
     request.on("end", async () => {
+      if (reqData === "li") {
+        response.end(reqData);
+        return;
+      }
+
       const id = app.uuid();
 
       const timer = setTimeout(() => {

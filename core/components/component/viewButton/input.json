@@ -22,6 +22,11 @@
           "type": "boolean",
           "id": "noRedirect",
           "text": "No redirect on create"
+        },
+        {
+          "type": "boolean",
+          "id": "clearOnSave",
+          "text": "Clear on save"
         }
       ]
     },

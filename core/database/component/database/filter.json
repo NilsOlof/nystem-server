@@ -1,0 +1,45 @@
+{
+  "item": [
+    {
+      "type": "text",
+      "id": "field",
+      "text": "Field id"
+    },
+    {
+      "type": "text",
+      "id": "value",
+      "text": "Value field id"
+    },
+    {
+      "type": "text",
+      "id": "saveId",
+      "text": "Save id"
+    },
+    {
+      "type": "select",
+      "option": [
+        {
+          "text": "view",
+          "_id": "view"
+        },
+        {
+          "text": "baseView",
+          "_id": "baseView"
+        },
+        {
+          "text": "baseViewBaseView",
+          "_id": "baseViewBaseView"
+        },
+        {
+          "text": "baseViewBaseViewBaseView",
+          "_id": "baseViewBaseViewBaseView"
+        }
+      ],
+      "inline": true,
+      "render": "button",
+      "id": "eventType",
+      "text": "Event type",
+      "limit": "1"
+    }
+  ]
+}

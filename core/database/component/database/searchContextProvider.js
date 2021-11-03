@@ -11,8 +11,10 @@ const DatabaseSearchContextProvider = ({ children, view }) => {
     let search = {};
     let timer = false;
     let active = false;
+    let mounted = true;
 
     const setSearchDebounce = async (newSearch) => {
+      if (!mounted) return;
       if (!active) {
         setLoading(true);
         view.on("search", 200, doSearch);
@@ -27,6 +29,7 @@ const DatabaseSearchContextProvider = ({ children, view }) => {
     };
 
     const setSearch = async () => {
+      if (!mounted) return;
       timer = false;
 
       const searchResult = await view.event("search", {
@@ -51,6 +54,7 @@ const DatabaseSearchContextProvider = ({ children, view }) => {
       });
 
     return () => {
+      mounted = false;
       view.off("setSearch", setSearchDebounce);
 
       if (active) {

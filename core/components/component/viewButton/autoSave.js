@@ -26,16 +26,21 @@ const ViewButtonAutoSave = ({ view }) => {
       saveIds = [];
     };
 
-    const handleChange = ({ id }) => {
-      if (!id || id === "_id" || !view.value) return;
+    const handleChange = ({ id, value }) => {
+      if (id === "_id" || ((!value || value._id) && !id)) return;
 
-      if (saveIds.includes(id)) return;
-      saveIds.push(id);
+      if (!id) saveIds = Object.keys(value);
+      else {
+        [id] = id.split(".");
+
+        if (saveIds.includes(id)) return;
+        saveIds.push(id);
+      }
 
       saveDelay = setTimeout(saveToDb, 200);
     };
 
-    view.on("change", handleChange);
+    view.on("change", -2100, handleChange);
     return () => {
       view.off("change", handleChange);
       if (saveDelay) clearTimeout(saveDelay);

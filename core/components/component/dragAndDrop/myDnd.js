@@ -64,8 +64,8 @@ export const Droppable = ({ droppableId, type, children, isDropDisabled }) => {
       10
     );
 
+    let size;
     const stop = (result) => {
-      const size = innerRef.current.getBoundingClientRect();
       setStyle(null);
       const { x, y } = result.pos;
 
@@ -83,7 +83,7 @@ export const Droppable = ({ droppableId, type, children, isDropDisabled }) => {
     const move = (result) => {
       if (!innerRef.current) return;
 
-      const size = innerRef.current.getBoundingClientRect();
+      size = innerRef.current.getBoundingClientRect();
       const { x, y } = result;
 
       if (y < size.top || y > size.bottom || x < size.left || x > size.right)
@@ -119,7 +119,7 @@ export const Droppable = ({ droppableId, type, children, isDropDisabled }) => {
     <MyDragAndDropContext.Provider
       value={{ ...context, parents, droppableId, isDropDisabled, type }}
     >
-      {children(provided, {})}
+      {children(provided, { isDraggingOver: !!style })}
     </MyDragAndDropContext.Provider>
   );
 };
@@ -128,9 +128,8 @@ export const Draggable = ({ draggableId, index, children, minHeight = 0 }) => {
   const [style, setStyle] = useState(null);
 
   const innerRef = useRef();
-  const { event, droppableId, isDropDisabled, type } = useContext(
-    MyDragAndDropContext
-  );
+  const { event, droppableId, isDropDisabled, type } =
+    useContext(MyDragAndDropContext);
 
   useEffect(() => {
     if (isDropDisabled) return;
@@ -264,7 +263,7 @@ export const Draggable = ({ draggableId, index, children, minHeight = 0 }) => {
         .then((query) => event.event(`${type}Over`, query));
     };
 
-    const mouseUp = (e) => {
+    const mouseUp = () => {
       window.removeEventListener("mousemove", mouseMove);
       window.removeEventListener("mouseup", mouseUp);
 

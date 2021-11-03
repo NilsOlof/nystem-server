@@ -47,6 +47,11 @@
           "text": "Select all on focus",
           "type": "boolean",
           "id": "selectAllOnFocus"
+        },
+        {
+          "text": "Focus",
+          "type": "boolean",
+          "id": "focus"
         }
       ]
     }

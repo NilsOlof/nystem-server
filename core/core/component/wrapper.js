@@ -29,17 +29,13 @@ const tags = [
   "sup",
   "main",
   "header",
+  "select",
+  "iframe",
+  "svg",
 ].reduce((prev, tag) => {
   prev[tag] = true;
   return prev;
 }, {});
-
-const typeClass = {
-  h1: "text-2xl",
-  h2: "text-xl",
-  h3: "text-4xl pb-5 pt-2",
-  h4: "text-xl",
-};
 
 const Wrapper = (
   {
@@ -66,6 +62,7 @@ const Wrapper = (
       : className;
 
   if (
+    !ref &&
     !className &&
     !renderAs &&
     !onClick &&
@@ -75,9 +72,6 @@ const Wrapper = (
     return children || null;
 
   if (!tags[renderAs] || renderAs === "input") renderAs = "div";
-
-  if (typeClass[renderAs])
-    className = `${className || ""} ${typeClass[renderAs]}`;
 
   return React.createElement(
     renderAs,

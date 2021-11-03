@@ -1,0 +1,22 @@
+{
+  "item": [
+    {
+      "type": "text",
+      "id": "event",
+      "text": "Event"
+    },
+    {
+      "type": "text",
+      "id": "default",
+      "text": "Default"
+    },
+    {
+      "text": "Field",
+      "id": "field",
+      "type": "dropReference",
+      "namefield": "text",
+      "field": "id",
+      "limit": 1
+    }
+  ]
+}

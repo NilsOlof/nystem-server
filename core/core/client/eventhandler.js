@@ -1,3 +1,5 @@
+// obj instanceof Promise
+
 function getStackTrace(row) {
   const obj = {};
   if (!Error.captureStackTrace) return;
@@ -83,9 +85,8 @@ module.exports = function addEventHandler(context, mapevents, name) {
         callbacksStack[key] = value.map((item) => translate(item));
       });
 
-      window.addEventHandlers[
-        callbacksStack.addEventHandlerInitiator[0]
-      ] = callbacksStack;
+      window.addEventHandlers[callbacksStack.addEventHandlerInitiator[0]] =
+        callbacksStack;
     }
   }, 1000);
 
@@ -163,7 +164,7 @@ module.exports = function addEventHandler(context, mapevents, name) {
       );
   };
 
-  const doEvent = function (event, data) {
+  const doEvent = (event, data) => {
     if (event === "getCallTrace") return getCallTrace(data);
     data = data || {};
     const callback = callbacks[event];
@@ -191,16 +192,7 @@ module.exports = function addEventHandler(context, mapevents, name) {
           return;
         }
 
-        if (data === "{{{breakEvent}}}") {
-          resolve(oldData);
-          return;
-        }
-
-        const skipNext = data === "{{{skipNext}}}";
-
-        data = skipNext || typeof data === "undefined" ? oldData : data;
-
-        if (skipNext) pos++;
+        data = typeof data === "undefined" ? oldData : data;
 
         if (pos >= callback.length) {
           clearTimeout(timer);

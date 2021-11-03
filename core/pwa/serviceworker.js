@@ -19,7 +19,7 @@ module.exports = (app) => {
     let appVersion = false;
 
     app.connection.on("getAppVersion", async (query) => {
-      if (!appVersion)
+      if (!appVersion && app.settings.port)
         [, appVersion] =
           regExpVersion.exec(
             await fetch(`http://localhost:${app.settings.port}/index.html`)

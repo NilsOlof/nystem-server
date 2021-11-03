@@ -6,7 +6,7 @@ const cacheM = require("./cache");
 const storageM = require("./storage");
 const saveQueueM = require("./saveQueue");
 
-module.exports = function (app) {
+module.exports = (app) => {
   const database = app.addeventhandler(
     {},
     ["init", "add", "clearCache"],

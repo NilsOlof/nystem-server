@@ -4,7 +4,7 @@ import { Wrapper, ContentTypeRender } from "nystem-components";
 const ViewLinkExternal = ({ view, path, model }) => {
   const insertVal = (val) => {
     if (!val) return val;
-    return val.replace(/\{([a-z_.0-9]+)\}/gim, (str, p1, offset, s) => {
+    return val.replace(/\{([a-z_.0-9]+)\}/gim, (str, p1) => {
       if (/pathItem[0-9]/.test(p1) && view.params) return view.params[p1[8]];
       return view.getValue(p1.replace("..", path));
     });
@@ -12,7 +12,8 @@ const ViewLinkExternal = ({ view, path, model }) => {
 
   const { className, item, href } = model;
   let link = insertVal(href);
-  if (!/https?:\/\//im.test(link)) link = `https://${link}`;
+  if (!/https?:\/\//im.test(link) && !link.startsWith("mailto:"))
+    link = `https://${link}`;
 
   return (
     <Wrapper

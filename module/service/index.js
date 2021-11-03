@@ -30,7 +30,7 @@ const start = function (app) {
 
     evHandler.on("stop", () => {
       execService.stdin.write("exit");
-      setTimeout(() => execService.kill("SIGINT"), 100);
+      setTimeout(() => execService.kill("SIGINT"), 300);
     });
 
     app.on("exit", () => {

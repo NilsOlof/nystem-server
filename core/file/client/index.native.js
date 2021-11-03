@@ -1,5 +1,5 @@
 import { AsyncStorage, FileSystem } from "react-native";
-module.exports = function (app) {
+module.exports = (app) => {
   app.storage = app.addeventhandler(
     {},
     [

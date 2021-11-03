@@ -6,6 +6,7 @@ const TextView = ({ model, value }) => (
     className={model.className}
     renderAs={model.renderAs}
     translate={model.translate}
+    title={value || model.fallback}
   >
     {value || model.fallback}
   </Wrapper>

@@ -30,9 +30,11 @@ const setValueAtPath = ({ path, current, value }) => {
   return out;
 };
 
-const getId = ({ path = "", id = "" }) => {
-  if (path && id) return `${path}.${id}`;
-  if (id) return id;
+const getValuePath = (path = "", id = "") => {
+  if (id) {
+    id = id.substring(id.lastIndexOf(".") + 1);
+    return path ? `${path}.${id}` : id;
+  }
   return path;
 };
 
@@ -71,8 +73,11 @@ const useValue = ({ view, propvalue }) => {
           if (diff.length) view.event("change", { value });
         });
     };
-    if (id) doGet();
-    if (!noAutoUpdate) db.on("update", doGet);
+    if (id) {
+      if (!db) console.error("Missing db", view);
+      doGet();
+      if (!noAutoUpdate) db.on("update", doGet);
+    }
 
     const changeData = (props) => ({
       ...props,
@@ -109,7 +114,7 @@ const useValue = ({ view, propvalue }) => {
     view.on("reload", reload);
 
     return () => {
-      if (!noAutoUpdate) db.off("update", doGet);
+      if (id && !noAutoUpdate) db.off("update", doGet);
       view.off("reload", reload);
       view.off("change", changeData);
       view.off("change", setData);
@@ -140,6 +145,7 @@ const ContentTypeView = ({
   value: propvalue,
   renderAs,
   itemRenderAs,
+  params,
   ...events
 }) => {
   const view = useMemo(() => {
@@ -163,14 +169,15 @@ const ContentTypeView = ({
         format,
         viewFormat: base.format,
         contentType,
-        getId,
+        getValuePath,
         id,
       },
       `view ${contentType} ${format}`
     );
-  }, [id, baseView, contentType, format, viewModel]);
+  }, [contentType, viewModel, format, baseView, id]);
 
   const { model } = view;
+  view.params = params;
 
   useEffect(() => {
     if (!view.on) return;

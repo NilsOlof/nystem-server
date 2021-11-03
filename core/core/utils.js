@@ -1,4 +1,4 @@
-module.exports = function (app) {
+module.exports = (app) => {
   if (!app) app = {};
   const crypto = require("crypto");
 
@@ -42,7 +42,7 @@ module.exports = function (app) {
     },
     // Translate longer text replaceing all t(text)
     translate: function (text, lang) {
-      return text.replace(/t\('([^']+)'\)/g, (str, p1, offset, s) => {
+      return text.replace(/t\('([^']+)'\)/g, (str, p1) => {
         if (app.translations[lang] && app.translations[lang][p1])
           return app.translations[lang][p1];
         return p1;
@@ -50,7 +50,7 @@ module.exports = function (app) {
     },
     // Insert data in text
     insertValues: function (text, data) {
-      return text.replace(/{([a-z0-9_\.]+)}/gi, (str, p1, offset, s) => {
+      return text.replace(/{([a-z0-9_\.]+)}/gi, (str, p1) => {
         return data[p1] ? data[p1] : `{${p1}}`;
       });
     },

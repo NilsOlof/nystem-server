@@ -7,7 +7,7 @@ const ViewInViewEmpty = ({ model, view, path }) => {
 
   const insertVal = (val) => {
     if (!val) return val;
-    return val.replace(/\{([a-z_.]+)\}/gim, (str, p1, offset, s) => {
+    return val.replace(/\{([a-z_.0-9]+)\}/gim, (str, p1) => {
       if (p1 === "_language") return app().settings.lang;
       if (p1 === "id") return view.id;
       if (p1.indexOf("baseView.") !== 0)

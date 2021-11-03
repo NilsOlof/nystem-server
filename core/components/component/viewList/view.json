@@ -36,6 +36,5 @@
       "type": "viewCreator",
       "expanded": true
     }
-  ],
-  "helperComponents": ["wrapper"]
+  ]
 }

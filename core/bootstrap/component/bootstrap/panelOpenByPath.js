@@ -1,29 +1,28 @@
-import React from "react";
+import { useEffect, useContext } from "react";
 import { useLocation } from "react-router-dom";
-import { Panel, ContentTypeRender } from "nystem-components";
+import { PanelContext } from "nystem-components";
 
-const BootstrapPanelOpenByPath = ({ model, path, value, view }) => {
-  const { item, header, typeClass } = model;
+const BootstrapPanelOpenByPath = ({ model, path, view }) => {
+  const { toggleExpand, expanded } = useContext(PanelContext);
   const { pathname } = useLocation();
 
-  const insertVal = (val) =>
-    val &&
-    val.replace(/\{([a-z_.0-9]+)\}/gim, (str, p1, offset, s) => {
-      if (/pathItem[0-9]/.test(p1) && view.params) return view.params[p1[8]];
-      return view.getValue(p1.replace("..", path));
-    });
+  useEffect(() => {
+    const insertVal = (val) =>
+      val &&
+      val.replace(/\{([a-z_.0-9]+)\}/gim, (str, p1) =>
+        /pathItem[0-9]/.test(p1) && view.params
+          ? view.params[p1[8]]
+          : view.getValue(p1.replace("..", path))
+      );
 
-  const expanded = pathname.match(new RegExp(insertVal(model.match)));
+    let setExpanded = pathname.match(new RegExp(insertVal(model.match)));
+    if (model.invert) setExpanded = !setExpanded;
 
-  return (
-    <Panel
-      {...model}
-      forceExpanded={expanded}
-      type={typeClass}
-      header={<ContentTypeRender path={path} items={header} />}
-      body={<ContentTypeRender path={path} items={item} />}
-    />
-  );
+    if (setExpanded && !expanded) toggleExpand(setExpanded);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [pathname]);
+
+  return null;
 };
 
 export default BootstrapPanelOpenByPath;

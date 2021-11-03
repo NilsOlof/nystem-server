@@ -8,7 +8,7 @@ const replaceExports = (content) => {
   return content.replace(/module.exports = /gim, "export default ");
 };
 
-module.exports = function (app) {
+module.exports = (app) => {
   if (!app.fs.existsSync(`${app.__dirname}/web`)) return;
   require("./debug/debug.js")(app);
   require("./debug/debugEvLog.js")(app);
@@ -43,7 +43,7 @@ module.exports = function (app) {
 
     app.writeFileChanged(
       `${app.__dirname}/web/src/indexScripts.js`,
-      `${imports}export default function(app) {\n${calls}}\n`
+      `${imports}\nexport default function(app) {\n${calls}}\n`
     );
   }
 

@@ -1,0 +1,36 @@
+{
+  "item": [
+    {
+      "id": "className",
+      "text": "Class",
+      "type": "gridselect"
+    },
+    {
+      "type": "gridselect",
+      "id": "rowClassName",
+      "text": "Row class"
+    },
+    {
+      "type": "text",
+      "id": "minHeight",
+      "text": "Min height"
+    },
+    {
+      "type": "text",
+      "id": "valueType",
+      "text": "Value type"
+    },
+    {
+      "text": "Empty result fields",
+      "id": "emptyFields",
+      "type": "viewCreator",
+      "expanded": false
+    },
+    {
+      "text": "Fields",
+      "id": "item",
+      "type": "viewCreator",
+      "expanded": true
+    }
+  ]
+}

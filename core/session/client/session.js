@@ -1,4 +1,4 @@
-module.exports = function (app) {
+module.exports = (app) => {
   const { userContentType = "adminUser" } = app.settings;
   const sessionKey = `session${userContentType}`;
 
@@ -42,58 +42,57 @@ module.exports = function (app) {
         return query;
       })
   );
+  app.on("init", -100, () => {
+    app.connection.on("autologin", (query) => {
+      const { user, error } = query;
 
-  app.connection.on("autologin", (query) => {
-    const { user, error } = query;
+      if (!user || error) return;
+      autoLoginUser = user;
+      if (session.user) return;
 
-    if (!user || error) return;
-    autoLoginUser = user;
-    if (session.user) return;
+      session.user = user;
+      if (typeof session.user.role === "string")
+        session.user.role = [session.user.role];
 
-    session.user = user;
-    if (typeof session.user.role === "string")
-      session.user.role = [session.user.role];
-
-    app.event("login", user);
-  });
-
-  const reload = ({ key, id }) => {
-    if ((key || id) !== sessionKey) return;
-    window.location.reload();
-  };
-  window.addEventListener("storage", reload);
-  app.storage.on("removeItem", -1000, reload);
-  app.storage.on("setItem", -1000, reload);
-
-  session.on("logout", () => {
-    app.storage.removeItem({ id: sessionKey });
-
-    delete session.user;
-
-    app.connection.emit({
-      type: "logout",
-      contentType: userContentType,
-      noCallback: true,
+      app.event("login", user);
     });
 
-    app.event("logout");
-  });
+    const reload = ({ key, id }) => {
+      if ((key || id) !== sessionKey) return;
+      window.location.reload();
+    };
+    window.addEventListener("storage", reload);
+    app.storage.on("removeItem", -1000, reload);
+    app.storage.on("setItem", -1000, reload);
 
-  app.connection.on("logout", () => {
-    app.storage.removeItem({ id: sessionKey });
-  });
+    session.on("logout", () => {
+      app.storage.removeItem({ id: sessionKey });
 
-  app.on("init", () =>
+      delete session.user;
+
+      app.connection.emit({
+        type: "logout",
+        contentType: userContentType,
+        noCallback: true,
+      });
+
+      app.event("logout");
+    });
+
+    app.connection.on("logout", () => {
+      app.storage.removeItem({ id: sessionKey });
+    });
+
     app.storage.getItem({ id: sessionKey }).then(({ value: userStore }) => {
       session.user = userStore || autoLoginUser;
 
       if (userStore) {
-        if (app.connection.connected()) session.login(userStore);
+        if (app.connection.connected) session.login(userStore);
 
-        app.connection.on("connect", () => {
-          session.login(userStore);
+        app.connection.on("connection", ({ connected }) => {
+          if (connected) session.login(userStore);
         });
       }
-    })
-  );
+    });
+  });
 };

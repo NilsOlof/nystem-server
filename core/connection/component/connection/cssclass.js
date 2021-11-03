@@ -1,44 +1,26 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import app from "nystem";
-import { Wrapper } from "nystem-components";
-class ConnectionCssclass extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = { connected: app().connection.connected() };
-  }
-  UNSAFE_componentWillReceiveProps(nextProps) {
-    this.setState({ value: nextProps.value });
-  }
-  componentDidMount() {
-    app().connection.on("connect", this.update);
-    app().connection.on("diconnect", this.update);
-  }
-  componentWillUnmount() {
-    app().connection.on("connect", this.update);
-    app().connection.on("diconnect", this.update);
-  }
-  update = () => {
-    this.setState({ connected: app().connection.connected() });
-  };
-  render() {
-    const { children, view } = this.props;
-    const model = this.props.model || this.props;
-    const { connected } = this.state;
+import { Wrapper, ContentTypeRender } from "nystem-components";
 
-    let className =
-      model.className instanceof Array
-        ? model.className.join(" ")
-        : model.className || "";
-    const connectionClass =
-      (connected ? model.onlineClass : model.offlineClass) || "";
-    const space = connectionClass && className ? " " : "";
+const ConnectionCssclass = ({ children, path, model }) => {
+  const [connected, setConnected] = useState(app().connection.connected);
 
-    return (
-      <Wrapper className={className + space + connectionClass}>
-        {children ? children : model.item.map(view.createItem, this)}
-      </Wrapper>
-    );
-  }
-}
+  useEffect(() => {
+    const update = () => setConnected(app().connection.connected);
+    app().connection.on("connection", update);
+    return () => {
+      app().connection.off("connection", update);
+    };
+  });
+
+  const connectionClass =
+    (connected ? model.onlineClass : model.offlineClass) || "";
+
+  return (
+    <Wrapper className={[model.className, connectionClass]}>
+      {children || <ContentTypeRender path={path} items={model.item} />}
+    </Wrapper>
+  );
+};
 
 export default ConnectionCssclass;

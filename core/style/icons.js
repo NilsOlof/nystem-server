@@ -564,7 +564,7 @@ export default {
   ),
   "php-elephant": (
     <path
-      fill-rule="evenodd"
+      fillRule="evenodd"
       d="M10 12v8A10 10 0 0 1 8.17.17L10 2h5a5 5 0 0 1 5 4.99v9.02A4 4 0 0 1 16 20v-2a2 2 0 1 0 0-4h-4l-2-2zm5.5-3a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3z"
     />
   ),
@@ -652,7 +652,7 @@ export default {
   ),
   "stand-by": (
     <path
-      fill-rule="evenodd"
+      fillRule="evenodd"
       d="M4.16 4.16l1.42 1.42A6.99 6.99 0 0 0 10 18a7 7 0 0 0 4.42-12.42l1.42-1.42a9 9 0 1 1-11.69 0zM9 0h2v8H9V0z"
     />
   ),
@@ -820,20 +820,20 @@ export default {
   ),
   "yin-yang": (
     <path
-      fill-rule="evenodd"
+      fillRule="evenodd"
       d="M10 20a10 10 0 1 1 0-20 10 10 0 0 1 0 20zm0-18a8 8 0 1 0 0 16 4 4 0 1 1 0-8 4 4 0 1 0 0-8zm0 13a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm0-8a1 1 0 1 1 0-2 1 1 0 0 1 0 2z"
     />
   ),
   "zoom-in": (
     <path
-      fill-rule="evenodd"
+      fillRule="evenodd"
       d="M12.9 14.32a8 8 0 1 1 1.41-1.41l5.35 5.33-1.42 1.42-5.33-5.34zM8 14A6 6 0 1 0 8 2a6 6 0 0 0 0 12zM7 7V5h2v2h2v2H9v2H7V9H5V7h2z"
     />
   ),
   "zoom-out": (
     <path
-      fill-rule="evenodd"
+      fillRule="evenodd"
       d="M12.9 14.32a8 8 0 1 1 1.41-1.41l5.35 5.33-1.42 1.42-5.33-5.34zM8 14A6 6 0 1 0 8 2a6 6 0 0 0 0 12zM5 7h6v2H5V7z"
     />
-  )
+  ),
 };

@@ -1,4 +1,6 @@
 module.exports = async (app) => {
+  if (!app.fs.existsSync(`${app.__dirname}/web`)) return;
+
   const paths = app.filePaths.filter((path) => {
     const parts = path.split("/");
     return parts[2] === "icons" && parts[3].includes(".svg");
@@ -26,7 +28,8 @@ module.exports = async (app) => {
 
   await app.fs.writeFile(
     `${app.__dirname}/web/src/icons.js`,
-    `import React from "react";
+    `/* eslint-disable */
+    import React from "react";
   
   export default ${JSON.stringify(byType)
     .replace(/"</g, "<")
@@ -50,7 +53,8 @@ module.exports = async (app) => {
 
   await app.fs.writeFile(
     `${app.__dirname}/web/src/iconsViewPorts.js`,
-    `export default ${JSON.stringify(viewPorts)}`
+    `/* eslint-disable */
+    export default ${JSON.stringify(viewPorts)}`
   );
 
   app.icons = {};

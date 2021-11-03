@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useCallback, useMemo } from "react";
 import app from "nystem";
-import { Button } from "nystem-components";
+import { Button, Wrapper, ContentTypeRender } from "nystem-components";
 
-const ViewButtonEventEmitter = ({ model, view }) => {
+const EventButton = ({ model, view, sendEvent }) => {
   const buttonStates = useMemo(
     () => ({
       default: {
@@ -25,32 +25,13 @@ const ViewButtonEventEmitter = ({ model, view }) => {
     [model.btnType, model.text]
   );
 
-  const [error, setError] = useState(false);
   const [button, setButton] = useState(buttonStates.default);
   const [savedTimer, setSavedTimer] = useState(false);
   const [activeKeySaveView, setActiveKeySaveView] = useState(false);
-
-  const sendEvent = useCallback(() => {
-    setError(false);
-    setButton(buttonStates.saving);
-
-    app()
-      .connection.emit({
-        type: model.event,
-        event: model.subEvent,
-        value: view.value,
-        contentType: view.contentType,
-      })
-      .then((data) => {
-        setButton(buttonStates.success);
-        setSavedTimer(setTimeout(() => setButton(buttonStates.default), 1000));
-        if (data.redirectToPath) app().router.click(data.redirectToPath);
-      });
-  }, [buttonStates, model, view.contentType, view.value]);
+  const [error, setError] = useState(false);
 
   const handleSubmit = useCallback(
     async (event) => {
-      if (app().settings.debug) console.log(view.value);
       if (event) event.preventDefault();
       const { errors = [] } = await view.event("validate");
       if (errors.length) {
@@ -61,7 +42,15 @@ const ViewButtonEventEmitter = ({ model, view }) => {
       if (model.confirm && button !== buttonStates.confirm) {
         setButton(buttonStates.confirm);
         setSavedTimer(setTimeout(() => setButton(buttonStates.default), 1000));
-      } else sendEvent();
+      } else {
+        setButton(buttonStates.saving);
+
+        const data = await sendEvent();
+        setButton(buttonStates.success);
+        setSavedTimer(setTimeout(() => setButton(buttonStates.default), 1000));
+
+        if (data.redirectToPath) app().router.click(data.redirectToPath);
+      }
     },
     [button, buttonStates, model.confirm, sendEvent, view]
   );
@@ -108,5 +97,67 @@ const ViewButtonEventEmitter = ({ model, view }) => {
       {error}
     </>
   );
+};
+
+const pick = (fields, value) =>
+  fields
+    ? fields.reduce(
+        (prev, [id, to]) => (value[id] ? { ...prev, [to]: value[id] } : prev),
+        {}
+      )
+    : value;
+
+const ViewButtonEventEmitter = ({ model, view, path }) => {
+  const [active, setActive] = useState(false);
+
+  const emitterByType = {
+    connection: {
+      event: (type, data) => app().connection.emit({ type, ...data }),
+    },
+    view: view,
+    baseView: view.baseView,
+    baseViewBaseView: view.baseView?.baseView,
+    baseViewBaseViewBaseView: view.baseView?.baseView?.baseView,
+    app: app(),
+  };
+  const emitter = emitterByType[model.eventType || "connection"];
+
+  useEffect(() => {
+    if (!emitter.on) return;
+
+    const checkActive = () => {
+      setActive(false);
+    };
+
+    emitter.on(model.event, checkActive);
+    return () => {
+      emitter.off(model.event, checkActive);
+    };
+  }, [emitter, model.event, view.value._id]);
+
+  const sendEvent = async () => {
+    await emitter.event(model.event, {
+      event: model.subEvent,
+      value: active ? false : pick(model.fields, view.value),
+      contentType: view.contentType,
+    });
+    if (model.inactiveClass || model.activeClass) setActive(!active);
+  };
+
+  if (model.item)
+    return (
+      <Wrapper
+        className={[
+          model.className,
+          active && model.activeClass,
+          !active && model.inactiveClass,
+        ]}
+        onClick={sendEvent}
+      >
+        <ContentTypeRender path={path} items={model.item} />
+      </Wrapper>
+    );
+
+  return <EventButton model={model} view={view} path={path} />;
 };
 export default ViewButtonEventEmitter;

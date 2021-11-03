@@ -1,6 +1,8 @@
+/* eslint-disable react/no-string-refs */
 import React from "react";
 import { InputWrapper } from "nystem-components";
 import app from "nystem";
+
 class PasswordOldpassword extends React.Component {
   constructor(props) {
     super(props);
@@ -13,18 +15,18 @@ class PasswordOldpassword extends React.Component {
   }
   handleChange() {
     this.validated = true;
-    const value = this.refs.input.value;
+    const { value } = this.refs.input;
     this.setState({
       value: value,
-      error: this.model.mandatory && !value ? this.errormsg : false
+      error: this.model.mandatory && !value ? this.errormsg : false,
     });
-    this.props.setValue("__" + this.model.id, value);
+    this.props.setValue(`__${this.model.id}`, value);
   }
   valid() {
     this.validated = true;
     if (this.model.mandatory && !this.state.value) {
       this.setState({
-        error: this.errormsg
+        error: this.errormsg,
       });
       return false;
     }
@@ -35,7 +37,7 @@ class PasswordOldpassword extends React.Component {
     if (this.props.value !== nextProps.value) {
       const error = this.validated && this.model.mandatory && !nextProps.value;
       this.setState({
-        error: error ? this.errormsg : false
+        error: error ? this.errormsg : false,
       });
     }
   }

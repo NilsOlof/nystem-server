@@ -1,16 +1,13 @@
 module.exports = (app) => {
   let connected = false;
   app.on("init", () => {
-    connected = app.connection.connected();
-    app.connection.on("connect", () => {
-      connected = true;
-    });
-    app.connection.on("disconnect", () => {
-      connected = false;
+    ({ connected } = app.connection);
+    app.connection.on("connection", (query) => {
+      ({ connected } = query);
     });
   });
 
-  app.database.on("init", ({ collection, db, contentType }) => {
+  app.database.on("init", ({ collection, contentType }) => {
     const send = (action, query) =>
       app.connection
         .emit({
@@ -59,11 +56,12 @@ module.exports = (app) => {
         !["update"].includes(event.action)
       )
         return;
+
       collection[event.action](event.query);
     });
 
-    app.connection.on("connect", () => {
-      collection.updates();
+    app.connection.on("connection", ({ connected }) => {
+      if (connected) collection.updates();
     });
   });
 };

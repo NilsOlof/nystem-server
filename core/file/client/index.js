@@ -1,4 +1,4 @@
-module.exports = function (app) {
+module.exports = (app) => {
   app.storage = app.addeventhandler(
     {},
     [
@@ -16,18 +16,42 @@ module.exports = function (app) {
     "storage"
   );
 
-  app.storage.on("getItem", (data) => {
-    const val = window.localStorage.getItem(data.id);
-    return Object.assign(data, {
+  app.storage.on("getItem", async (data) => {
+    let val = window.localStorage.getItem(data.id);
+
+    if (val === `nystemCache${data.id}`) {
+      const nystemCache = await caches.open("nystem");
+      val = await nystemCache.match(val).then((req) => req.json());
+    }
+    return {
+      ...data,
       value: val && (val[0] === "[" || val[0] === "{") ? JSON.parse(val) : val,
-    });
+    };
   });
 
-  app.storage.on("setItem", ({ id, value }) => {
-    window.localStorage.setItem(
-      id,
-      typeof value === "string" ? value : JSON.stringify(value)
-    );
+  app.storage.on("setItem", async ({ id, value }) => {
+    value = typeof value === "string" ? value : JSON.stringify(value);
+
+    try {
+      window.localStorage.setItem(id, value);
+    } catch (e) {
+      const nystemCache = await caches.open("nystem");
+      if (e.code !== 22) return;
+
+      await nystemCache.put(
+        `nystemCache${id}`,
+        new Response(value, {
+          status: 200,
+          statusText: "Dbcache",
+          headers: new Headers({
+            "content-type": `application/json`,
+            date: new Date(),
+            etag: "dbdata",
+          }),
+        })
+      );
+      window.localStorage.setItem(id, `nystemCache${id}`);
+    }
   });
 
   const timer = {};
@@ -56,10 +80,11 @@ module.exports = function (app) {
   app.storage.on("removeItemMem", ({ id }) => {
     delete memstore[id];
   });
-
+  /*
   app.storage.on("getFile", (data) => {});
 
   app.storage.on("setFile", ({ id, value }) => {});
 
   app.storage.on("removeFile", ({ id }) => {});
+  */
 };

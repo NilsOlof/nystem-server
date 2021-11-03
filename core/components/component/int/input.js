@@ -39,7 +39,7 @@ const IntInput = ({ model, view, focus, setValue, value, className }) => {
         }}
         disabled={disabled}
         type="text"
-        focus={focus}
+        focus={model.focus || focus}
         onBlur={() => setValidated(true)}
         selectAllOnFocus={model.selectAllOnFocus}
       />

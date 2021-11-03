@@ -7,11 +7,16 @@ const ViewInViewView = ({ model, view, value, path, onSave }) => {
 
   const insertVal = (val) => {
     if (!val) return val;
-    return val.replace(/\{([a-z_.]+)\}/gim, (str, p1, offset, s) => {
-      if (p1 === "_language") return app().settings.lang;
+    return val.replace(/\{([a-z_.0-9]+)\}/gim, (str, p1) => {
       if (p1 === "id") return view.id;
+      if (p1 === "_language") return app().settings.lang;
+
+      if (p1.indexOf("params.") === 0)
+        return view.params[p1.replace("params.", "")];
+
       if (p1.indexOf("baseView.") !== 0)
         return view.getValue(p1.replace("..", path));
+
       p1 = p1.replace("baseView.", "");
       return view.baseView.getValue(p1.replace("..", path));
     });
@@ -25,6 +30,7 @@ const ViewInViewView = ({ model, view, value, path, onSave }) => {
       value={(addid && value[addid]) || value}
       id={insertVal(viewId)}
       baseView={view}
+      params={view.params}
       {...(onSave ? { onSave } : {})}
     />
   );
