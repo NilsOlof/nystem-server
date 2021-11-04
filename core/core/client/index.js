@@ -2,13 +2,6 @@
 module.exports = (app) => {
   if (!app.t) app.t = (text) => text;
 
-  app.on("init", -1000, () => {
-    app.capFirst = app.utils.capFirst;
-    app.uuid = app.utils.uuid;
-    app.clone = app.utils.clone;
-    init();
-  });
-
   function init() {
     if (!document.body) {
       window.onload = init;
@@ -97,4 +90,6 @@ module.exports = (app) => {
 
     app.event("loaded");
   }
+
+  app.on("init", -1000, init);
 };

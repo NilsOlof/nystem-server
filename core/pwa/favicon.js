@@ -42,6 +42,7 @@ module.exports = (app) => {
     icoBuffer = icongen(
       await Promise.all(sizes.map((size) => generateSize(size)))
     );
+    return { file, png: await buffers.original.toBuffer() };
   };
   app.on("favicon", ({ file }) => generate(file));
   if (app.settings.favicon) generate(app.settings.favicon);

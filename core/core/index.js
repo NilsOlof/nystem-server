@@ -99,10 +99,15 @@ if (app.settings.client.domain) {
   }
 } else app.express = { get: () => {}, post: () => {} };
 
-require("./utils.js")(app);
 require("./exit.js")(app);
 
-app.uuid = app.utils.generateGUID;
+const S4 = () =>
+  // eslint-disable-next-line no-bitwise
+  (((1 + Math.random()) * 0x10000) | 0).toString(16).substring(1);
+app.uuid = () => S4() + S4() + S4() + S4() + S4() + S4() + S4() + S4();
+app.capFirst = (text) =>
+  text && text.substring(0, 1).toUpperCase() + text.substring(1);
+
 app.on("settings", () => app.settings);
 const { debug } = app.settings;
 

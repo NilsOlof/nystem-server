@@ -1,5 +1,10 @@
 const role = "super";
 
+const insertValues = (text, data) =>
+  text.replace(/{([a-z0-9_\.]+)}/gi, (str, p1) => {
+    return data[p1] ? data[p1] : `{${p1}}`;
+  });
+
 const start = function (app) {
   const runProgram = function (path, program) {
     const { spawn } = require("child_process");
@@ -110,9 +115,7 @@ module.exports = (app) => {
   app.on("serverPath", (server) => {
     const { atHost } = app.settings;
 
-    let path = app.utils
-      .insertValues(server.path, atHost.folders)
-      .replace(/\\/g, "/");
+    let path = insertValues(server.path, atHost.folders).replace(/\\/g, "/");
 
     if (path[0] !== "/" && path[1] !== ":") path = `${atHost.basepath}/${path}`;
 
