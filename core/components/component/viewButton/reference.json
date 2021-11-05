@@ -34,7 +34,8 @@
         "referenceAdd",
         "referenceRemove",
         "exposedReferenceAdd",
-        "exposedReferenceRemove"
+        "exposedReferenceRemove",
+        "referenceSearch"
       ],
       "limit": 1,
       "inline": true

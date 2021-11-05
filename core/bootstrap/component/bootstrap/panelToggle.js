@@ -6,12 +6,18 @@ import {
   PanelContext,
 } from "nystem-components";
 
+const addClick = (doFunction) => ({
+  onClick: doFunction,
+  role: "button",
+  tabIndex: "0",
+});
+
 const BootstrapPanelToggle = ({ model, path, children }) => {
   const { className, item } = model;
   const { toggleExpand, expanded } = useContext(PanelContext);
 
   return (
-    <Wrapper className={className} {...toggleExpand}>
+    <Wrapper className={className} {...addClick(toggleExpand)}>
       {model.icon && (
         <Icon
           icon={expanded ? "cheveron-down" : "cheveron-right"}

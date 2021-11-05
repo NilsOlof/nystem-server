@@ -1,4 +1,4 @@
-module.exports = function (app) {
+module.exports = (app) => {
   // Clear all caches
   app.express.get("/clearcache", (req, res) => {
     app.cacheTimeStart = new Date();
@@ -12,7 +12,7 @@ module.exports = function (app) {
 
   // Return not updated (304) if cache not cleared and not debug
   // otherwise return false and process request
-  app.isCached = function (type, req, res, debug) {
+  app.isCached = (type, req, res, debug) => {
     const age = debug ? 1 : 180;
     res.setHeader("Cache-Control", `max-age=${age}, must-revalidate`);
     res.setHeader("Expires", new Date(Date.now() + age * 1000).toUTCString());
@@ -31,7 +31,7 @@ module.exports = function (app) {
   };
 
   // Gzip the response
-  app.compressRes = function compressRes(data, req, res) {
+  app.compressRes = (data, req, res) => {
     if (app.atHost.debug) {
       res.end(data);
       return;
@@ -59,7 +59,7 @@ module.exports = function (app) {
 
   let pipeFileCache = {};
   // Stream file
-  app.pipeFile = function (path, res) {
+  app.pipeFile = (path, res) => {
     if (!fs.existsSync(`${app.__dirname}/${path}`)) return false;
     if (!app.atHost.debug) {
       if (!pipeFileCache[path])

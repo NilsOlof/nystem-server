@@ -6,7 +6,7 @@ import { withRouter } from "react-router";
 const ViewButtonLogin = ({ view, model, history }) => {
   const [saveButton, setSaveButton] = useState("Log in");
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async () => {
     const { errors = [] } = await view.event("validate");
 
     if (errors.length) {

@@ -45,7 +45,7 @@ module.exports = (app) => {
     await app.writeFileChanged(
       `${app.__dirname}/web/public/index.html`,
       content
-        .replace("<head>", `<head>\n${headFiles.join("\n")}`)
+        .replace("</head>", `${headFiles.join("\n")}\n</head>`)
         .replace(/\{name\}/gi, app.settings.client.name || "")
         .replace(
           /\{description\}/gi,

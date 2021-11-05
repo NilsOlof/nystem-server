@@ -16,6 +16,38 @@
       "text": "Name field"
     },
     {
+      "text": "Filter",
+      "type": "multigroup",
+      "id": "filter",
+      "itemExpandable": true,
+      "expandable": false,
+      "expanded": true,
+      "item": [
+        {
+          "id": "and",
+          "text": "And",
+          "type": "matrix",
+          "rowLabel": ["Field", "Value"]
+        },
+        {
+          "type": "switchButtons",
+          "item": [
+            {
+              "id": "exact",
+              "text": "Exact search",
+              "type": "boolean"
+            },
+            {
+              "id": "removeifempty",
+              "text": "Remove if empty value",
+              "type": "boolean"
+            }
+          ]
+        }
+      ],
+      "itemExpanded": true
+    },
+    {
       "type": "select",
       "id": "render",
       "text": "Render as",
@@ -25,9 +57,24 @@
       "render": "checkbox"
     },
     {
-      "type": "boolean",
-      "text": "Inline",
-      "id": "inline"
+      "type": "switchButtons",
+      "item": [
+        {
+          "type": "boolean",
+          "text": "Inline",
+          "id": "inline"
+        },
+        {
+          "text": "Focus",
+          "type": "boolean",
+          "id": "focus"
+        },
+        {
+          "text": "Mandatory",
+          "type": "boolean",
+          "id": "mandatory"
+        }
+      ]
     }
   ]
 }

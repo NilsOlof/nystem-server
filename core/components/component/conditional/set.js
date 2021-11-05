@@ -2,7 +2,7 @@ import { useEffect } from "react";
 
 const isset = (val) => !!val && !(val instanceof Array && val.length === 0);
 
-const ConditionalSet = ({ view, model, value, path }) => {
+const ConditionalSet = ({ view, model, value }) => {
   useEffect(() => {
     const testCondition = (id, value) => {
       const val = view.getValue(id);

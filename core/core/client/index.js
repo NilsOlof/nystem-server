@@ -1,12 +1,6 @@
-module.exports = function (app) {
+/* eslint-disable guard-for-in */
+module.exports = (app) => {
   if (!app.t) app.t = (text) => text;
-
-  app.on("init", -1000, () => {
-    app.capFirst = app.utils.capFirst;
-    app.uuid = app.utils.uuid;
-    app.clone = app.utils.clone;
-    init();
-  });
 
   function init() {
     if (!document.body) {
@@ -16,10 +10,10 @@ module.exports = function (app) {
 
     if (app.settings.debug) console.log(app);
 
-    app.parseFilter = function (filter, getValue, path) {
+    app.parseFilter = (filter, getValue, path) => {
       if (!filter) return {};
       function insertVal(val) {
-        return val.replace(/\{([a-z_.]+)\}/gim, (str, p1, offset, s) => {
+        return val.replace(/\{([a-z_.]+)\}/gim, (str, p1) => {
           return getValue(p1.replace("..", path));
         });
       }
@@ -68,7 +62,7 @@ module.exports = function (app) {
       };
     })();
 
-    app.domPathId = function (element) {
+    app.domPathId = (element) => {
       if (!element) return null;
       const path = [];
       for (let i = 0; i < 200 && element.parentElement; i++) {
@@ -96,4 +90,6 @@ module.exports = function (app) {
 
     app.event("loaded");
   }
+
+  app.on("init", -1000, init);
 };

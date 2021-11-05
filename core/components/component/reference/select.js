@@ -6,28 +6,28 @@ const ReferenceSelect = ({ model, setValue, value, view, path }) => {
   const [option, setOption] = useState([]);
 
   useEffect(() => {
-    const loadOption = () => {
+    const loadOption = ({ connected }) => {
+      if (!connected) return;
+
       const namefield = model.namefield ? model.namefield : "name";
       app()
         .database[model.source].search({
-          autoUpdate: true,
           filter: app().parseFilter(model.filter, view.getValue, path),
           count: 100,
         })
-        .then(({ data, offline }) => {
-          if (offline) {
-            app().connection.on("connect", loadOption);
-            app().connection.on("connect", loadOption);
-          } else app().connection.off("connect", loadOption);
+        .then(({ data }) => {
+          app().connection.on("connection", loadOption);
 
           setOption(
-            data.map((item) => ({ _id: item._id, text: item[namefield] }))
+            data
+              ? data.map((item) => ({ _id: item._id, text: item[namefield] }))
+              : []
           );
         });
     };
-    loadOption();
+    loadOption({ connected: true });
     return () => {
-      app().connection.off("connect", loadOption);
+      app().connection.off("connection", loadOption);
     };
   }, [model, path, view]);
 
@@ -36,6 +36,7 @@ const ReferenceSelect = ({ model, setValue, value, view, path }) => {
 
   return (
     <SelectInput
+      view={view}
       model={{ ...model, option }}
       setValue={setValue}
       value={value}

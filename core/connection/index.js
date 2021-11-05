@@ -1,11 +1,15 @@
-module.exports = function (app) {
+module.exports = (app) => {
+  if (!app.settings.client.domain) return;
+
+  require("./httpsfallback")(app);
+
+  const clients = {};
+  let connectedCount = 0;
   const WebSocketServer = require("websocket").server;
   let partData = ""; // For larger data than 64000 bytes
   const wsServer = new WebSocketServer({
     httpServer: app.server,
   });
-  const clients = {};
-  let connectedCount = 0;
 
   wsServer.on("request", (request) => {
     if (request.resourceURL.pathname !== "/") return;
@@ -70,6 +74,4 @@ module.exports = function (app) {
   });
 
   app.connection.on("count", () => connectedCount);
-
-  require("./httpsfallback")(app);
 };

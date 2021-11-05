@@ -19,6 +19,7 @@ class FlatgroupInput extends React.Component {
   valid() {
     let valid = true;
     for (let i = 0; i < this.model.item.length; i++)
+      // eslint-disable-next-line react/no-string-refs
       if (!this.refs[`component${i}`].valid()) valid = false;
     return valid;
   }
@@ -41,7 +42,7 @@ class FlatgroupInput extends React.Component {
       }
       return groupVal;
     }
-    const createItem = function (item, index) {
+    const createItem = (item, index) => {
       const value = item.id
         ? self.state.value[self.model.add2id + item.id]
         : getGroupVal();

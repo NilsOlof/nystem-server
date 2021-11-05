@@ -12,17 +12,18 @@ class MultilinetextInputlist extends React.Component {
   handleChange() {
     const val = [];
     for (let i = 0; i < this.state.value.length; i++) {
+      // eslint-disable-next-line react/no-string-refs
       const oneVal = this.refs[`input${i}`].value;
       if (oneVal) val.push(oneVal);
     }
     if (this.props.setValue) this.props.setValue(val);
     if (val.length > this.props.limit)
       this.setState({
-        value: val.concat([])
+        value: val.concat([]),
       });
     else
       this.setState({
-        value: val.concat([""])
+        value: val.concat([""]),
       });
   }
   UNSAFE_componentWillReceiveProps(nextProps) {
@@ -36,6 +37,7 @@ class MultilinetextInputlist extends React.Component {
   }
   componentDidMount() {
     if (this.props.focus)
+      // eslint-disable-next-line react/no-string-refs
       this.refs[`input${this.state.value.length - 1}`].focus();
   }
   render() {

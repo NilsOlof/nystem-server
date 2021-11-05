@@ -3,9 +3,13 @@ const { spawn } = require("child_process");
 const role = "super";
 
 const start = (app) => {
-  const runProgram = function (program, args, path) {
+  const runProgram = function (program, args, path = "") {
     const extra = path ? { cwd: path } : {};
-    const execService = spawn(program, args, { ...extra, detached: false });
+    const execService = spawn(program, args, {
+      ...extra,
+      detached: false,
+      env: { ...process.env, NODE_PATH: undefined, NODE__DIRNAME: undefined },
+    });
 
     console.log(`start ${path}/${program} pid:${execService.pid}`, args);
 
@@ -135,26 +139,31 @@ const start = (app) => {
     },
   });
 
-  const startManager = async ({ basepath, runbasepath, port }) => {
-    console.log("Open manager", basepath.replace(/\//g, "\\"));
-
-    const { runbasepath: cmdPath } = await app.event("serverPath", {
-      path: "{localdeploy}nystemmanager",
-    });
-    return runProgram(
-      "node",
-      ["app.js", "server.js", basepath, port, runbasepath],
-      cmdPath
-    );
-  };
-
   programRunner({
     field: "manager",
-    call: startManager,
-    callWin: startManager,
+    call: async ({ basepath, runbasepath, port }) => {
+      console.log("Open manager", basepath.replace(/\//g, "\\"));
+
+      const { runbasepath: cmdPath } = await app.event("serverPath", {
+        path: "{localdeploy}nystemmanager",
+      });
+      return runProgram(
+        "node",
+        ["app.js", "server.js", basepath, port, runbasepath],
+        cmdPath
+      );
+    },
+    callWin: async ({ basepath }) => {
+      console.log("Open manager", basepath.replace(/\//g, "\\"));
+
+      return runProgram(
+        "C:\\Users\\Nisse\\AppData\\Local\\app\\Nystem contenttype manager.exe",
+        [basepath, basepath]
+      );
+    },
   });
 
-  app.event("favicon", { path: "/files/image/original/logo2.svg" });
+  app.event("favicon", { file: "/files/image/original/logo2.svg" });
 };
 
 module.exports = (app) => app.on("start", start);

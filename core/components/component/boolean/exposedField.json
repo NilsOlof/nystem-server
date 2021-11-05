@@ -1,14 +1,63 @@
 {
-	"item": [
-		{
-			"type": "gridselect",
-			"id": "className",
-			"text": "Class"
-		},
-		{
-			"type": "text",
-			"id": "text",
-			"text": "Label"
-		}
-	]
+  "item": [
+    {
+      "type": "gridselect",
+      "id": "className",
+      "text": "Class"
+    },
+    {
+      "type": "text",
+      "id": "trueText",
+      "text": "True text"
+    },
+    {
+      "type": "text",
+      "id": "falseText",
+      "text": "False text"
+    },
+    {
+      "type": "text",
+      "id": "saveId",
+      "text": "Save id"
+    },
+    {
+      "type": "select",
+      "id": "render",
+      "text": "Render as",
+      "option": ["checkbox", "button"],
+      "limit": "1",
+      "inline": true,
+      "render": "checkbox"
+    },
+    {
+      "type": "switchButtons",
+      "item": [
+        {
+          "type": "boolean",
+          "id": "hideFalse",
+          "text": "Hide false text"
+        },
+        {
+          "type": "boolean",
+          "id": "inline",
+          "text": "Inline"
+        },
+        {
+          "type": "boolean",
+          "id": "hideTrue",
+          "text": "Hide true text"
+        },
+        {
+          "type": "boolean",
+          "id": "nolabel",
+          "text": "No label"
+        },
+        {
+          "type": "boolean",
+          "id": "floatlabel",
+          "text": "Float label"
+        }
+      ]
+    }
+  ]
 }

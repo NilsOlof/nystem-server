@@ -4,14 +4,14 @@ import {
   DateInputDate,
   UseValidator,
   Wrapper,
-  DateInputTime
+  DateInputTime,
 } from "nystem-components";
 import validate from "./validate";
 
-const DateInput = ({ model, view, focus, setValue, value }) => {
+const DateInput = ({ model, view, setValue, value }) => {
   const { dateType = ["date", "time"] } = model;
   const [error, setValidated] = UseValidator({ view, validate, value, model });
-  const validateAndSet = value => {
+  const validateAndSet = (value) => {
     setValue(value);
     setValidated(true);
   };

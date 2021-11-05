@@ -16,9 +16,46 @@
       "text": "Text field id"
     },
     {
+      "text": "Filter",
+      "type": "multigroup",
+      "id": "filter",
+      "itemExpandable": true,
+      "expandable": false,
+      "expanded": true,
+      "item": [
+        {
+          "id": "and",
+          "text": "And",
+          "type": "matrix",
+          "rowLabel": ["Field", "Value"]
+        },
+        {
+          "type": "switchButtons",
+          "item": [
+            {
+              "id": "exact",
+              "text": "Exact search",
+              "type": "boolean"
+            },
+            {
+              "id": "removeifempty",
+              "text": "Remove if empty value",
+              "type": "boolean"
+            }
+          ]
+        }
+      ],
+      "itemExpanded": true
+    },
+    {
       "type": "text",
       "id": "saveId",
       "text": "Save id"
+    },
+    {
+      "text": "Float label",
+      "type": "boolean",
+      "id": "floatlabel"
     },
     {
       "type": "select",
@@ -33,6 +70,26 @@
       "type": "int",
       "id": "limit",
       "text": "Limit"
+    },
+    {
+      "type": "switchButtons",
+      "item": [
+        {
+          "type": "boolean",
+          "id": "inline",
+          "text": "Inline"
+        },
+        {
+          "type": "boolean",
+          "id": "noLabel",
+          "text": "No label"
+        },
+        {
+          "type": "boolean",
+          "text": "Exact",
+          "id": "exact"
+        }
+      ]
     },
     {
       "text": "Label class",

@@ -42,6 +42,11 @@
           "text": "Float label",
           "type": "boolean",
           "id": "floatlabel"
+        },
+        {
+          "text": "Focus",
+          "type": "boolean",
+          "id": "focus"
         }
       ]
     }

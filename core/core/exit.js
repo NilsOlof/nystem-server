@@ -10,11 +10,12 @@ const formatBytes = (a, b = 2) => {
 
 module.exports = (app) => {
   process.stdin.resume();
-  process.stdin.on("data", (data) => {
+  process.stdin.on("data", async (data) => {
     if (data.toString() !== "exit") return;
     updateData();
     console.log(`Process exit, ${prg}`);
-    app.event("exit");
+    await app.event("exit");
+    process.exit();
   });
 
   process.on("unhandledRejection", (r) => console.log("unhandledRejection", r)); // eslint-disable-line no-console

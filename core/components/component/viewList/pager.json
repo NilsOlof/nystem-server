@@ -1,9 +1,14 @@
 {
-	"item": [
-		{
-			"type": "gridselect",
-			"id": "className",
-			"text": "Class"
-		}
-	]
+  "item": [
+    {
+      "type": "gridselect",
+      "id": "className",
+      "text": "Class"
+    },
+    {
+      "type": "text",
+      "id": "saveId",
+      "text": "Save searchvalue as query id"
+    }
+  ]
 }

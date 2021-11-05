@@ -6,16 +6,6 @@
       "type": "gridselect"
     },
     {
-      "type": "boolean",
-      "id": "addId",
-      "text": "Add id"
-    },
-    {
-      "type": "text",
-      "text": "Add",
-      "id": "add"
-    },
-    {
       "id": "href",
       "text": "Href",
       "type": "text"

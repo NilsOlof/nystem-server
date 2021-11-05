@@ -1,68 +1,47 @@
-import React, { useState } from "react";
-import app from "nystem";
-import {
-  Panel,
-  MultigroupOneInput,
-  Button,
-  BootstrapPanelToggle,
-  Wrapper,
-} from "nystem-components";
+import React from "react";
+import { ContentTypeRender } from "nystem-components";
+import { fallback } from "./input.json";
+// http://manager.localhost:9154/view/input/view_testmultigroup
 
-const MultigroupInput = ({ value, setValue, model, path, view }) => {
-  const [ids, setIds] = useState({});
-  value = value || [];
+const replaceInObject = (item, fn) => {
+  if (item instanceof Array)
+    return item.map((item) => replaceInObject(item, fn));
 
-  const addItem = () => {
-    value.push({});
-    setValue(value);
-  };
+  if (typeof item === "object") {
+    item = fn(item);
 
-  const createItem = function (item, index) {
-    const id = ids[index] || app().utils.uuid();
-    if (!ids[index]) setIds({ ...ids, [index]: id });
-
-    return React.createElement(MultigroupOneInput, {
-      key: id,
-      model,
-      value,
-      setValue,
-      expanded: model.itemExpanded,
-      last: index === value.length - 1,
-      view,
-      path: `${path}.${index}`,
+    Object.entries(item).forEach(([key, value]) => {
+      item[key] = replaceInObject(value, fn);
     });
-  };
+  }
+  return item;
+};
 
-  return (
-    <Panel
-      type="default"
-      expandable={model.expandable}
-      expanded={model.expanded}
-      icon={model.expandable}
-      header={
-        <Wrapper className="flex items-center">
-          <BootstrapPanelToggle
-            model={{
-              ...model,
-              icon: true,
-              className: "flex items-center",
-              item: [],
-            }}
-          >
-            {model.text}
-          </BootstrapPanelToggle>
-          <Button
-            onClick={addItem}
-            type="primary"
-            size="xs"
-            className="ml-auto"
-          >
-            Add
-          </Button>
-        </Wrapper>
-      }
-      body={value.map(createItem)}
-    />
-  );
+const MultigroupInput = ({ model, path }) => {
+  const item = replaceInObject(fallback, (item) => {
+    if (item.id && item.id.startsWith("testmultigroup"))
+      return item.id === "testmultigroup._id"
+        ? model.header
+          ? { type: "style", item: model.header }
+          : { ...item, id: `${model.idField || "_id"}` }
+        : { ...item, id: item.id.replace("testmultigroup", model.id) };
+
+    if (item.item === "item")
+      return {
+        ...item,
+        item: model.item.map((field) => ({
+          ...field,
+          id:
+            field.id && field.id.includes(".")
+              ? field.id
+              : `${model.id}.${field.id}`,
+        })),
+      };
+
+    if (item.text === "{name}") return { ...item, text: model.text };
+    return { ...item };
+  });
+
+  return <ContentTypeRender path={path} items={[item]} />;
 };
 export default MultigroupInput;

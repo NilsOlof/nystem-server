@@ -18,7 +18,9 @@ const DragAndDropList = ({ value = [], model, path, view }) => {
   let { field } = model;
   if (field instanceof Array) [field] = field;
   if (!field) field = { id: "item" };
-  const valuePath = path ? `${path}.${field.id}` : field.id;
+
+  let valuePath = field.id.substring(field.id.lastIndexOf(".") + 1);
+  if (path) valuePath = `${path}.${valuePath}`;
 
   value = view.getValue(valuePath);
   value = value || [];
@@ -72,15 +74,13 @@ const DragAndDropList = ({ value = [], model, path, view }) => {
 
   if (!(value instanceof Array)) return null;
 
-  const { className = [] } = model;
-
   return (
     <Droppable droppableId={droppableId} type={valueType}>
       {(provided, snapshot) => (
         <Wrapper
           className={[
-            "min-h-2-5 px-2 py-1 border shadow rounded",
-            ...className,
+            model.className,
+            snapshot.isDraggingOver && model.hoverClassName,
           ]}
           {...provided.droppableProps}
           ref={provided.innerRef}
@@ -92,7 +92,7 @@ const DragAndDropList = ({ value = [], model, path, view }) => {
               index={index}
               minHeight={model.minHeight}
             >
-              {(provided, snapshot) => (
+              {(provided) => (
                 <div
                   ref={provided.innerRef}
                   {...provided.draggableProps}
@@ -102,17 +102,8 @@ const DragAndDropList = ({ value = [], model, path, view }) => {
                     value={provided.dragHandleProps}
                   >
                     <ContentTypeRender
-                      path={path}
-                      items={
-                        app().replaceInModel({
-                          model,
-                          viewFormat: view.viewFormat,
-                          fn: ({ model: item }) =>
-                            item.id === field.id
-                              ? { ...item, id: `${item.id}.${index}` }
-                              : item,
-                        }).item
-                      }
+                      path={`${path ? `${path}.` : ""}${field.id}.${index}`}
+                      items={model.item}
                     />
                   </DragAndDropListContext.Provider>
                 </div>

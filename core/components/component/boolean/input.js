@@ -7,7 +7,7 @@ const BooleanInput = ({ model, setValue, value, view, render }) => {
   const [error, setValidated] = UseValidator({ view, validate, value, model });
   const [id] = useState(app().uuid);
 
-  const handleChangeButton = (e) => {
+  const handleChangeButton = () => {
     setValidated(true);
     setValue(!value);
   };

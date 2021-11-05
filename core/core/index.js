@@ -1,7 +1,5 @@
 const http = require("http");
 
-module.exports = () => {};
-
 let fs;
 try {
   fs = require("fs-extra");
@@ -26,7 +24,7 @@ function pathFinder(basePath) {
   return readPath(`${basePath}/core`).concat(readPath(`${basePath}/module`));
 }
 
-let app = {
+const app = {
   fs,
   __dirname:
     process.env.NODE__DIRNAME ||
@@ -34,6 +32,9 @@ let app = {
   pathFinder,
 };
 app.__dirname = app.__dirname.replace(/\\/g, "/");
+app.addeventhandler = require("./client/eventhandler");
+
+app.addeventhandler(app);
 
 app.writeFileChanged = (fileName, data) =>
   new Promise((resolve, reject) => {
@@ -65,60 +66,77 @@ app.readFile = (fileName) =>
 
 app.filePaths = pathFinder(app.__dirname);
 
-require("./package.js")(app).then(async () => {
-  const express = require("express")();
-  const server = http.createServer(express);
+require("./package.js")(app);
 
-  express.use((req, res, next) => {
-    res.removeHeader("x-powered-by");
-    next();
-  });
+console.time("load"); // eslint-disable-line no-console
+app.cacheTimeStart = new Date();
 
-  app = { ...app, server, express };
+try {
+  // eslint-disable-next-line no-multi-assign
+  app.atHost = app.settings = JSON.parse(
+    fs.readFileSync(`${app.__dirname}/data/host.json`, "utf8")
+  );
+} catch (e) {
+  // eslint-disable-next-line no-multi-assign
+  app.atHost = app.settings = {};
+}
+app.settings.appName = app.settings.appName || "app";
+app.settings.client = app.settings.client || {};
 
-  console.time("load"); // eslint-disable-line no-console
-
-  app.cacheTimeStart = new Date();
-
+if (app.settings.client.domain) {
   try {
-    // Load server specific settings from /data/host.json
-    // eslint-disable-next-line no-multi-assign
-    app.atHost = app.settings = JSON.parse(
-      fs.readFileSync(`${app.__dirname}/data/host.json`, "utf8")
-    );
+    app.express = require("express")();
+
+    app.server = http.createServer(app.express);
+
+    app.express.use((req, res, next) => {
+      res.removeHeader("x-powered-by");
+      next();
+    });
   } catch (e) {
-    // eslint-disable-next-line no-multi-assign
-    app.atHost = app.settings = {};
+    console.log("Modules missing, exiting.");
+    return;
   }
-  app.settings.appName = app.settings.appName || "app";
-  app.settings.client = app.settings.client || {};
+} else app.express = { get: () => {}, post: () => {} };
 
-  app.addeventhandler = require("./client/eventhandler");
-  app.addeventhandler(app);
-  require("./utils.js")(app);
-  require("./exit.js")(app);
+require("./exit.js")(app);
 
-  app.uuid = app.utils.generateGUID;
-  app.on("settings", () => app.settings);
-  const { debug } = app.settings;
+const S4 = () =>
+  // eslint-disable-next-line no-bitwise
+  (((1 + Math.random()) * 0x10000) | 0).toString(16).substring(1);
+app.uuid = () => S4() + S4() + S4() + S4() + S4() + S4() + S4() + S4();
+app.capFirst = (text) =>
+  text && text.substring(0, 1).toUpperCase() + text.substring(1);
 
-  app.filePaths.forEach((path) => {
-    const pathpart = path.split("/");
-    if (pathpart.length !== 3) return;
-    path = `${app.__dirname}/${path}`;
+app.on("settings", () => app.settings);
+const { debug } = app.settings;
 
-    if (pathpart[2] === "index.js") require(path)(app);
+app.filePaths.forEach((path) => {
+  const pathpart = path.split("/");
+  if (
+    pathpart.length !== 3 ||
+    (pathpart[2] === "index.js" && pathpart[1] === "core")
+  )
+    return;
 
-    if (debug && pathpart[2] === "dev.js") require(path)(app);
+  path = `${app.__dirname}/${path}`;
+  if (pathpart[2] === "index.js") require(path)(app);
 
-    if (!debug && pathpart[2] === "prod.js") require(path)(app);
-  });
+  if (debug && pathpart[2] === "dev.js") require(path)(app);
 
+  if (!debug && pathpart[2] === "prod.js") require(path)(app);
+});
+
+(async () => {
   await app.event("init", app);
   await app.event("load", app);
   await app.event("start", app);
 
   console.timeEnd("load"); // eslint-disable-line no-console
-  server.listen(app.settings.port, app.settings.host);
+  if (app.settings.port)
+    app.server.listen(app.settings.port, app.settings.host);
+
   await app.event("started", app);
-});
+})();
+
+module.exports = () => app;

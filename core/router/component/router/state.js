@@ -3,7 +3,7 @@ import app from "nystem";
 import PropTypes from "prop-types";
 
 class RouterState extends React.Component {
-  getPath = context => {
+  getPath = (context) => {
     return context.router.history.location.pathname;
   };
   componentDidMount() {
@@ -27,20 +27,19 @@ class RouterState extends React.Component {
       if (pathname.indexOf(this.props.match) === 0) {
         pathname = pathname.replace(this.props.match, "");
         this.context.router.history.replace(this.props.redirect + pathname);
-        return;
       }
     }
   }
 
   componentWillUnmount() {}
 
-  UNSAFE_componentWillReceiveProps(nextProps, nextContext) {
+  UNSAFE_componentWillReceiveProps() {
     if (this.props.save === "memory")
       app().pathname = this.getPath(this.context);
     if (this.props.save === "storage")
       app().storage.setItem({
         id: "router.pathname",
-        value: this.getPath(this.context)
+        value: this.getPath(this.context),
       });
   }
 
@@ -49,8 +48,8 @@ class RouterState extends React.Component {
   }
 }
 RouterState.contextTypes = {
-  router: PropTypes.object
+  router: PropTypes.object,
 };
 export default RouterState;
 
-//app.storage.getItem({ id: "language" }));
+// app.storage.getItem({ id: "language" }));

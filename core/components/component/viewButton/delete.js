@@ -7,7 +7,9 @@ const ViewButtonDelete = ({ view, model, history }) => {
   const { className, size, btnType, deletedText } = model;
   const [text, setText] = useState(model.text);
 
-  const handleDelete = () => {
+  const handleDelete = (event) => {
+    if (model.stopPropagation) event.stopPropagation();
+
     if (view.event("delete"))
       app()
         .database[view.contentType].delete({ id: view.value._id })
@@ -22,6 +24,9 @@ const ViewButtonDelete = ({ view, model, history }) => {
     <Button
       className={className}
       size={size}
+      onMouseDown={(event) => {
+        if (model.stopPropagation) event.stopPropagation();
+      }}
       onClick={handleDelete}
       type={btnType}
     >

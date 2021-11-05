@@ -1,36 +1,16 @@
 import React, { useState, useEffect, useRef } from "react";
-import app from "nystem";
 import {
   InputWrapper,
-  ReferenceView,
   Wrapper,
   ReferenceSortable,
   Button,
   ViewInViewView,
   UseValidator,
   Input,
+  ContentTypeView,
 } from "nystem-components";
 import validate from "./validate";
 import "./input.css";
-
-const useSearch = ({ contentType, searchVal, model } = {}) => {
-  const [result, setResult] = useState([]);
-  useEffect(() => {
-    if (!contentType) return;
-    const { sortby, searchCount, reverse } = model;
-
-    const db = app().database[contentType];
-    db.search({
-      filter: searchVal && { $all: searchVal },
-      count: searchCount || 100,
-      data: undefined,
-      sortby,
-      reverse,
-    }).then(({ data }) => setResult(data || []));
-  }, [setResult, contentType, searchVal, model]);
-
-  return { result };
-};
 
 const InputSpes = ({ focus, onBlur, onFocus, ...props }) => {
   const inputEl = useRef(null);
@@ -61,7 +41,7 @@ const InputSpes = ({ focus, onBlur, onFocus, ...props }) => {
   );
 };
 
-const InlineAdd = ({ model, view }) => {
+const InlineAdd = ({ model, view, path }) => {
   const [isAdding, setIsAdding] = useState(false);
   if (!model.inlineAdd) return null;
   if (!isAdding)
@@ -76,9 +56,18 @@ const InlineAdd = ({ model, view }) => {
     );
   return (
     <ViewInViewView
-      model={{ contentType: model.source, view: model.inlineAdd }}
+      model={{
+        contentType: model.source,
+        view: model.inlineAdd,
+        className: model.classNameInput,
+      }}
       onSave={({ _id }) => {
-        view.event("referenceAdd", { model, value: { _id }, close: true });
+        view.event("referenceAdd", {
+          model,
+          path,
+          value: { _id },
+          close: true,
+        });
         setIsAdding(false);
       }}
     />
@@ -86,22 +75,21 @@ const InlineAdd = ({ model, view }) => {
 };
 
 const ReferenceInput = ({ model, view, value = [], setValue, path }) => {
-  const { source, exposed } = model;
+  const { exposed } = model;
   const [inFocus, setInFocus] = useState(false);
   const [searchVal, setSearchVal] = useState("");
   const [error] = UseValidator({ view, validate, value, model });
 
-  const { result } = useSearch({ contentType: source, searchVal, model }) || {};
-
   value = value instanceof Array ? value : [value];
 
   useEffect(() => {
+    const modelId = model.id;
     const events = exposed
       ? { add: "exposedReferenceAdd", remove: "exposedReferenceRemove" }
       : { add: "referenceAdd", remove: "referenceRemove" };
 
-    const add = ({ value: addValue, close, path: atPath }) => {
-      if (path !== atPath) return;
+    const add = ({ model, value: addValue, close, path: atPath }) => {
+      if (path !== atPath || modelId !== model.id) return;
 
       const newVal = [...value, addValue._id];
       setValue(model.limit === 1 ? newVal[0] : newVal);
@@ -111,8 +99,8 @@ const ReferenceInput = ({ model, view, value = [], setValue, path }) => {
 
       setSearchVal("");
     };
-    const remove = ({ value: removeValue, path: atPath }) => {
-      if (path !== atPath) return;
+    const remove = ({ model, value: removeValue, path: atPath }) => {
+      if (path !== atPath || modelId !== model.id) return;
 
       const newVal = value.filter((id) => `${id}` !== `${removeValue._id}`);
       setValue(newVal.length ? newVal : undefined);
@@ -127,8 +115,6 @@ const ReferenceInput = ({ model, view, value = [], setValue, path }) => {
   }, [view, setValue, value, setInFocus, model.id, model.limit, path, exposed]);
 
   let clicked = false;
-  const itemsSelect =
-    result.map((item) => item._id).filter((id) => !value.includes(id)) || [];
 
   const addable = !model.limit || value.length < model.limit || null;
 
@@ -150,7 +136,7 @@ const ReferenceInput = ({ model, view, value = [], setValue, path }) => {
       )}
       {addable && (
         <>
-          <InlineAdd model={model} view={view} />
+          <InlineAdd model={model} view={view} path={path} />
           <InputSpes
             onFocus={() => setInFocus(true)}
             onBlur={() => {
@@ -174,16 +160,15 @@ const ReferenceInput = ({ model, view, value = [], setValue, path }) => {
             }, 500);
           }}
         >
-          {itemsSelect.length ? (
-            <ReferenceView
-              model={{ ...model, renderFormat: model.renderFormatSelect }}
-              value={itemsSelect}
-              view={view}
-              path={path}
-            />
-          ) : (
-            <Wrapper className="p-2 bg-red-200">No addable items found</Wrapper>
-          )}
+          <ContentTypeView
+            contentType={model.source}
+            baseView={view}
+            format={model.renderFormatSelect}
+            onReference={(item) =>
+              view.event(item.event, { ...item, model, path })
+            }
+            value={{ exclude: value, searchVal }}
+          />
         </Wrapper>
       )}
     </InputWrapper>

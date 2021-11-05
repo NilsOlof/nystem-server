@@ -1,77 +1,15 @@
 {
-  "text": "Bootstrap",
+  "text": "Open by path",
   "item": [
-    {
-      "id": "className",
-      "text": "Class",
-      "type": "gridselect"
-    },
-    {
-      "id": "expanded",
-      "text": "Expanded",
-      "type": "boolean"
-    },
-    {
-      "type": "select",
-      "id": "stateStore",
-      "text": "Store state",
-      "inline": true,
-      "option": [
-        {
-          "text": "By URL",
-          "_id": "byUrl"
-        },
-        {
-          "text": "Independent of URL",
-          "_id": "independent"
-        },
-        {
-          "text": "Disabled",
-          "_id": "disabled"
-        }
-      ],
-      "limit": "1",
-      "render": "button",
-      "default": "byUrl"
-    },
-    {
-      "type": "select",
-      "id": "typeClass",
-      "text": "Style",
-      "inline": true,
-      "option": [
-        {
-          "text": "Default",
-          "_id": "default"
-        },
-        {
-          "text": "Primary",
-          "_id": "primary"
-        },
-        {
-          "text": "Compact",
-          "_id": "compact"
-        }
-      ],
-      "limit": "1",
-      "render": "button"
-    },
     {
       "text": "Match",
       "id": "match",
       "type": "text"
     },
     {
-      "text": "Header",
-      "id": "header",
-      "type": "viewCreator",
-      "expanded": true
-    },
-    {
-      "text": "Fields",
-      "id": "item",
-      "type": "viewCreator",
-      "expanded": true
+      "type": "boolean",
+      "id": "invert",
+      "text": "Invert"
     }
   ]
 }

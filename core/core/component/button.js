@@ -58,7 +58,7 @@ const Button = ({
       {...props}
       onClick={(e) => {
         e.preventDefault();
-        onClick();
+        onClick(e);
       }}
     />
   );

@@ -406,6 +406,30 @@
 						"hover:bg-gray-100",
 						"ml-0"
 					]
+				},
+				{
+					"type": "session",
+					"format": "logout",
+					"item": [
+						{
+							"type": "viewText",
+							"text": "Log out",
+							"className": [
+								"cursor-pointer",
+								"border",
+								"p-2",
+								"m-2",
+								"block",
+								"w-32",
+								"text-center",
+								"bg-gray-200",
+								"shadow",
+								"hover:bg-gray-100",
+								"ml-0"
+							]
+						}
+					],
+					"to": "/"
 				}
 			]
 		},

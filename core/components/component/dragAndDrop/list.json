@@ -6,6 +6,11 @@
       "type": "gridselect"
     },
     {
+      "id": "hoverClassName",
+      "text": "Class when hover over",
+      "type": "gridselect"
+    },
+    {
       "type": "text",
       "id": "valueType",
       "text": "Value type"
@@ -17,11 +22,6 @@
       "namefield": "text",
       "field": "id",
       "limit": 1
-    },
-    {
-      "id": "myDnd",
-      "text": "My DND",
-      "type": "boolean"
     },
     {
       "id": "minHeight",

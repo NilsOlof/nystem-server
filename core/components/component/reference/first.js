@@ -7,7 +7,7 @@ const ReferenceFirst = ({ model, view, value = [] }) => {
 
   if (!value) return null;
 
-  const option = (item, index) => (
+  const option = (item) => (
     <ContentTypeView
       key={item}
       contentType={source}

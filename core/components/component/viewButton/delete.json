@@ -16,6 +16,11 @@
       "type": "text"
     },
     {
+      "id": "stopPropagation",
+      "text": "Stop propagation",
+      "type": "boolean"
+    },
+    {
       "type": "text",
       "id": "redirectURL",
       "text": "Redirect to URL"

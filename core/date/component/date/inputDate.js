@@ -14,7 +14,7 @@ const ClearButton = ({ setValue }) => (
 
 const dateFormat = "YYYY-MM-DD";
 
-const DateInputDate = ({ model, onBlur, focus, setValue, value }) => {
+const DateInputDate = ({ model, focus, setValue, value }) => {
   const [inputVal, setInputVal] = useState(
     value ? moment(value).format(dateFormat) : ""
   );

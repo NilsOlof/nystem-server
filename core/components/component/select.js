@@ -1,6 +1,7 @@
 import React from "react";
+import { Wrapper } from "nystem-components";
 
 const Select = ({ className, ...props }) => (
-  <select className={className} {...props} />
+  <Wrapper renderAs="select" className={className} {...props} />
 );
 export default Select;

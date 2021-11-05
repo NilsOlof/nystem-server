@@ -4,6 +4,7 @@ import app from "nystem";
 import { Wrapper } from "nystem-components";
 
 const dateTimeFormats = {
+  year: "YYYY",
   dateLong: "YYYY-MM-DD",
   timeLong: "H:mm",
   dateTimeLong: "YYYY-MM-DD HH:mm",
@@ -18,19 +19,17 @@ const hourInMs = 1000 * 60 * 60;
 
 const DateView = ({ model, value }) => {
   const { className, renderAs, dateFormat } = model;
-  const format = dateTimeFormats[dateFormat || "dateTimeLong"];
+  const format = dateTimeFormats[dateFormat]
+    ? dateTimeFormats[dateFormat]
+    : dateFormat || dateTimeFormats.dateTimeLong;
+
   value = parseInt(value, 10);
   let rel = value && model.relative && value + hourInMs * 24 - Date.now();
   rel = !rel || rel < 0 ? 0 : rel;
   if (rel && moment().startOf("day").valueOf() > value) rel = 0;
 
   const formatDate = useCallback(
-    () =>
-      rel
-        ? rel > 23 * hourInMs
-          ? moment(value).fromNow()
-          : moment(value).format("H:mm")
-        : moment(value).format(format),
+    () => (rel ? moment(value).format("H:mm") : moment(value).format(format)),
     [format, rel, value]
   );
   const [result, setResult] = useState(formatDate());

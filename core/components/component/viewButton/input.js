@@ -107,6 +107,8 @@ const ViewButtonInput = ({ view, model, value, history, location }) => {
 
     if (!saved) return;
 
+    if (model.clearOnSave) view.setValue({ value: {} });
+
     setButton("success");
     setSavedTimer(
       setTimeout(() => {

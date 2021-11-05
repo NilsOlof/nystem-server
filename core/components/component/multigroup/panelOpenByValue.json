@@ -1,0 +1,21 @@
+{
+  "text": "Open by value",
+  "item": [
+    {
+      "type": "matrix",
+      "text": "Conditions",
+      "rowLabel": ["Field id", "value"],
+      "id": "condition"
+    },
+    {
+      "type": "int",
+      "id": "keyCount",
+      "text": "Key count"
+    },
+    {
+      "type": "boolean",
+      "id": "invert",
+      "text": "Invert"
+    }
+  ]
+}

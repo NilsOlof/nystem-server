@@ -4,12 +4,15 @@ import { Button, Wrapper, ContentTypeRender } from "nystem-components";
 
 const ViewButtonReference = ({ model, view, path }) => {
   const { event, item, className } = model;
+  const callView = event.includes("Add") ? view.baseView : view;
 
   if (item && item.length)
     return (
       <Wrapper
         className={className}
-        onClick={() => view.event("reference", { event, value: view.value })}
+        onClick={() =>
+          callView.event("reference", { event, value: view.value })
+        }
       >
         <ContentTypeRender path={path} items={item} />
       </Wrapper>
@@ -17,7 +20,7 @@ const ViewButtonReference = ({ model, view, path }) => {
 
   return (
     <Button
-      onClick={() => view.event("reference", { event, value: view.value })}
+      onClick={() => callView.event("reference", { event, value: view.value })}
       className={className}
       type={model.btnType}
       size={model.btnSize}

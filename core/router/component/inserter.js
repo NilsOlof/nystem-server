@@ -35,14 +35,12 @@ const Inserter = (props) => {
 
         return (
           <ContentTypeView
+            key={path.join("-")}
             className={className}
             contentType={path[1]}
             format={path[2]}
             id={path[3]}
-            location={location}
             params={location.pathname.split("/").slice(1)}
-            path={path}
-            key={location.pathname}
             noForm={props.noForm}
           />
         );

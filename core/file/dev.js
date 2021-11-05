@@ -1,21 +1,35 @@
-module.exports = function (app) {
-  app.on("start", () => {
-    if (!app.fs.existsSync(`${app.__dirname}/web`)) return;
-    require("./htmlFolder")(app);
-    require("./manifest")(app);
+const devStartingIfno = `
+<!doctype html>
+<html lang="en">
+  <head>
+    <script>
+      setTimeout(() => {
+        window.location.reload();
+      }, 7000);
+    </script>
+    </head>
+  <body><h1>Dev environment starting...</h1></body>
+</html>
+`;
 
-    app.writeFileChanged(
-      `${app.__dirname}/web/.env`,
-      `BROWSER=none\nSKIP_PREFLIGHT_CHECK=true\nINLINE_RUNTIME_CHUNK=false\nDOMAIN=localhost:${
-        app.settings.port + 5000
-      }\nPORT=${app.settings.port + 5000}\n`
-    );
+module.exports = (app) => {
+  app.on("start", () => {
+    const port = app.settings.port + 5000;
+    if (app.fs.existsSync(`${app.__dirname}/web`)) {
+      require("./htmlFolder")(app);
+      require("./manifest")(app);
+
+      app.writeFileChanged(
+        `${app.__dirname}/web/.env`,
+        `BROWSER=none\nSKIP_PREFLIGHT_CHECK=true\nINLINE_RUNTIME_CHUNK=false\nDOMAIN=localhost:${port}\nESLINT_NO_DEV_ERRORS=true\nFAST_REFRESH=false\nPORT=${port}\nWDS_SOCKET_PORT=${port}\n`
+      );
+    }
 
     const http = require("http");
     const httpProxy = require("http-proxy");
 
     const proxy = httpProxy.createProxyServer({
-      target: `http://localhost:${app.settings.port + 5000}`,
+      target: `http://localhost:${port}`,
       ws: true,
       xfwd: true,
       agent: new http.Agent({ maxSockets: Number.MAX_VALUE }),
@@ -40,7 +54,7 @@ module.exports = function (app) {
         };
 
         const _writeHead = res.writeHead;
-        res.writeHead = function (statusCode, headers) {
+        res.writeHead = (statusCode, headers) => {
           res.removeHeader("Content-length");
           _writeHead.call(res, statusCode, headers);
         };
@@ -50,20 +64,20 @@ module.exports = function (app) {
         if (error) {
           console.log("res.get", error);
           if (error.code === "ECONNREFUSED") startApp();
-          res.end("Dev environment starting");
+          res.end(devStartingIfno);
         }
       });
     });
     app.express.post("/*", (req, res) => {
       proxy.web(req, res, (error) => {
         console.log("res.post", error);
-        res.end("Dev environment starting");
+        res.end("res.post error", error);
       });
     });
   });
 
   let started = false;
-  function startApp() {
+  const startApp = () => {
     if (started) return;
     started = true;
     const { spawn } = require("child_process");
@@ -78,8 +92,12 @@ module.exports = function (app) {
     };
     // require("child_process").exec(`open -a Terminal "${runbasepath}"`);
 
-    const runPathWin = `${__dirname}/openReactApp.cmd`;
-    const ex = spawn(os.platform() === "win32" ? runPathWin : "npm", args, opt);
+    const command =
+      os.platform() === "win32"
+        ? `${__dirname}/openReactApp.cmd`
+        : `osascript -e 'tell app "Terminal" to do script "cd ${app.__dirname}/web && npm start"'`;
+
+    const ex = spawn(command, args, opt);
     app.on("exit", () => ex.kill());
-  }
+  };
 };

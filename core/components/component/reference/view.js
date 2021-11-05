@@ -5,7 +5,7 @@ const ReferenceView = ({ model, view, value = [], path }) => {
   value = value instanceof Array ? value : [value];
   const { renderFormat, className, source, itemClassName } = model;
 
-  const option = (item, index) => (
+  const option = (item) => (
     <ContentTypeView
       key={item}
       contentType={source}

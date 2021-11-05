@@ -2,11 +2,11 @@ import React from "react";
 import { Input, InputWrapper, UseValidator } from "nystem-components";
 import validate from "./validate";
 
-const MultilinetextInput = ({ model, value, setValue, focus, view }) => {
+const MultilinetextInput = ({ model, value, setValue, view }) => {
   const [error, setValidated] = UseValidator({ view, validate, value, model });
   value = value instanceof Array ? value : value ? [value] : [];
 
-  value = value.filter(value => value !== "");
+  value = value.filter((value) => value !== "");
   value.push("");
 
   const onChange = (itemValue, index) => {
@@ -22,7 +22,7 @@ const MultilinetextInput = ({ model, value, setValue, focus, view }) => {
           <Input
             className="textInputDefault"
             value={value}
-            onChange={value => onChange(value, index)}
+            onChange={(value) => onChange(value, index)}
           />
         </div>
       ))}

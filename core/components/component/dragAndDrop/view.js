@@ -29,7 +29,7 @@ const DragAndDropView = ({ value, model, path }) => {
       type={model.valueType}
       isDropDisabled={true}
     >
-      {(provided, snapshot) => {
+      {(provided) => {
         // console.log(provided);
         return (
           <div {...provided.droppableProps} ref={provided.innerRef}>
@@ -39,7 +39,7 @@ const DragAndDropView = ({ value, model, path }) => {
               index={0}
               minHeight={model.minHeight}
             >
-              {(provided, snapshot) => {
+              {(provided) => {
                 // console.log(provided.draggableProps.style);
                 return (
                   <div

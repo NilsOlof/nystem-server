@@ -49,32 +49,35 @@ module.exports = (app) => {
       window.location.reload();
     });
   });
+  app.on("init", -100, () => {
+    app.connection.on("connection", ({ connected }) => {
+      if (!connected) return;
 
-  app.connection.on("connect", () => {
-    app.connection
-      .emit({ type: "getAppVersion" })
-      .then(async ({ appVersion }) => {
-        const { appVersion: clientAppVersion } = await app.event(
-          "getAppVersion"
-        );
-        console.log("At version", { clientAppVersion, appVersion });
-        if (
-          !clientAppVersion ||
-          !appVersion ||
-          clientAppVersion === appVersion
-        ) {
-          window.localStorage.setItem("havereloaded", "false");
-          return;
-        }
+      app.connection
+        .emit({ type: "getAppVersion" })
+        .then(async ({ appVersion }) => {
+          const { appVersion: clientAppVersion } = await app.event(
+            "getAppVersion"
+          );
+          console.log("At version", { clientAppVersion, appVersion });
+          if (
+            !clientAppVersion ||
+            !appVersion ||
+            clientAppVersion === appVersion
+          ) {
+            window.localStorage.setItem("havereloaded", "false");
+            return;
+          }
 
-        if (window.localStorage.getItem("havereloaded") === "true") return;
+          if (window.localStorage.getItem("havereloaded") === "true") return;
 
-        window.localStorage.setItem("havereloaded", "true");
+          window.localStorage.setItem("havereloaded", "true");
 
-        window.caches.delete("nystem").then(() => {
-          window.location.reload();
+          window.caches.delete("nystem").then(() => {
+            window.location.reload();
+          });
         });
-      });
+    });
   });
   setTimeout(() => {
     window.localStorage.setItem("havereloaded", "false");

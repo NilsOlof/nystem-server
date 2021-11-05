@@ -1,12 +1,14 @@
+/* eslint-disable react/no-string-refs */
 import React from "react";
 import app from "nystem";
 import { InputWrapper } from "nystem-components";
+
 class EmailVerifiedInput extends React.Component {
   constructor(props) {
     super(props);
     this.model = props.model;
     const state = {
-      value: props.value
+      value: props.value,
     };
     if (props.add && this.model.default)
       this.props.setValue(this.model.id, this.model.default);
@@ -18,10 +20,10 @@ class EmailVerifiedInput extends React.Component {
   }
   handleChange() {
     this.validated = true;
-    const value = this.refs.input.value;
+    const { value } = this.refs.input;
     this.setState({
       value: value,
-      error: this.model.mandatory && !value ? this.errormsg : false
+      error: this.model.mandatory && !value ? this.errormsg : false,
     });
     this.props.setValue(this.model.id, value);
   }
@@ -29,13 +31,13 @@ class EmailVerifiedInput extends React.Component {
     this.validated = true;
     if (this.model.mandatory && !this.state.value) {
       this.setState({
-        error: this.errormsg
+        error: this.errormsg,
       });
       return false;
     }
     if (this.test(this.state.value)) {
       this.setState({
-        error: "Incorrect e-mail adress"
+        error: "Incorrect e-mail adress",
       });
       return false;
     }
@@ -53,7 +55,7 @@ class EmailVerifiedInput extends React.Component {
       const error = this.validated && this.model.mandatory && !nextProps.value;
       this.setState({
         value: nextProps.value,
-        error: error ? this.errormsg : false
+        error: error ? this.errormsg : false,
       });
     }
   }

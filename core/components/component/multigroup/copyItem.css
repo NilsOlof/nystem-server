@@ -1,0 +1,13 @@
+@keyframes copyItemBounce {
+  from {
+    transform: translate3d(0, 0, 0);
+  }
+
+  to {
+    transform: translate3d(0, -5px, 0);
+  }
+}
+
+.copyItemBounce {
+  animation: copyItemBounce 0.2s alternate;
+}

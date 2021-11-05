@@ -1,0 +1,14 @@
+{
+  "item": [
+    {
+      "type": "text",
+      "id": "saveId",
+      "text": "Save id"
+    },
+    {
+      "type": "boolean",
+      "text": "Push",
+      "id": "push"
+    }
+  ]
+}

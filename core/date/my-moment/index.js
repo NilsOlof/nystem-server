@@ -28,14 +28,22 @@ const typeByFormat = {
   M: new Intl.DateTimeFormat("sv-SE", { month: "numeric" }),
   D: new Intl.DateTimeFormat("sv-SE", { day: "numeric" }),
   HH: new Intl.DateTimeFormat("sv-SE", { hour: "2-digit" }),
-  mm: new Intl.DateTimeFormat("sv-SE", { minute: "2-digit" }),
+  mm: {
+    format: (at) => {
+      const val = new Intl.DateTimeFormat("sv-SE", {
+        minute: "2-digit",
+      }).format(at);
+
+      return val < 10 ? `0${val}` : val;
+    },
+  },
   H: new Intl.DateTimeFormat("sv-SE", { hour: "numeric" }),
   m: new Intl.DateTimeFormat("sv-SE", { minute: "numeric" }),
   dddd: new Intl.DateTimeFormat("en-GB", { weekday: "long" }),
 };
 
 const finderRegExp = new RegExp(Object.keys(typeByFormat).join("|"), "gi");
-const replacer = (at) => (format) => typeByFormat[format].format(at);
+const replacer = (at) => (format) => typeByFormat[format]?.format(at);
 
 const myMoment = (val) => {
   const at = new Date(val || Date.now());

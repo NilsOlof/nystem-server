@@ -1,7 +1,7 @@
 import React from "react";
 import { Wrapper, ContentTypeRender } from "nystem-components";
 
-const StyleEventOutside = ({ model, path, view, value }) => {
+const StyleEventOutside = ({ model, path, view, value, children }) => {
   const { className, classNameInner, item, event } = model;
   let innerClicked = false;
   return (
@@ -18,7 +18,7 @@ const StyleEventOutside = ({ model, path, view, value }) => {
           innerClicked = true;
         }}
       >
-        <ContentTypeRender path={path} items={item} />
+        {children || <ContentTypeRender path={path} items={item} />}
       </Wrapper>
     </Wrapper>
   );

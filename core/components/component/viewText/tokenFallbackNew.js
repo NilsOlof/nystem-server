@@ -29,7 +29,7 @@ class ViewTextTokenFallbackNew extends React.Component {
     if (!val) return val;
     const self = this;
     this.val = false;
-    return val.replace(/\{([a-z_.]+)\}/gim, (str, p1, offset, s) => {
+    return val.replace(/\{([a-z_.]+)\}/gim, (str, p1) => {
       const val = self.view.getValue(p1.replace("..", self.props.path));
       self.val = self.val || val;
       return typeof val === "undefined" ? "" : val;

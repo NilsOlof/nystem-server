@@ -5,7 +5,7 @@ import { Button } from "nystem-components";
 const isInstalled =
   navigator.standalone || matchMedia("(display-mode: standalone)").matches;
 
-const ServiceWorkerView = ({ model, view }) =>
+const ServiceWorkerView = ({ model }) =>
   isInstalled ? null : (
     <div className={model.className}>
       <Button type={model.btnType} onClick={() => app().event("runAppInstall")}>

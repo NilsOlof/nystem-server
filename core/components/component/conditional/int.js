@@ -8,7 +8,7 @@ const byType = {
   ">=": (v1, v2) => v1 >= v2,
 };
 
-const ConditionalInt = ({ view, model, value, path }) => {
+const ConditionalInt = ({ view, model, path }) => {
   const testCondition = useCallback(() => {
     const { condition } = model;
     for (let i = 0; i < condition.length; i++) {
@@ -16,7 +16,6 @@ const ConditionalInt = ({ view, model, value, path }) => {
       const val = view.getValue(field);
 
       const [, type, testVal] = test.match(/([<>=]{1,2})(.+)/im) || [];
-      console.log([type, testVal]);
       if (byType[type](parseFloat(val), parseFloat(testVal))) return true;
     }
     return false;

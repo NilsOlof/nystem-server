@@ -1,7 +1,7 @@
 import React from "react";
 import { Wrapper, ContentTypeRender } from "nystem-components";
 
-const EmailMailto = ({ model, value, path }) => {
+const EmailMailto = ({ model, value }) => {
   const { className, item } = model;
 
   return (

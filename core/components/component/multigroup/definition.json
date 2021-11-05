@@ -14,6 +14,11 @@
       "mandatory": true
     },
     {
+      "text": "Id field",
+      "id": "idField",
+      "type": "text"
+    },
+    {
       "text": "Fields",
       "type": "dynamicField",
       "id": "item"

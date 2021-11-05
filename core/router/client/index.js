@@ -1,4 +1,4 @@
-module.exports = function(app) {
+module.exports = (app) => {
   /* const pathRegexp = function(path, keys, sensitive, strict) {
     if (Object.prototype.toString.call(path) === "[object RegExp]") return path;
     if (Array.isArray(path)) path = "(" + path.join("|") + ")";
@@ -33,7 +33,7 @@ module.exports = function(app) {
     return new RegExp("^" + path + "$", sensitive ? "" : "i");
 }; */
 
-  app.parseURL = function(url) {
+  app.parseURL = (url) => {
     url = url.replace(/^[^/]+:\/\/[^/]+/gi, "");
     const out = {};
     const hashtag = url.split("#");
@@ -41,10 +41,13 @@ module.exports = function(app) {
     out.path = query[0].split("/");
     out.domain = out.path.shift();
     out.query = {};
+    // eslint-disable-next-line prefer-destructuring
     out.hashtag = hashtag[1];
     query = query[1] ? query[1].split("&") : false;
+    // eslint-disable-next-line guard-for-in
     for (const i in query) {
       const param = query[i].split("=");
+      // eslint-disable-next-line prefer-destructuring
       out.query[param[0]] = param[1];
     }
     return out;

@@ -12,13 +12,15 @@ const MultilinetextView = ({ value, path, model, view }) => {
       {value.map((nul, index) => (
         <ContentTypeRender
           key={index}
-          path={path.replace(new RegExp(`.?${id}$`, "i"), "")}
+          path={`${path ? `${path}.` : ""}${id}.${index}`}
           items={
             app().replaceInModel({
               model,
               viewFormat: view.viewFormat,
               fn: ({ model: item }) =>
-                item.id === id ? { ...item, id: `${item.id}.${index}` } : item,
+                item.id && item.id.startsWith(id)
+                  ? { ...item, id: undefined }
+                  : item,
             }).item
           }
         />

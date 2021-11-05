@@ -1,5 +1,5 @@
 module.exports = (app) => {
-  app.database.on("init", ({ collection, db, contentType }) => {
+  app.database.on("init", ({ collection, db }) => {
     let ids = [];
     const updateSearch = {};
     const updateGet = {};

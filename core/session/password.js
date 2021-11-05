@@ -1,5 +1,32 @@
-module.exports = function (app) {
-  const { utils } = app;
+const crypto = require("crypto");
+
+const md5 = (text) => crypto.createHash("md5").update(text).digest("hex");
+let encryptPassword = (password, salt) => {
+  try {
+    const encrypt = crypto.createCipheriv("BF-ECB", salt, "");
+
+    let hex = encrypt.update(md5(password), "ascii", "hex");
+    hex += encrypt.final("hex");
+    return hex;
+  } catch (e) {
+    return false;
+  }
+};
+let checkPassword = (inPassword, bdPassword, salt) =>
+  bdPassword === encryptPassword(inPassword, salt);
+
+module.exports = (app) => {
+  if (app.settings.bcryptjs) {
+    const bcrypt = require("bcryptjs");
+
+    const encryptPasswordOld = encryptPassword;
+    encryptPassword = (password) => bcrypt.hashSync(password, 12);
+
+    checkPassword = (inPassword, bdPassword, salt) =>
+      bcrypt.compareSync(inPassword, bdPassword) ||
+      (bdPassword === encryptPasswordOld(inPassword, salt) && "old");
+  }
+
   app.on("init", () => {
     app.database.on("init", ({ collection, contentType, db }) => {
       if (
@@ -10,7 +37,7 @@ module.exports = function (app) {
 
       collection.on(["get", "search", "find"], 990, (query) => {
         if (!query.data) return;
-        query.data = app.utils.clone(query.data);
+        query.data = JSON.parse(JSON.stringify(query.data));
         if (query.data instanceof Array)
           for (let i = 0; i < query.data.length; i++)
             delete query.data[i].password;
@@ -27,23 +54,17 @@ module.exports = function (app) {
 
       collection.on("save", 990, (query) => {
         if (!query.data) return;
-        if (query.data._id) {
-          if (
-            utils.exist(query.data.password) &&
-            query.data.password.length > 2
-          )
-            query.data.password = utils.encryptPassword(
-              utils.md5(query.data.password),
-              query.data._id
-            );
+
+        const { _id, password } = query.data;
+
+        if (_id) {
+          if (typeof password === "string" && password.length > 2)
+            query.data.password = encryptPassword(password, _id);
           else
             query.data.password = query.oldData ? query.oldData.password : "aa";
         } else {
           query.data._id = app.uuid();
-          query.data.password = utils.encryptPassword(
-            utils.md5(query.data.password),
-            query.data._id
-          );
+          query.data.password = encryptPassword(password, query.data._id);
         }
       });
 
@@ -69,15 +90,19 @@ module.exports = function (app) {
         if (!user) return { ...data, error: "missing" };
         if (!data.password) return { ...data, error: "password" };
 
-        const password = utils.encryptPassword(
-          utils.md5(data.password),
+        const valid = checkPassword(
+          data.password,
+          db.dbIndex[user._id].password,
           user._id
         );
 
-        if (password !== db.dbIndex[user._id].password)
-          return { ...data, error: "password" };
+        if (valid === "old")
+          await collection.save({
+            data: { ...user, password: data.password },
+            role: "super",
+          });
 
-        return { ...data, user };
+        return valid ? { ...data, user } : { ...data, error: "password" };
       });
     });
   });

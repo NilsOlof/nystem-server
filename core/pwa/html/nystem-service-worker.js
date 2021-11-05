@@ -23,15 +23,21 @@ self.addEventListener("fetch", (event) => {
 
   event.respondWith(
     (async () => {
-      const cache = await caches.open("nystem");
+      try {
+        const cache = await caches.open("nystem");
 
-      const cached = await cache.match(pathname);
-      if (cached) return cached;
+        const cached = await cache.match(pathname);
+        if (cached) return cached;
 
-      const response = await fetch(event.request);
+        const response = await fetch(event.request);
 
-      cache.put(pathname, response.clone());
-      return response;
+        cache.put(pathname, response.clone());
+
+        return response;
+      } catch (e) {
+        console.log("Fetch failed", e, pathname);
+        return "Page not found";
+      }
     })()
   );
 });

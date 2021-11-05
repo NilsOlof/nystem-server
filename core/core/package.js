@@ -1,4 +1,4 @@
-module.exports = function (app) {
+module.exports = (app) => {
   const { fs } = app;
 
   function generate(filename, destination, packages) {

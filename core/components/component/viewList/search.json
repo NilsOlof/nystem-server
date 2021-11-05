@@ -21,14 +21,39 @@
       "type": "gridselect"
     },
     {
-      "id": "focus",
-      "text": "Focus on load",
-      "type": "boolean"
-    },
-    {
-      "id": "noWrapper",
-      "text": "No wrapper",
-      "type": "boolean"
+      "type": "switchButtons",
+      "item": [
+        {
+          "id": "focus",
+          "text": "Focus on load",
+          "type": "boolean"
+        },
+        {
+          "id": "noWrapper",
+          "text": "No wrapper",
+          "type": "boolean"
+        },
+        {
+          "type": "boolean",
+          "id": "exact",
+          "text": "Exact"
+        },
+        {
+          "type": "boolean",
+          "id": "nolabel",
+          "text": "No label"
+        },
+        {
+          "type": "boolean",
+          "id": "noClearButton",
+          "text": "No clear label"
+        },
+        {
+          "type": "boolean",
+          "id": "floatlabel",
+          "text": "Float label"
+        }
+      ]
     },
     {
       "type": "int",
@@ -36,9 +61,9 @@
       "text": "Search delay"
     },
     {
-      "type": "boolean",
-      "id": "saveValue",
-      "text": "Save searchvalue"
+      "type": "text",
+      "id": "saveId",
+      "text": "Save searchvalue as query id"
     }
   ]
 }

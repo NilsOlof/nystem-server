@@ -1,0 +1,19 @@
+{
+  "item": [
+    {
+      "id": "className",
+      "text": "Class",
+      "type": "gridselect"
+    },
+    {
+      "id": "iconOpen",
+      "text": "Icon open",
+      "type": "text"
+    },
+    {
+      "id": "iconClosed",
+      "text": "Icon closed",
+      "type": "text"
+    }
+  ]
+}

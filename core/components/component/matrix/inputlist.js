@@ -11,13 +11,14 @@ class MatrixInputlist extends React.Component {
   handleChange() {
     const val = [];
     for (let i = 0; i < this.state.value.length; i++) {
+      // eslint-disable-next-line react/no-string-refs
       const oneVal = this.refs[`input${i}`].value;
       if (oneVal) val.push(oneVal);
     }
     if (this.props.setValue) this.props.setValue(val);
 
     this.setState({
-      value: val.length > this.props.limit ? val.concat([""]) : val.concat([])
+      value: val.length > this.props.limit ? val.concat([""]) : val.concat([]),
     });
   }
   UNSAFE_componentWillReceiveProps(nextProps) {
@@ -29,7 +30,7 @@ class MatrixInputlist extends React.Component {
   }
   render() {
     const self = this;
-    const inputKeyField = function(item, index) {
+    const inputKeyField = (item, index) => {
       return (
         <input
           ref={`inputKey${index}`}
@@ -40,7 +41,7 @@ class MatrixInputlist extends React.Component {
         />
       );
     };
-    const inputValueField = function(item, index) {
+    const inputValueField = (item, index) => {
       return (
         <input
           ref={`inputValue${index}`}

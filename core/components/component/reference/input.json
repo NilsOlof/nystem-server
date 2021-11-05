@@ -26,11 +26,6 @@
       "text": "Text"
     },
     {
-      "type": "int",
-      "id": "searchCount",
-      "text": "Search count"
-    },
-    {
       "id": "renderFormat",
       "text": "View",
       "type": "viewSelect",
@@ -45,19 +40,15 @@
       "inline": true
     },
     {
-      "text": "Sort by",
-      "id": "sortby",
-      "type": "text"
-    },
-    {
       "type": "boolean",
-      "id": "reverse",
-      "text": "Reverse"
+      "id": "mandatory",
+      "text": "Mandatory"
     },
     {
       "text": "Inline add view",
       "id": "inlineAdd",
-      "type": "viewSelect"
+      "type": "viewSelect",
+      "inline": true
     }
   ]
 }

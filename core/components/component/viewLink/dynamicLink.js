@@ -5,9 +5,20 @@ import { Link } from "nystem-components";
 const ViewLinkDynamicLink = ({ model, view, path }) => {
   const insertVal = (val) =>
     val &&
-    val.replace(/\{([a-z_.0-9]+)\}/gim, (str, p1, offset, s) => {
-      if (/pathItem[0-9]/.test(p1) && view.params) return view.params[p1[8]];
-      return view.getValue(p1.replace("..", path));
+    val.replace(/\{([a-z_.0-9]+)\}/gim, (str, p1) => {
+      let val = "";
+      if (p1 === "_language") val = app().settings.lang;
+      else if (p1 === "id") val = view.id;
+      else if (p1.indexOf("params.") === 0)
+        val = view.params[p1.replace("params.", "")];
+      else if (p1.indexOf("baseView.") !== 0)
+        val = view.getValue(p1.replace("..", path));
+      else {
+        p1 = p1.replace("baseView.", "");
+        val = view.baseView.getValue(p1.replace("..", path));
+      }
+      if (val instanceof Array) val = val.join("|");
+      return val;
     });
 
   const { href, match, className } = model;

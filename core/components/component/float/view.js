@@ -8,5 +8,5 @@ function outputFloat({ value, model }) {
   return app().settings.lang === "sv" ? value.replace(".", ",") : value;
 }
 
-let FloatView = props => <TextView {...props} value={outputFloat(props)} />;
+const FloatView = (props) => <TextView {...props} value={outputFloat(props)} />;
 export default FloatView;

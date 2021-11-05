@@ -1,0 +1,38 @@
+{
+  "item": [
+    {
+      "id": "className",
+      "text": "Class",
+      "type": "gridselect"
+    },
+    {
+      "id": "buttonText",
+      "text": "Button text",
+      "type": "text"
+    },
+    {
+      "id": "btnType",
+      "text": "Button type",
+      "type": "select",
+      "option": ["default", "primary", "info", "warning", "danger", "success"],
+      "limit": 1,
+      "inline": true
+    },
+    {
+      "id": "btnSize",
+      "text": "Button size",
+      "type": "select",
+      "option": ["xs", "sm", "base", "lg", "xl", "2xl"],
+      "limit": 1,
+      "inline": true
+    },
+    {
+      "id": "action",
+      "text": "Action",
+      "type": "select",
+      "option": ["Add", "Remove"],
+      "limit": 1,
+      "inline": true
+    }
+  ]
+}

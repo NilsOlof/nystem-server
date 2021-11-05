@@ -12,7 +12,7 @@ const Link = ({ to, className, match, children, exact }) => (
     exact={Boolean(exact)}
     path={match || (typeof to === "object" ? to.pathname : to)}
   >
-    {({ location, match }) => (
+    {({ match }) => (
       <RLink to={to || "/"} className={toClassString(className, match)}>
         {children}
       </RLink>

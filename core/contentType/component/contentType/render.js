@@ -10,12 +10,12 @@ const createItem = ({ item, value, path, view, ...context }) => {
     format || view.viewFormat || "view"
   )}`;
 
-  const component =
+  let component =
     components[componentName] || components[`${capFirst(type)}View`];
 
-  const { getValue, getId } = view;
-  path = getId({ id, path });
-  const setValue = (value) => view.setValue({ path, value });
+  const { getValue, getValuePath } = view;
+  const valuePath = getValuePath(path, id);
+  const setValue = (value) => view.setValue({ path: valuePath, value });
 
   if (!component)
     return (
@@ -32,10 +32,13 @@ const createItem = ({ item, value, path, view, ...context }) => {
     !view.focused;
 
   if (focus) view.focused = true;
-
+  if (typeof component === "object" && !component.render) {
+    console.log(component, item);
+    component = "div";
+  }
   return React.createElement(component, {
     ...context,
-    value: getValue(path),
+    value: getValue(valuePath),
     path,
     view,
     model: item,

@@ -7,24 +7,9 @@
       "type": "gridselect"
     },
     {
-      "id": "bodyClassName",
-      "text": "Body class",
-      "type": "gridselect"
-    },
-    {
-      "type": "switchButtons",
-      "item": [
-        {
-          "id": "expanded",
-          "text": "Expanded",
-          "type": "boolean"
-        },
-        {
-          "text": "Visibility hidden",
-          "id": "visibilityHidden",
-          "type": "boolean"
-        }
-      ]
+      "id": "expanded",
+      "text": "Expanded",
+      "type": "boolean"
     },
     {
       "type": "select",
@@ -75,7 +60,11 @@
       "limit": "1",
       "render": "button"
     },
-
+    {
+      "text": "Visibility hidden",
+      "id": "visibilityHidden",
+      "type": "boolean"
+    },
     {
       "text": "Header",
       "id": "header",

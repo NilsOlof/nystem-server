@@ -20,7 +20,8 @@
       "text": "In module",
       "id": "module",
       "type": "contentTypeModule",
-      "mandatory": true
+      "mandatory": true,
+      "inline": true
     },
     {
       "text": "DB features",
@@ -106,35 +107,35 @@
           "id": "get",
           "type": "select",
           "inline": true,
-          "option": ["all", "user", "config"]
+          "option": ["all", "user", "config", "usertype2"]
         },
         {
           "text": "Find",
           "id": "find",
           "type": "select",
           "inline": true,
-          "option": ["all", "user", "config"]
+          "option": ["all", "user", "config", "usertype2"]
         },
         {
           "text": "Search",
           "id": "search",
           "type": "select",
           "inline": true,
-          "option": ["all", "user", "config"]
+          "option": ["all", "user", "config", "usertype2"]
         },
         {
           "text": "Save",
           "id": "save",
           "type": "select",
           "inline": true,
-          "option": ["all", "user", "config"]
+          "option": ["all", "user", "config", "usertype2"]
         },
         {
           "text": "Delete",
           "id": "delete",
           "type": "select",
           "inline": true,
-          "option": ["all", "user", "config"]
+          "option": ["all", "user", "config", "usertype2"]
         }
       ]
     },

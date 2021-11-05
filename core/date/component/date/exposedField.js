@@ -9,7 +9,7 @@ class DateExposedField extends React.Component {
     this.classNameBase = this.model.className ? this.model.className : [];
     this.updateCounter = 0;
   }
-  update(data) {
+  update() {
     if (this.id) {
       const state = {};
       const modelId = this.model.id;

@@ -6,15 +6,12 @@ import "./input.css";
 
 const ClearButton = ({ value, setValue }) =>
   !value ? null : (
-    <>
-      <Icon
-        onClick={() => setValue("")}
-        className="w-8 h-8 p-2 relative left-12 cursor-pointer"
-        icon="close"
-        aria-hidden="true"
-      />
-      <div className="flex-grow" />
-    </>
+    <Icon
+      onClick={() => setValue("")}
+      className="w-8 h-8 p-2 relative right-8 cursor-pointer"
+      icon="close"
+      aria-hidden="true"
+    />
   );
 
 const TextInput = ({ model, view, focus, setValue, value }, ref) => {
@@ -27,7 +24,7 @@ const TextInput = ({ model, view, focus, setValue, value }, ref) => {
       id={id}
       model={{
         ...model,
-        classNameInput: "relative flex-grow flex",
+        classNameInput: "relative flex w-full",
       }}
       error={error}
     >

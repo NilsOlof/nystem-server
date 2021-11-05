@@ -7,7 +7,7 @@ class ConditionalViewAndOr extends React.Component {
     this.model = props.model;
     this.view = props.view;
     const state = {
-      value: this.view.value
+      value: this.view.value,
     };
     if (!state.value) state.value = {};
     state.visible = this.testCondition(state.value);
@@ -18,7 +18,7 @@ class ConditionalViewAndOr extends React.Component {
   setValue(id, value) {
     return this.view.setValue(id, value);
   }
-  onChange(id, value) {
+  onChange() {
     if (this.changeTimer) clearTimeout(this.changeTimer);
     this.changeTimer = setTimeout(this.setValueView, 0);
   }
@@ -45,11 +45,11 @@ class ConditionalViewAndOr extends React.Component {
       if (visible && !this.state.visible)
         for (let i=0;i<this.model.item.length;i++)
           if (this.model.item[i].id && typeof value[this.model.item[i].id] === 'undefined')
-            this.setValue(this.model.item[i].id,this.tempValue[this.model.item[i].id]);*/
+            this.setValue(this.model.item[i].id,this.tempValue[this.model.item[i].id]); */
 
     this.setState({
       value: value,
-      visible: visible
+      visible: visible,
     });
     this.inThis = false;
   }
@@ -57,6 +57,7 @@ class ConditionalViewAndOr extends React.Component {
     let valid = true;
     if (this.state.visible)
       for (let i = 0; i < this.model.item.length; i++)
+        // eslint-disable-next-line react/no-string-refs
         if (!this.refs[`component${i}`].valid()) valid = false;
     return valid;
   }
@@ -84,10 +85,10 @@ class ConditionalViewAndOr extends React.Component {
 
     let valid = true;
     let sum = false;
-    const sumValidator = function(condition) {
+    const sumValidator = (condition) => {
       let sum = 0;
       condition = condition.split("||");
-      return function(valid) {
+      return function (valid) {
         if (typeof valid !== "undefined" && valid) sum++;
         for (let i = 0; i < condition.length; i++)
           if (parseInt(condition[i], 10) === sum) return true;
