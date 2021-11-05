@@ -1,6 +1,6 @@
 // obj instanceof Promise
 
-function getStackTrace(row) {
+const getStackTrace = (row) => {
   const obj = {};
   if (!Error.captureStackTrace) return;
   Error.captureStackTrace(obj, getStackTrace);
@@ -13,7 +13,7 @@ function getStackTrace(row) {
   return !source
     ? obj.stack.split("\n")[row]
     : translate(`${source} ${line}:${column}`);
-}
+};
 
 let translate = (str) => str;
 
@@ -92,12 +92,7 @@ module.exports = function addEventHandler(context, mapevents, name) {
 
   context = context || {};
 
-  context.on = (event, callback, prio) => {
-    event = event instanceof Array ? event : [event];
-    event.forEach((event) => addEvent(event, callback, prio));
-  };
-
-  function addEvent(event, callback, prio) {
+  const addEvent = (event, callback, prio) => {
     if (typeof callback === "number") {
       const tmp = callback;
       callback = prio;
@@ -122,14 +117,14 @@ module.exports = function addEventHandler(context, mapevents, name) {
     callbacksprio[event].splice(pos, 0, prio);
     callbacks[event].splice(pos, 0, callback);
     callbacksStack[event].splice(pos, 0, getStackTrace(5));
-  }
-
-  context.off = (event, callback) => {
-    event = event instanceof Array ? event : [event];
-    event.forEach((event) => removeEvent(event, callback));
   };
 
-  function removeEvent(event, callback) {
+  context.on = (event, callback, prio) => {
+    event = event instanceof Array ? event : [event];
+    event.forEach((event) => addEvent(event, callback, prio));
+  };
+
+  const removeEvent = (event, callback) => {
     if (!callbacks[event]) {
       console.log("Missing event", event, callbacks);
       return;
@@ -140,36 +135,22 @@ module.exports = function addEventHandler(context, mapevents, name) {
       callbacksprio[event].splice(pos, 1);
       callbacksStack[event].splice(pos, 1);
     }
-  }
 
-  const getCallTrace = (event) => {
-    const callback = callbacks[event];
-    if (typeof window !== "undefined") {
-      console.log(
-        event,
-        " getCallTrace",
-        callback.length,
-        Object.keys(context)
-      );
-      callbacksStack[event].forEach((event) => {
-        console.log(event);
-      });
-    } else
-      console.log(
-        event,
-        " getCallTrace",
-        callback.length,
-        Object.keys(context),
-        callbacksStack[event]
-      );
+    if (!callbacks[event].length) delete callbacks[event];
   };
 
+  context.off = (event, callback) => {
+    event = event instanceof Array ? event : [event];
+    event.forEach((event) => removeEvent(event, callback));
+  };
+
+  const fired = {};
   const doEvent = (event, data) => {
-    if (event === "getCallTrace") return getCallTrace(data);
     data = data || {};
     const callback = callbacks[event];
 
-    if (!callback || !callback.length) return Promise.resolve(data);
+    if (!callback) return Promise.resolve(data);
+    if (!fired[event]) fired[event] = true;
 
     return new Promise((resolve, reject) => {
       const timer = setTimeout(() => {
@@ -186,7 +167,7 @@ module.exports = function addEventHandler(context, mapevents, name) {
       let pos = 0;
       let oldData = data;
 
-      function next(data) {
+      const next = (data) => {
         if (data instanceof Promise) {
           data.then(next).catch(reject);
           return;
@@ -204,11 +185,21 @@ module.exports = function addEventHandler(context, mapevents, name) {
         Promise.resolve(callback[pos++](data))
           .then(next)
           .catch(reject);
-      }
+      };
       next(data);
     });
   };
   context.event = doEvent;
+
+  context.waitFor = (event) => {
+    if (fired[event]) return;
+
+    return new Promise((resolve) => {
+      context.on(event, () => {
+        resolve();
+      });
+    });
+  };
 
   if (mapevents)
     mapevents.forEach((event) => {

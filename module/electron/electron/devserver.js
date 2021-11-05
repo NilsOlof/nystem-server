@@ -1,7 +1,7 @@
 const http = require("http");
 
 const fetch = (url) =>
-  new Promise((resolve) => {
+  new Promise((resolve, reject) => {
     http
       .request(url, (response) => {
         let data = "";
@@ -13,11 +13,14 @@ const fetch = (url) =>
         response.on("end", () => {
           resolve(data);
         });
+
+        response.on("error", (error) => {
+          console.log(error);
+          reject(error);
+        });
       })
       .end();
   });
-
-const delay = (delay) => new Promise((resolve) => setTimeout(resolve, delay));
 
 module.exports = (app) => {
   app.on("electronInit", async ({ mainWindow }) => {
@@ -25,7 +28,7 @@ module.exports = (app) => {
 
     if (app.settings.debug) {
       const url = `http://${app.settings.client.domain}/`;
-      await delay(500);
+      await app.waitFor("started");
       html = await fetch(url);
 
       html = html
@@ -51,7 +54,6 @@ module.exports = (app) => {
     }
 
     await app.fs.writeFile(`${app.__dirname}/index.html`, html);
-
     mainWindow.setIcon(`${app.__dirname}/icon.png`);
   });
 

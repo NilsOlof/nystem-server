@@ -464,6 +464,17 @@
 			"format": "view",
 			"item": [
 				{
+					"type": "router",
+					"match": "index.html",
+					"item": [
+						{
+							"type": "router",
+							"format": "redirect",
+							"to": "/"
+						}
+					]
+				},
+				{
 					"category": "view",
 					"type": "style",
 					"item": [
