@@ -1,4 +1,10 @@
-const { app: electron, BrowserWindow, ipcMain, screen } = require("electron");
+const {
+  app: electron,
+  BrowserWindow,
+  ipcMain,
+  screen,
+  shell,
+} = require("electron");
 const fs = require("fs");
 
 let app = {};
@@ -38,7 +44,13 @@ app.on("electronReady", async ({ pos, ...windowProps }) => {
 
   await app.event("electronInit", { mainWindow });
 
-  mainWindow.loadFile(`${__dirname}/index.html`);
+  if (app.settings.client.port)
+    mainWindow.loadURL(
+      `http${app.settings.client.secure ? "s" : ""}://${
+        app.settings.client.domain
+      }`
+    );
+  else mainWindow.loadFile(`${__dirname}/index.html`);
 
   ipcMain.on("msg", (event, data) => {
     app.event("electronData", data);
@@ -60,6 +72,11 @@ app.on("electronReady", async ({ pos, ...windowProps }) => {
 
   mainWindow.on("resize", setDebounce);
   mainWindow.on("move", setDebounce);
+
+  mainWindow.webContents.on("new-window", (e, url) => {
+    e.preventDefault();
+    shell.openExternal(url);
+  });
 });
 
 try {
@@ -81,6 +98,9 @@ electron.on("ready", () =>
 
 electron.on("window-all-closed", () => {
   electron.quit();
+  setTimeout(() => {
+    process.kill(process.pid, "SIGINT");
+  }, 100);
 });
 
 console.log("Started");
