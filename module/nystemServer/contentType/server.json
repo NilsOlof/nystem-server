@@ -500,7 +500,8 @@
 											"className": [
 												"w-8",
 												"h-8",
-												"p-2"
+												"p-2",
+												"select-none"
 											],
 											"icon": "menu"
 										}
@@ -514,7 +515,8 @@
 									"href": "/",
 									"className": [
 										"pl-1",
-										"flex-grow"
+										"flex-grow",
+										"select-none"
 									]
 								},
 								{
@@ -527,7 +529,8 @@
 												"w-10",
 												"h-10",
 												"grayscale",
-												"mb-1"
+												"mb-1",
+												"select-none"
 											],
 											"filename": "logo2.svg"
 										}
@@ -543,7 +546,8 @@
 											"className": [
 												"w-10",
 												"h-10",
-												"mb-1"
+												"mb-1",
+												"select-none"
 											],
 											"filename": "logo2.svg"
 										}
@@ -555,7 +559,8 @@
 						{
 							"type": "viewText",
 							"className": [
-								"flex-grow"
+								"flex-grow",
+								"select-none"
 							]
 						},
 						{
