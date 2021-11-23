@@ -4,32 +4,12 @@ module.exports = (app) => {
   app.connection = app.addeventhandler({}, ["emit", "broadcast"], "connection");
   const { connection } = app;
 
-  const callbacks = {};
+  connection.on("broadcast", (data) =>
+    app.event("electronEvent", { ...data, broadcast: true })
+  );
+  connection.on("emit", (data) => app.event("electronEvent", data));
 
-  const send = (data) =>
-    new Promise((resolve) => {
-      if (!data.noCallback) {
-        data.callbackid = app.uuid();
-        callbacks[data.callbackid] = resolve;
-      } else resolve();
-
-      app.event("electronEvent", data);
-    });
-
-  connection.on("broadcast", (data) => send({ ...data, broadcast: true }));
-  connection.on("emit", send);
-
-  app.on("electronData", (data) => {
-    if (callbacks[data.callbackid]) {
-      try {
-        callbacks[data.callbackid](data);
-      } catch (e) {
-        console.log("err", callbacks[data.callbackid], e);
-      }
-      delete callbacks[data.callbackid];
-    }
-    connection.event(data.type, data);
-  });
+  app.on("electronData", (data) => connection.event(data.type, data));
 
   connection.connected = false;
   connection.on("connection", 100, (query) => {

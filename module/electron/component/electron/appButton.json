@@ -1,28 +1,19 @@
 {
   "item": [
     {
-      "type": "gridselect",
       "id": "className",
-      "text": "Class"
+      "text": "Class",
+      "type": "gridselect"
     },
     {
-      "type": "select",
-      "id": "btnType",
-      "text": "Type",
-      "inline": true,
-      "limit": "1",
-      "option": ["primary", "default", "info", "error", "danger"],
-      "render": "checkbox"
+      "id": "button",
+      "text": "Button",
+      "type": "text"
     },
     {
-      "type": "text",
-      "id": "icon",
-      "text": "Icon"
-    },
-    {
-      "type": "boolean",
-      "id": "fwd",
-      "text": "Fwd"
+      "id": "buttonActive",
+      "text": "Button active",
+      "type": "text"
     },
     {
       "type": "select",
@@ -50,10 +41,6 @@
         {
           "text": "success",
           "_id": "success"
-        },
-        {
-          "text": "plain",
-          "_id": "plain"
         }
       ],
       "inline": true,
@@ -88,10 +75,6 @@
         {
           "text": "2xl",
           "_id": "2xl"
-        },
-        {
-          "text": "plain",
-          "_id": "plain"
         }
       ],
       "inline": true,

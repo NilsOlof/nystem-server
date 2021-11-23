@@ -26,10 +26,7 @@ module.exports = (app) => {
       connection.send(data);
     }
 
-    clients[requestId] = {
-      id: requestId,
-      emit: emit,
-    };
+    clients[requestId] = { id: requestId, emit };
 
     app.connection.event("connect", {
       id: requestId,
@@ -37,20 +34,24 @@ module.exports = (app) => {
     });
 
     connection.on("message", (message) => {
-      if (message.type === "utf8") {
-        if (message.utf8Data === "li") return;
-        if (message.utf8Data.toString().length === 64000) {
-          partData += message.utf8Data;
-          return;
-        }
-        if (partData) {
-          message.utf8Data = partData + message.utf8Data;
-          partData = "";
-        }
-        const data = JSON.parse(message.utf8Data);
-        data.id = requestId;
-        app.connection.event(data.type, data);
+      if (message.type !== "utf8" || message.utf8Data === "li") return;
+
+      if (message.utf8Data.toString().length === 64000) {
+        partData += message.utf8Data;
+        return;
       }
+
+      if (partData) {
+        message.utf8Data = partData + message.utf8Data;
+        partData = "";
+      }
+
+      const data = JSON.parse(message.utf8Data);
+      data.id = requestId;
+
+      app.connection
+        .event(data.type, data)
+        .then((result) => result.callbackClient && emit(result));
     });
 
     connection.on("close", () => {

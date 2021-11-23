@@ -1,0 +1,44 @@
+{
+  "item": [
+    {
+      "type": "multilinetext",
+      "id": "event",
+      "mandatory": true,
+      "text": "Event"
+    },
+    {
+      "type": "select",
+      "option": [
+        {
+          "text": "connection",
+          "_id": "connection"
+        },
+        {
+          "text": "view",
+          "_id": "view"
+        },
+        {
+          "text": "baseView",
+          "_id": "baseView"
+        },
+        {
+          "text": "baseViewBaseView",
+          "_id": "baseViewBaseView"
+        },
+        {
+          "text": "baseViewBaseViewBaseView",
+          "_id": "baseViewBaseViewBaseView"
+        },
+        {
+          "text": "app",
+          "_id": "app"
+        }
+      ],
+      "inline": true,
+      "render": "button",
+      "id": "eventType",
+      "text": "Event type",
+      "limit": "1"
+    }
+  ]
+}

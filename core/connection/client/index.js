@@ -13,8 +13,8 @@ module.exports = (app) => {
   const emitSocket = (callback) => (data) =>
     new Promise((resolve) => {
       if (!data.noCallback) {
-        data.callbackid = app.uuid();
-        callbacks[data.callbackid] = resolve;
+        data.callbackClient = app.uuid();
+        callbacks[data.callbackClient] = resolve;
       } else resolve();
 
       let message = JSON.stringify(data);
@@ -29,15 +29,14 @@ module.exports = (app) => {
   const receiveSocket = (message) => {
     const data = JSON.parse(message);
 
-    if (callbacks[data.callbackid]) {
+    if (callbacks[data.callbackClient]) {
       try {
-        callbacks[data.callbackid](data);
+        callbacks[data.callbackClient](data);
       } catch (e) {
-        console.log("err", callbacks[data.callbackid], e);
+        console.log("err", callbacks[data.callbackClient], e);
       }
-      delete callbacks[data.callbackid];
-    }
-    connection.event(data.type, data);
+      delete callbacks[data.callbackClient];
+    } else connection.event(data.type, data);
   };
 
   const openconnection = () => {

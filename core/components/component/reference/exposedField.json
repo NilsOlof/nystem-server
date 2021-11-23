@@ -81,7 +81,7 @@
         },
         {
           "type": "boolean",
-          "id": "noLabel",
+          "id": "nolabel",
           "text": "No label"
         },
         {
@@ -90,6 +90,11 @@
           "id": "exact"
         }
       ]
+    },
+    {
+      "text": "Dropdown text",
+      "type": "text",
+      "id": "dropdownText"
     },
     {
       "text": "Label class",

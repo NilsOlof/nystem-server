@@ -10,22 +10,27 @@ const ConditionalView = ({ view, model, path }) => {
     for (let i = 0; i < condition.length; i++) {
       const id = condition[i][0].replace(/^\./i, `${path}.`);
       const val = view.getValue(id);
+
       let test = condition[i][1];
+
       if (test === "false") {
         if (!isset(val)) return true;
         continue;
       }
+
       if (test === "undefined") {
         if (val === undefined) return true;
         continue;
       }
+
       if (test === "true") {
         if (isset(val)) return true;
         continue;
       }
+
       const reverse = test[0] === "!";
       if (reverse) test = test.substring(1);
-      test = new RegExp(`^${test}$`, "i");
+      test = new RegExp(model.notExact ? test : `^${test}$`, "i");
 
       if (test.test(val)) {
         if (!reverse) return true;

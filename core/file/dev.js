@@ -77,12 +77,18 @@ module.exports = (app) => {
   });
 
   let started = false;
-  const startApp = () => {
+  function startApp() {
     if (started) return;
     started = true;
     const { spawn } = require("child_process");
     const os = require("os");
-    const args = ["start"];
+    const args =
+      os.platform() === "win32"
+        ? ["start"]
+        : [
+            "-e",
+            `tell app "Terminal" to do script "cd ${app.__dirname}/web && npm start"`,
+          ];
 
     const opt = {
       cwd: `${app.__dirname}/web`,
@@ -90,14 +96,11 @@ module.exports = (app) => {
       stdio: [process.stdin, process.stdout, process.stderr],
       detached: false,
     };
-    // require("child_process").exec(`open -a Terminal "${runbasepath}"`);
 
     const command =
-      os.platform() === "win32"
-        ? `${__dirname}/openReactApp.cmd`
-        : `osascript -e 'tell app "Terminal" to do script "cd ${app.__dirname}/web && npm start"'`;
+      os.platform() === "win32" ? `${__dirname}/openReactApp.cmd` : "osascript";
 
     const ex = spawn(command, args, opt);
     app.on("exit", () => ex.kill());
-  };
+  }
 };

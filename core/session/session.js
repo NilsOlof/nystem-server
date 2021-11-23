@@ -19,49 +19,50 @@ module.exports = (app) => {
       .map(([key]) => key);
 
   app.on("init", -100, () => {
-    app.connection.on("login", (query) => {
+    app.connection.on("login", async (query) => {
       if (query.sessionid) {
         if (sessions[query.sessionid]) {
           query.user = sessions[query.sessionid];
           requestSessions[query.id] = query.user;
         }
-        app.connection.emit(query);
-        return;
+
+        return query;
       }
 
       let contentType = query.contentType ? query.contentType : "adminUser";
-      function login(lastError) {
-        app.database[contentType]
-          .event("checkPassword", query.data)
-          .then(({ error, user }) => {
-            if (error === "missing" && contentType !== "adminUser") {
-              contentType = "adminUser";
-              login(error);
-              return;
-            }
-            if (!error) {
-              user = {
-                role: user.role,
-                _id: user._id,
-                sessionid: app.uuid(),
-                contentType,
-                _crdate: Date.now(),
-              };
-              console.log(`New session ${user.sessionid}`);
-              requestSessions[query.id] = user;
-              sessions[user.sessionid] = user;
-              saveDB();
-              query.user = user;
+      const login = async (lastError) => {
+        let { error, user } = await app.database[contentType].event(
+          "checkPassword",
+          query.data
+        );
 
-              app.connection.emit(query);
-            } else {
-              query.data = false;
-              query.error = lastError === "password" ? lastError : error;
-              app.connection.emit(query);
-            }
-          });
-      }
-      login();
+        if (error === "missing" && contentType !== "adminUser") {
+          contentType = "adminUser";
+          return login(error);
+        }
+
+        if (!error) {
+          user = {
+            role: user.role,
+            _id: user._id,
+            sessionid: app.uuid(),
+            contentType,
+            _crdate: Date.now(),
+          };
+          console.log(`New session ${user.sessionid}`);
+          requestSessions[query.id] = user;
+          sessions[user.sessionid] = user;
+          saveDB();
+          query.user = user;
+
+          return query;
+        }
+
+        query.data = false;
+        query.error = lastError === "password" ? lastError : error;
+        return query;
+      };
+      return login();
     });
 
     const logout = (data) => {

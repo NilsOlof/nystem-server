@@ -1,0 +1,8 @@
+{
+  "dependencies": {
+    "bcryptjs": "*"
+  },
+  "devDependencies": {
+    "@fiahfy/icns": "*"
+  }
+}

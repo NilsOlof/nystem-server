@@ -49,8 +49,10 @@ const myMoment = (val) => {
   const at = new Date(val || Date.now());
 
   return {
-    startOf: () =>
-      myMoment(Date.UTC(at.getFullYear(), at.getMonth(), at.getDate())),
+    startOf: (isUTC) =>
+      myMoment(
+        (isUTC ? Date.UTC : Date)(at.getFullYear(), at.getMonth(), at.getDate())
+      ),
     valueOf: () => at.getTime(),
     format: (format) => {
       if (!typeByFormat[format])

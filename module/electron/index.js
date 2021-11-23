@@ -1,7 +1,8 @@
 module.exports = (app) => {
-  app.on("electronInit", 100, async () => {
+  app.on("electronReady", 100, async () => {
     require("./electron/files")(app);
     require("./electron/devserver")(app);
     require("./electron/connection")(app);
+    require("./electron/menubar")(app);
   });
 };

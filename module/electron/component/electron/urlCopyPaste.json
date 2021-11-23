@@ -1,28 +1,24 @@
 {
   "item": [
     {
-      "type": "gridselect",
       "id": "className",
-      "text": "Class"
+      "text": "Class",
+      "type": "gridselect"
     },
     {
-      "type": "select",
-      "id": "btnType",
-      "text": "Type",
-      "inline": true,
-      "limit": "1",
-      "option": ["primary", "default", "info", "error", "danger"],
-      "render": "checkbox"
+      "id": "title",
+      "text": "Icon title",
+      "type": "text"
     },
     {
-      "type": "text",
-      "id": "icon",
-      "text": "Icon"
+      "id": "text",
+      "text": "Text",
+      "type": "text"
     },
     {
-      "type": "boolean",
-      "id": "fwd",
-      "text": "Fwd"
+      "id": "paste",
+      "text": "Paste button",
+      "type": "boolean"
     },
     {
       "type": "select",
@@ -90,7 +86,7 @@
           "_id": "2xl"
         },
         {
-          "text": "plain",
+          "text": "Plain",
           "_id": "plain"
         }
       ],

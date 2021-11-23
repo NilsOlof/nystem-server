@@ -85,7 +85,7 @@ const RenderDropdown = ({
     value={value[0]}
   >
     <option key="_empty" value="">
-      {placeholder || " - choose - "}
+      {model.dropdownText || placeholder || " - choose - "}
     </option>
     {option.map(({ text, _id }) => (
       <option key={_id || "___"} value={_id || "___"}>

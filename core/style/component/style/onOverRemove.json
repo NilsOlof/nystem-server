@@ -11,6 +11,11 @@
       "type": "boolean"
     },
     {
+      "id": "delay",
+      "text": "Delay",
+      "type": "int"
+    },
+    {
       "text": "Fields",
       "id": "item",
       "type": "viewCreator",

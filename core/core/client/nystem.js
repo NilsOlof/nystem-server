@@ -22,6 +22,7 @@ const S4 = () =>
 app.uuid = () => S4() + S4() + S4() + S4() + S4() + S4() + S4() + S4();
 app.capFirst = (text) =>
   text && text.substring(0, 1).toUpperCase() + text.substring(1);
+app.clone = (data) => data && JSON.parse(JSON.stringify(data));
 
 indexScripts(app);
 

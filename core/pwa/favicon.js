@@ -19,33 +19,43 @@ module.exports = (app) => {
   const icongen = require("./ico");
   let icoBuffer = "";
   const sizes = [16, 24, 32, 48, 64, 128, 192];
-  let buffers = {};
+  const buffers = {};
+  let original = false;
+
   const bgColor = hexToRgb(app.settings.bgColor || "#FFFFFF00");
 
-  const generateSize = async (width, height) => {
+  app.on("generateIconSize", async ({ width, height }) => {
+    if (!original) return;
+
     const id = width + (height ? `x${height}` : "");
 
-    buffers[id] = await buffers.original
+    const density = (width / original.width) * 72;
+    buffers[id] = await sharp(original.buffer, { density })
       .resize(width, height || width, { fit: "contain", background: bgColor })
       .toBuffer();
 
-    return buffers[id];
-  };
+    return { buffer: buffers[id] };
+  });
 
-  const generate = async (file) => {
+  app.on("favicon", async ({ file }) => {
     const fullPath = typeof file === "string" ? app.__dirname + file : file;
-    if (!app.fs.existsSync(fullPath)) return;
+    if (!(await app.fs.exists(fullPath))) return;
 
-    buffers = {};
-    buffers.original = await sharp(fullPath).png();
+    const buffer = await app.fs.readFile(fullPath);
+    const { width, height } = await sharp(buffer).metadata();
+    original = { file, buffer, width, height };
 
     icoBuffer = icongen(
-      await Promise.all(sizes.map((size) => generateSize(size)))
+      await Promise.all(
+        sizes.map((width) => app.event("generateIconSize", { width }))
+      )
     );
-    return { file, png: await buffers.original.toBuffer() };
-  };
-  app.on("favicon", ({ file }) => generate(file));
-  if (app.settings.favicon) generate(app.settings.favicon);
+
+    return original;
+  });
+
+  if (app.settings.favicon)
+    app.event("favicon", { file: app.settings.favicon });
 
   app.express.get("/favicon.ico", (req, res) => {
     const type = require("mime").getType(".ico");
@@ -63,9 +73,14 @@ module.exports = (app) => {
     if (app.isCached(type, req, res)) return;
 
     const id = width + (ext ? `x${height}` : "");
-    if (!buffers[id]) await generateSize(toInt(width), ext && toInt(height));
+    if (!buffers[id])
+      await app.event("generateIconSize", {
+        width: toInt(width),
+        height: ext && toInt(height),
+      });
 
     res.setHeader("Content-Type", type);
     res.end(buffers[id] || "");
   });
 };
+// sharp(new Buffer(layersWithSvg[0].icon_svg), { density: 450 })...

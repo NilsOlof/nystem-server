@@ -8,18 +8,22 @@ const ViewButtonAutoSave = ({ view }) => {
 
     const saveToDb = async () => {
       const { errors = [] } = await view.event("validate");
-      if (!saveIds.length || errors.length) return;
+      if ((!saveIds.length && view.value._id) || errors.length) return;
 
       const reduceById = (res, id) => ({ ...res, [id]: view.getValue(id) });
 
+      const hasId = !!(view.value._id || view.id);
+
       const data = await app().database[view.contentType].save({
-        data: saveIds.reduce(reduceById, {
-          _id: view.value._id || view.id,
-        }),
-        fields: true,
+        data: hasId
+          ? saveIds.reduce(reduceById, {
+              _id: view.value._id || view.id,
+            })
+          : view.value,
+        fields: hasId,
       });
 
-      if (!view.value._id) view.setValue({ path: "_id", value: data.id });
+      if (!view.value._id) await view.setValue({ path: "_id", value: data.id });
 
       view.event("save", view.value);
 
@@ -39,6 +43,8 @@ const ViewButtonAutoSave = ({ view }) => {
 
       saveDelay = setTimeout(saveToDb, 200);
     };
+    if (!view.value._id && Object.keys(view.value).length)
+      saveDelay = setTimeout(saveToDb, 200);
 
     view.on("change", -2100, handleChange);
     return () => {

@@ -4,14 +4,13 @@ module.exports = (app) => {
   const requestId = app.uuid();
   app.connection = app.addeventhandler({}, ["emit", "broadcast", "count"]);
 
-  app.on("electronData", (data) => {
-    data.id = requestId;
-    app.connection.event(data.type, data);
-  });
+  app.on("electronData", (data) =>
+    app.connection.event(data.type, { ...data, id: requestId })
+  );
 
-  app.connection.on(["emit", "broadcast"], (data) => {
-    app.event("electronEvent", data);
-  });
+  app.connection.on(["emit", "broadcast"], (data) =>
+    app.event("electronEvent", data)
+  );
 
   app.connection.on("count", () => 1);
 };

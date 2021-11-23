@@ -80,6 +80,7 @@ const ReferenceInput = ({ model, view, value = [], setValue, path }) => {
   const [searchVal, setSearchVal] = useState("");
   const [error] = UseValidator({ view, validate, value, model });
 
+  if (!value) value = [];
   value = value instanceof Array ? value : [value];
 
   useEffect(() => {

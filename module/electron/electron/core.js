@@ -5,19 +5,32 @@ const {
   screen,
   shell,
 } = require("electron");
-const fs = require("fs");
+const fs = require("fs-extra");
 
 let app = {};
 
 if (fs.existsSync(`${__dirname}/core/core/index.js`))
   app = require(`${__dirname}/core/core`)();
 else {
+  app.__dirname = __dirname;
+  app.fs = fs;
   app.addeventhandler = require(`${__dirname}/core/core/client/eventhandler`);
   app.addeventhandler(app);
+
+  const S4 = () =>
+    // eslint-disable-next-line no-bitwise
+    (((1 + Math.random()) * 0x10000) | 0).toString(16).substring(1);
+  app.uuid = () => S4() + S4() + S4() + S4() + S4() + S4() + S4() + S4();
+
+  app.settings = JSON.parse(
+    fs.readFileSync(`${__dirname}/data/host.json`, "utf8")
+  );
+
   require("./scripts")(app);
+  app.event("started");
 }
 
-if (require("electron-squirrel-startup")) app.quit();
+if (require("electron-squirrel-startup")) electron.quit();
 
 let pos = {};
 const isInside = (pos, bounds) => {
@@ -44,7 +57,7 @@ app.on("electronReady", async ({ pos, ...windowProps }) => {
 
   await app.event("electronInit", { mainWindow });
 
-  if (app.settings.client.port)
+  if (app.settings.client.domain)
     mainWindow.loadURL(
       `http${app.settings.client.secure ? "s" : ""}://${
         app.settings.client.domain
@@ -52,12 +65,39 @@ app.on("electronReady", async ({ pos, ...windowProps }) => {
     );
   else mainWindow.loadFile(`${__dirname}/index.html`);
 
-  ipcMain.on("msg", (event, data) => {
-    app.event("electronData", data);
-  });
+  const callbacks = {};
+
+  const send = (data, callback) =>
+    new Promise((resolve) => {
+      data.callbackServer = app.uuid();
+      callbacks[data.callbackServer] = resolve;
+
+      callback();
+    });
+
+  const back = (data) => {
+    if (!callbacks[data.callbackServer]) return;
+
+    try {
+      callbacks[data.callbackServer](data);
+    } catch (e) {
+      console.log("err", callbacks[data.callbackServer], e);
+    }
+
+    delete callbacks[data.callbackServer];
+  };
 
   app.on("electronEvent", (data) => {
-    mainWindow.webContents.send("msg", data);
+    if (data.noCallback) mainWindow.webContents.send("msg", data);
+    else return send(data, () => mainWindow.webContents.send("msg", data));
+  });
+
+  ipcMain.on("msg", async (event, data) => {
+    if (data.callbackServer) back(data);
+    else {
+      data = await app.event("electronData", data);
+      if (data.callbackClient) mainWindow.webContents.send("msg", data);
+    }
   });
 
   let timer = false;
@@ -93,6 +133,7 @@ electron.on("ready", () =>
       enableRemoteModule: false,
       preload: `${__dirname}/module/electron/electron/preload.js`,
     },
+    frame: false,
   })
 );
 

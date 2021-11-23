@@ -29,8 +29,10 @@ module.exports = (app) => {
         mainWindow.webContents.openDevTools();
       });
 
+    mainWindow.setIcon(`${app.__dirname}/icon.png`);
     await app.waitFor("started");
-    if (!app.settings.port) return;
+
+    if (app.settings.port) return;
 
     let html;
 
@@ -61,6 +63,5 @@ module.exports = (app) => {
     }
 
     await app.fs.writeFile(`${app.__dirname}/index.html`, html);
-    mainWindow.setIcon(`${app.__dirname}/icon.png`);
   });
 };
