@@ -1,4 +1,3 @@
-const Icns = require("@fiahfy/icns");
 const os = require("os");
 
 const sizes = [
@@ -16,11 +15,18 @@ const sizes = [
 ];
 
 module.exports = (app) => {
-  app.on("favicon", -10, async ({ buffer }) => {
+  app.on("favicon", -10, async ({ icoBuffer }) => {
+    await app.fs.writeFile(
+      `${app.__dirname}/electron/src/favicon.ico`,
+      icoBuffer
+    );
+
+    const { buffer } = await app.event("generateIconSize", { width: 1024 });
     await app.fs.writeFile(`${app.__dirname}/electron/src/icon.png`, buffer);
 
     if (os.platform() !== "darwin") return;
 
+    const Icns = require("@fiahfy/icns");
     const icns = new Icns();
 
     await Promise.all(

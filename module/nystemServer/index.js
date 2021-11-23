@@ -157,7 +157,7 @@ const start = (app) => {
       console.log("Open manager", basepath.replace(/\//g, "\\"));
 
       return runProgram(
-        "C:\\Users\\Nisse\\AppData\\Local\\app\\Nystem contenttype manager.exe",
+        "C:\\Users\\Nisse\\AppData\\Local\\nystemcontenttypemanager\\nystemcontenttypemanager.exe",
         [basepath, basepath]
       );
     },

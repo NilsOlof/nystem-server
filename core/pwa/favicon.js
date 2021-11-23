@@ -45,11 +45,11 @@ module.exports = (app) => {
     const { width, height } = await sharp(buffer).metadata();
     original = { file, buffer, width, height };
 
-    icoBuffer = icongen(
-      await Promise.all(
-        sizes.map((width) => app.event("generateIconSize", { width }))
-      )
+    const bufs = await Promise.all(
+      sizes.map((width) => app.event("generateIconSize", { width }))
     );
+    icoBuffer = icongen(bufs.map(({ buffer }) => buffer));
+    original.icoBuffer = icoBuffer;
 
     return original;
   });
@@ -83,4 +83,3 @@ module.exports = (app) => {
     res.end(buffers[id] || "");
   });
 };
-// sharp(new Buffer(layersWithSvg[0].icon_svg), { density: 450 })...
