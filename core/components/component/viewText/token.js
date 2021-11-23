@@ -8,7 +8,7 @@ class ViewTextToken extends React.Component {
     this.model = props.model;
     this.view = props.view;
     const state = {
-      value: app().utils.clone(this.view.value),
+      value: app().clone(this.view.value),
       text: this.insertVal(this.model.text),
     };
     this.view.on("change", this.setValueView);
@@ -20,7 +20,7 @@ class ViewTextToken extends React.Component {
       setTimeout(() => {
         if (self.isMounted())
           self.setState({
-            value: app().utils.clone(self.view.value),
+            value: app().clone(self.view.value),
             text: self.insertVal(self.model.text),
           });
       }, 0);

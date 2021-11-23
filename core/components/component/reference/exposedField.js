@@ -17,7 +17,7 @@ const ReferenceExposedField = ({ model, view, path }) => {
 
   if (!option || option.length === 0) return null;
 
-  const selectModel = app().utils.clone(model);
+  const selectModel = app().clone(model);
   delete selectModel.source;
   delete selectModel.mandatory;
 

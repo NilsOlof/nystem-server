@@ -12,6 +12,11 @@
       "id": "condition"
     },
     {
+      "type": "boolean",
+      "text": "Not exact",
+      "id": "notExact"
+    },
+    {
       "addid": "format",
       "text": "Format",
       "type": "componentSelect",

@@ -25,7 +25,7 @@ module.exports = (app) => {
             await fetch(`http://localhost:${app.settings.port}/index.html`)
           ) || [];
 
-      app.connection.emit({ appVersion, ...query });
+      return { appVersion, ...query };
     });
   });
 };

@@ -14,7 +14,14 @@ const Image = ({ className, alt, src, ...props }) => (
   <img
     alt={alt}
     {...props}
-    className={className instanceof Array ? className.join(" ") : className}
+    className={
+      className instanceof Array
+        ? className
+            .flat(Infinity)
+            .filter((item) => item)
+            .join(" ")
+        : className
+    }
     src={add(src)}
   />
 );

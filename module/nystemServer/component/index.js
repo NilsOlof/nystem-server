@@ -20,14 +20,23 @@ const Index = () => (
         />
       </SessionRole>
       <SessionRole userrole="logged-in">
-        <Inserter match="*" source="/server/menu" />
-        <Inserter match="/popup.html" source="/server/extension" />
-        <Inserter match="/" source="/server/overview" />
-        <Inserter match="/menu" source="/settings/menu" />
-        <Wrapper className="px-6">
-          <Inserter match="/server/*" />
-          <Inserter match="/host/*" />
-          <Inserter match="/settings/*" />
+        <Inserter
+          className="fixed top-0 w-full"
+          match="*"
+          source="/server/menu"
+        />
+        <Wrapper
+          renderAs="main"
+          className="h-full-minus overflow-y-scroll mt-11"
+        >
+          <Inserter match="/popup.html" source="/server/extension" />
+          <Inserter match="/" source="/server/overview" />
+          <Inserter match="/menu" source="/settings/menu" />
+          <Wrapper className="px-6">
+            <Inserter match="/server/*" />
+            <Inserter match="/host/*" />
+            <Inserter match="/settings/*" />
+          </Wrapper>
         </Wrapper>
       </SessionRole>
     </DragAndDropContext>

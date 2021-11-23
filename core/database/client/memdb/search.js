@@ -28,12 +28,34 @@ const sortFuncText = (key, reverse) => {
   };
 };
 
+const sortFuncCount = (key, reverse) => {
+  const up = reverse ? 1 : -1;
+  const down = reverse ? -1 : 1;
+
+  return (a, b) => {
+    const x = a[key] ? a[key].length : 0;
+    const y = b[key] ? b[key].length : 0;
+
+    if (x === undefined) return y === undefined ? 0 : down;
+    if (y === undefined) return up;
+    return x < y ? up : x > y ? down : 0;
+  };
+};
+
+const sortByType = {
+  int: sortFuncInt,
+  date: sortFuncInt,
+  reference: sortFuncCount,
+  default: sortFuncText,
+};
+
 const sortByFunc = (array, sortBys) => {
   const sortFuncs = sortBys.map(({ type, key, reverse }) =>
-    ["int", "date"].includes(type)
-      ? sortFuncInt(key, reverse)
-      : sortFuncText(key, reverse)
+    sortByType[type]
+      ? sortByType[type](key, reverse)
+      : sortByType.default(key, reverse)
   );
+
   return array.sort((a, b) => {
     let res;
     for (let i = 0; i < sortFuncs.length; i++) {

@@ -41,9 +41,11 @@ const Button = ({
 }) => {
   className = className instanceof Array ? [...className] : [className];
 
-  className.push("rounded shadow-sm");
-  className.push(sizes[size] || sizes.base);
-  className.push(types[(type || "default") + (disabled ? "Disabled" : "")]);
+  if (type !== "plain") {
+    className.push("rounded shadow-sm");
+    className.push(sizes[size] || sizes.base);
+    className.push(types[(type || "default") + (disabled ? "Disabled" : "")]);
+  }
 
   if (props.Component)
     return React.createElement(props.Component, {

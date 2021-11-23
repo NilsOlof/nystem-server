@@ -32,6 +32,7 @@ const tags = [
   "select",
   "iframe",
   "svg",
+  "canvas",
 ].reduce((prev, tag) => {
   prev[tag] = true;
   return prev;

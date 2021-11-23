@@ -149,8 +149,8 @@ module.exports = function addEventHandler(context, mapevents, name) {
     data = data || {};
     const callback = callbacks[event];
 
-    if (!callback) return Promise.resolve(data);
     if (!fired[event]) fired[event] = true;
+    if (!callback) return Promise.resolve(data);
 
     return new Promise((resolve, reject) => {
       const timer = setTimeout(() => {
@@ -191,15 +191,16 @@ module.exports = function addEventHandler(context, mapevents, name) {
   };
   context.event = doEvent;
 
-  context.waitFor = (event) => {
-    if (fired[event]) return;
-
-    return new Promise((resolve) => {
-      context.on(event, () => {
+  context.waitFor = (event) =>
+    new Promise((resolve) => {
+      const call = () => {
+        context.off(event, call);
         resolve();
-      });
+      };
+
+      if (fired[event]) resolve();
+      else context.on(event, call);
     });
-  };
 
   if (mapevents)
     mapevents.forEach((event) => {

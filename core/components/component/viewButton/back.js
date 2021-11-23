@@ -3,27 +3,22 @@ import app from "nystem";
 import { Icon, Wrapper, Button } from "nystem-components";
 import { withRouter } from "react-router";
 
-const ViewButtonBack = ({ children, model, history }) => {
-  model = model || {};
-  const { className, text } = model;
+const ViewButtonBack = ({ children, model, history, ...rest }) => {
+  const { className, text, fwd, size, icon, btnType } = model || rest;
 
-  if (model.icon)
+  if (icon)
     return (
-      <Icon
-        className={className}
-        icon={model.icon}
-        onClick={() => history.go(-1)}
-      />
+      <Icon className={className} icon={icon} onClick={() => history.go(-1)} />
     );
 
   return (
     <Button
-      size={model.size}
-      type={model.btnType}
+      size={size}
+      type={btnType}
       className={className}
-      onClick={() => history.go(-1)}
+      onClick={() => history.go(fwd ? 1 : -1)}
     >
-      <Icon icon="arrow-left" className="w-6 h-6" />
+      <Icon icon={fwd ? "arrow-right" : "arrow-left"} className="w-6 h-6" />
       <Wrapper>{children || app().t(text)}</Wrapper>
     </Button>
   );

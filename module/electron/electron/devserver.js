@@ -24,11 +24,20 @@ const fetch = (url) =>
 
 module.exports = (app) => {
   app.on("electronInit", async ({ mainWindow }) => {
+    if (app.settings.debug)
+      app.on("electronInit", async ({ mainWindow }) => {
+        mainWindow.webContents.openDevTools();
+      });
+
+    mainWindow.setIcon(`${app.__dirname}/icon.png`);
+    await app.waitFor("started");
+
+    if (app.settings.port) return;
+
     let html;
 
     if (app.settings.debug) {
       const url = `http://${app.settings.client.domain}/`;
-      await app.waitFor("started");
       html = await fetch(url);
 
       html = html
@@ -54,11 +63,5 @@ module.exports = (app) => {
     }
 
     await app.fs.writeFile(`${app.__dirname}/index.html`, html);
-    mainWindow.setIcon(`${app.__dirname}/icon.png`);
   });
-
-  if (app.settings.debug)
-    app.on("electronInit", async ({ mainWindow }) => {
-      mainWindow.webContents.openDevTools();
-    });
 };

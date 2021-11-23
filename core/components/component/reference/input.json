@@ -49,6 +49,11 @@
       "id": "inlineAdd",
       "type": "viewSelect",
       "inline": true
+    },
+    {
+      "text": "Dropdown text",
+      "type": "text",
+      "id": "dropdownText"
     }
   ]
 }

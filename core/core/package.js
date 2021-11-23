@@ -17,7 +17,7 @@ module.exports = (app) => {
 
     return Promise.all(packages).then((packages) => {
       const packagejson = packages
-        .map((data) => JSON.parse(data))
+        .map((data) => (typeof data === "string" ? JSON.parse(data) : data))
         .reduce((prev, data) => {
           if (!prev) return data;
           Object.keys(data).forEach((key) => {
