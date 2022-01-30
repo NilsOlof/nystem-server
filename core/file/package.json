@@ -1,5 +1,8 @@
 {
   "dependencies": {
     "mime": "*"
+  },
+  "scripts": {
+    "initweb": "node app.js core/file/initweb.js"
   }
 }

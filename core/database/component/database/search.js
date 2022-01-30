@@ -38,7 +38,18 @@ const DatabaseSearch = ({ view, model, path, children }) => {
         const oneFilter = {};
 
         ofilter.and.forEach((oneFilterIn) => {
-          oneFilter[insertVal(oneFilterIn[0])] = insertVal(oneFilterIn[1]);
+          let val = insertVal(oneFilterIn[1]);
+
+          if (val.startsWith("<="))
+            val = `<${parseInt(val.substring(2), 10) + 1}`;
+
+          if (val.startsWith(">="))
+            val = `>${parseInt(val.substring(2), 10) - 1}`;
+
+          if (val === "true") val = true;
+          if (val === "false") val = false;
+
+          oneFilter[insertVal(oneFilterIn[0])] = val;
         });
 
         if (ofilter.exact) oneFilter.__exact = true;

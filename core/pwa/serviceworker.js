@@ -1,6 +1,6 @@
 const http = require("http");
 
-const regExpVersion = /main\.([0-9a-f]+)\.chunk.js/im;
+const regExpVersion = /main\.([0-9a-f]+)\.js/im;
 const fetch = (url) =>
   new Promise((resolve, reject) => {
     http

@@ -30,7 +30,10 @@ module.exports = (app) => {
   });
 
   app.storage.on("setItem", async ({ id, value }) => {
-    value = typeof value === "string" ? value : JSON.stringify(value);
+    value =
+      value === undefined || typeof value === "string"
+        ? value
+        : JSON.stringify(value);
 
     try {
       window.localStorage.setItem(id, value);

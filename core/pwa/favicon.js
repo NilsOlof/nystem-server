@@ -29,7 +29,9 @@ module.exports = (app) => {
 
     const id = width + (height ? `x${height}` : "");
 
-    const density = (width / original.width) * 72;
+    let density = (width / original.width) * 72;
+    density = density < 1 ? 1 : density;
+
     buffers[id] = await sharp(original.buffer, { density })
       .resize(width, height || width, { fit: "contain", background: bgColor })
       .toBuffer();
@@ -48,9 +50,11 @@ module.exports = (app) => {
     const bufs = await Promise.all(
       sizes.map((width) => app.event("generateIconSize", { width }))
     );
+    console.log("byyygd");
     icoBuffer = icongen(bufs.map(({ buffer }) => buffer));
     original.icoBuffer = icoBuffer;
 
+    console.log("byyygdfino");
     return original;
   });
 

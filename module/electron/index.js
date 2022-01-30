@@ -5,4 +5,7 @@ module.exports = (app) => {
     require("./electron/connection")(app);
     require("./electron/menubar")(app);
   });
+  app.on("started", () => {
+    require("./package.js")(app);
+  });
 };

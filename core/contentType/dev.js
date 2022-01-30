@@ -1,6 +1,6 @@
 module.exports = (app) => {
   const { fs } = app;
-  // Load and and merge contentypes into one JSON
+  // Load and and merge contenttypes into one JSON
   app.on("getContentTypes", () => {
     console.log("getContentTypes");
     const out =
@@ -15,7 +15,8 @@ module.exports = (app) => {
       } else if (
         parent === "contentType" &&
         file.indexOf(".json") !== -1 &&
-        file.indexOf("component/contentType/definition.json") === -1
+        file.indexOf("component/contentType/definition.json") === -1 &&
+        file.indexOf("/package.") === -1
       ) {
         try {
           out[filename.replace(".json", "")] = JSON.parse(
@@ -40,7 +41,7 @@ module.exports = (app) => {
         resolve();
         if (!app.fs.existsSync(`${app.__dirname}/web`)) return;
 
-        const path = `${app.__dirname}/web/src/contentype.json`;
+        const path = `${app.__dirname}/web/src/contenttype.json`;
         app.writeFileChanged(path, JSON.stringify(app.contentType));
       })
     );

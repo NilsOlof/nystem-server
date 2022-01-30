@@ -80,7 +80,7 @@ const RenderDropdown = ({
 }) => (
   // eslint-disable-next-line jsx-a11y/no-onchange
   <Select
-    className={model.classNameInput || "sm:w-1/2 w-full p-2 border"}
+    className={model.classNameInput || "sm:w-1/2 w-full p-2 border rounded"}
     onChange={(e) => handleChange(e.target.value)}
     value={value[0]}
   >
@@ -122,14 +122,16 @@ const SelectInput = ({ model, value, view, setValue }) => {
   const option = useMemo(() => normalizeOption(model), [model]);
 
   const handleChange = (id) => {
+    const newValue = value instanceof Array ? [...value] : value;
+
     if (id === "") id = undefined;
-    if (value.indexOf(id) !== -1) value.splice(value.indexOf(id), 1);
-    else value.push(id);
+    if (newValue.indexOf(id) !== -1) newValue.splice(newValue.indexOf(id), 1);
+    else newValue.push(id);
 
-    if (limit && limit < value.length) value.shift();
+    if (limit && limit < newValue.length) newValue.shift();
 
-    if (limit === 1) setValue(value[0]);
-    else setValue(value);
+    if (limit === 1) setValue(newValue[0]);
+    else setValue(newValue);
     setValidated(true);
   };
   useEffect(() => {

@@ -104,3 +104,6 @@ body::-webkit-scrollbar-track {
 .select-none {
   -webkit-user-drag: none;
 }
+@tailwind base;
+@tailwind components;
+@tailwind utilities;

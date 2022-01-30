@@ -9,9 +9,15 @@ const fs = require("fs-extra");
 
 let app = {};
 
-if (fs.existsSync(`${__dirname}/core/core/index.js`))
+if (fs.existsSync(`${__dirname}/core/core/index.js`)) {
+  app.dbPath = `${electron.getPath("userData")}/data`;
+  fs.ensureDirSync(app.dbPath);
+
+  if (!fs.existsSync(`${app.dbPath}/db`))
+    fs.copySync(`${__dirname}/data/db`, `${app.dbPath}/db`);
+
   app = require(`${__dirname}/core/core`)();
-else {
+} else {
   app.__dirname = __dirname;
   app.fs = fs;
   app.addeventhandler = require(`${__dirname}/core/core/client/eventhandler`);

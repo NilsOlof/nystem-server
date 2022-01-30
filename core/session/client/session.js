@@ -20,28 +20,26 @@ module.exports = (app) => {
     app.event("login", user);
   }
 
-  session.on("login", (value) =>
-    app.connection
-      .emit({
-        type: "login",
-        data: value,
-        sessionid: value.sessionid,
-        contentType: value.contentType,
-      })
-      .then((query) => {
-        const { user } = query;
+  session.on("login", async (value) => {
+    const query = await app.connection.emit({
+      type: "login",
+      data: value,
+      sessionid: value.sessionid,
+      contentType: value.contentType,
+    });
 
-        if (user && !query.error) loginEvent(user);
-        else if (session.user !== autoLoginUser) {
-          session.user = autoLoginUser;
-          try {
-            app.storage.removeItem({ id: sessionKey });
-            // eslint-disable-next-line no-empty
-          } catch (e) {}
-        }
-        return query;
-      })
-  );
+    const { user } = query;
+    if (user && !query.error) loginEvent(user);
+    else if (session.user !== autoLoginUser) {
+      session.user = autoLoginUser;
+      try {
+        app.event("clearCacheAndReload");
+        // eslint-disable-next-line no-empty
+      } catch (e) {}
+    }
+    return query;
+  });
+
   app.on("init", -100, () => {
     app.connection.on("autologin", (query) => {
       const { user, error } = query;
@@ -66,8 +64,6 @@ module.exports = (app) => {
     app.storage.on("setItem", -1000, reload);
 
     session.on("logout", () => {
-      app.storage.removeItem({ id: sessionKey });
-
       delete session.user;
 
       app.connection.emit({
@@ -76,11 +72,12 @@ module.exports = (app) => {
         noCallback: true,
       });
 
+      app.event("clearCacheAndReload");
       app.event("logout");
     });
 
     app.connection.on("logout", () => {
-      app.storage.removeItem({ id: sessionKey });
+      app.event("clearCacheAndReload");
     });
 
     app.storage.getItem({ id: sessionKey }).then(({ value: userStore }) => {

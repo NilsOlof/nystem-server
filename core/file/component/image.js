@@ -5,7 +5,7 @@ const add = (path) => {
   if (/^https?:/im.test(path)) return path;
 
   const { domain, secure } = app().settings;
-  if (!domain) return `.${path}`;
+  if (!domain) return path.replace("/image", "./files/image/original/");
 
   return `http${secure ? "s" : ""}://${domain}${path}`;
 };

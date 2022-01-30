@@ -1,0 +1,9 @@
+{
+  "item": [
+    {
+      "id": "className",
+      "text": "Class",
+      "type": "gridselect"
+    }
+  ]
+}

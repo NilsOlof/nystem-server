@@ -1,43 +1,5 @@
 import React from "react";
 
-const tags = [
-  "p",
-  "a",
-  "h1",
-  "h2",
-  "h3",
-  "h4",
-  "h5",
-  "h6",
-  "div",
-  "nav",
-  "section",
-  "span",
-  "b",
-  "em",
-  "strong",
-  "i",
-  "form",
-  "button",
-  "label",
-  "table",
-  "tbody",
-  "thead",
-  "tr",
-  "th",
-  "td",
-  "sup",
-  "main",
-  "header",
-  "select",
-  "iframe",
-  "svg",
-  "canvas",
-].reduce((prev, tag) => {
-  prev[tag] = true;
-  return prev;
-}, {});
-
 const Wrapper = (
   {
     renderAs,
@@ -50,6 +12,7 @@ const Wrapper = (
     children,
     onClick,
     style,
+    title,
     ...props
   },
   ref
@@ -72,11 +35,11 @@ const Wrapper = (
   )
     return children || null;
 
-  if (!tags[renderAs] || renderAs === "input") renderAs = "div";
+  if (!renderAs || renderAs === "input") renderAs = "div";
 
   return React.createElement(
     renderAs,
-    { ...props, ref, className, onClick, style },
+    { ...props, title, ref, className, onClick, style },
     children
   );
 };

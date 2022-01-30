@@ -4,7 +4,7 @@ import { useHistory } from "react-router-dom";
 const toType = {
   reference: (val) => val,
   text: (val) => val,
-  select: (val) => val,
+  select: (val) => (val.includes(",") ? val.split(",") : val),
   int: (val) => parseInt(val || 0, 10),
   float: (val) => parseFloat(val),
   array: (val) => (val === "" ? undefined : val),
@@ -39,16 +39,30 @@ const TextQueryValue = ({ model, setValue, value }) => {
     history[push ? "push" : "replace"](`${pathname}?${rest}${add}`);
   };
 
-  const qVal = getQueryValue(search);
+  let qVal = getQueryValue(search);
 
   value = value || "";
-  if (enabled && value !== qVal) setRouterValue(value);
+  if (enabled) {
+    if (value instanceof Array) {
+      value.sort();
+      if (qVal !== "") {
+        if (!(qVal instanceof Array)) qVal = [qVal];
+
+        qVal.sort();
+        if (!qVal.length) qVal = "";
+      }
+      if (!value.length) value = "";
+
+      if (JSON.stringify(value) !== JSON.stringify(qVal)) setRouterValue(value);
+    } else if (value !== qVal) setRouterValue(value);
+  }
 
   useEffect(() => {
     if (value) return;
 
     setTimeout(() => {
       if (qVal) setValue(qVal);
+
       setEnabled(true);
     }, 10);
     // eslint-disable-next-line react-hooks/exhaustive-deps

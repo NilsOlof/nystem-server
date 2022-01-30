@@ -34,10 +34,10 @@ module.exports = (app) => {
     });
   });
 
-  const regExpVersion = /main\.([0-9a-f]+)\.chunk.js/im;
+  const regExpVersion = /main\.([0-9a-f]+)\.js/im;
   app.on("getAppVersion", () => ({
     appVersion: (regExpVersion.exec(
-      [...document.body.children]
+      [...document.head.children]
         .map((child) => child.src)
         .find((src) => regExpVersion.test(src))
     ) || [])[1],

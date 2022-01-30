@@ -1,5 +1,5 @@
 {
   "dependencies": {
-    "react-router-dom": "*"
+    "react-router-dom": "5.2.*"
   }
 }

@@ -136,12 +136,15 @@ const ViewButtonEventEmitter = ({ model, view, path }) => {
   }, [emitter, model.event, view.value._id]);
 
   const sendEvent = async () => {
-    await emitter.event(model.event, {
+    const data = await emitter.event(model.event, {
       event: model.subEvent,
       value: active ? false : pick(model.fields, view.value),
       contentType: view.contentType,
     });
+
     if (model.inactiveClass || model.activeClass) setActive(!active);
+
+    return data;
   };
 
   if (model.item)
@@ -158,6 +161,8 @@ const ViewButtonEventEmitter = ({ model, view, path }) => {
       </Wrapper>
     );
 
-  return <EventButton model={model} view={view} path={path} />;
+  return (
+    <EventButton model={model} view={view} path={path} sendEvent={sendEvent} />
+  );
 };
 export default ViewButtonEventEmitter;

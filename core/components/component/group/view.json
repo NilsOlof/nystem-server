@@ -15,6 +15,7 @@
       "default": "list",
       "typeFrom": "group"
     },
+    { "id": "hideIfEmpty", "text": "Hide if empty", "type": "boolean" },
     {
       "text": "Fields",
       "id": "item",

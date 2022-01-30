@@ -1,6 +1,6 @@
 // eslint-disable-next-line import/extensions
 import indexScripts from "../../../indexScripts";
-import contentType from "../../../contentype.json";
+import contentType from "../../../contenttype.json";
 import addeventhandler from "./eventhandler";
 import buildsettings from "../../../settings.json";
 

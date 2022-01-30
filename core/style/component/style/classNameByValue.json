@@ -37,6 +37,11 @@
       "typeField": "type"
     },
     {
+      "id": "add2Model",
+      "text": "Add to child models",
+      "type": "boolean"
+    },
+    {
       "id": "renderAs",
       "text": "Render as",
       "type": "select",

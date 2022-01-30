@@ -1,5 +1,4 @@
 {
-  "main": "server.js",
   "scripts": {
     "start": "node server.js",
     "deploy": "node app.js core/core/deploy.js",

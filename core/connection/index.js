@@ -1,4 +1,6 @@
 module.exports = (app) => {
+  app.connection = app.addeventhandler({}, ["emit", "broadcast", "count"]);
+
   if (!app.settings.client.domain) return;
 
   require("./httpsfallback")(app);
@@ -62,8 +64,6 @@ module.exports = (app) => {
     });
   });
 
-  app.connection = app.addeventhandler({}, ["emit", "broadcast", "count"]);
-
   app.connection.on("emit", (data) => {
     if (clients[data.id]) clients[data.id].emit(data);
   });
@@ -74,5 +74,10 @@ module.exports = (app) => {
       .forEach((client) => client.emit(data));
   });
 
-  app.connection.on("count", () => connectedCount);
+  app.connection.on("count", (query) => {
+    app.session.add(query);
+
+    if (query.session.role !== "super") return;
+    app.connection.emit({ ...query, connectedCount });
+  });
 };

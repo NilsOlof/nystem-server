@@ -1,4 +1,6 @@
 module.exports = (app) => {
+  require("./logToFile")(app);
+
   // Clear all caches
   app.express.get("/clearcache", (req, res) => {
     app.cacheTimeStart = new Date();

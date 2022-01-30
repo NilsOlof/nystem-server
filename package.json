@@ -9,8 +9,10 @@
     "fs-extra": "*",
     "websocket": "*"
   },
-  "main": "server.js",
   "scripts": {
+    "initelectron": "node app.js module/electron/initelectron.js",
+    "startelectron": "node app.js module/electron/startelectron.js",
+    "initweb": "node app.js core/file/initweb.js",
     "start": "node server.js",
     "deploy": "node app.js core/core/deploy.js",
     "lint": "eslint .",

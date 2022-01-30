@@ -1,0 +1,35 @@
+{
+  "item": [
+    {
+      "id": "className",
+      "text": "Class",
+      "type": "gridselect"
+    },
+    {
+      "id": "mirrorId",
+      "text": "Mirror id",
+      "type": "text"
+    },
+    {
+      "id": "host",
+      "text": "Is host",
+      "type": "boolean"
+    },
+    {
+      "id": "setWidth",
+      "text": "Set width",
+      "type": "boolean"
+    },
+    {
+      "id": "setHeight",
+      "text": "Set height",
+      "type": "boolean"
+    },
+    {
+      "text": "Fields",
+      "id": "item",
+      "type": "viewCreator",
+      "expanded": true
+    }
+  ]
+}

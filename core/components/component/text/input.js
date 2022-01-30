@@ -16,7 +16,14 @@ const ClearButton = ({ value, setValue }) =>
 
 const TextInput = ({ model, view, focus, setValue, value }, ref) => {
   const [error, setValidated] = UseValidator({ view, validate, value, model });
-  const { disabled, length, text, clearButton, classNameInput = [] } = model;
+  const {
+    disabled,
+    length,
+    text,
+    clearButton,
+    classNameInput = [],
+    removeChars = "",
+  } = model;
   const [id] = useState(app().uuid);
 
   return (
@@ -35,7 +42,13 @@ const TextInput = ({ model, view, focus, setValue, value }, ref) => {
         className={classNameInput}
         value={value || ""}
         maxLength={length}
-        onChange={(value) => setValue(value)}
+        onChange={(value) => {
+          setValue(
+            removeChars
+              ? value.replace(new RegExp(`[${removeChars}]`, "g"), "")
+              : value
+          );
+        }}
         disabled={disabled}
         type="text"
         focus={model.focus || focus}

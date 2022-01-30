@@ -26,6 +26,7 @@
         "timeLong",
         "dateTimeLong",
         "dateTimeNoYear",
+        "dateNoYear",
         "dateTimeNoYearDay",
         "dateNoYearDay",
         "day",
