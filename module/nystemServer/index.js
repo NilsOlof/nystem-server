@@ -156,10 +156,7 @@ const start = (app) => {
     callWin: async ({ basepath }) => {
       console.log("Open manager", basepath.replace(/\//g, "\\"));
 
-      return runProgram(
-        "C:\\Users\\Nisse\\AppData\\Local\\nystemcontenttypemanager\\nystemcontenttypemanager.exe",
-        [basepath, basepath]
-      );
+      return runProgram(app.settings.nystemmanagerpath, [basepath, basepath]);
     },
   });
 

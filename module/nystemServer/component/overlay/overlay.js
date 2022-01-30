@@ -5,7 +5,7 @@ class OverlayOverlay extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      mounted: false
+      mounted: false,
     };
   }
   findPosition(obj) {
@@ -28,17 +28,18 @@ class OverlayOverlay extends React.Component {
     return { x: sx, y: sy };
   }
   onMouseDown(event) {
+    // eslint-disable-next-line react/no-string-refs
     const { modal } = this.refs;
     this.at = {
       start: {
         x: event.clientX,
-        y: event.clientY
+        y: event.clientY,
       },
       obj: this.findPosition(modal),
       pos: {
         x: event.clientX,
-        y: event.clientY
-      }
+        y: event.clientY,
+      },
     };
   }
   shouldComponentUpdate(nextProps, nextState) {

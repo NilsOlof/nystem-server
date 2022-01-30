@@ -21,10 +21,16 @@ const start = (app) => {
   });
   app.on("requireSu.start", (query) => ({ ...query, settings: app.settings }));
 
-  const command = `node ${app.__dirname}/app.js ${__dirname}/worker.js`;
+  const command = `node "${app.__dirname}/app.js" "${__dirname}/worker.js"`;
 
-  if (os === "win32") require("node-windows").elevate(command, {}, log);
-  else require("child_process").exec(`sudo ${command}`, {}, log);
+  // if (os === "win32") require("node-windows").elevate(command, {}, log);
+  // else require("child_process").exec(`sudo ${command}`, {}, log);
+
+  const sudo = require("sudo-prompt");
+  sudo.exec(command, { name: "Router start" }, (error, stdout, stderr) => {
+    if (error) throw error;
+    console.log(`stdout: ${stdout}`);
+  });
 
   if (!startCallback)
     return new Promise((resolve) => {

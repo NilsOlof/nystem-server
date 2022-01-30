@@ -1,5 +1,6 @@
 import React from "react";
 import app from "nystem";
+
 class ViewButtonMirrorSave extends React.Component {
   constructor(props) {
     super(props);
@@ -24,7 +25,7 @@ class ViewButtonMirrorSave extends React.Component {
   insertVal(val) {
     if (!val) return val;
     const self = this;
-    return val.replace(/\{([a-z_.]+)\}/gim, function(str, p1, offset, s) {
+    return val.replace(/\{([a-z_.]+)\}/gim, (str, p1, offset, s) => {
       if (p1.indexOf("baseView.") !== 0) return self.view.baseView.getValue(p1);
       p1 = p1.replace("baseView.", "");
       if (p1.indexOf("baseView.") !== 0)
@@ -48,9 +49,9 @@ class ViewButtonMirrorSave extends React.Component {
       app().database[this.view.contentType].save(
         {
           data: this.saveVals,
-          fields: true
+          fields: true,
         },
-        function(data) {
+        (data) => {
           if (!self.view.value._id) self.view.setValue("_id", data);
 
           self.view.event("save", self.view.value);
@@ -62,7 +63,7 @@ class ViewButtonMirrorSave extends React.Component {
   }
   componentDidMount() {
     if (this.model.insertVal)
-      this.model.insertVal.forEach(item => {
+      this.model.insertVal.forEach((item) => {
         this.view.setValue(item[0], this.insertVal(item[1]));
       });
   }

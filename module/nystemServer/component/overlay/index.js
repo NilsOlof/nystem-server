@@ -6,6 +6,7 @@ import { OverlayContextProvider } from "./context";
 let atPath = "";
 
 const OverlayIndex = withRouter(({ children, match }) => {
+  // eslint-disable-next-line prefer-const
   let [open, setOpenState] = useState({});
 
   const overlayEvent = ({ event, overlayId }) => {
@@ -33,7 +34,7 @@ const OverlayIndex = withRouter(({ children, match }) => {
 
   return items
     .filter(({ props }) => open[props.overlayId])
-    .map(child => (
+    .map((child) => (
       <OverlayContextProvider
         key={child.props.overlayId}
         value={child.props.overlayId}
