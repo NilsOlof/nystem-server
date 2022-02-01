@@ -532,7 +532,7 @@
 												"mb-1",
 												"select-none"
 											],
-											"filename": "logo2.svg"
+											"filename": "logo3.svg"
 										}
 									],
 									"offline": true
@@ -549,7 +549,7 @@
 												"mb-1",
 												"select-none"
 											],
-											"filename": "logo2.svg"
+											"filename": "logo3.svg"
 										}
 									]
 								}
@@ -575,7 +575,7 @@
 										"w-8",
 										"h-8",
 										"cursor-pointer",
-										"hover:bg-gray-800",
+										"hover:bg-gray-200",
 										"rounded"
 									],
 									"button": "minus"
@@ -589,7 +589,7 @@
 										"w-8",
 										"h-8",
 										"cursor-pointer",
-										"hover:bg-gray-800",
+										"hover:bg-gray-200",
 										"rounded"
 									],
 									"button": "edit-copy"
@@ -603,7 +603,7 @@
 										"w-8",
 										"h-8",
 										"cursor-pointer",
-										"hover:bg-gray-800",
+										"hover:bg-gray-200",
 										"rounded",
 										"mr-1"
 									],

@@ -11,6 +11,7 @@
     "websocket": "*"
   },
   "scripts": {
+    "worker": "sudo node app.js module/requireSu/worker.js",
     "initelectron": "node app.js module/electron/initelectron.js",
     "startelectron": "node app.js module/electron/startelectron.js",
     "initweb": "node app.js core/file/initweb.js",

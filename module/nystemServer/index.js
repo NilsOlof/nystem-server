@@ -147,11 +147,20 @@ const start = (app) => {
       const { runbasepath: cmdPath } = await app.event("serverPath", {
         path: "{localdeploy}nystemmanager",
       });
+
+      return runProgram("open", [
+        app.settings.nystemmanagerpathMac,
+        "--args",
+        basepath,
+        basepath,
+      ]);
+      /*
       return runProgram(
         "node",
         ["app.js", "server.js", basepath, port, runbasepath],
         cmdPath
       );
+      */
     },
     callWin: async ({ basepath }) => {
       console.log("Open manager", basepath.replace(/\//g, "\\"));

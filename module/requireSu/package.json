@@ -1,5 +1,8 @@
 {
   "dependencies": {
     "sudo-prompt": "*"
+  },
+  "scripts": {
+    "worker": "sudo node app.js module/requireSu/worker.js"
   }
 }
