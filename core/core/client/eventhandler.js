@@ -205,7 +205,7 @@ module.exports = function addEventHandler(context, mapevents, name) {
   if (mapevents)
     mapevents.forEach((event) => {
       context[event] = (data, defectiveCallback) => {
-        if (defectiveCallback) debugger;
+        // if (defectiveCallback) debugger;
         return doEvent(event, data);
       };
     });

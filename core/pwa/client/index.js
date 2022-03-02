@@ -43,8 +43,8 @@ module.exports = (app) => {
     ) || [])[1],
   }));
 
-  app.on("clearCacheAndReload", () => {
-    window.localStorage.clear();
+  app.on("clearCacheAndReload", async () => {
+    await app.storage.clear();
     window.caches.delete("nystem").then(() => {
       window.location.reload();
     });
@@ -65,13 +65,13 @@ module.exports = (app) => {
             !appVersion ||
             clientAppVersion === appVersion
           ) {
-            window.localStorage.setItem("havereloaded", "false");
+            await app.storage.setItem("havereloaded", "false");
             return;
           }
 
-          if (window.localStorage.getItem("havereloaded") === "true") return;
+          if ((await app.storage.getItem("havereloaded")) === "true") return;
 
-          window.localStorage.setItem("havereloaded", "true");
+          await app.storage.setItem("havereloaded", "true");
 
           window.caches.delete("nystem").then(() => {
             window.location.reload();
@@ -79,7 +79,7 @@ module.exports = (app) => {
         });
     });
   });
-  setTimeout(() => {
-    window.localStorage.setItem("havereloaded", "false");
+  setTimeout(async () => {
+    await app.storage.setItem("havereloaded", "false");
   }, 10000);
 };

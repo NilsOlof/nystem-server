@@ -142,7 +142,7 @@ const start = (app) => {
   programRunner({
     field: "manager",
     call: async ({ basepath, runbasepath, port }) => {
-      console.log("Open manager", basepath.replace(/\//g, "\\"));
+      console.log("Open manager", runbasepath.replace(/\//g, "\\"));
 
       const { runbasepath: cmdPath } = await app.event("serverPath", {
         path: "{localdeploy}nystemmanager",
@@ -151,8 +151,8 @@ const start = (app) => {
       return runProgram("open", [
         app.settings.nystemmanagerpathMac,
         "--args",
-        basepath,
-        basepath,
+        runbasepath,
+        runbasepath,
       ]);
       /*
       return runProgram(
@@ -162,10 +162,13 @@ const start = (app) => {
       );
       */
     },
-    callWin: async ({ basepath }) => {
-      console.log("Open manager", basepath.replace(/\//g, "\\"));
+    callWin: async ({ runbasepath }) => {
+      console.log("Open manager", runbasepath.replace(/\//g, "\\"));
 
-      return runProgram(app.settings.nystemmanagerpath, [basepath, basepath]);
+      return runProgram(app.settings.nystemmanagerpath, [
+        runbasepath,
+        runbasepath,
+      ]);
     },
   });
 

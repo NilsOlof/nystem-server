@@ -3,6 +3,8 @@ module.exports = function (app) {
 
   const fetch = require("node-fetch");
   let timer;
+  const { name } = app.settings.client;
+
   const host = `http://localhost:${app.settings.port}`;
   const extPath = `${app.__dirname}/files/extension`;
   const { fs } = app;
@@ -19,7 +21,7 @@ module.exports = function (app) {
   };
 
   const entrypoints = require("./features.json").filter((item) =>
-    ["popup", "background", "content"].includes(item)
+    ["popup", "background", "content", "devtools"].includes(item)
   );
 
   const update = async () => {
@@ -50,6 +52,18 @@ module.exports = function (app) {
     entrypoints.forEach(async (filename) => {
       if (["content"].includes(filename))
         await fs.writeFile(`${extPath}/${filename}.js`, bundle);
+
+      if (["devtools"].includes(filename)) {
+        await fs.writeFile(
+          `${extPath}/devtoolsinit.js`,
+          `chrome.devtools.panels.create("${name}","icon/32.png","devtools.html", (panel)=>{});`
+        );
+        await fs.writeFile(
+          `${extPath}/devtoolsinit.html`,
+          `<script src="devtoolsinit.js"></script>`
+        );
+      }
+
       await fs.writeFile(`${extPath}/${filename}.html`, indexHtml);
     });
   };

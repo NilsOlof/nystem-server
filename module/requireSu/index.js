@@ -8,6 +8,8 @@ const log = (error, stdout, stderr) => {
 };
 
 const start = (app) => {
+  if (app.settings.noRequireSu) return;
+
   server(app);
 
   let startCallback = false;
