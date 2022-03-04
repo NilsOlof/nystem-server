@@ -1,4 +1,4 @@
-const extensionIcon = props => {
+const ExtensionIcon = (props) => {
   const { browserAction } = window.chrome;
   const { color, text, icon, canvas } = props.model || props;
   if (icon) browserAction.setIcon({ path: icon });
@@ -7,9 +7,9 @@ const extensionIcon = props => {
   if (canvas) {
     const canvasContext = canvas.getContext("2d");
     browserAction.setIcon({
-      imageData: canvasContext.getImageData(0, 0, canvas.width, canvas.height)
+      imageData: canvasContext.getImageData(0, 0, canvas.width, canvas.height),
     });
   }
   return null;
 };
-module.exports = extensionIcon;
+export default ExtensionIcon;

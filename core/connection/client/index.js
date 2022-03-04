@@ -1,4 +1,5 @@
 const httpsfallbackM = require("./httpsfallback");
+const devtoolsM = require("./devtools");
 
 module.exports = (app) => {
   if (!app.settings.domain) return;
@@ -116,4 +117,5 @@ module.exports = (app) => {
   }
 
   httpsfallbackM(app);
+  devtoolsM(app);
 };

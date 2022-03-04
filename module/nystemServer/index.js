@@ -173,6 +173,9 @@ const start = (app) => {
   });
 
   app.event("favicon", { file: "/files/image/original/logo2.svg" });
+  app.on("extensionContent", async () => ({
+    content: await app.fs.readFile(`${__dirname}/content.js`),
+  }));
 };
 
 module.exports = (app) => app.on("start", start);

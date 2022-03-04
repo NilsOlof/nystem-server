@@ -24,7 +24,9 @@ const Index = () => (
           className="fixed top-0 w-full"
           match="*"
           source="/server/menu"
+          exclude="/devtools.html"
         />
+        <Inserter match="/devtools.html" source="/server/devtools" />
         <Wrapper
           renderAs="main"
           className="h-full-minus overflow-y-scroll mt-11"

@@ -1,0 +1,140 @@
+{
+	"views": [
+		{
+			"name": "list",
+			"format": "list",
+			"item": [
+				{
+					"type": "database",
+					"format": "search"
+				},
+				{
+					"type": "bootstrap",
+					"format": "panel",
+					"stateStore": "disabled",
+					"header": [
+						{
+							"type": "bootstrap",
+							"format": "panelToggle",
+							"icon": true,
+							"className": [
+								"flex",
+								"items-center"
+							],
+							"item": [
+								{
+									"type": "viewText",
+									"text": "Database explorer"
+								}
+							]
+						}
+					],
+					"item": [
+						{
+							"type": "viewList",
+							"format": "search",
+							"className": [
+								"w-96"
+							]
+						},
+						{
+							"type": "viewList",
+							"rowClassName": [
+								"flex"
+							],
+							"item": [
+								{
+									"id": "_id",
+									"type": "text",
+									"className": [
+										"w-32"
+									]
+								},
+								{
+									"id": "_crdate",
+									"type": "date",
+									"className": [
+										"w-32"
+									]
+								},
+								{
+									"id": "_chdate",
+									"type": "date",
+									"className": [
+										"w-32"
+									]
+								},
+								{
+									"type": "text",
+									"id": "name"
+								}
+							],
+							"headerFields": [
+								{
+									"type": "style",
+									"item": [
+										{
+											"id": "_id",
+											"type": "text",
+											"format": "sortBy",
+											"text": "Id",
+											"className": [
+												"w-32"
+											]
+										},
+										{
+											"id": "_crdate",
+											"type": "date",
+											"format": "sortBy",
+											"text": "Created",
+											"className": [
+												"w-32"
+											]
+										},
+										{
+											"id": "_chdate",
+											"type": "date",
+											"format": "sortBy",
+											"text": "Changed",
+											"className": [
+												"w-32"
+											]
+										},
+										{
+											"type": "text",
+											"id": "name",
+											"format": "sortBy"
+										}
+									],
+									"className": [
+										"flex"
+									]
+								}
+							],
+							"className": [
+								""
+							],
+							"header": [
+								{
+									"type": "viewText",
+									"text": "Database explorer"
+								}
+							]
+						}
+					],
+					"expanded": true,
+					"className": [
+						"mx-3"
+					]
+				}
+			]
+		}
+	],
+	"item": [
+		{
+			"type": "text",
+			"text": "Name",
+			"id": "name"
+		}
+	]
+}

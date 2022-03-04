@@ -42,6 +42,124 @@
 	"storage": "data",
 	"views": [
 		{
+			"name": "devtools",
+			"item": [
+				{
+					"category": "view",
+					"type": "extension",
+					"item": [
+						{
+							"category": "view",
+							"type": "extension",
+							"format": "tab",
+							"item": [
+								{
+									"category": "view",
+									"type": "extension",
+									"item": [
+										{
+											"type": "viewText",
+											"text": "Hepp"
+										}
+									],
+									"format": "search",
+									"field": "host",
+									"extract": "(\\/\\/)([^\\/]+)"
+								},
+								{
+									"category": "view",
+									"type": "style",
+									"item": [
+										{
+											"category": "view",
+											"type": "bootstrap",
+											"format": "panel",
+											"header": [
+												{
+													"category": "view",
+													"type": "style",
+													"item": [
+														{
+															"category": "view",
+															"type": "bootstrap",
+															"format": "panelToggle",
+															"item": [
+																{
+																	"category": "contentTypeField",
+																	"type": "text",
+																	"id": "name",
+																	"renderAs": "div",
+																	"className": [
+																		""
+																	],
+																	"format": "view"
+																}
+															],
+															"icon": true,
+															"className": [
+																"flex",
+																"items-center",
+																"content-center",
+																"py-1",
+																"",
+																"flex-grow"
+															]
+														},
+														{
+															"category": "view",
+															"type": "viewInView",
+															"contentType": "serverStatus",
+															"view": "controlnohide",
+															"className": [
+																""
+															],
+															"format": "empty",
+															"viewId": "{_id}"
+														}
+													],
+													"className": [
+														"flex",
+														"items-center"
+													]
+												}
+											],
+											"item": [
+												{
+													"category": "view",
+													"type": "viewInView",
+													"contentType": "serverStatus",
+													"view": "status",
+													"viewId": "{_id}",
+													"format": "empty"
+												}
+											],
+											"typeClass": "defaultWithoutPadding",
+											"stateStore": "disabled",
+											"expanded": true
+										}
+									],
+									"format": "onOverHandle",
+									"className": [
+										"p-3",
+										"max-w-4xl"
+									]
+								}
+							],
+							"match": "localhost"
+						},
+						{
+							"type": "devtools"
+						},
+						{
+							"type": "viewInView",
+							"contentType": "dbexplorer",
+							"view": "list"
+						}
+					]
+				}
+			]
+		},
+		{
 			"name": "extension",
 			"item": [
 				{
@@ -393,8 +511,10 @@
 							"format": "view",
 							"className": [
 								"",
-								"py-1",
-								"px-2"
+								"my-1",
+								"mx-2",
+								"w-4",
+								"h-4"
 							]
 						}
 					],

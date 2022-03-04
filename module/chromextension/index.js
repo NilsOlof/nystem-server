@@ -50,8 +50,11 @@ module.exports = function (app) {
     );
 
     entrypoints.forEach(async (filename) => {
-      if (["content"].includes(filename))
-        await fs.writeFile(`${extPath}/${filename}.js`, bundle);
+      if (["content"].includes(filename)) {
+        const { content } = await app.event("extensionContent");
+        await fs.writeFile(`${extPath}/${filename}.js`, content || bundle);
+        return;
+      }
 
       if (["devtools"].includes(filename)) {
         await fs.writeFile(
@@ -84,7 +87,7 @@ module.exports = function (app) {
     setTimeout(compileAndCopy, 1000);
   });
 
-  if (app.settings.debug)
+  if (app.settings.debug === "hhhå")
     app.on("debugModeFileChange", (event) => {
       const parts = event.path.split("/");
       if (!["component", "style", "contentType"].includes(parts[3])) return;
