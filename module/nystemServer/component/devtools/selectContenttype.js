@@ -20,7 +20,12 @@ const DevtoolsSelectContenttype = ({ model, view }) => {
         data: undefined,
       });
 
-      return { ...query, data: result.data };
+      return {
+        ...query,
+        data: result.data,
+        total: result.total,
+        searchTotal: result.searchTotal,
+      };
     };
     app().database[view.contentType].on("search", onSearch);
 
@@ -39,6 +44,19 @@ const DevtoolsSelectContenttype = ({ model, view }) => {
     };
     app().database[view.contentType].on("get", onGet);
 
+    const onSave = async (query) => {
+      if (!valRef.current) return;
+
+      await app().event("devtools", {
+        ...query,
+        path: `database.${valRef.current}`,
+        event: "save",
+      });
+
+      return { ...query, data: false };
+    };
+    app().database[view.contentType].on("save", onSave);
+
     const getOptions = async () => {
       const { data } = await app().event("devtools", { path: "contentType" });
       setOption(Object.keys(data));
@@ -53,6 +71,7 @@ const DevtoolsSelectContenttype = ({ model, view }) => {
     return () => {
       app().database[view.contentType].off("get", onGet);
       app().database[view.contentType].off("search", onSearch);
+      app().database[view.contentType].off("save", onSave);
       app().off("devtools", init);
     };
   }, [view]);
@@ -62,7 +81,7 @@ const DevtoolsSelectContenttype = ({ model, view }) => {
   }, [value, view]);
 
   if (!option) return null;
-  console.log({ value });
+
   return (
     <SelectInput
       model={{ ...model, option }}
