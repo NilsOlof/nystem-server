@@ -1,69 +1,87 @@
-// obj instanceof Promise
-
 const getStackTrace = (row) => {
   const obj = {};
-  if (!Error.captureStackTrace) return;
+  if (!Error.captureStackTrace) return "";
   Error.captureStackTrace(obj, getStackTrace);
-  if (row === 3) console.log(obj.stack.split("\n"));
+
   const [, source, line, column] =
     /https?:\/\/[^/]+\/([^:]+):([^:]+):([0-9]+)/im.exec(
       obj.stack.split("\n")[row]
     ) || [];
 
-  return !source
-    ? obj.stack.split("\n")[row]
-    : translate(`${source} ${line}:${column}`);
+  return !source ? obj.stack.split("\n")[row] : `(${source} ${line}:${column})`;
 };
-
-let translate = (str) => str;
 
 if (
   typeof window !== "undefined" &&
-  window.location.host.includes("localhost")
+  window?.location?.host?.includes(".localhost")
 ) {
-  const addScript = (src) =>
-    new Promise((resolve) => {
-      if (
-        [...document.head.children].some(
-          (child) => child.getAttribute("src") === src
-        )
-      ) {
-        resolve();
-        return;
-      }
+  const replaceLinks =
+    (callback) =>
+    async (...args) => {
+      for (let i = 0; i < args.length; i++)
+        if (typeof args[i] === "string") args[i] = await translate(args[i]);
 
-      const scriptEl = document.createElement("script");
+      callback(...args);
+    };
 
-      scriptEl.setAttribute("src", src);
-      scriptEl.onload = resolve;
-      document.head.appendChild(scriptEl);
-    });
+  window.console.error = replaceLinks(window.console.error);
 
-  addScript("/source-map.js").then(async () => {
-    window.sourceMap.SourceMapConsumer.initialize({
-      "lib/mappings.wasm": "/mappings.wasm",
-    });
-    try {
-      const consumer = await new window.sourceMap.SourceMapConsumer(
-        await fetch("/static/js/main.chunk.js.map").then((res) => res.json())
-      );
-      translate = (str) => {
-        if (!str || !str.includes(":")) return str;
+  const oldLog = window.console.log;
+  window.console.log = (...args) =>
+    replaceLinks(oldLog)(getStackTrace(5), ...args);
 
-        let [source, line, column] = str.split(/[ :]/);
+  window.onerror = function (message, source, lineno, colno, error) {
+    console.error(error.stack);
+    return true;
+  };
 
-        ({ source, line, column } = consumer.originalPositionFor({
-          line: parseInt(line, 10),
-          column: parseInt(column, 10),
-        }));
-        return `${source} ${line}:${column}`;
-      };
-      // eslint-disable-next-line no-empty
-    } catch (e) {}
-  });
+  const translate = (() => {
+    let consumer = false;
+    const load = () =>
+      new Promise((resolve) => {
+        callbacks.push(resolve);
+        if (callbacks.length > 1) return;
+
+        const scriptEl = document.createElement("script");
+
+        scriptEl.setAttribute("src", "/source-map.js");
+        scriptEl.onload = async () => {
+          window.sourceMap.SourceMapConsumer.initialize({
+            "lib/mappings.wasm":
+              "https://unpkg.com/source-map@0.7.3/lib/mappings.wasm",
+          });
+          const mapData = await fetch("/static/js/bundle.js.map").then((res) =>
+            res.json()
+          );
+
+          consumer = await new window.sourceMap.SourceMapConsumer(mapData);
+          callbacks.forEach((callback) => callback());
+        };
+        document.head.appendChild(scriptEl);
+      });
+
+    const callbacks = [];
+    const replace = (all, str, hepp2) => {
+      if (!str || !str.includes(":")) return str;
+
+      let [source, , line, column] = str.split(/[ :]/);
+      if (!column) [source, line, column] = str.split(/[ :]/);
+
+      ({ source, line, column } = consumer.originalPositionFor({
+        line: parseInt(line, 10),
+        column: parseInt(column, 10),
+      }));
+
+      return line ? ` (vscode://file/${source}:${line}:${column})\n` : str;
+    };
+
+    return async (str) => {
+      if (!consumer) await load();
+
+      return str.replace(/\(([^)]+)\)\n?/g, replace);
+    };
+  })();
 }
-
-if (typeof window !== "undefined") window.addEventHandlers = {};
 
 module.exports = function addEventHandler(context, mapevents, name) {
   const callbacks = {};
@@ -78,17 +96,6 @@ module.exports = function addEventHandler(context, mapevents, name) {
     `${name} ${Math.random()}`,
     getStackTrace(2),
   ];
-
-  setTimeout(() => {
-    if (typeof window !== "undefined") {
-      Object.entries(callbacksStack).forEach(([key, value]) => {
-        callbacksStack[key] = value.map((item) => translate(item));
-      });
-
-      window.addEventHandlers[callbacksStack.addEventHandlerInitiator[0]] =
-        callbacksStack;
-    }
-  }, 1000);
 
   context = context || {};
 
@@ -144,6 +151,9 @@ module.exports = function addEventHandler(context, mapevents, name) {
     event.forEach((event) => removeEvent(event, callback));
   };
 
+  const printStack = (text) =>
+    text && text.replace("   at module.exports ", "at ");
+
   const fired = {};
   const doEvent = (event, data) => {
     data = data || {};
@@ -155,13 +165,11 @@ module.exports = function addEventHandler(context, mapevents, name) {
     return new Promise((resolve, reject) => {
       const timer = setTimeout(() => {
         console.log(
-          event,
-          " Stopped at",
-          pos,
-          callback.length,
-          Object.keys(context),
-          callbacksStack[event][pos - 1],
-          callbacksStack[event]
+          `💥 Event ${event} stopped ${pos} of ${callback.length}${printStack(
+            callbacksStack[event][pos - 1]
+          )} - ${callbacksStack[event]
+            .map((item, index) => `${index}.${printStack(item)}`)
+            .join("  ")}`
         );
       }, 5000);
       let pos = 0;
@@ -205,7 +213,7 @@ module.exports = function addEventHandler(context, mapevents, name) {
   if (mapevents)
     mapevents.forEach((event) => {
       context[event] = (data, defectiveCallback) => {
-        if (defectiveCallback) debugger;
+        // if (defectiveCallback) debugger;
         return doEvent(event, data);
       };
     });

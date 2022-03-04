@@ -55,26 +55,6 @@
         {
           "_id": "dataThreaded",
           "text": "Threaded in data/db"
-        },
-        {
-          "_id": "moduleThreaded",
-          "text": "Threaded in the content type module"
-        },
-        {
-          "_id": "memoryThreaded",
-          "text": "Threaded memory only"
-        },
-        {
-          "_id": "noneThreaded",
-          "text": "Threaded init later"
-        },
-        {
-          "_id": "mongoDB",
-          "text": "mongoDB"
-        },
-        {
-          "_id": "noneMongoDB",
-          "text": "Init later as mongoDB"
         }
       ],
       "inline": true,

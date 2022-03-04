@@ -62,8 +62,10 @@ module.exports = (app) => {
 
     collection.on("update", ({ ids, offline }) => {
       if (offline) return;
-      if (ids) {
+
+      if (ids && ids.length < 500) {
         ids.forEach(delItem);
+
         return;
       }
 

@@ -4,5 +4,9 @@
   },
   "devDependencies": {
     "@fiahfy/icns": "*"
+  },
+  "scripts": {
+    "initelectron": "node app.js module/electron/initelectron.js",
+    "startelectron": "node app.js module/electron/startelectron.js"
   }
 }

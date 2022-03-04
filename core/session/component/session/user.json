@@ -1,10 +1,9 @@
 {
-	"item": [
-		{
-			"type": "viewSelect",
-			"id": "toformat",
-			"text": "Format"
-		}
-	],
-	"modulePath": "C:\\Users\\Nisse\\Dropbox\\nodejs/akvavision/core/session"
+  "item": [
+    {
+      "type": "viewSelect",
+      "id": "toFormat",
+      "text": "Format"
+    }
+  ]
 }

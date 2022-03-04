@@ -1,6 +1,5 @@
 const connectionM = require("./connection");
 const updatesM = require("./updates");
-const debugM = require("./debug");
 const memdbM = require("./memdb");
 const cacheM = require("./cache");
 const storageM = require("./storage");
@@ -16,7 +15,6 @@ module.exports = (app) => {
 
   connectionM(app);
   updatesM(app);
-  debugM(app);
   memdbM(app);
   cacheM(app);
   storageM(app);

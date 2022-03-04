@@ -6,13 +6,18 @@ const ReferenceExposedField = ({ model, view, path }) => {
   const [option, setOption] = useState();
 
   useEffect(() => {
-    app()
-      .database[model.source].search({
-        autoUpdate: true,
+    const update = async () => {
+      const { data: option } = await app().database[model.source].search({
         filter: app().parseFilter(model.filter, view.getValue, path),
-        count: 100,
-      })
-      .then(({ data: option }) => setOption(option));
+        count: 2000,
+      });
+      setOption(option);
+    };
+
+    const timer = setTimeout(update, 100);
+    return () => {
+      clearTimeout(timer);
+    };
   }, [model.filter, model.source, path, view.getValue]);
 
   if (!option || option.length === 0) return null;

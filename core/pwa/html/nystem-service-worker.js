@@ -30,8 +30,10 @@ self.addEventListener("fetch", (event) => {
         if (cached) return cached;
 
         const response = await fetch(event.request);
-
-        cache.put(pathname, response.clone());
+        if (
+          response.headers.get("Cache-Control") !== "max-age=0, must-revalidate"
+        )
+          cache.put(pathname, response.clone());
 
         return response;
       } catch (e) {

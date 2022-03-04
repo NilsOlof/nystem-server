@@ -1,7 +1,7 @@
-module.exports = function(app) {
+module.exports = function (app) {
   const { fs } = app;
-  const srcPath = `${app.__dirname}/web/src/contentype.json`;
-  const distPath = `${app.__dirname}/build/contentype.json`;
+  const srcPath = `${app.__dirname}/web/src/contenttype.json`;
+  const distPath = `${app.__dirname}/build/contenttype.json`;
 
   app.on(
     "init",

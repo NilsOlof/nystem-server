@@ -16,24 +16,22 @@ const sizes = [
 
 module.exports = (app) => {
   app.on("favicon", -10, async ({ icoBuffer }) => {
-    await app.fs.writeFile(
-      `${app.__dirname}/electron/src/favicon.ico`,
-      icoBuffer
-    );
+    await app.fs.writeFile(`${app.__dirname}/electron/src/icon.ico`, icoBuffer);
 
     const { buffer } = await app.event("generateIconSize", { width: 1024 });
     await app.fs.writeFile(`${app.__dirname}/electron/src/icon.png`, buffer);
 
     if (os.platform() !== "darwin") return;
 
-    const Icns = require("@fiahfy/icns");
+    const { Icns, IcnsImage } = require("@fiahfy/icns");
     const icns = new Icns();
 
     await Promise.all(
       sizes.map(async ({ osType, size: width }) => {
         const { buffer } = await app.event("generateIconSize", { width });
 
-        await icns.appendImage(buffer, osType);
+        const image = IcnsImage.fromPNG(buffer, osType);
+        await icns.append(image);
       })
     );
 

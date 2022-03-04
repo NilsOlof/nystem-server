@@ -1,6 +1,6 @@
 const net = require("net");
 
-const port = 64654;
+const port = 64656;
 const commandSeparator = "%%%%";
 
 const uuid = () => {

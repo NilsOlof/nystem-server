@@ -1,0 +1,6 @@
+{
+  "dependencies": {
+    "prettier-plugin-tailwindcss": "*",
+    "prettier": "*"
+  }
+}

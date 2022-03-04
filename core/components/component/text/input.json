@@ -21,6 +21,11 @@
       "id": "classNameInput"
     },
     {
+      "text": "Remove chars",
+      "type": "text",
+      "id": "removeChars"
+    },
+    {
       "type": "switchButtons",
       "item": [
         {

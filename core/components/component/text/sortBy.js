@@ -37,7 +37,7 @@ const TextSortBy = ({ model, view }) => {
 
   return (
     <Wrapper
-      className={[className, "flex"]}
+      className={[className, "flex items-center"]}
       renderAs="a"
       href={id}
       onClick={handleSort}
@@ -46,7 +46,7 @@ const TextSortBy = ({ model, view }) => {
       {sortbyId === id ? (
         <Icon
           icon={`arrow-${reverse1 ? "up" : "down"}`}
-          className="ml-1 w-4 font-bold"
+          className="ml-1 w-4 h-4 font-bold"
         />
       ) : null}
     </Wrapper>

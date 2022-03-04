@@ -50,7 +50,7 @@ module.exports = (app) => {
         .replace(/src="\//g, `src="build/`)
         .replace(/href="\//g, `href="build/`);
 
-      const mainJs = /src="(build\/static\/js\/main\.[^.]+\.chunk\.js)/gim;
+      const mainJs = /src="(build\/static\/js\/main\.[^.]+\.js)/gim;
       const filename = `${app.__dirname}/${mainJs.exec(html)[1]}`;
       let jsFile = await app.fs.readFile(filename, "utf8");
 

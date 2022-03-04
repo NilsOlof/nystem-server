@@ -2,6 +2,7 @@ import React from "react";
 import { ContentTypeRender } from "nystem-components";
 
 const ExtensionView = ({ invert, model = {}, path, children }) => {
+  console.log("ExtensionView");
   const inExtension = window.location.protocol === "chrome-extension:";
   invert = invert || model.invert;
 

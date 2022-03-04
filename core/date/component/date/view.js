@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useRef, useState, useEffect, useCallback } from "react";
 import moment from "my-moment";
 import app from "nystem";
 import { Wrapper } from "nystem-components";
@@ -12,6 +12,7 @@ const dateTimeFormats = {
   dateTimeNoYearDay: "ddd D/M H:mm",
   dateNoYearDay: "ddd D/M",
   timeDay: "ddd D/M H:mm",
+  dateNoYear: "D/M",
   day: "dddd",
 };
 
@@ -24,6 +25,7 @@ const DateView = ({ model, value }) => {
     : dateFormat || dateTimeFormats.dateTimeLong;
 
   value = parseInt(value, 10);
+
   let rel = value && model.relative && value + hourInMs * 24 - Date.now();
   rel = !rel || rel < 0 ? 0 : rel;
   if (rel && moment().startOf("day").valueOf() > value) rel = 0;
@@ -33,8 +35,11 @@ const DateView = ({ model, value }) => {
     [format, rel, value]
   );
   const [result, setResult] = useState(formatDate());
+  const ref = useRef();
+  ref.current = result;
 
   useEffect(() => {
+    if (ref.current !== formatDate()) setResult(formatDate());
     if (!rel) return;
 
     const update = () => setResult(formatDate());

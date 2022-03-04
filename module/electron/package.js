@@ -1,4 +1,6 @@
-module.exports = (app) => {
+module.exports = async (app) => {
+  if (!app.fs.existsSync(`${app.__dirname}/electron`)) return;
+
   const readFile = async (path) => JSON.parse(await app.readFile(path));
 
   const getPackage = async () => {
@@ -12,30 +14,44 @@ module.exports = (app) => {
       .toLowerCase()
       .replace(/ /g, "");
 
-    add.config.forge.packagerConfig = { icon: "src/favicon.ico" };
+    add.config.forge.packagerConfig = { icon: "src/icon" };
     return add;
   };
 
   if (app.settings.electronType === "external") {
-    app.on("start", async () => {
-      app.packages.generate(
-        "package.electron.json",
-        `${app.__dirname}/electron`,
-        [await getPackage()]
-      );
-    });
+    app.packages.generate(
+      "package.electron.json",
+      `${app.__dirname}/electron`,
+      [await getPackage()]
+    );
 
     return;
   }
 
-  app.on("start", async () => {
-    const add = getPackage();
-    const { dependencies } = await readFile(`${app.__dirname}/package.json`);
-    add.dependencies = { ...add.dependencies, ...dependencies };
+  const add = await getPackage();
 
-    app.writeFileChanged(
-      `${app.__dirname}/electron/package.js`,
-      JSON.stringify(add)
-    );
-  });
+  const { dependencies } = await readFile(`${app.__dirname}/package.json`);
+
+  if (app.settings.electronType === "hostless")
+    add.dependencies = {
+      ...add.dependencies,
+      ...dependencies,
+      websocket: undefined,
+    };
+  else add.dependencies = { ...add.dependencies, ...dependencies };
+
+  app.writeFileChanged(
+    `${app.__dirname}/electron/package.json`,
+    JSON.stringify(add, null, "  ").replace(/file:\.\//g, "file:./src/")
+  );
+
+  await app.fs.copy(
+    `${app.__dirname}/web/build`,
+    `${app.__dirname}/electron/src/build`
+  );
+
+  await app.fs.copy(
+    `${app.__dirname}/web/src/contenttype.json`,
+    `${app.__dirname}/electron/src/build/contenttype.json`
+  );
 };

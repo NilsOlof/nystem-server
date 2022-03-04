@@ -54,6 +54,7 @@ module.exports = (app) => {
   app.on("start", async () => {
     ensureDir("build");
     ensureDir("files");
+    if (!app.fs.existsSync(`${app.__dirname}/electron/build`)) return;
 
     if (
       (await fs.stat(`${app.__dirname}/web/build`)).mtimeMs <

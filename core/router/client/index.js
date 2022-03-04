@@ -52,17 +52,16 @@ module.exports = (app) => {
     }
     return out;
   };
-
-  /* app.on("loaded", () => {
+  /*
+  app.on("loaded", async () => {
     if (app.settings.extension) {
-      const to = "/";
-      if (
-        window.localStorage["lastpos"] &&
-        window.localStorage["lastpos"] !== "/index.html"
-      )
-        to = window.localStorage["lastpos"];
+      let to = "/";
+      const lastpos = await app.storage.getItem("lastpos");
+      if (lastpos && lastpos !== "/index.html") to = lastpos;
+
       window.history.pushState({}, "Site", to);
       app.router.setState();
     }
-  }); */
+  });
+*/
 };

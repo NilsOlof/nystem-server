@@ -6,7 +6,7 @@ import moment from "my-moment";
 const ClearButton = ({ setValue }) => (
   <Icon
     onClick={() => setValue("")}
-    className="absolute w-4 right-0 top-0 m-3"
+    className="absolute right-0 top-0 m-3 w-4"
     icon="close"
     aria-hidden="true"
   />
@@ -24,7 +24,7 @@ const DateInputDate = ({ model, focus, setValue, value }) => {
 
   const setFromPicker = useCallback(
     function () {
-      const formVal = this.getMoment().format(dateFormat);
+      const formVal = this.getDate();
       setValue(moment(formVal).valueOf());
     },
     [setValue]
@@ -54,7 +54,7 @@ const DateInputDate = ({ model, focus, setValue, value }) => {
         ref={inputEl}
         placeholder={app().t(text)}
         className={
-          "appearance-none block bg-grey-lighter text-grey-darker border border-grey-lighter rounded py-2 px-3 w-full"
+          "bg-grey-lighter text-grey-darker border-grey-lighter block w-full appearance-none rounded border py-2 px-3"
         }
         value={inputVal}
         maxLength={length}

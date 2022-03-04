@@ -142,28 +142,40 @@ const start = (app) => {
   programRunner({
     field: "manager",
     call: async ({ basepath, runbasepath, port }) => {
-      console.log("Open manager", basepath.replace(/\//g, "\\"));
+      console.log("Open manager", runbasepath.replace(/\//g, "\\"));
 
       const { runbasepath: cmdPath } = await app.event("serverPath", {
         path: "{localdeploy}nystemmanager",
       });
+
+      return runProgram("open", [
+        app.settings.nystemmanagerpathMac,
+        "--args",
+        runbasepath,
+        runbasepath,
+      ]);
+      /*
       return runProgram(
         "node",
         ["app.js", "server.js", basepath, port, runbasepath],
         cmdPath
       );
+      */
     },
-    callWin: async ({ basepath }) => {
-      console.log("Open manager", basepath.replace(/\//g, "\\"));
+    callWin: async ({ runbasepath }) => {
+      console.log("Open manager", runbasepath.replace(/\//g, "\\"));
 
-      return runProgram(
-        "C:\\Users\\Nisse\\AppData\\Local\\nystemcontenttypemanager\\nystemcontenttypemanager.exe",
-        [basepath, basepath]
-      );
+      return runProgram(app.settings.nystemmanagerpath, [
+        runbasepath,
+        runbasepath,
+      ]);
     },
   });
 
   app.event("favicon", { file: "/files/image/original/logo2.svg" });
+  app.on("extensionContent", async () => ({
+    content: await app.fs.readFile(`${__dirname}/content.js`),
+  }));
 };
 
 module.exports = (app) => app.on("start", start);

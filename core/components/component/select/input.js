@@ -26,12 +26,12 @@ const RenderButton = ({ option, handleChange, value, model }) => (
     {option.map(({ text, _id }) => (
       <Button
         onClick={() => handleChange(_id)}
-        className={[model.classNameItem, "mr-2 my-1"]}
+        className={[model.classNameItem, "my-1 mr-2"]}
         key={_id}
         type={value.indexOf(_id) !== -1 ? "primary" : "secondary"}
         size="xs"
       >
-        {text}
+        {app().t(text)}
       </Button>
     ))}
   </Wrapper>
@@ -61,9 +61,9 @@ const RenderCheckbox = ({
               onChange={() => handleChange(_id)}
               type={limit === 1 ? "radio" : "checkbox"}
               checked={value.indexOf(_id) !== -1 ? "checked" : false}
-              className="p-1 mr-2"
+              className="mr-2 p-1"
             />
-            {text}
+            {app().t(text)}
           </label>
         </Wrapper>
       ))}
@@ -80,7 +80,7 @@ const RenderDropdown = ({
 }) => (
   // eslint-disable-next-line jsx-a11y/no-onchange
   <Select
-    className={model.classNameInput || "sm:w-1/2 w-full p-2 border"}
+    className={model.classNameInput || "w-full rounded border p-2 sm:w-1/2"}
     onChange={(e) => handleChange(e.target.value)}
     value={value[0]}
   >
@@ -89,7 +89,7 @@ const RenderDropdown = ({
     </option>
     {option.map(({ text, _id }) => (
       <option key={_id || "___"} value={_id || "___"}>
-        {text}
+        {app().t(text)}
       </option>
     ))}
   </Select>
@@ -122,33 +122,38 @@ const SelectInput = ({ model, value, view, setValue }) => {
   const option = useMemo(() => normalizeOption(model), [model]);
 
   const handleChange = (id) => {
+    const newValue = value instanceof Array ? [...value] : value;
+
     if (id === "") id = undefined;
-    if (value.indexOf(id) !== -1) value.splice(value.indexOf(id), 1);
-    else value.push(id);
+    if (newValue.indexOf(id) !== -1) newValue.splice(newValue.indexOf(id), 1);
+    else newValue.push(id);
 
-    if (limit && limit < value.length) value.shift();
+    if (limit && limit < newValue.length) newValue.shift();
 
-    if (limit === 1) setValue(value[0]);
-    else setValue(value);
+    if (limit === 1) setValue(newValue[0]);
+    else setValue(newValue);
     setValidated(true);
   };
+
   useEffect(() => {
     if (value.length === 0 && model.default) handleChange(model.default);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  const Component = renderTypes[render || "checkbox"];
+
   return (
     <InputWrapper id={id} model={model} error={error}>
-      {renderTypes[render || "checkbox"]({
-        option,
-        handleChange,
-        value,
-        limit,
-        inline,
-        placeholder,
-        model,
-        id,
-      })}
+      <Component
+        option={option}
+        handleChange={handleChange}
+        value={value}
+        limit={limit}
+        inline={inline}
+        placeholder={placeholder}
+        model={model}
+        id={id}
+      />
     </InputWrapper>
   );
 };

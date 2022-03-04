@@ -1,9 +1,20 @@
+const os = require("os").platform();
+
 module.exports = (app) => {
-  app.database.on("init", ({ collection, db, contentType }) => {
-    const { fs } = app;
-    let dbFile = app.dbPath
-      ? app.dbPath
-      : `${app.__dirname}/data/db/${contentType.machinename}`;
+  const { dbPath, fs } = app;
+  const { dbPathWin, dbPathMac } = app.settings;
+
+  const dbFileBase =
+    (os === "win32" && dbPathWin) ||
+    (os === "darwin" && dbPathMac) ||
+    dbPath ||
+    `${app.__dirname}/data`;
+
+  fs.ensureDir(`${dbFileBase}/db`);
+
+  app.database.on("init", async ({ collection, db, contentType }) => {
+    let dbFile = `${dbFileBase}/db/${contentType.machinename}`;
+
     if (["module", "moduleThreaded"].includes(contentType.storage)) {
       dbFile = `${app.__dirname}/module/${contentType.module}/db/${contentType.machinename}`;
       if (!fs.existsSync(dbFile)) fs.mkdirSync(dbFile);

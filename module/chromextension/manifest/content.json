@@ -4,7 +4,7 @@
   "content_scripts": [
     {
       "all_frames": true,
-      "js": ["script/content.js"],
+      "js": ["content.js"],
       "match_about_blank": true,
       "matches": ["http://*/*", "https://*/*"],
       "run_at": "document_start"

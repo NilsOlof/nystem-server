@@ -1,6 +1,6 @@
 {
   "name": "{name}",
-  "version": "0.1",
+  "version": "0.2",
   "description": "{name}",
   "icons": {
     "16": "icon/16.png",
@@ -9,5 +9,6 @@
     "128": "icon/128.png",
     "512": "icon/512.png"
   },
-  "manifest_version": 2
+  "manifest_version": 2,
+  "permissions": ["storage"]
 }

@@ -3,6 +3,8 @@ module.exports = function (app) {
 
   const fetch = require("node-fetch");
   let timer;
+  const { name } = app.settings.client;
+
   const host = `http://localhost:${app.settings.port}`;
   const extPath = `${app.__dirname}/files/extension`;
   const { fs } = app;
@@ -19,7 +21,7 @@ module.exports = function (app) {
   };
 
   const entrypoints = require("./features.json").filter((item) =>
-    ["popup", "background", "content"].includes(item)
+    ["popup", "background", "content", "devtools"].includes(item)
   );
 
   const update = async () => {
@@ -48,8 +50,23 @@ module.exports = function (app) {
     );
 
     entrypoints.forEach(async (filename) => {
-      if (["content"].includes(filename))
-        await fs.writeFile(`${extPath}/${filename}.js`, bundle);
+      if (["content"].includes(filename)) {
+        const { content } = await app.event("extensionContent");
+        await fs.writeFile(`${extPath}/${filename}.js`, content || bundle);
+        return;
+      }
+
+      if (["devtools"].includes(filename)) {
+        await fs.writeFile(
+          `${extPath}/devtoolsinit.js`,
+          `chrome.devtools.panels.create("${name}","icon/32.png","devtools.html", (panel)=>{});`
+        );
+        await fs.writeFile(
+          `${extPath}/devtoolsinit.html`,
+          `<script src="devtoolsinit.js"></script>`
+        );
+      }
+
       await fs.writeFile(`${extPath}/${filename}.html`, indexHtml);
     });
   };
@@ -70,7 +87,7 @@ module.exports = function (app) {
     setTimeout(compileAndCopy, 1000);
   });
 
-  if (app.settings.debug)
+  if (app.settings.debug === "hhhå")
     app.on("debugModeFileChange", (event) => {
       const parts = event.path.split("/");
       if (!["component", "style", "contentType"].includes(parts[3])) return;

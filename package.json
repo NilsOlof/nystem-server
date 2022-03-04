@@ -1,6 +1,9 @@
 {
   "dependencies": {
+    "sudo-prompt": "*",
     "bcryptjs": "*",
+    "prettier-plugin-tailwindcss": "*",
+    "prettier": "*",
     "pngjs": "*",
     "sharp": "*",
     "mime": "*",
@@ -9,8 +12,11 @@
     "fs-extra": "*",
     "websocket": "*"
   },
-  "main": "server.js",
   "scripts": {
+    "worker": "sudo node app.js module/requireSu/worker.js",
+    "initelectron": "node app.js module/electron/initelectron.js",
+    "startelectron": "node app.js module/electron/startelectron.js",
+    "initweb": "node app.js core/file/initweb.js",
     "start": "node server.js",
     "deploy": "node app.js core/core/deploy.js",
     "lint": "eslint .",
@@ -31,8 +37,5 @@
     "eslint-plugin-mocha-no-only": "^1.1.0",
     "eslint-plugin-react": "^7.12.4",
     "eslint-plugin-react-hooks": "^1.6.0"
-  },
-  "optionalDependencies": {
-    "node-windows": "*"
   }
 }

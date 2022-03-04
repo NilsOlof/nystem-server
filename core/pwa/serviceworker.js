@@ -1,29 +1,17 @@
-const http = require("http");
-
-const regExpVersion = /main\.([0-9a-f]+)\.chunk.js/im;
-const fetch = (url) =>
-  new Promise((resolve, reject) => {
-    http
-      .get(url, (resp) => {
-        let data = "";
-        resp.on("data", (chunk) => {
-          data += chunk;
-        });
-        resp.on("end", () => resolve(data.toString()));
-      })
-      .on("error", reject);
-  });
+const regExpVersion = /main\.([0-9a-f]+)\.js/im;
 
 module.exports = (app) => {
   app.on("start", () => {
     let appVersion = false;
 
     app.connection.on("getAppVersion", async (query) => {
-      if (!appVersion && app.settings.port)
-        [, appVersion] =
-          regExpVersion.exec(
-            await fetch(`http://localhost:${app.settings.port}/index.html`)
-          ) || [];
+      if (!appVersion && app.settings.port) {
+        const html = await app.fs.readFile(
+          `${app.__dirname}/build/index.html`,
+          "utf8"
+        );
+        [, appVersion] = regExpVersion.exec(html) || [];
+      }
 
       return { appVersion, ...query };
     });

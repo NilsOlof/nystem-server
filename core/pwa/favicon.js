@@ -25,15 +25,19 @@ module.exports = (app) => {
   const bgColor = hexToRgb(app.settings.bgColor || "#FFFFFF00");
 
   app.on("generateIconSize", async ({ width, height }) => {
+    console.log("Do generateIconSize", width, typeof original);
     if (!original) return;
 
     const id = width + (height ? `x${height}` : "");
 
-    const density = (width / original.width) * 72;
+    let density = (width / original.width) * 72;
+    density = density < 1 ? 1 : density;
+
     buffers[id] = await sharp(original.buffer, { density })
       .resize(width, height || width, { fit: "contain", background: bgColor })
       .toBuffer();
 
+    console.log("generateIconSize done");
     return { buffer: buffers[id] };
   });
 

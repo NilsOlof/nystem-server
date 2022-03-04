@@ -1,3 +1,4 @@
+/* eslint-disable guard-for-in */
 import * as React from "react";
 import app from "nystem";
 
@@ -209,6 +210,7 @@ class ExtensionBackgroundIndex extends React.Component {
       event: "connectExtension",
     });
     window.chrome.tabs.query({}, (data) => {
+      // eslint-disable-next-line no-restricted-syntax
       for (const item in data) self.saveTab(data[item], true);
     });
   };

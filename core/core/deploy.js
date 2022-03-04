@@ -16,10 +16,13 @@ const addPreload = (html) => {
   return html.replace("<head>", `<head>${out}`);
 };
 
-const runCommandExec = (command, cwd) =>
+const runCommandExec = (command, env = {}) =>
   new Promise((resolve, reject) =>
-    exec(command, { cwd: cwd ? folder + cwd : null }, (error, stdout, stderr) =>
-      error ? reject(error) : resolve(stdout + stderr)
+    exec(
+      command,
+      { env: { ...process.env, ...env } },
+      (error, stdout, stderr) =>
+        error ? reject(error) : resolve(stdout + stderr)
     )
   );
 
@@ -38,9 +41,10 @@ const runCommand = (commandLine, cwd) =>
     proc.on("exit", resolve);
   });
 
-const runGitCommand = (command) =>
+const runGitCommand = (command, env) =>
   runCommandExec(
-    `git --git-dir="${gitFolder}.git" --work-tree="${gitFolder}" ${command}`
+    `git --git-dir="${gitFolder}.git" --work-tree="${gitFolder}" ${command}`,
+    env
   );
 
 const dirname = process.env.NODE__DIRNAME || __dirname;
@@ -61,7 +65,8 @@ const saveContentTypes = () => {
     } else if (
       parent === "contentType" &&
       file.indexOf(".json") !== -1 &&
-      file.indexOf("component/contentType/definition.json") === -1
+      file.indexOf("component/contentType/definition.json") === -1 &&
+      file.indexOf("package.") === -1
     ) {
       try {
         out[filename.replace(".json", "")] = JSON.parse(
@@ -79,7 +84,7 @@ const saveContentTypes = () => {
   file2Type(`${dirname}/module`, 3);
 
   if (!fs.existsSync(`${dirname}/web`)) return;
-  fs.writeFile(`${dirname}/web/src/contentype.json`, JSON.stringify(out));
+  fs.writeFile(`${dirname}/web/src/contenttype.json`, JSON.stringify(out));
 };
 
 const deploy = async () => {
@@ -96,7 +101,7 @@ const deploy = async () => {
     await runGitCommand("merge develop");
     console.log("Merge done, building");
 
-    await runCommand("npm run build:css:prod", "/web");
+    // await runCommand("npm run build:css:prod", "/web");
     await runCommand("npm run build", "/web");
     console.log("Build done, copying");
 
@@ -110,8 +115,8 @@ const deploy = async () => {
       )
     );
     await fs.copy(
-      `${folderAsUnix}/web/src/contentype.json`,
-      `${folderAsUnix}/build/contentype.json`
+      `${folderAsUnix}/web/src/contenttype.json`,
+      `${folderAsUnix}/build/contenttype.json`
     );
 
     await fs.writeFile(
@@ -124,10 +129,16 @@ const deploy = async () => {
     console.log("Copy done, adding to git");
     await runGitCommand("add *");
     await runGitCommand("commit -m Build");
-    // await runGitCommand("push");
 
+    if (process.platform === "win32")
+      await runGitCommand("push", {
+        GIT_SSH: "C:\\Program Files\\PuTTY\\plink.exe",
+      });
+    else await runGitCommand("push");
+
+    await runGitCommand("status");
     await runGitCommand("checkout develop");
-    await runCommand("npm run build:css", "/web");
+    // await runCommand("npm run build:css", "/web");
     console.log("Deploy done");
   } catch (e) {
     console.log("Error", e);
@@ -135,3 +146,4 @@ const deploy = async () => {
 };
 
 deploy();
+// set GIT_SSH=C:\Program Files\PuTTY\plink.exe

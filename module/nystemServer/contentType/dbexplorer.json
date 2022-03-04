@@ -1,0 +1,230 @@
+{
+	"storage": "memory",
+	"_features": [
+		"date",
+		"access"
+	],
+	"name": "dbexplorer",
+	"machinename": "dbexplorer",
+	"views": [
+		{
+			"format": "list",
+			"name": "list",
+			"item": [
+				{
+					"type": "bootstrap",
+					"format": "panel",
+					"stateStore": "disabled",
+					"header": [
+						{
+							"type": "bootstrap",
+							"format": "panelToggle",
+							"icon": true,
+							"className": [
+								"flex",
+								"items-center"
+							],
+							"item": [
+								{
+									"type": "viewText",
+									"text": "Database explorer"
+								}
+							]
+						}
+					],
+					"item": [
+						{
+							"type": "database",
+							"format": "search"
+						},
+						{
+							"type": "devtools",
+							"format": "selectContenttype",
+							"limit": 1,
+							"inline": true,
+							"render": "button"
+						},
+						{
+							"type": "viewList",
+							"format": "search",
+							"className": [
+								"w-96",
+								"my-6"
+							]
+						},
+						{
+							"type": "viewList",
+							"format": "infinite",
+							"item": [
+								{
+									"type": "viewList",
+									"rowClassName": [
+										""
+									],
+									"item": [
+										{
+											"type": "bootstrap",
+											"format": "panel",
+											"stateStore": "byUrl",
+											"header": [
+												{
+													"type": "bootstrap",
+													"format": "panelToggle",
+													"iconClassName": [
+														"w-4",
+														"h-4"
+													],
+													"icon": true,
+													"item": [
+														{
+															"id": "_crdate",
+															"type": "date",
+															"className": [
+																"w-40"
+															]
+														},
+														{
+															"id": "_chdate",
+															"type": "date",
+															"className": [
+																"w-40"
+															]
+														},
+														{
+															"type": "text",
+															"id": "name"
+														},
+														{
+															"type": "conditional",
+															"condition": [
+																[
+																	"name",
+																	"false"
+																]
+															],
+															"item": [
+																{
+																	"id": "_id",
+																	"type": "text",
+																	"className": [
+																		"w-32"
+																	]
+																}
+															]
+														},
+														{
+															"type": "viewButton",
+															"format": "input",
+															"size": "xs",
+															"className": [
+																"ml-auto"
+															]
+														}
+													],
+													"className": [
+														"flex",
+														"items-center"
+													]
+												}
+											],
+											"item": [
+												{
+													"type": "viewText",
+													"text": "content",
+													"format": "codemirror",
+													"className": [
+														"h-96",
+														"w-full"
+													]
+												}
+											],
+											"className": [
+												"w-full",
+												"my-2"
+											]
+										}
+									],
+									"headerFields": [
+										{
+											"type": "style",
+											"item": [
+												{
+													"id": "_crdate",
+													"type": "date",
+													"format": "sortBy",
+													"text": "Created",
+													"className": [
+														"w-40"
+													]
+												},
+												{
+													"id": "_chdate",
+													"type": "date",
+													"format": "sortBy",
+													"text": "Changed",
+													"className": [
+														"w-40"
+													]
+												},
+												{
+													"type": "text",
+													"id": "name",
+													"format": "sortBy",
+													"className": [
+														"w-40"
+													]
+												},
+												{
+													"id": "_id",
+													"type": "text",
+													"format": "sortBy",
+													"text": "Id",
+													"className": [
+														"w-32"
+													]
+												}
+											],
+											"className": [
+												"flex",
+												"ml-6",
+												"mb-6"
+											]
+										}
+									],
+									"className": [
+										""
+									],
+									"header": [
+										{
+											"type": "viewText",
+											"text": "Database explorer"
+										}
+									],
+									"emptyFields": [
+										{
+											"type": "viewText",
+											"text": "No data found"
+										}
+									]
+								}
+							],
+							"slotLimit": 3
+						}
+					],
+					"expanded": true,
+					"className": [
+						"mx-3"
+					]
+				}
+			]
+		}
+	],
+	"item": [
+		{
+			"type": "text",
+			"text": "Name",
+			"id": "name"
+		}
+	],
+	"noClientCache": true
+}

@@ -2,15 +2,13 @@ module.exports = (app) => {
   app.storage = app.addeventhandler(
     {},
     [
+      "clear",
       "getItem",
       "setItem",
       "removeItem",
       "getItemMem",
       "setItemMem",
       "removeItemMem",
-      "getFile",
-      "setFile",
-      "removeFile",
       "setItemDebounce",
     ],
     "storage"
@@ -30,7 +28,10 @@ module.exports = (app) => {
   });
 
   app.storage.on("setItem", async ({ id, value }) => {
-    value = typeof value === "string" ? value : JSON.stringify(value);
+    value =
+      value === undefined || typeof value === "string"
+        ? value
+        : JSON.stringify(value);
 
     try {
       window.localStorage.setItem(id, value);
@@ -66,6 +67,9 @@ module.exports = (app) => {
   app.storage.on("removeItem", ({ id }) => {
     window.localStorage.removeItem(id);
   });
+  app.storage.on("clear", () => {
+    window.localStorage.clear();
+  });
 
   const memstore = {};
 
@@ -80,11 +84,4 @@ module.exports = (app) => {
   app.storage.on("removeItemMem", ({ id }) => {
     delete memstore[id];
   });
-  /*
-  app.storage.on("getFile", (data) => {});
-
-  app.storage.on("setFile", ({ id, value }) => {});
-
-  app.storage.on("removeFile", ({ id }) => {});
-  */
 };
