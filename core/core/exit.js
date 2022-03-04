@@ -18,7 +18,10 @@ module.exports = (app) => {
     process.exit();
   });
 
-  process.on("unhandledRejection", (r) => console.log("unhandledRejection", r)); // eslint-disable-line no-console
+  process.on("unhandledRejection", ({ stack, message }) => {
+    stack = stack || message || "Unknown error";
+    console.log(`💥 Rejection ${stack.toString().replace(/\n/g, "")}`);
+  }); // eslint-disable-line no-console
 
   let prg = "";
   const updateData = () => {
@@ -40,6 +43,6 @@ module.exports = (app) => {
   ev.forEach((eventType) => process.on(eventType, exitRouter));
 
   process.on(`uncaughtException`, (e) => {
-    console.log(`uncaughtException`, e);
+    console.log(`💥 Exception ${e.stack.toString().replace(/\n/g, "")}`);
   });
 };

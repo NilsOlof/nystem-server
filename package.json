@@ -2,6 +2,8 @@
   "dependencies": {
     "sudo-prompt": "*",
     "bcryptjs": "*",
+    "prettier-plugin-tailwindcss": "*",
+    "prettier": "*",
     "pngjs": "*",
     "sharp": "*",
     "mime": "*",

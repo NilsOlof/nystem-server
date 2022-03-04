@@ -40,7 +40,7 @@ module.exports = (app) => {
     return query;
   });
 
-  app.on("init", -100, () => {
+  app.on("init", -100, async () => {
     app.connection.on("autologin", (query) => {
       const { user, error } = query;
 
@@ -57,7 +57,7 @@ module.exports = (app) => {
 
     const reload = ({ key, id }) => {
       if ((key || id) !== sessionKey) return;
-      window.location.reload();
+      setTimeout(() => window.location.reload(), 0);
     };
     window.addEventListener("storage", reload);
     app.storage.on("removeItem", -1000, reload);
@@ -80,16 +80,15 @@ module.exports = (app) => {
       app.event("clearCacheAndReload");
     });
 
-    app.storage.getItem({ id: sessionKey }).then(({ value: userStore }) => {
-      session.user = userStore || autoLoginUser;
+    const { value: userStore } = await app.storage.getItem({ id: sessionKey });
+    session.user = userStore || autoLoginUser;
 
-      if (userStore) {
-        if (app.connection.connected) session.login(userStore);
+    if (userStore) {
+      if (app.connection.connected) session.login(userStore);
 
-        app.connection.on("connection", ({ connected }) => {
-          if (connected) session.login(userStore);
-        });
-      }
-    });
+      app.connection.on("connection", ({ connected }) => {
+        if (connected) session.login(userStore);
+      });
+    }
   });
 };

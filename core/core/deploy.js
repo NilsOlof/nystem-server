@@ -16,10 +16,13 @@ const addPreload = (html) => {
   return html.replace("<head>", `<head>${out}`);
 };
 
-const runCommandExec = (command, cwd) =>
+const runCommandExec = (command, env = {}) =>
   new Promise((resolve, reject) =>
-    exec(command, { cwd: cwd ? folder + cwd : null }, (error, stdout, stderr) =>
-      error ? reject(error) : resolve(stdout + stderr)
+    exec(
+      command,
+      { env: { ...process.env, ...env } },
+      (error, stdout, stderr) =>
+        error ? reject(error) : resolve(stdout + stderr)
     )
   );
 
@@ -38,9 +41,10 @@ const runCommand = (commandLine, cwd) =>
     proc.on("exit", resolve);
   });
 
-const runGitCommand = (command) =>
+const runGitCommand = (command, env) =>
   runCommandExec(
-    `git --git-dir="${gitFolder}.git" --work-tree="${gitFolder}" ${command}`
+    `git --git-dir="${gitFolder}.git" --work-tree="${gitFolder}" ${command}`,
+    env
   );
 
 const dirname = process.env.NODE__DIRNAME || __dirname;
@@ -127,10 +131,12 @@ const deploy = async () => {
     await runGitCommand("commit -m Build");
 
     if (process.platform === "win32")
-      await runCommand("set GIT_SSH=C:\\Program Files\\PuTTY\\plink.exe", "/");
+      await runGitCommand("push", {
+        GIT_SSH: "C:\\Program Files\\PuTTY\\plink.exe",
+      });
+    else await runGitCommand("push");
 
-    await runGitCommand("push");
-
+    await runGitCommand("status");
     await runGitCommand("checkout develop");
     // await runCommand("npm run build:css", "/web");
     console.log("Deploy done");

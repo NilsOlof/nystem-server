@@ -25,6 +25,7 @@ module.exports = (app) => {
   const bgColor = hexToRgb(app.settings.bgColor || "#FFFFFF00");
 
   app.on("generateIconSize", async ({ width, height }) => {
+    console.log("Do generateIconSize", width, typeof original);
     if (!original) return;
 
     const id = width + (height ? `x${height}` : "");
@@ -36,6 +37,7 @@ module.exports = (app) => {
       .resize(width, height || width, { fit: "contain", background: bgColor })
       .toBuffer();
 
+    console.log("generateIconSize done");
     return { buffer: buffers[id] };
   });
 
@@ -50,11 +52,9 @@ module.exports = (app) => {
     const bufs = await Promise.all(
       sizes.map((width) => app.event("generateIconSize", { width }))
     );
-    console.log("byyygd");
     icoBuffer = icongen(bufs.map(({ buffer }) => buffer));
     original.icoBuffer = icoBuffer;
 
-    console.log("byyygdfino");
     return original;
   });
 

@@ -51,9 +51,9 @@ module.exports = (app) => {
       const data = JSON.parse(message.utf8Data);
       data.id = requestId;
 
-      app.connection
-        .event(data.type, data)
-        .then((result) => result.callbackClient && emit(result));
+      app.connection.event(data.type, data).then(
+        (result) => (result.callbackClient || result.callbackid) && emit(result) // Remove callbackid in future
+      );
     });
 
     connection.on("close", () => {
@@ -78,6 +78,6 @@ module.exports = (app) => {
     app.session.add(query);
 
     if (query.session.role !== "super") return;
-    app.connection.emit({ ...query, connectedCount });
+    return { ...query, connectedCount };
   });
 };

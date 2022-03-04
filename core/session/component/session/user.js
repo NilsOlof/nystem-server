@@ -1,33 +1,42 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import app from "nystem";
 import { ContentTypeView } from "nystem-components";
 
-class SessionUser extends React.Component {
-  constructor(props) {
-    super(props);
-    app().on("login", this.sessionChange.bind(this));
-    app().on("logout", this.sessionChange.bind(this));
+const useUser = () => {
+  const [user, setUser] = useState();
 
-    const session = app().session.user;
-    this.state = { userid: session ? session._id : null };
-  }
-  sessionChange() {
-    const session = app().session.user;
-    this.setState({ userid: session ? session._id : null });
-  }
-  render() {
-    const { view, model } = this.props;
-    if (this.state.userid && model.toformat !== view.format)
-      return (
-        <ContentTypeView
-          key={this.state.userid}
-          contentType={view.contentType}
-          format={model.toformat}
-          id={this.state.userid}
-          baseView={view}
-        />
-      );
-    return null;
-  }
-}
+  useEffect(() => {
+    const setUserEv = () => {
+      setUser(app().session.user);
+    };
+
+    app().on("login", -10, setUserEv);
+    app().on("logout", -10, setUserEv);
+    setUser(app().session.user);
+
+    return () => {
+      app().off("login", setUserEv);
+      app().off("logout", setUserEv);
+    };
+  }, []);
+  return user;
+};
+
+const SessionUser = ({ view, model, ...rest }) => {
+  const { contentType, toFormat } = model || rest;
+  const user = useUser();
+
+  if (user)
+    return (
+      <ContentTypeView
+        key={user.userid}
+        contentType={contentType || view.contentType}
+        format={toFormat}
+        id={user._id}
+        baseView={view}
+      />
+    );
+
+  return null;
+};
 export default SessionUser;

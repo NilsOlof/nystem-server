@@ -1,13 +1,16 @@
 {
+	"storage": "memory",
+	"_features": [
+		"date",
+		"access"
+	],
+	"name": "dbexplorer",
+	"machinename": "dbexplorer",
 	"views": [
 		{
-			"name": "list",
 			"format": "list",
+			"name": "list",
 			"item": [
-				{
-					"type": "database",
-					"format": "search"
-				},
 				{
 					"type": "bootstrap",
 					"format": "panel",
@@ -31,95 +34,181 @@
 					],
 					"item": [
 						{
+							"type": "database",
+							"format": "search"
+						},
+						{
+							"type": "devtools",
+							"format": "selectContenttype",
+							"limit": 1,
+							"inline": true,
+							"render": "button"
+						},
+						{
 							"type": "viewList",
 							"format": "search",
 							"className": [
-								"w-96"
+								"w-96",
+								"my-6"
 							]
 						},
 						{
 							"type": "viewList",
-							"rowClassName": [
-								"flex"
-							],
+							"format": "infinite",
 							"item": [
 								{
-									"id": "_id",
-									"type": "text",
-									"className": [
-										"w-32"
-									]
-								},
-								{
-									"id": "_crdate",
-									"type": "date",
-									"className": [
-										"w-32"
-									]
-								},
-								{
-									"id": "_chdate",
-									"type": "date",
-									"className": [
-										"w-32"
-									]
-								},
-								{
-									"type": "text",
-									"id": "name"
-								}
-							],
-							"headerFields": [
-								{
-									"type": "style",
+									"type": "viewList",
+									"rowClassName": [
+										""
+									],
 									"item": [
 										{
-											"id": "_id",
-											"type": "text",
-											"format": "sortBy",
-											"text": "Id",
+											"type": "bootstrap",
+											"format": "panel",
+											"stateStore": "byUrl",
+											"header": [
+												{
+													"type": "bootstrap",
+													"format": "panelToggle",
+													"iconClassName": [
+														"w-4",
+														"h-4"
+													],
+													"icon": true,
+													"item": [
+														{
+															"id": "_crdate",
+															"type": "date",
+															"className": [
+																"w-40"
+															]
+														},
+														{
+															"id": "_chdate",
+															"type": "date",
+															"className": [
+																"w-40"
+															]
+														},
+														{
+															"type": "text",
+															"id": "name"
+														},
+														{
+															"type": "conditional",
+															"condition": [
+																[
+																	"name",
+																	"false"
+																]
+															],
+															"item": [
+																{
+																	"id": "_id",
+																	"type": "text",
+																	"className": [
+																		"w-32"
+																	]
+																}
+															]
+														},
+														{
+															"type": "viewButton",
+															"format": "input",
+															"size": "xs",
+															"className": [
+																"ml-auto"
+															]
+														}
+													],
+													"className": [
+														"flex",
+														"items-center"
+													]
+												}
+											],
+											"item": [
+												{
+													"type": "viewText",
+													"text": "content",
+													"format": "codemirror",
+													"className": [
+														"h-96",
+														"w-full"
+													]
+												}
+											],
 											"className": [
-												"w-32"
+												"w-full",
+												"my-2"
 											]
-										},
+										}
+									],
+									"headerFields": [
 										{
-											"id": "_crdate",
-											"type": "date",
-											"format": "sortBy",
-											"text": "Created",
+											"type": "style",
+											"item": [
+												{
+													"id": "_crdate",
+													"type": "date",
+													"format": "sortBy",
+													"text": "Created",
+													"className": [
+														"w-40"
+													]
+												},
+												{
+													"id": "_chdate",
+													"type": "date",
+													"format": "sortBy",
+													"text": "Changed",
+													"className": [
+														"w-40"
+													]
+												},
+												{
+													"type": "text",
+													"id": "name",
+													"format": "sortBy",
+													"className": [
+														"w-40"
+													]
+												},
+												{
+													"id": "_id",
+													"type": "text",
+													"format": "sortBy",
+													"text": "Id",
+													"className": [
+														"w-32"
+													]
+												}
+											],
 											"className": [
-												"w-32"
+												"flex",
+												"ml-6",
+												"mb-6"
 											]
-										},
-										{
-											"id": "_chdate",
-											"type": "date",
-											"format": "sortBy",
-											"text": "Changed",
-											"className": [
-												"w-32"
-											]
-										},
-										{
-											"type": "text",
-											"id": "name",
-											"format": "sortBy"
 										}
 									],
 									"className": [
-										"flex"
+										""
+									],
+									"header": [
+										{
+											"type": "viewText",
+											"text": "Database explorer"
+										}
+									],
+									"emptyFields": [
+										{
+											"type": "viewText",
+											"text": "No data found"
+										}
 									]
 								}
 							],
-							"className": [
-								""
-							],
-							"header": [
-								{
-									"type": "viewText",
-									"text": "Database explorer"
-								}
-							]
+							"slotLimit": 3
 						}
 					],
 					"expanded": true,
@@ -136,5 +225,6 @@
 			"text": "Name",
 			"id": "name"
 		}
-	]
+	],
+	"noClientCache": true
 }

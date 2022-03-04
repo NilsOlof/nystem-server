@@ -7,23 +7,22 @@ module.exports = (app) => {
 
     app.database[source].on("delete", (query) => {
       const { _id } = query.data;
-      collection
-        .search({ role: "super", count: 1000 })
-        .then(({ data = [] }) => {
-          const removeFrom = data.filter((item) =>
-            (item[fieldId] || []).includes(_id)
-          );
+      collection.search({ role: "super", count: 1000 }).then(({ data }) => {
+        data = data || false;
+        const removeFrom = data.filter((item) =>
+          (item[fieldId] || []).includes(_id)
+        );
 
-          removeFrom.forEach((item) =>
-            collection.save({
-              role: "super",
-              data: {
-                ...item,
-                [fieldId]: item[fieldId].filter((id) => id !== _id),
-              },
-            })
-          );
-        });
+        removeFrom.forEach((item) =>
+          collection.save({
+            role: "super",
+            data: {
+              ...item,
+              [fieldId]: item[fieldId].filter((id) => id !== _id),
+            },
+          })
+        );
+      });
     });
   };
 

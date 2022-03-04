@@ -5,7 +5,7 @@ module.exports = (app) => {
     const src = `${app.__dirname}/${path}`;
 
     if (unlink === true) app.fs.unlink(dest);
-    else await app.writeFileChanged(dest, app.readFile(src));
+    else await app.fs.copy(src, dest);
   };
 
   const exclude = ["index.html", "manifest.json"];

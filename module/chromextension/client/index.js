@@ -1,9 +1,10 @@
 module.exports = (app) => {
-  if (!window.chrome) return;
+  if (!window.chrome.storage) return;
+  console.log("chrome extension storage");
 
   app.on("init", 500, () => {
     app.storage = app.addeventhandler(
-      {},
+      { at: "window.chrome.storage" },
       [
         "clear",
         "getItem",
@@ -24,6 +25,7 @@ module.exports = (app) => {
     const getItem = (key) =>
       new Promise((resolve) => {
         window.chrome.storage.local.get([key], (result) => {
+          console.log("get", key, result);
           resolve(result[key]);
         });
       });

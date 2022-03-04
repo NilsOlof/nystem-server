@@ -31,6 +31,7 @@ const app = {
 };
 app.__dirname = app.__dirname.replace(/\\/g, "/");
 app.addeventhandler = require("./client/eventhandler");
+app.waitInLine = require("./client/waitInLine");
 
 app.addeventhandler(app);
 

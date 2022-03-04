@@ -2,7 +2,6 @@ module.exports = (app) => {
   const { fs } = app;
   // Load and and merge contenttypes into one JSON
   app.on("getContentTypes", () => {
-    console.log("getContentTypes");
     const out =
       app.atHost.noContentTypeClear && app.contentType ? app.contentType : {};
 

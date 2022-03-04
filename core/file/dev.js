@@ -62,7 +62,9 @@ module.exports = (app) => {
 
       proxy.web(req, res, (error) => {
         if (error) {
-          console.log("res.get", error);
+          console.log(
+            `💥 Res error ${error.stack.toString().replace(/\n/g, "")}`
+          );
           if (error.code === "ECONNREFUSED") startApp();
           res.end(devStartingIfno);
         }
@@ -70,7 +72,9 @@ module.exports = (app) => {
     });
     app.express.post("/*", (req, res) => {
       proxy.web(req, res, (error) => {
-        console.log("res.post", error);
+        console.log(
+          `💥 Res post error ${error.stack.toString().replace(/\n/g, "")}`
+        );
         res.end("res.post error", error);
       });
     });

@@ -10,7 +10,7 @@ document.body.appendChild(base);
 
 export default (app) => {
   let comp;
-  app.on("loaded", async () => {
+  const loadDom = async () => {
     const { renderer, component, element } = await app.event(
       "getElementContext",
       {
@@ -21,7 +21,10 @@ export default (app) => {
     );
     comp = element;
     renderer.render(React.createElement(components[component]), element);
-  });
+  };
+
+  app.on("loaded", loadDom);
+  app.on("reload", loadDom);
 
   app.on("unmount", () => {
     ReactDOM.unmountComponentAtNode(comp);

@@ -1,3 +1,4 @@
+/* eslint-disable import/extensions */
 const http = require("http");
 const app = require("./init");
 

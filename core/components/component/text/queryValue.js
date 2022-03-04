@@ -36,7 +36,9 @@ const TextQueryValue = ({ model, setValue, value }) => {
     const rest = search.replace(new RegExp(reg, "gi"), "");
     const add = value ? `&${saveId}=${value}` : "";
 
-    history[push ? "push" : "replace"](`${pathname}?${rest}${add}`);
+    setTimeout(() => {
+      history[push ? "push" : "replace"](`${pathname}?${rest}${add}`);
+    }, 0);
   };
 
   let qVal = getQueryValue(search);

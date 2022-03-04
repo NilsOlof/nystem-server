@@ -21,24 +21,24 @@ const DevtoolsView = ({ model, value }) => {
         return;
 
       if (message.init) app().event("devtools", message);
-      if (!message.callbackId) return;
+      if (!message.devtoolsId) return;
 
-      callbacks[message.callbackId](message);
-      delete callbacks[message.callbackId];
+      callbacks[message.devtoolsId](message);
+      delete callbacks[message.devtoolsId];
     };
 
     window.chrome.runtime.onMessage.addListener(onMessage);
 
     const send = (query) =>
       new Promise((resolve) => {
-        query.callbackId = app().uuid();
-        callbacks[query.callbackId] = resolve;
+        query.devtoolsId = app().uuid();
+        callbacks[query.devtoolsId] = resolve;
 
         setTimeout(() => {
-          if (!callbacks[query.callbackId]) return;
+          if (!callbacks[query.devtoolsId]) return;
 
-          callbacks[query.callbackId](query);
-          delete callbacks[query.callbackId];
+          callbacks[query.devtoolsId](query);
+          delete callbacks[query.devtoolsId];
         }, 4000);
 
         sendMessage({ nystem: "to", ...query });
