@@ -45,11 +45,84 @@
 							"render": "button"
 						},
 						{
-							"type": "viewList",
-							"format": "search",
+							"type": "style",
+							"item": [
+								{
+									"type": "viewList",
+									"format": "search",
+									"className": [
+										"w-96",
+										"my-6"
+									]
+								},
+								{
+									"type": "viewText",
+									"text": "Count",
+									"className": [
+										"mx-3"
+									]
+								},
+								{
+									"type": "viewList",
+									"format": "listStat",
+									"show": [
+										"searchTotal",
+										"total"
+									],
+									"text": "",
+									"className": [
+										"ml-6"
+									]
+								}
+							],
 							"className": [
-								"w-96",
-								"my-6"
+								"flex",
+								"items-center"
+							]
+						},
+						{
+							"type": "style",
+							"item": [
+								{
+									"id": "_crdate",
+									"type": "date",
+									"format": "sortBy",
+									"text": "Created",
+									"className": [
+										"w-40"
+									]
+								},
+								{
+									"id": "_chdate",
+									"type": "date",
+									"format": "sortBy",
+									"text": "Changed",
+									"className": [
+										"w-40"
+									]
+								},
+								{
+									"type": "text",
+									"id": "name",
+									"format": "sortBy",
+									"className": [
+										"w-40"
+									]
+								},
+								{
+									"id": "_id",
+									"type": "text",
+									"format": "sortBy",
+									"text": "Id",
+									"className": [
+										"w-32"
+									]
+								}
+							],
+							"className": [
+								"flex",
+								"ml-6",
+								"mb-6"
 							]
 						},
 						{
@@ -144,53 +217,7 @@
 											]
 										}
 									],
-									"headerFields": [
-										{
-											"type": "style",
-											"item": [
-												{
-													"id": "_crdate",
-													"type": "date",
-													"format": "sortBy",
-													"text": "Created",
-													"className": [
-														"w-40"
-													]
-												},
-												{
-													"id": "_chdate",
-													"type": "date",
-													"format": "sortBy",
-													"text": "Changed",
-													"className": [
-														"w-40"
-													]
-												},
-												{
-													"type": "text",
-													"id": "name",
-													"format": "sortBy",
-													"className": [
-														"w-40"
-													]
-												},
-												{
-													"id": "_id",
-													"type": "text",
-													"format": "sortBy",
-													"text": "Id",
-													"className": [
-														"w-32"
-													]
-												}
-											],
-											"className": [
-												"flex",
-												"ml-6",
-												"mb-6"
-											]
-										}
-									],
+									"headerFields": [],
 									"className": [
 										""
 									],
