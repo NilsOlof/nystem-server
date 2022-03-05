@@ -1,11 +1,14 @@
 import React, { useRef } from "react";
 import app from "nystem";
-import { Button } from "nystem-components";
+import { Button, Icon } from "nystem-components";
 
 const CopyToClipBoardView = ({ model, value }) => {
   const ref = useRef();
   const doVopyVal = (e) => {
-    if ((e.altKey && !model.gotoOnClick) || (!e.altKey && model.gotoOnClick)) {
+    if (
+      e &&
+      ((e.altKey && !model.gotoOnClick) || (!e.altKey && model.gotoOnClick))
+    ) {
       window.open(copyVal, "_blank").focus();
       return;
     }
@@ -23,7 +26,9 @@ const CopyToClipBoardView = ({ model, value }) => {
     }
   };
 
-  let copyVal = value[model.field];
+  let copyVal = model.field ? value[model.field] : value;
+  if (typeof copyVal === "object")
+    copyVal = JSON.stringify(copyVal, null, "  ");
   if (model.addBefore) copyVal = model.addBefore + copyVal;
 
   return (
@@ -44,7 +49,11 @@ const CopyToClipBoardView = ({ model, value }) => {
         onClick={doVopyVal}
         size={model.btnSize}
       >
-        {app().t(model.text)}
+        {["edit-copy", "paste"].includes(model.text) ? (
+          <Icon className="h-4 w-4" icon={model.text} alt={model.text} />
+        ) : (
+          app().t(model.text)
+        )}
       </Button>
     </>
   );

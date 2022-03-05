@@ -29,7 +29,7 @@ const Index = () => (
         <Inserter match="/devtools.html" source="/server/devtools" />
         <Wrapper
           renderAs="main"
-          className="h-full-minus overflow-y-scroll mt-11"
+          className="h-full-minus mt-11 overflow-y-scroll"
         >
           <Inserter match="/popup.html" source="/server/extension" />
           <Inserter match="/" source="/server/overview" />

@@ -57,6 +57,19 @@ const DevtoolsSelectContenttype = ({ model, view }) => {
     };
     app().database[view.contentType].on("save", onSave);
 
+    const onDelete = async (query) => {
+      if (!valRef.current) return;
+
+      await app().event("devtools", {
+        ...query,
+        path: `database.${valRef.current}`,
+        event: "delete",
+      });
+
+      return { ...query, data: false };
+    };
+    app().database[view.contentType].on("delete", onDelete);
+
     const getOptions = async () => {
       const { data } = await app().event("devtools", { path: "contentType" });
       setOption(Object.keys(data));
@@ -72,6 +85,7 @@ const DevtoolsSelectContenttype = ({ model, view }) => {
       app().database[view.contentType].off("get", onGet);
       app().database[view.contentType].off("search", onSearch);
       app().database[view.contentType].off("save", onSave);
+      app().database[view.contentType].off("delete", onDelete);
       app().off("devtools", init);
     };
   }, [view]);

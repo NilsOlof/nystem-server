@@ -59,8 +59,7 @@
 									"type": "viewList",
 									"format": "search",
 									"className": [
-										"w-96",
-										"my-6"
+										"w-96"
 									]
 								},
 								{
@@ -85,7 +84,8 @@
 							],
 							"className": [
 								"flex",
-								"items-center"
+								"items-center",
+								"my-3"
 							]
 						},
 						{
@@ -192,11 +192,26 @@
 																	]
 																}
 															]
+														},
+														{
+															"type": "viewText",
+															"className": [
+																"flex-grow"
+															]
+														},
+														{
+															"type": "copyToClipBoard",
+															"text": "edit-copy",
+															"field": "_id",
+															"btnSize": "xs",
+															"gotoOnClick": false,
+															"btnType": "primary"
 														}
 													],
 													"className": [
 														"flex",
-														"items-center"
+														"items-center",
+														"py-1"
 													]
 												}
 											],
@@ -209,10 +224,13 @@
 															"item": [
 																{
 																	"type": "copyToClipBoard",
-																	"text": "copy",
-																	"field": "_id",
+																	"text": "edit-copy",
 																	"btnSize": "xs",
-																	"gotoOnClick": false
+																	"btnType": "default",
+																	"className": [
+																		"rounded",
+																		"mr-1"
+																	]
 																},
 																{
 																	"type": "viewButton",
@@ -227,15 +245,19 @@
 																}
 															],
 															"className": [
-																"opacity-20",
+																"opacity-60",
+																"hover:opacity-100",
 																"absolute",
 																"right-0",
-																"flex"
+																"z-20",
+																"flex",
+																"m-1"
 															]
 														}
 													],
 													"className": [
-														"relative"
+														"relative",
+														"z-20"
 													]
 												},
 												{
@@ -244,7 +266,9 @@
 													"format": "codemirror",
 													"className": [
 														"h-96",
-														"w-full"
+														"w-full",
+														"z-10",
+														"relative"
 													]
 												}
 											],
@@ -268,7 +292,12 @@
 									"emptyFields": [
 										{
 											"type": "viewText",
-											"text": "No data found"
+											"text": "No data found",
+											"renderAs": "h3",
+											"className": [
+												"ml-6",
+												"font-bold"
+											]
 										}
 									]
 								}
