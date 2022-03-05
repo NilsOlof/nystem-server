@@ -35,7 +35,15 @@
 					"item": [
 						{
 							"type": "database",
-							"format": "search"
+							"format": "search",
+							"count": 20,
+							"sortby": [
+								{
+									"id": "_chdate",
+									"type": "date"
+								}
+							],
+							"reversesortby": true
 						},
 						{
 							"type": "devtools",
@@ -59,7 +67,7 @@
 									"type": "viewText",
 									"text": "Count",
 									"className": [
-										"mx-3"
+										"ml-6"
 									]
 								},
 								{
@@ -184,14 +192,6 @@
 																	]
 																}
 															]
-														},
-														{
-															"type": "viewButton",
-															"format": "input",
-															"size": "xs",
-															"className": [
-																"ml-auto"
-															]
 														}
 													],
 													"className": [
@@ -201,6 +201,43 @@
 												}
 											],
 											"item": [
+												{
+													"type": "style",
+													"item": [
+														{
+															"type": "style",
+															"item": [
+																{
+																	"type": "copyToClipBoard",
+																	"text": "copy",
+																	"field": "_id",
+																	"btnSize": "xs",
+																	"gotoOnClick": false
+																},
+																{
+																	"type": "viewButton",
+																	"format": "input",
+																	"text": "",
+																	"event": "",
+																	"btnType": "default",
+																	"className": [
+																		""
+																	],
+																	"size": "sm"
+																}
+															],
+															"className": [
+																"opacity-20",
+																"absolute",
+																"right-0",
+																"flex"
+															]
+														}
+													],
+													"className": [
+														"relative"
+													]
+												},
 												{
 													"type": "viewText",
 													"text": "content",
@@ -213,8 +250,9 @@
 											],
 											"className": [
 												"w-full",
-												"my-2"
-											]
+												"my-3"
+											],
+											"typeClass": "defaultWithoutPadding"
 										}
 									],
 									"headerFields": [],
@@ -235,12 +273,13 @@
 									]
 								}
 							],
-							"slotLimit": 3
+							"slotLimit": 5
 						}
 					],
 					"expanded": true,
 					"className": [
-						"mx-3"
+						"mx-3",
+						"mt-3"
 					]
 				}
 			]

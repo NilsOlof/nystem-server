@@ -1,0 +1,45 @@
+{
+  "item": [
+    {
+      "type": "gridselect",
+      "id": "className",
+      "text": "Class"
+    },
+    {
+      "type": "text",
+      "id": "text",
+      "text": "Text"
+    },
+    {
+      "type": "text",
+      "id": "field",
+      "text": "Field"
+    },
+    {
+      "type": "text",
+      "id": "addBefore",
+      "text": "Add before"
+    },
+    {
+      "type": "boolean",
+      "id": "gotoOnClick",
+      "text": "Goto on click"
+    },
+    {
+      "id": "btnType",
+      "text": "Button type",
+      "type": "select",
+      "option": ["default", "primary", "info", "warning", "danger", "success"],
+      "limit": 1,
+      "inline": true
+    },
+    {
+      "id": "btnSize",
+      "text": "Button size",
+      "type": "select",
+      "option": ["xs", "sm", "base", "lg", "xl", "2xl"],
+      "limit": 1,
+      "inline": true
+    }
+  ]
+}
