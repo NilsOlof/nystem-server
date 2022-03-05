@@ -401,7 +401,7 @@
 							"event": "clearlog",
 							"btnType": "default",
 							"className": [
-								"opacity-10",
+								"opacity-20",
 								"absolute",
 								"right-0"
 							]

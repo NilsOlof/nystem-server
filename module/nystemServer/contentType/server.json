@@ -140,7 +140,7 @@
 									],
 									"format": "onOverHandle",
 									"className": [
-										"p-3",
+										"m-3",
 										"max-w-4xl"
 									]
 								}
