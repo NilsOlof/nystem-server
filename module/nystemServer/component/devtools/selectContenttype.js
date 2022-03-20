@@ -1,12 +1,15 @@
 import React, { useEffect, useState, useRef } from "react";
-import { SelectInput } from "nystem-components";
+import { SelectInput, Wrapper } from "nystem-components";
 import app from "nystem";
 
 const DevtoolsSelectContenttype = ({ model, view }) => {
   const [option, setOption] = useState();
-  const [value, setValue] = useState();
+  const [searches, setSetsearches] = useState([]);
+  const [value, setValue] = useState({});
   const valRef = useRef();
-  valRef.current = value;
+  valRef.current = value.id;
+  const paramRef = useRef();
+  paramRef.current = searches[value.index];
 
   useEffect(() => {
     const onSearch = async (query) => {
@@ -14,6 +17,7 @@ const DevtoolsSelectContenttype = ({ model, view }) => {
 
       const result = await app().event("devtools", {
         ...query,
+        ...(paramRef.current || {}),
         path: `database.${valRef.current}`,
         event: "search",
         contentType: valRef.current,
@@ -91,17 +95,72 @@ const DevtoolsSelectContenttype = ({ model, view }) => {
   }, [view]);
 
   useEffect(() => {
+    let id = 0;
+    let searches = [];
+    setSetsearches(searches);
+
     view.event("setSearch");
-  }, [value, view]);
+
+    app()
+      .event("devtools", { on: "search", path: `database.${value.id}` })
+      .then(({ listenId }) => {
+        id = listenId;
+      });
+
+    const onSearch = ({ query, listenId }) => {
+      if (!query || id !== listenId) return;
+
+      const { sortby, filter, reverse } = query;
+      if (
+        searches.find(
+          (search) =>
+            JSON.stringify(search) ===
+            JSON.stringify({ sortby, filter, reverse })
+        )
+      )
+        return;
+
+      searches = [{ sortby, filter, reverse }, ...searches].slice(0, 20);
+
+      console.log({ searches });
+      setSetsearches(searches);
+    };
+    app().on("devtools", onSearch);
+
+    return () => {
+      app().off("devtools", onSearch);
+    };
+  }, [value.id, view]);
+
+  const at = searches[value.index];
+  useEffect(() => {
+    view.event("setSearch");
+  }, [view, at]);
 
   if (!option) return null;
 
   return (
-    <SelectInput
-      model={{ ...model, option }}
-      value={value}
-      setValue={setValue}
-    />
+    <Wrapper>
+      <SelectInput
+        model={{ ...model, option }}
+        value={value.id}
+        setValue={(val) => setValue({ id: val })}
+      />
+      {value && (
+        <SelectInput
+          model={{
+            ...model,
+            text: "Searches",
+            option: searches.map((item, index) => `0${index}`),
+          }}
+          value={`0${value.index}`}
+          setValue={(index) =>
+            setValue({ id: value.id, index: parseInt(index, 10) })
+          }
+        />
+      )}
+      {at !== undefined && JSON.stringify(at)}
+    </Wrapper>
   );
 };
 

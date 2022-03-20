@@ -10,7 +10,7 @@ const sendMessage = (message) =>
     )
   );
 
-const DevtoolsView = ({ model, value }) => {
+const DevtoolsView = () => {
   useEffect(() => {
     if (!window.chrome) return;
 
@@ -20,8 +20,10 @@ const DevtoolsView = ({ model, value }) => {
       if (window.chrome.devtools.inspectedWindow.tabId !== sender.tab.id)
         return;
 
-      if (message.init) app().event("devtools", message);
-      if (!message.devtoolsId) return;
+      if (!callbacks[message.devtoolsId]) {
+        app().event("devtools", message);
+        return;
+      }
 
       callbacks[message.devtoolsId](message);
       delete callbacks[message.devtoolsId];
