@@ -60,7 +60,8 @@
 									"format": "search",
 									"className": [
 										"w-96"
-									]
+									],
+									"includeId": true
 								},
 								{
 									"type": "viewText",
@@ -176,6 +177,10 @@
 															"id": "name"
 														},
 														{
+															"type": "text",
+															"id": "title"
+														},
+														{
 															"type": "conditional",
 															"condition": [
 																[
@@ -185,10 +190,21 @@
 															],
 															"item": [
 																{
-																	"id": "_id",
-																	"type": "text",
-																	"className": [
-																		"w-32"
+																	"type": "conditional",
+																	"item": [
+																		{
+																			"id": "_id",
+																			"type": "text",
+																			"className": [
+																				"w-32"
+																			]
+																		}
+																	],
+																	"condition": [
+																		[
+																			"title",
+																			"false"
+																		]
 																	]
 																}
 															]
@@ -319,6 +335,11 @@
 			"type": "text",
 			"text": "Name",
 			"id": "name"
+		},
+		{
+			"type": "text",
+			"text": "Title",
+			"id": "title"
 		}
 	],
 	"noClientCache": true
