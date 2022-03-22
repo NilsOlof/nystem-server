@@ -1,0 +1,54 @@
+{
+  "item": [
+    {
+      "type": "gridselect",
+      "id": "className",
+      "text": "Class"
+    },
+    {
+      "type": "text",
+      "id": "text",
+      "text": "Text"
+    },
+    {
+      "type": "gridselect",
+      "id": "classNameLabel",
+      "text": "Label class"
+    },
+    {
+      "id": "classNameInput",
+      "text": "Input class",
+      "type": "gridselect"
+    },
+    {
+      "type": "switchButtons",
+      "item": [
+        {
+          "id": "noWrapper",
+          "text": "No wrapper",
+          "type": "boolean"
+        },
+        {
+          "type": "boolean",
+          "id": "exact",
+          "text": "Exact"
+        },
+        {
+          "type": "boolean",
+          "id": "nolabel",
+          "text": "No label"
+        },
+        {
+          "type": "boolean",
+          "id": "floatlabel",
+          "text": "Float label"
+        },
+        {
+          "type": "boolean",
+          "id": "includeId",
+          "text": "Include id"
+        }
+      ]
+    }
+  ]
+}
