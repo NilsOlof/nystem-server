@@ -15,9 +15,12 @@ const DevtoolsSelectContenttype = ({ model, view }) => {
     const onSearch = async (query) => {
       if (!valRef.current) return;
 
+      const filter = { ...(paramRef.current || {}) };
+      filter.$and = [...(filter.$and || []), ...(query.filter?.$and || [])];
+
       const result = await app().event("devtools", {
         ...query,
-        ...(paramRef.current || {}),
+        filter,
         path: `database.${valRef.current}`,
         event: "search",
         contentType: valRef.current,

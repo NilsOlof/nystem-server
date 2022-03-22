@@ -53,6 +53,11 @@
 							"render": "button"
 						},
 						{
+							"type": "devtools",
+							"format": "urlPartFilter",
+							"text": "Filter"
+						},
+						{
 							"type": "style",
 							"item": [
 								{
