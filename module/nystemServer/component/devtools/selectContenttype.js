@@ -15,7 +15,7 @@ const DevtoolsSelectContenttype = ({ model, view }) => {
     const onSearch = async (query) => {
       if (!valRef.current) return;
 
-      const filter = { ...(paramRef.current || {}) };
+      const filter = { ...(paramRef.current?.filter || {}) };
       filter.$and = [...(filter.$and || []), ...(query.filter?.$and || [])];
 
       const result = await app().event("devtools", {
@@ -111,7 +111,7 @@ const DevtoolsSelectContenttype = ({ model, view }) => {
       });
 
     const onSearch = ({ query, listenId }) => {
-      if (!query || id !== listenId) return;
+      if (!query || id !== listenId || query.devtoolsId) return;
 
       const { sortby, filter, reverse } = query;
       if (
@@ -125,7 +125,6 @@ const DevtoolsSelectContenttype = ({ model, view }) => {
 
       searches = [{ sortby, filter, reverse }, ...searches].slice(0, 20);
 
-      console.log({ searches });
       setSetsearches(searches);
     };
     app().on("devtools", onSearch);
