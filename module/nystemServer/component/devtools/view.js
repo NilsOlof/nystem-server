@@ -62,13 +62,13 @@ const DevtoolsView = () => {
     });
 
     const onNew = (tab) => {
-      if (!tab.pendingUrl.startsWith(`nyst://${domain}`)) return;
+      if (!tab.pendingUrl.startsWith(`nystem://${domain}`)) return;
 
       app()
         .event("devtools", { path: "", event: "devtoolsnystvscode" })
         .then(({ base }) => {
           let path = tab.pendingUrl
-            .replace(`nyst://${domain}`, base)
+            .replace(`nystem://${domain}`, base)
             .replace(/\.([0-9]+)$/, ":$1")
             .split("/");
 
