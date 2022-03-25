@@ -53,6 +53,41 @@ const DevtoolsView = () => {
     };
   }, []);
 
+  useEffect(() => {
+    let domain = "";
+    const { tabId } = window.chrome.devtools.inspectedWindow;
+    window.chrome.tabs.get(tabId, (tab) => {
+      // eslint-disable-next-line prefer-destructuring
+      domain = tab.url.split("/")[2].split(".")[0];
+    });
+
+    const onNew = (tab) => {
+      if (!tab.pendingUrl.startsWith(`nyst://${domain}`)) return;
+
+      app()
+        .event("devtools", { path: "", event: "devtoolsnystvscode" })
+        .then(({ base }) => {
+          let path = tab.pendingUrl
+            .replace(`nyst://${domain}`, base)
+            .replace(/\.([0-9]+)$/, ":$1")
+            .split("/");
+
+          if (path[3] === "c") path[3] = "core";
+          if (path[3] === "m") path[3] = "module";
+          if (path[5] === "c") path[5] = "component";
+
+          path = path.join("/");
+          app().connection.emit({ type: "devtoolsnystvscode", path });
+        });
+      window.chrome.tabs.remove(tab.id);
+    };
+    window.chrome.tabs.onCreated.addListener(onNew);
+
+    return () => {
+      window.chrome.tabs.onCreated.removeListener(onNew);
+    };
+  }, []);
+
   return null;
 };
 

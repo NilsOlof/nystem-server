@@ -176,6 +176,18 @@ const start = (app) => {
   app.on("extensionContent", async () => ({
     content: await app.fs.readFile(`${__dirname}/content.js`),
   }));
+
+  app.connection.on("devtoolsnystvscode", async ({ path }) => {
+    console.log("Open code path", path);
+
+    if (process.platform !== "win32")
+      require("child_process").exec(`code -g ${path}`);
+    else
+      runProgram("C:/Program Files/Microsoft VS Code/Code.exe", [
+        "-g",
+        path.replace(/\//g, "\\"),
+      ]);
+  });
 };
 
 module.exports = (app) => app.on("start", start);
