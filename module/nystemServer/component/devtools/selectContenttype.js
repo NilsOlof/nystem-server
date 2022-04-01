@@ -98,6 +98,8 @@ const DevtoolsSelectContenttype = ({ model, view }) => {
   }, [view]);
 
   useEffect(() => {
+    if (!value.id) return;
+
     let id = 0;
     let searches = [];
     setSetsearches(searches);
