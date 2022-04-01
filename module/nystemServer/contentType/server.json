@@ -154,6 +154,37 @@
 							"type": "viewInView",
 							"contentType": "dbexplorer",
 							"view": "list"
+						},
+						{
+							"type": "bootstrap",
+							"format": "panel",
+							"stateStore": "byUrl",
+							"header": [
+								{
+									"type": "bootstrap",
+									"format": "panelToggle",
+									"icon": true,
+									"className": [
+										"flex"
+									],
+									"item": [
+										{
+											"type": "viewText",
+											"text": "Settings"
+										}
+									]
+								}
+							],
+							"item": [
+								{
+									"type": "devtools",
+									"format": "settings"
+								},
+								{
+									"type": "viewText",
+									"format": "codemirror"
+								}
+							]
 						}
 					]
 				}
