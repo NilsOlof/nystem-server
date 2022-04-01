@@ -79,6 +79,8 @@ const DevtoolsSelectContenttype = ({ model, view }) => {
 
     const getOptions = async () => {
       const { data } = await app().event("devtools", { path: "contentType" });
+      if (!data) return;
+
       setOption(Object.keys(data));
     };
     getOptions();

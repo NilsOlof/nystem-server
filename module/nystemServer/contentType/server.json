@@ -156,37 +156,59 @@
 							"view": "list"
 						},
 						{
+							"type": "viewInView",
+							"contentType": "server",
+							"view": "devtoolsettings"
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "devtoolsettings",
+			"item": [
+				{
+					"type": "bootstrap",
+					"format": "panel",
+					"stateStore": "disabled",
+					"header": [
+						{
 							"type": "bootstrap",
-							"format": "panel",
-							"stateStore": "byUrl",
-							"header": [
-								{
-									"type": "bootstrap",
-									"format": "panelToggle",
-									"icon": true,
-									"className": [
-										"flex"
-									],
-									"item": [
-										{
-											"type": "viewText",
-											"text": "Settings"
-										}
-									]
-								}
+							"format": "panelToggle",
+							"icon": true,
+							"className": [
+								"flex",
+								"items-center"
 							],
 							"item": [
 								{
-									"type": "devtools",
-									"format": "settings"
-								},
-								{
 									"type": "viewText",
-									"format": "codemirror"
+									"text": "Settings",
+									"className": [
+										"py-2"
+									]
 								}
 							]
 						}
-					]
+					],
+					"item": [
+						{
+							"type": "devtools",
+							"format": "settings"
+						},
+						{
+							"type": "viewText",
+							"format": "codemirror",
+							"className": [
+								"h-96"
+							]
+						}
+					],
+					"className": [
+						"m-3",
+						"shadow"
+					],
+					"typeClass": "defaultWithoutPadding"
 				}
 			]
 		},
