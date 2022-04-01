@@ -3,23 +3,20 @@ import app from "nystem";
 
 const DevtoolsSettings = ({ view }) => {
   useEffect(() => {
-    app()
-      .event("devtools", { path: `settings` })
-      .then(({ data }) => {
-        view.setValue({ path: "settings", value: data });
+    const init = async () => {
+      const { data: settings } = await app().event("devtools", {
+        path: `settings`,
+      });
+      const { data: vContentTypes } = await app().event("devtools", {
+        path: `populatedViews`,
+      });
+      const { data: user } = await app().event("devtools", {
+        path: `session.user`,
       });
 
-    app()
-      .event("devtools", { path: `populatedViews` })
-      .then(({ data }) => {
-        view.setValue({ path: "populatedViews", value: data });
-      });
-
-    app()
-      .event("devtools", { path: `session.user` })
-      .then(({ data }) => {
-        view.setValue({ path: "session", value: data });
-      });
+      view.setValue({ value: { settings, user, vContentTypes } });
+    };
+    init();
   }, [view]);
 
   return null;
