@@ -55,7 +55,8 @@
 						{
 							"type": "devtools",
 							"format": "urlPartFilter",
-							"text": "Filter"
+							"text": "Filter",
+							"includeId": true
 						},
 						{
 							"type": "style",
