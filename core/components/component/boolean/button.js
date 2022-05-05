@@ -6,9 +6,8 @@ const classNames = (className) =>
   !className ? [] : className instanceof Array ? className : [className];
 
 const BooleanButton = ({ setValue, model, value }) => {
-  const [text, className = []] = (value
-    ? model.text
-    : model.falseText || model.text
+  const [text, className = []] = (
+    value ? model.text : model.falseText || model.text
   ).split(":");
 
   return (
@@ -23,11 +22,11 @@ const BooleanButton = ({ setValue, model, value }) => {
         "pause",
         "play",
         "folder",
-        "cog",
-        "wallet",
-        "location",
+        "gear",
+        "terminal-solid",
+        "brands-github",
       ].includes(text) ? (
-        <Icon className="w-4 h-4" icon={text} alt={text} />
+        <Icon className="h-4 w-4" icon={text} alt={text} />
       ) : (
         app().t(text)
       )}

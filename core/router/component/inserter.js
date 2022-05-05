@@ -12,7 +12,8 @@ const checkMatch = {
 
 const Inserter = (props) => {
   const { pathname } = useLocation();
-  const { match, className, children, source, exclude } = props;
+  const { className, children, source, exclude } = props;
+  let { match } = props;
 
   let path = pathname;
   if (path[2] === ":") path = path.substring(3);
@@ -21,13 +22,19 @@ const Inserter = (props) => {
 
   let checkType = "exact";
 
-  if (match !== "*") {
-    if (match.endsWith("*")) checkType = "start";
+  if (match && match !== "*") {
+    if (!(match instanceof Array)) match = [match];
 
-    if (match.startsWith("*"))
-      checkType = checkType === "start" ? "includes" : "end";
+    match = match.find((match) => {
+      if (match.endsWith("*")) checkType = "start";
 
-    if (!checkMatch[checkType](path, match)) return null;
+      if (match.startsWith("*"))
+        checkType = checkType === "start" ? "includes" : "end";
+
+      return checkMatch[checkType](path, match);
+    });
+
+    if (!match) return null;
   }
 
   if (children)

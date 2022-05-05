@@ -22,12 +22,15 @@ const typeByFormat = {
     minute: "numeric",
   }),
   YYYY: new Intl.DateTimeFormat("sv-SE", { year: "numeric" }),
+  ddd: new Intl.DateTimeFormat("en-US", { month: "short" }),
+  MMM: new Intl.DateTimeFormat("en-US", { weekday: "short" }),
   YY: new Intl.DateTimeFormat("sv-SE", { year: "2-digit" }),
   MM: new Intl.DateTimeFormat("sv-SE", { month: "2-digit" }),
   DD: new Intl.DateTimeFormat("sv-SE", { day: "2-digit" }),
   M: new Intl.DateTimeFormat("sv-SE", { month: "numeric" }),
   D: new Intl.DateTimeFormat("sv-SE", { day: "numeric" }),
   HH: new Intl.DateTimeFormat("sv-SE", { hour: "2-digit" }),
+  ss: new Intl.DateTimeFormat("sv-SE", { second: "2-digit" }),
   mm: {
     format: (at) => {
       const val = new Intl.DateTimeFormat("sv-SE", {
@@ -66,7 +69,7 @@ const myMoment = (val) => {
 module.exports = myMoment;
 
 /*
-
+    full: "ddd, D MMM YYYY HH:mm:ss +0000",
 Input	Example	Description
 YYYY	2014	4 or 2 digit year. Note: Only 4 digit can be parsed on strict mode
 YY	14	2 digit year

@@ -1,6 +1,7 @@
 {
-  "dependencies": {
-    "prettier-plugin-tailwindcss": "*",
-    "prettier": "*"
+  "devDependencies": {
+    "tailwindcss": "*",
+    "@tailwindcss/typography": "*",
+    "@tailwindcss/forms": "*"
   }
 }

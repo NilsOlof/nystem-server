@@ -1,7 +1,7 @@
 {
   "name": "my-moment",
-  "version": "0.1.0",
-  "description": "oo",
+  "version": "0.1.1",
+  "description": "My moment shim",
   "main": "index.js",
   "author": "Nisse",
   "license": "MIT"

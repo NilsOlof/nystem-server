@@ -1,6 +1,12 @@
+const waitInLineM = require("./waitInLine");
+const logM = require("./log");
+
 /* eslint-disable guard-for-in */
 module.exports = (app) => {
   if (!app.t) app.t = (text) => text;
+
+  logM(app);
+  app.waitInLine = waitInLineM;
 
   function init() {
     if (!document.body) {

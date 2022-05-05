@@ -1,9 +1,19 @@
 {
   "item": [
     {
-      "type": "viewSelect",
+      "type": "contentTypeSelect",
+      "text": "Content type",
+      "id": "contentType",
+      "limit": 1,
+      "inline": true
+    },
+    {
       "id": "toFormat",
-      "text": "Format"
+      "text": "View",
+      "type": "viewSelect",
+      "contentTypeId": "..contentType",
+      "limit": 1,
+      "inline": true
     }
   ]
 }

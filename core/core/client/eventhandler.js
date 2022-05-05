@@ -8,80 +8,10 @@ const getStackTrace = (row) => {
       obj.stack.split("\n")[row]
     ) || [];
 
-  return !source ? obj.stack.split("\n")[row] : `(${source} ${line}:${column})`;
+  return !source
+    ? obj.stack.split("\n")[row]
+    : ` ${source}:${line}:${column}\n`;
 };
-
-if (
-  typeof window !== "undefined" &&
-  window?.location?.host?.includes(".localhost")
-) {
-  const replaceLinks =
-    (callback) =>
-    async (...args) => {
-      for (let i = 0; i < args.length; i++)
-        if (typeof args[i] === "string") args[i] = await translate(args[i]);
-
-      callback(...args);
-    };
-
-  window.console.error = replaceLinks(window.console.error);
-
-  const oldLog = window.console.log;
-  window.console.log = (...args) =>
-    replaceLinks(oldLog)(getStackTrace(5), ...args);
-
-  window.onerror = function (message, source, lineno, colno, error) {
-    console.error(error.stack);
-    return true;
-  };
-
-  const translate = (() => {
-    let consumer = false;
-    const load = () =>
-      new Promise((resolve) => {
-        callbacks.push(resolve);
-        if (callbacks.length > 1) return;
-
-        const scriptEl = document.createElement("script");
-
-        scriptEl.setAttribute("src", "/source-map.js");
-        scriptEl.onload = async () => {
-          window.sourceMap.SourceMapConsumer.initialize({
-            "lib/mappings.wasm":
-              "https://unpkg.com/source-map@0.7.3/lib/mappings.wasm",
-          });
-          const mapData = await fetch("/static/js/bundle.js.map").then((res) =>
-            res.json()
-          );
-
-          consumer = await new window.sourceMap.SourceMapConsumer(mapData);
-          callbacks.forEach((callback) => callback());
-        };
-        document.head.appendChild(scriptEl);
-      });
-
-    const callbacks = [];
-    const replace = (all, str, hepp2) => {
-      if (!str || !str.includes(":")) return str;
-
-      let [source, , line, column] = str.split(/[ :]/);
-      if (!column) [source, line, column] = str.split(/[ :]/);
-
-      ({ source, line, column } = consumer.originalPositionFor({
-        line: parseInt(line, 10),
-        column: parseInt(column, 10),
-      }));
-
-      return line ? ` (vscode://file/${source}:${line}:${column})\n` : str;
-    };
-
-    return async (str) => {
-      if (!consumer) await load();
-
-      return str.replace(/\(([^)]+)\)\n?/g, replace);
-    };
-  })();
-}
 
 module.exports = function addEventHandler(context, mapevents, name) {
   const callbacks = {};
@@ -167,7 +97,7 @@ module.exports = function addEventHandler(context, mapevents, name) {
         console.log(
           `💥 Event ${event} stopped ${pos} of ${callback.length}${printStack(
             callbacksStack[event][pos - 1]
-          )} - ${callbacksStack[event]
+          )}  ${callbacksStack[event]
             .map((item, index) => `${index}.${printStack(item)}`)
             .join("  ")}`
         );

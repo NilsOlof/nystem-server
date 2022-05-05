@@ -72,8 +72,8 @@
 												"duration-500",
 												"ease-in-out"
 											],
-											"text": "cog",
-											"falseText": "cog:hide-on-false"
+											"text": "gear",
+											"falseText": "gear:hide-on-false"
 										},
 										{
 											"category": "contentTypeField",
@@ -108,8 +108,8 @@
 											"btnType": "primary",
 											"falseBtnType": "primary",
 											"size": "xs",
-											"text": "wallet",
-											"falseText": "wallet:hide-on-false"
+											"text": "terminal",
+											"falseText": "terminal-solid:hide-on-false"
 										},
 										{
 											"category": "contentTypeField",
@@ -126,8 +126,8 @@
 												"duration-500",
 												"ease-in-out"
 											],
-											"text": "location",
-											"falseText": "location:hide-on-false"
+											"text": "brands-github",
+											"falseText": "brands-github:hide-on-false"
 										},
 										{
 											"category": "contentTypeField",
@@ -275,8 +275,8 @@
 							"className": [
 								"mr-1"
 							],
-							"text": "cog",
-							"falseText": "cog"
+							"text": "gear",
+							"falseText": "gear"
 						},
 						{
 							"category": "contentTypeField",
@@ -303,8 +303,8 @@
 							"btnType": "primary",
 							"falseBtnType": "primary",
 							"size": "xs",
-							"text": "wallet",
-							"falseText": "wallet"
+							"text": "terminal",
+							"falseText": "terminal"
 						},
 						{
 							"category": "contentTypeField",
@@ -317,8 +317,8 @@
 							"className": [
 								"mr-1"
 							],
-							"text": "location",
-							"falseText": "location"
+							"text": "brands-github",
+							"falseText": "brands-github"
 						},
 						{
 							"category": "contentTypeField",

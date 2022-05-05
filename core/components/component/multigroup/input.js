@@ -52,7 +52,7 @@ const fallback = {
                   direction: "copy",
                   btnSize: "xs",
                   btnType: "info",
-                  text: "edit-copy",
+                  text: "copy",
                   className: ["mr-1"],
                 },
                 {

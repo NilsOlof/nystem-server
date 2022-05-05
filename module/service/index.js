@@ -52,18 +52,22 @@ const start = function (app) {
     logs[id] = logs[id] || "";
     let running = true;
 
+    const { data: server } = await app.database.server.get({ id, role });
+
+    const { runbasepath: path, basepath } = await app.event(
+      "serverPath",
+      server
+    );
+
     const update = async (updatedData) => {
       const { data } = await app.database.serverStatus.get({ id, role });
+      data.basepath = basepath;
 
       app.database.serverStatus.save({
         data: { ...data, ...updatedData },
         role,
       });
     };
-
-    const { data: server } = await app.database.server.get({ id, role });
-
-    const { runbasepath: path } = await app.event("serverPath", server);
 
     const hasAppJs = await app.fs.exists(`${path}/app.js`);
 
@@ -74,6 +78,8 @@ const start = function (app) {
         type: `serverLog${id}`,
         ...query,
         dataType,
+        path,
+        basepath,
       });
 
       logs[id] += query.data;

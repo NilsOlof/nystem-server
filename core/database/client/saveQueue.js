@@ -30,7 +30,6 @@ module.exports = (app) => {
       if (!date) return;
 
       let i = dbArray.length - 1;
-      console.log("saveQueue");
       while (i !== -1 && !saveQueue[dbArray[i]._id]) {
         // date = dbArray[i]._chdate;
         i--;

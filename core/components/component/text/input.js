@@ -9,7 +9,7 @@ const ClearButton = ({ value, setValue }) =>
     <Icon
       onClick={() => setValue("")}
       className="w-8 h-8 p-2 relative right-8 cursor-pointer"
-      icon="close"
+      icon="xmark"
       aria-hidden="true"
     />
   );

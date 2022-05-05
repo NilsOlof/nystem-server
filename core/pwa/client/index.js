@@ -3,7 +3,6 @@ module.exports = (app) => {
     window.addEventListener("load", () => {
       navigator.serviceWorker.register("/nystem-service-worker.js").then(
         (registration) => {
-          console.log("ServiceWorker registration successful");
           registration.update();
         },
         (err) => {
@@ -37,7 +36,7 @@ module.exports = (app) => {
   const regExpVersion = /main\.([0-9a-f]+)\.js/im;
   app.on("getAppVersion", () => ({
     appVersion: (regExpVersion.exec(
-      [...document.head.children]
+      [...document.head.children, ...document.body.children]
         .map((child) => child.src)
         .find((src) => regExpVersion.test(src))
     ) || [])[1],
@@ -59,7 +58,8 @@ module.exports = (app) => {
           const { appVersion: clientAppVersion } = await app.event(
             "getAppVersion"
           );
-          console.log("At version", { clientAppVersion, appVersion });
+          app.settings.version = `${clientAppVersion}/${appVersion}`;
+
           if (
             !clientAppVersion ||
             !appVersion ||

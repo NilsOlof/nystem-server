@@ -4,6 +4,7 @@ const memdbM = require("./memdb");
 const cacheM = require("./cache");
 const storageM = require("./storage");
 const saveQueueM = require("./saveQueue");
+const addToCacheM = require("./addToCache");
 
 module.exports = (app) => {
   const database = app.addeventhandler(
@@ -19,6 +20,7 @@ module.exports = (app) => {
   cacheM(app);
   storageM(app);
   saveQueueM(app);
+  addToCacheM(app);
 
   database.on("clearCache", () =>
     Promise.all(

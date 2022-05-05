@@ -52,11 +52,6 @@
           "type": "boolean",
           "id": "floatlabel",
           "text": "Float label"
-        },
-        {
-          "type": "boolean",
-          "id": "includeId",
-          "text": "Include id"
         }
       ]
     },

@@ -150,7 +150,7 @@ module.exports = (app) => {
           if (!["$all", "__id", "__exact"].includes(field)) {
             oneSearchField.push(field);
 
-            if (value[0] === "!") {
+            if (value && value[0] === "!") {
               oneSearchInvert[index] = true;
               value = value.substring(1);
             }

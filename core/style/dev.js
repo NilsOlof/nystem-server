@@ -1,61 +1,38 @@
-module.exports = async (app) => {
+module.exports = (app) => {
   if (!app.fs.existsSync(`${app.__dirname}/web`)) return;
 
-  const paths = app.filePaths.filter((path) => {
-    const parts = path.split("/");
-    return parts[2] === "icons" && parts[3].includes(".svg");
+  if (app.fs.existsSync(`${app.__dirname}/files/icons.json`))
+    app.fs.copyFileSync(
+      `${app.__dirname}/files/icons.json`,
+      `${app.__dirname}/web/src/icons.json`
+    );
+  else app.fs.writeFileSync(`${app.__dirname}/web/src/icons.json`, "{}");
+
+  const iconpath = app.settings.iconsrcpath?.replace(/\\/g, "/");
+  if (!iconpath) return;
+  const { fs } = app;
+
+  const readPath = (path, paths = []) => {
+    if (!fs.existsSync(path)) return;
+
+    if (fs.statSync(path).isDirectory()) {
+      const files = fs.readdirSync(path);
+      for (let i = 0; i < files.length; i++)
+        readPath(`${path}/${files[i]}`, paths);
+    } else paths.push(path.replace(`${iconpath}/`, ""));
+    return paths;
+  };
+
+  const allicons = {};
+
+  readPath(iconpath).map((path) => {
+    const src = fs.readFileSync(`${iconpath}/${path}`, "utf8");
+
+    const parts = src.match(/.*viewBox="([^"]+)".*<path d="([^"]+)"/im);
+    path = path.replace("/", "-").replace(/(^solid-)|(\.svg$)/gim, "");
+
+    allicons[path] = `${parts[1]}|${parts[2]}`;
   });
 
-  const icons = await Promise.all(
-    paths.map(async (path) => ({
-      text: await app.fs.readFile(`${app.__dirname}/${path}`, "utf8"),
-      file: path.split("/")[3].replace(".svg", ""),
-    }))
-  );
-
-  const byType = icons
-    .map((item) => ({
-      ...item,
-      text: item.text.replace(/<\/?svg[^>]*>/gi, "").replace(/[\r\n]/gi, ""),
-    }))
-    .reduce(
-      (res, curr) => ({
-        ...res,
-        [curr.file]: curr.text,
-      }),
-      {}
-    );
-
-  await app.fs.writeFile(
-    `${app.__dirname}/web/src/icons.js`,
-    `/* eslint-disable */
-    import React from "react";
-  
-  export default ${JSON.stringify(byType)
-    .replace(/"</g, "<")
-    .replace(/>"/g, ">")
-    .replace(/\\/g, "")}`
-  );
-
-  const viewPorts = icons
-    .map((item) => ({
-      ...item,
-      viewPort: / viewBox="([^"]+)"/gim.exec(item.text)[1],
-    }))
-    .filter((item) => item.viewPort !== "0 0 20 20")
-    .reduce(
-      (res, curr) => ({
-        ...res,
-        [curr.file]: curr.viewPort,
-      }),
-      {}
-    );
-
-  await app.fs.writeFile(
-    `${app.__dirname}/web/src/iconsViewPorts.js`,
-    `/* eslint-disable */
-    export default ${JSON.stringify(viewPorts)}`
-  );
-
-  app.icons = {};
+  fs.writeFile(`${__dirname}/allicons.json`, JSON.stringify(allicons));
 };

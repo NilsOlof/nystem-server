@@ -8,7 +8,7 @@ const DragAndDropHandle = ({ model, path }) => {
 
   return (
     <Wrapper className={className} {...dragHandleProps}>
-      {model.icon && <Icon icon="move" className="w-8 h-8 py-2" />}
+      {model.icon && <Icon icon="arrows-up-down" className="w-8 h-8 py-2" />}
       {item && <ContentTypeRender path={path} items={item} />}
     </Wrapper>
   );

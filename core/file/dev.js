@@ -59,6 +59,27 @@ module.exports = (app) => {
           _writeHead.call(res, statusCode, headers);
         };
       }
+      if (/bundle\.js$/im.test(req.url)) {
+        delete req.headers["accept-encoding"];
+        const _write = res.write;
+        res.write = (data) => {
+          _write.call(
+            res,
+            data
+              .toString()
+              .replace(
+                "console.info('%cDownload",
+                "const a = ()=>{}; a('%cDownload"
+              )
+          );
+        };
+
+        const _writeHead = res.writeHead;
+        res.writeHead = (statusCode, headers) => {
+          res.removeHeader("Content-length");
+          _writeHead.call(res, statusCode, headers);
+        };
+      }
 
       proxy.web(req, res, (error) => {
         if (error) {

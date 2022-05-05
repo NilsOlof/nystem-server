@@ -14,9 +14,19 @@
       "limit": 1
     },
     {
-      "text": "Title",
-      "type": "boolean",
-      "id": "title"
+      "type": "switchButtons",
+      "item": [
+        {
+          "text": "Hide if empty",
+          "type": "boolean",
+          "id": "hideIfEmpty"
+        },
+        {
+          "text": "Title",
+          "type": "boolean",
+          "id": "title"
+        }
+      ]
     },
     {
       "type": "text",
