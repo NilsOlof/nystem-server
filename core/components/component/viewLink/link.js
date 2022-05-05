@@ -26,7 +26,7 @@ class ViewLinkLink extends React.Component {
     if (model.renderType === "icon")
       return (
         <Link to={href} match={model.match} type="link">
-          <Icon className={className} />
+          <Icon icon={model.text} className={className} />
         </Link>
       );
 

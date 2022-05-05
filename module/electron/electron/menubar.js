@@ -15,9 +15,9 @@ module.exports = async (app) => {
   app.on("electronData", async ({ event, button, active }) => {
     if (event !== "appButton") return;
 
-    if (button === "minus") window.minimize();
-    if (button === "close") window.close();
-    if (button === "rectangle") {
+    if (button === "window-minimize") window.minimize();
+    if (button === "xmark") window.close();
+    if (button === "regular-square-full") {
       if (active) window.unmaximize();
       else window.maximize();
     }

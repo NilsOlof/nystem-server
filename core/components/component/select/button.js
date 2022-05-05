@@ -1,5 +1,5 @@
 import React from "react";
-import { Button } from "nystem-components";
+import { Button, Wrapper } from "nystem-components";
 
 const SelectButton = ({ model, setValue, value }) => {
   const { trueState, trueOnState, falseState, btnType, falseOnState } = model;
@@ -18,10 +18,14 @@ const SelectButton = ({ model, setValue, value }) => {
     type = model.falseBtnType;
   }
 
-  return (
+  return btnType ? (
     <Button type={type} className={model.className} onClick={handleChange}>
       {text || "..."}
     </Button>
+  ) : (
+    <Wrapper className={model.className} onClick={handleChange}>
+      {text || "..."}
+    </Wrapper>
   );
 };
 

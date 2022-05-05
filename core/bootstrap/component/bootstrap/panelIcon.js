@@ -8,9 +8,9 @@ const BootstrapPanelIcon = ({ model }) => {
   return (
     <Icon
       icon={
-        expanded ? iconOpen || "cheveron-down" : iconClosed || "cheveron-right"
+        expanded ? iconOpen || "chevron-down" : iconClosed || "chevron-right"
       }
-      className={className || "w-6 h-6 pl-0 pointer"}
+      className={className || "pointer h-6 w-6 pl-0"}
     />
   );
 };

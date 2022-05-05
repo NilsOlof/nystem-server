@@ -6,6 +6,7 @@ const compare = (val1, val2) => {
   if (val1 === "false") val1 = false;
   if (val2 === "true") val2 = true;
   if (val2 === "false") val2 = false;
+  if (val2 === "undefined") val2 = undefined;
 
   if (typeof val1 !== "number") return val1 === val2;
   if (val2[0] === "<") return parseInt(val2.substring(1), 10) > val1;

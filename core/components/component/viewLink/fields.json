@@ -26,20 +26,6 @@
       "inline": true
     },
     {
-      "id": "renderType",
-      "text": "Render type",
-      "type": "select",
-      "option": ["link", "button"],
-      "limit": 1,
-      "inline": true
-    },
-    {
-      "text": "Fields",
-      "id": "item",
-      "type": "viewCreator",
-      "expanded": true
-    },
-    {
       "type": "boolean",
       "id": "addId",
       "text": "Add id"
@@ -48,6 +34,12 @@
       "type": "text",
       "text": "Add",
       "id": "add"
+    },
+    {
+      "text": "Fields",
+      "id": "item",
+      "type": "viewCreator",
+      "expanded": true
     }
   ]
 }

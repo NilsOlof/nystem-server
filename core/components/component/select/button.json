@@ -45,7 +45,7 @@
       "limit": "1"
     },
     {
-      "type": "selectFieldOption",
+      "type": "text",
       "render": ["button"],
       "limit": "1",
       "id": "trueState",
@@ -53,7 +53,7 @@
       "inline": true
     },
     {
-      "type": "selectFieldOption",
+      "type": "text",
       "inline": true,
       "id": "trueOnState",
       "text": "On on state",
@@ -99,7 +99,7 @@
       "limit": "1"
     },
     {
-      "type": "selectFieldOption",
+      "type": "text",
       "id": "falseState",
       "text": "Off state",
       "limit": "1",
@@ -107,7 +107,7 @@
       "inline": true
     },
     {
-      "type": "selectFieldOption",
+      "type": "text",
       "id": "falseOnState",
       "text": "Off on state",
       "render": ["button"],

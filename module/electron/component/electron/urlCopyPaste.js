@@ -40,8 +40,8 @@ const ElectronUrlCopyPaste = ({ model, ...rest }) => {
         size={size}
       >
         <Icon
-          className="w-4 h-4"
-          icon={paste ? "paste" : "edit-copy"}
+          className="h-4 w-4"
+          icon={paste ? "paste" : "copy"}
           title={title}
         />
         <Wrapper className={text && "ml-2 flex"}>{text || ""}</Wrapper>

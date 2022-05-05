@@ -29,8 +29,8 @@ const MultigroupAddRemove = ({ model, view, setValue, value, path }) => {
     >
       {!model.buttonText ? (
         <Icon
-          className={["w-4 h-4", action === "Add" && "transform rotate-45"]}
-          icon="close"
+          className={["h-6 w-6", action === "Add" && "transform rotate-45"]}
+          icon="xmark"
           title={action}
         />
       ) : (

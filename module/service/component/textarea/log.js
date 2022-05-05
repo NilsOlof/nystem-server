@@ -8,19 +8,34 @@ const TextareaLog = ({ view, model, value = "" }) => {
 
   useEffect(() => {
     if (!hasVal) return;
+
+    const makeLinks = (match, p1, p2, p3) => {
+      console.log("match", match, p1, p2, p3);
+      let path = p3.split(/[/\\]/).join("/").split(":");
+      path = `${path[0]}:${path[1]}`;
+
+      return `(<a href="nystem://${view.baseView.value.name}${path}">${path}</a>)`;
+    };
+
+    const replace = view.value.basepath.replace(/[/\\]/g, "[/\\\\]");
+
     const parseLog = (log) => {
       const parsedLog = (log || "")
-        .replace(/ /g, "&nbsp;")
+        .replace(
+          new RegExp(`(module\\.exports )?[( ](${replace})([^) ]+)[) ]`, "gim"),
+          makeLinks
+        )
         // eslint-disable-next-line no-control-regex
         .replace(/\x1b\[((?:\d{1,3};?)+|)m/gim, (match, p1) => {
           return `</span><span style='color:${colors[parseInt(p1, 10)]};'>`;
         });
-      return `<span>${parsedLog.replace(/\n/g, "</span><br/><span>")}</span>`;
+      return `<pre>${parsedLog.replace(/\n/g, "</span><br/><span>")}</pre>`;
     };
 
     let fullLog = parseLog(value);
     setLog(fullLog);
 
+    console.log(view.baseView.value.name);
     const updateLog = ({ data }) => {
       fullLog += parseLog(data);
       setLog(fullLog);

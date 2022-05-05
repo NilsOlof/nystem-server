@@ -22,7 +22,7 @@ const ViewButtonUndoRedo = ({ model, view }) => {
 
   const IconButton = ({ icon, onClick }) => (
     <Button onClick={onClick} type={model.btnType} size={model.btnSize}>
-      <Icon className={iconClassName || "w-4 h-4"} icon={icon} />
+      <Icon className={iconClassName || "h-6 w-6"} icon={icon} />
     </Button>
   );
 

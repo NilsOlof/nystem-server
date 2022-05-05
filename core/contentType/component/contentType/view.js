@@ -208,6 +208,8 @@ const ContentTypeView = ({
 
   if (!renderAs) renderAs = !(addForm || view.addForm) ? undefined : "form";
 
+  if (!view.on) return <div>💥💥 view creation failure 💥💥</div>;
+
   return (
     <ViewContextProvider value={context}>
       <Wrapper

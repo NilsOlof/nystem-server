@@ -16,10 +16,6 @@ const ServiceWorkerView = ({ model }) =>
 
 export default ServiceWorkerView;
 
-if (navigator.standalone) {
-  console.log("Launched: Installed (iOS)");
-} else if (matchMedia("(display-mode: standalone)").matches) {
+if (navigator.standalone) console.log("Launched: Installed (iOS)");
+else if (matchMedia("(display-mode: standalone)").matches)
   console.log("Launched: Installed");
-} else {
-  console.log("Launched: Browser Tab");
-}

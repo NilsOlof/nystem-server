@@ -20,8 +20,8 @@ const BootstrapPanelToggle = ({ model, path, children }) => {
     <Wrapper className={className} {...addClick(toggleExpand)}>
       {model.icon && (
         <Icon
-          icon={expanded ? "cheveron-down" : "cheveron-right"}
-          className={model.iconClassName || "w-6 h-6 pl-0 pointer"}
+          icon={expanded ? "chevron-down" : "chevron-right"}
+          className={model.iconClassName || "pointer h-6 w-6 p-1 pl-0"}
         />
       )}
       {children || <ContentTypeRender path={path} items={item} />}

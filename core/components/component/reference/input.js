@@ -27,7 +27,7 @@ const InputSpes = ({ focus, onBlur, onFocus, ...props }) => {
     <Input
       ref={inputEl}
       {...props}
-      className={className || "sm:w-1/2 w-full"}
+      className={className || "w-full sm:w-1/2"}
       onChange={props.onChange}
       onFocus={() => {
         setInFocus(true);
@@ -49,7 +49,7 @@ const InlineAdd = ({ model, view, path }) => {
       <Button
         onClick={() => setIsAdding(true)}
         size="sm"
-        className="mb-1 float-right"
+        className="float-right mb-1"
       >
         Create new
       </Button>
@@ -125,7 +125,7 @@ const ReferenceInput = ({ model, view, value = [], setValue, path }) => {
       error={error}
     >
       {(value.length || null) && (
-        <Wrapper className="px-1 pb-2 pt-1 w-full max-w-sm">
+        <Wrapper className="w-full max-w-sm px-1 pb-2 pt-1">
           <ReferenceSortable
             model={model}
             view={view}
@@ -152,7 +152,7 @@ const ReferenceInput = ({ model, view, value = [], setValue, path }) => {
       )}
       {addable && inFocus && (
         <Wrapper
-          className="absolute shadow-md sm:w-1/2 w-full overflow-y-auto z-10 max-h-400"
+          className="max-h-400 absolute z-10 w-full overflow-y-auto border border-gray-500 shadow-md sm:w-1/2"
           onMouseDown={() => {
             clicked = true;
             setInFocus(true);

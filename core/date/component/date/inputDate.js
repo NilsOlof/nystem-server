@@ -7,7 +7,7 @@ const ClearButton = ({ setValue }) => (
   <Icon
     onClick={() => setValue("")}
     className="absolute right-0 top-0 m-3 w-4"
-    icon="close"
+    icon="xmark"
     aria-hidden="true"
   />
 );
@@ -49,7 +49,7 @@ const DateInputDate = ({ model, focus, setValue, value }) => {
   }, []);
 
   return (
-    <Wrapper className="relative w-1/3">
+    <Wrapper className="relative w-1/2">
       <input
         ref={inputEl}
         placeholder={app().t(text)}

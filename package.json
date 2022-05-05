@@ -2,8 +2,6 @@
   "dependencies": {
     "sudo-prompt": "*",
     "bcryptjs": "*",
-    "prettier-plugin-tailwindcss": "*",
-    "prettier": "*",
     "pngjs": "*",
     "sharp": "*",
     "mime": "*",
@@ -26,6 +24,9 @@
   "devDependencies": {
     "@fiahfy/icns": "*",
     "node-fetch": "*",
+    "tailwindcss": "*",
+    "@tailwindcss/typography": "*",
+    "@tailwindcss/forms": "*",
     "chokidar": "*",
     "http-proxy": "*",
     "babel-eslint": "^10.0.1",
