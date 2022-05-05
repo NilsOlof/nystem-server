@@ -177,7 +177,16 @@ const start = (app) => {
     content: await app.fs.readFile(`${__dirname}/content.js`),
   }));
 
-  app.connection.on("devtoolsnystvscode", async ({ path }) => {
+  app.connection.on("devtoolsnystvscode", async ({ path, server }) => {
+    if (server) {
+      const { data } = await app.database.server.get({
+        id: server,
+        role: "super",
+      });
+
+      const { runbasepath } = await app.event("serverPath", data);
+      path = `${runbasepath}/${path}`;
+    }
     console.log("Open code path", path);
 
     if (process.platform !== "win32")
