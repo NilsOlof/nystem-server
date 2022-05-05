@@ -108,7 +108,7 @@
 											"btnType": "primary",
 											"falseBtnType": "primary",
 											"size": "xs",
-											"text": "terminal",
+											"text": "terminal-solid",
 											"falseText": "terminal-solid:hide-on-false"
 										},
 										{

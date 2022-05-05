@@ -14,7 +14,7 @@ const TextareaLog = ({ view, model, value = "" }) => {
       let path = p3.split(/[/\\]/).join("/").split(":");
       path = `${path[0]}:${path[1]}`;
 
-      return `(<a href="nystem://${view.baseView.value.path}${path}">${path}</a>)`;
+      return `(<a href="nystem://${view.baseView.value.host[0]}${path}">${path}</a>)`;
     };
 
     const replace = view.value.basepath.replace(/[/\\]/g, "[/\\\\]");
@@ -35,7 +35,6 @@ const TextareaLog = ({ view, model, value = "" }) => {
     let fullLog = parseLog(value);
     setLog(fullLog);
 
-    console.log(view.baseView.value.name);
     const updateLog = ({ data }) => {
       fullLog += parseLog(data);
       setLog(fullLog);
@@ -57,7 +56,21 @@ const TextareaLog = ({ view, model, value = "" }) => {
   const className = model.className && model.className.join(" ");
   return (
     <code>
-      <Wrapper className={model.wrapperClass}>
+      <Wrapper
+        className={model.wrapperClass}
+        onClick={(e) => {
+          console.log(e.target.href);
+          e.stopPropagation();
+          e.preventDefault();
+          const path = e.target.href.split("/").slice(3);
+
+          app().connection.emit({
+            type: "devtoolsnystvscode",
+            server: view.id,
+            path: path.join("/"),
+          });
+        }}
+      >
         <div className={className} dangerouslySetInnerHTML={{ __html: log }} />
       </Wrapper>
     </code>
