@@ -14,7 +14,7 @@ const TextareaLog = ({ view, model, value = "" }) => {
       let path = p3.split(/[/\\]/).join("/").split(":");
       path = `${path[0]}:${path[1]}`;
 
-      return `(<a href="nystem://${view.baseView.value.name}${path}">${path}</a>)`;
+      return `(<a href="nystem://${view.baseView.value.path}${path}">${path}</a>)`;
     };
 
     const replace = view.value.basepath.replace(/[/\\]/g, "[/\\\\]");
