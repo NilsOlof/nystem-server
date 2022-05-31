@@ -141,7 +141,7 @@ const deploy = async () => {
     else await runGitCommand("push");
 
     await runGitCommand("status");
-    await delay(500);
+    await delay(1000);
     await runGitCommand("checkout develop");
     // await runCommand("npm run build:css", "/web");
     console.log("Deploy done");

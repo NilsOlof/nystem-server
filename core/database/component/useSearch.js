@@ -9,7 +9,12 @@ const UseSearch = ({ view, id, value, exact = false }) => {
     const setSearch = (query) => {
       query.filter = query.filter || {};
       query.filter.$and = query.filter.$and || [];
-      const search = exact ? { [id]: value, __exact: true } : { [id]: value };
+      const search = exact ? { __exact: true } : {};
+
+      const fields = id instanceof Array ? id : [id];
+      fields.forEach((id) => {
+        search[id] = value;
+      });
 
       query.filter.$and.push(search);
     };
