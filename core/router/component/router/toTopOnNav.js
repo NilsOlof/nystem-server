@@ -1,7 +1,9 @@
-import { withRouter } from "react-router";
+import { UseLocation } from "nystem-components";
 
 let last = false;
-const RouterToTopOnNav = ({ location }) => {
+const RouterToTopOnNav = () => {
+  const location = UseLocation();
+
   if (location.pathname !== last) {
     last = location.pathname;
     document.documentElement.scrollTop = 0;
@@ -10,4 +12,4 @@ const RouterToTopOnNav = ({ location }) => {
   return null;
 };
 
-export default withRouter(RouterToTopOnNav);
+export default RouterToTopOnNav;

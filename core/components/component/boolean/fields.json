@@ -6,6 +6,11 @@
       "id": "className"
     },
     {
+      "text": "No onClick",
+      "type": "boolean",
+      "id": "noOnClick"
+    },
+    {
       "text": "Fields true",
       "id": "itemTrue",
       "type": "viewCreator",

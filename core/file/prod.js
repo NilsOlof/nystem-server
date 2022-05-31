@@ -1,26 +1,40 @@
 module.exports = (app) => {
   const { fs } = app;
-  const mime = require("mime");
+
   const cache = {};
-
   app.on("start", -200, () => {
-    app.express.get("/*", (req, res) => {
-      const isHtml = req.params[0].indexOf(".") === -1;
-      const path = isHtml ? "index.html" : req.params[0];
-      const type = mime.getType(path);
-      if (app.isCached(type, req, res)) return;
+    app.file.on("get", -100, async ({ id, url, type }) => {
+      if (!url) return;
+      if (type === "text/html") url = "index.html";
 
-      if (!cache[path]) {
-        fs.readFile(`${app.__dirname}/build/${path}`, (err, data) => {
-          cache[path] =
-            path.indexOf("static/js/main") !== -1 && path.indexOf(".map") === -1
+      try {
+        let data = cache[url];
+        if (!data) {
+          data = await fs.readFile(`${app.__dirname}/build/${url}`, "utf8");
+
+          cache[url] =
+            url.indexOf("static/js/main") !== -1 && url.indexOf(".map") === -1
               ? `window.___settings___ = ${JSON.stringify(
                   app.settings.client
                 )};${data}`
               : data;
-          app.compressRes(cache[path], req, res);
+        }
+
+        app.file.event("response", {
+          id,
+          headers: { "Content-Type": type },
+          data: cache[url],
+          closed: true,
         });
-      } else app.compressRes(cache[path], req, res);
+      } catch (e) {
+        app.file.event("response", {
+          id,
+          headers: { "Content-Type": type },
+          data: "file not found",
+          statusCode: 404,
+          closed: true,
+        });
+      }
     });
 
     if (fs.existsSync(`${app.__dirname}/web/build`))

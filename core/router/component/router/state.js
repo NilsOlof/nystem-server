@@ -14,19 +14,19 @@ class RouterState extends React.Component {
         .storage.getItem({ id: "router.pathname" })
         .then(({ value }) => {
           if (value && value !== pathname)
-            this.context.router.history.replace(value);
+            window.history.replaceState({}, "", value);
           else if (this.props.start && pathname === "/")
-            this.context.router.history.replace(this.props.start);
+            window.history.replaceState({}, "", this.props.start);
         });
     else if (this.props.save === "memory" && app().pathname) {
       if (app().pathname !== pathname)
-        this.context.router.history.replace(app().pathname);
+        window.history.replaceState({}, "", app().pathname);
     } else if (this.props.start && pathname === "/")
-      this.context.router.history.replace(this.props.start);
+      window.history.replaceState({}, "", this.props.start);
     else if (this.props.redirect) {
       if (pathname.indexOf(this.props.match) === 0) {
         pathname = pathname.replace(this.props.match, "");
-        this.context.router.history.replace(this.props.redirect + pathname);
+        window.history.replaceState({}, "", this.props.redirect + pathname);
       }
     }
   }

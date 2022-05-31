@@ -20,7 +20,7 @@ const types = {
   },
   compact: {
     wrapper: "mb-1",
-    body: "pl-3",
+    body: "",
     header: "",
   },
 };

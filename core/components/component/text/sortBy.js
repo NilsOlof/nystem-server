@@ -46,7 +46,7 @@ const TextSortBy = ({ model, view }) => {
       {sortbyId === id ? (
         <Icon
           icon={`arrow-${reverse1 ? "up" : "down"}`}
-          className="ml-1 h-6 w-6 font-bold"
+          className="ml-1 h-4 w-4 font-bold"
         />
       ) : null}
     </Wrapper>

@@ -16,14 +16,16 @@ const Icon = ({ icon, className, renderAs, deg, ...props }, ref) => {
 
     fetch(`/geticon/${icon}.txt`)
       .then((response) => response.text())
-      .then((text) => setData({ ...data, [icon]: text }));
+      .then((text) => text && setData({ ...data, [icon]: text }));
   }, [icon, data]);
 
   if (!data[icon]) return null;
 
   if (data[icon] === "missing") {
-    console.error(
-      `Icon missing ${icon} at https://fontawesome.com/search?m=free`
+    console.log(
+      `💥 Icon missing ${icon} at https://fontawesome.com/search?m=free&q=${
+        icon || ""
+      }`
     );
     data[icon] = icons.question;
   }

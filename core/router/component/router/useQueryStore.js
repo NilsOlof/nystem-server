@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect, useCallback } from "react";
-import { useHistory } from "react-router-dom";
+import { UseLocation } from "nystem-components";
 
 const toType = {
   int: (val) => parseInt(val || 0, 10),
@@ -8,10 +8,10 @@ const toType = {
 };
 
 const RouterUseQueryStore = (saveId, type, push) => {
-  const history = useHistory();
+  const location = UseLocation();
 
   const ref = useRef();
-  const { search } = history.location;
+  const { search } = location;
 
   const getQueryValue = useCallback(
     (query) => {
@@ -39,13 +39,17 @@ const RouterUseQueryStore = (saveId, type, push) => {
 
     if (!saveId) return;
 
-    const { pathname, search } = history.location;
+    const { pathname, search } = location;
 
     const reg = `(^\\?)|(\\&${saveId}=[^\\s&]*)`;
     const rest = search.replace(new RegExp(reg, "gi"), "");
     const add = value ? `&${saveId}=${value}` : "";
 
-    history[push ? "push" : "replace"](`${pathname}?${rest}${add}`);
+    window.history[push ? "pushState" : "replaceState"](
+      {},
+      "",
+      `${pathname}?${rest}${add}`
+    );
   };
 
   return [value, setRouterValue, ref];

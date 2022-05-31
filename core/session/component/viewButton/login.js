@@ -1,10 +1,9 @@
 import React, { useState } from "react";
 import app from "nystem";
 import { Button } from "nystem-components";
-import { withRouter } from "react-router";
 
-const ViewButtonLogin = ({ view, model, history }) => {
-  const [saveButton, setSaveButton] = useState("Log in");
+const ViewButtonLogin = ({ view, model }) => {
+  const [saveButton, setSaveButton] = useState(app().t("Log in"));
 
   const handleSubmit = async () => {
     const { errors = [] } = await view.event("validate");
@@ -19,7 +18,8 @@ const ViewButtonLogin = ({ view, model, history }) => {
 
     if (error === "missing") view.event("error", "Email does not exist");
     else if (error === "password") view.event("error", "Password error");
-    else if (model.redirectURL) history.replace(model.redirectURL);
+    else if (model.redirectURL)
+      window.history.replaceState({}, "", model.redirectURL);
 
     setSaveButton("Log in");
   };
@@ -35,4 +35,4 @@ const ViewButtonLogin = ({ view, model, history }) => {
     </Button>
   );
 };
-export default withRouter(ViewButtonLogin);
+export default ViewButtonLogin;

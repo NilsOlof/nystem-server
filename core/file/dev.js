@@ -1,3 +1,5 @@
+const http = require("http");
+
 const devStartingIfno = `
 <!doctype html>
 <html lang="en">
@@ -12,7 +14,22 @@ const devStartingIfno = `
 </html>
 `;
 
+const getRelReplace = (dirname) =>
+  new RegExp(`(${dirname.replace(/\\/g, "/")})/web/src/`, "gi");
+
 module.exports = (app) => {
+  const rewrite = (url, data) => {
+    if (/\.js\.map$/im.test(url))
+      return data.toString().replace(getRelReplace(app.__dirname), "$1/");
+
+    if (/bundle\.js$/im.test(url))
+      return data
+        .toString()
+        .replace("console.info('%cDownload", "const a = ()=>{}; a('%cDownload");
+
+    return data;
+  };
+
   app.on("start", () => {
     const port = app.settings.port + 5000;
     if (app.fs.existsSync(`${app.__dirname}/web`)) {
@@ -25,79 +42,75 @@ module.exports = (app) => {
       );
     }
 
-    const http = require("http");
-    const httpProxy = require("http-proxy");
+    app.file.on("get", -1000, async (query) => {
+      const { id, url = "", type, headers } = query;
+      if (!url) return;
+      delete headers["accept-encoding"];
 
-    const proxy = httpProxy.createProxyServer({
-      target: `http://localhost:${port}`,
-      ws: true,
-      xfwd: true,
-      agent: new http.Agent({ maxSockets: Number.MAX_VALUE }),
-    });
+      const resp = http.request(
+        {
+          hostname: "127.0.0.1",
+          port: app.settings.port + 5000,
+          path: url,
+          method: "GET",
+          headers: { ...headers, host: "underproduktion.localhost:13065" },
+        },
+        (response) => {
+          const { headers, statusMessage, statusCode } = response;
+          delete headers["Content-length"];
+          delete headers["accept-encoding"];
 
-    const getRelReplace = (dirname) =>
-      new RegExp(`(${dirname.replace(/\\/g, "/")})/web/src/`, "gi");
+          if (statusCode === 500) {
+            app.file.event("response", {
+              id,
+              headers,
+              data: "File not found",
+              statusMessage,
+              statusCode,
+              closed: true,
+            });
 
-    app.server.on("upgrade", (req, socket, head) => {
-      if (req.url !== "/") proxy.ws(req, socket, head);
-    });
+            return;
+          }
 
-    app.express.get("/*", (req, res) => {
-      if (/\.js\.map$/im.test(req.url)) {
-        delete req.headers["accept-encoding"];
-        const _write = res.write;
-        res.write = (data) => {
-          _write.call(
-            res,
-            data.toString().replace(getRelReplace(app.__dirname), "$1/")
-          );
-        };
+          app.file.event("response", {
+            id,
+            headers,
+            statusMessage,
+            statusCode,
+          });
 
-        const _writeHead = res.writeHead;
-        res.writeHead = (statusCode, headers) => {
-          res.removeHeader("Content-length");
-          _writeHead.call(res, statusCode, headers);
-        };
-      }
-      if (/bundle\.js$/im.test(req.url)) {
-        delete req.headers["accept-encoding"];
-        const _write = res.write;
-        res.write = (data) => {
-          _write.call(
-            res,
-            data
-              .toString()
-              .replace(
-                "console.info('%cDownload",
-                "const a = ()=>{}; a('%cDownload"
-              )
-          );
-        };
+          response.on("end", () => {
+            app.file.event("response", { id, closed: true });
+          });
+          response.on("data", (data) => {
+            app.file.event("response", { id, data: rewrite(url, data) });
+          });
 
-        const _writeHead = res.writeHead;
-        res.writeHead = (statusCode, headers) => {
-          res.removeHeader("Content-length");
-          _writeHead.call(res, statusCode, headers);
-        };
-      }
-
-      proxy.web(req, res, (error) => {
-        if (error) {
-          console.log(
-            `💥 Res error ${error.stack.toString().replace(/\n/g, "")}`
-          );
-          if (error.code === "ECONNREFUSED") startApp();
-          res.end(devStartingIfno);
+          response.on("error", (error) => {
+            console.log("error", error);
+            app.file.event("response", { id, close: true });
+          });
         }
-      });
-    });
-    app.express.post("/*", (req, res) => {
-      proxy.web(req, res, (error) => {
+      );
+
+      resp.on("error", (error) => {
         console.log(
-          `💥 Res post error ${error.stack.toString().replace(/\n/g, "")}`
+          `💥 Res error ${error.stack.toString().replace(/\n/g, "")}`
         );
-        res.end("res.post error", error);
+        if (error.code === "ECONNREFUSED") startApp();
+
+        app.file.event("response", {
+          id,
+          data: devStartingIfno,
+          statusMessage: "OK",
+          statusCode: 404,
+          closed: true,
+        });
       });
+
+      resp.end();
+      return {};
     });
   });
 
@@ -105,6 +118,7 @@ module.exports = (app) => {
   function startApp() {
     if (started) return;
     started = true;
+
     const { spawn } = require("child_process");
     const os = require("os");
     const args =

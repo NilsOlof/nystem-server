@@ -28,7 +28,10 @@ const DatabaseSearch = ({ view, model, path, children }) => {
             val = view.getValue(p1.replace("..", path));
           else {
             p1 = p1.replace("baseView.", "");
-            val = view.baseView.getValue(p1.replace("..", path));
+            if (p1.startsWith("baseView.")) {
+              p1 = p1.replace("baseView.", "");
+              val = view.baseView.baseView.getValue(p1.replace("..", path));
+            } else val = view.baseView.getValue(p1.replace("..", path));
           }
           if (val instanceof Array) val = val.join("|");
           return val || "";

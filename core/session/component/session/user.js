@@ -6,13 +6,16 @@ const useUser = () => {
   const [user, setUser] = useState();
 
   useEffect(() => {
-    const setUserEv = () => {
-      setUser(app().session.user);
+    const setUserEv = async () => {
+      const { _id, contentType } = app().session.user;
+      const { data } = await app().database[contentType].get({ id: _id });
+
+      setUser(data);
     };
 
     app().on("login", -10, setUserEv);
     app().on("logout", -10, setUserEv);
-    setUser(app().session.user);
+    setUserEv();
 
     return () => {
       app().off("login", setUserEv);
@@ -29,10 +32,9 @@ const SessionUser = ({ view, model, ...rest }) => {
   if (user)
     return (
       <ContentTypeView
-        key={user.userid}
-        contentType={contentType || view.contentType}
+        contentType={contentType}
         format={toFormat}
-        id={user._id}
+        value={user}
         baseView={view}
       />
     );

@@ -27,7 +27,7 @@ const InputWrapper = ({
       <Wrapper renderAs="label" htmlFor={id} className={classNameLabel}>
         {text}
         {model.mandatory && (
-          <Wrapper renderAs="span" className="text-red-800 text-sm">
+          <Wrapper renderAs="span" className="text-sm text-red-800">
             *
           </Wrapper>
         )}
@@ -52,7 +52,7 @@ const InputWrapper = ({
 
   const info = () =>
     model.info ? (
-      <span className="sm:ml-48 mt-2 align-top block text-gray-500">
+      <span className="mt-2 block align-top text-gray-500 sm:ml-48">
         {app().t(model.info)}
       </span>
     ) : null;
@@ -63,7 +63,7 @@ const InputWrapper = ({
     return (
       <Wrapper className={className}>
         <label htmlFor={id} className="label-hidden">
-          {model.text}
+          {app().t(model.text)}
         </label>
         <Wrapper className={model.classNameInput}>{children}</Wrapper>
       </Wrapper>

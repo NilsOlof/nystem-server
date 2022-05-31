@@ -80,7 +80,7 @@ const RenderDropdown = ({
 }) => (
   // eslint-disable-next-line jsx-a11y/no-onchange
   <Select
-    className={model.classNameInput || "w-full rounded border p-2 sm:w-1/2"}
+    className={model.classNameInput || "w-full rounded border p-2"}
     onChange={(e) => handleChange(e.target.value)}
     value={value[0]}
   >

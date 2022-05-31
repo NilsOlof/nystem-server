@@ -1,4 +1,13 @@
 {
+  "scripts": {
+    "worker": "sudo node app.js module/requireSu/worker.js",
+    "initelectron": "node app.js module/electron/initelectron.js",
+    "startelectron": "node app.js module/electron/startelectron.js",
+    "initweb": "node app.js core/file/initweb.js",
+    "start": "node server.js",
+    "deploy": "node app.js core/core/deploy.js"
+  },
+  "license": "ISC",
   "dependencies": {
     "sudo-prompt": "*",
     "bcryptjs": "*",
@@ -6,29 +15,14 @@
     "sharp": "*",
     "mime": "*",
     "my-moment": "file:./core/date/my-moment",
-    "express": "*",
-    "fs-extra": "*",
-    "websocket": "*"
+    "fs-extra": "*"
   },
-  "scripts": {
-    "worker": "sudo node app.js module/requireSu/worker.js",
-    "initelectron": "node app.js module/electron/initelectron.js",
-    "startelectron": "node app.js module/electron/startelectron.js",
-    "initweb": "node app.js core/file/initweb.js",
-    "start": "node server.js",
-    "deploy": "node app.js core/core/deploy.js",
-    "lint": "eslint .",
-    "lint:fix": "eslint . --fix"
-  },
-  "license": "ISC",
   "devDependencies": {
     "@fiahfy/icns": "*",
-    "node-fetch": "*",
     "tailwindcss": "*",
     "@tailwindcss/typography": "*",
     "@tailwindcss/forms": "*",
     "chokidar": "*",
-    "http-proxy": "*",
     "babel-eslint": "^10.0.1",
     "eslint": "^5.15.3",
     "eslint-config-airbnb-base": "^13.1.0",

@@ -1,24 +1,24 @@
 import React from "react";
 import app from "nystem";
-import { Wrapper, ContentTypeRender } from "nystem-components";
-import { withRouter } from "react-router";
+import { Button, ContentTypeRender } from "nystem-components";
 
-const SessionLogout = ({ children, model, history, path, ...props }) => {
-  const { item, className, to } = model || props;
+const SessionLogout = ({ children, model, path, ...props }) => {
+  const { item, to, btnType, ...rest } = model || props;
   return (
-    <Wrapper
-      className={className}
+    <Button
+      {...rest}
+      type={btnType}
       onClick={(e) => {
         e.preventDefault();
         app().session.logout();
         if (!to) return;
 
-        history.replace(to);
+        window.history.replaceState({}, "", to);
       }}
     >
       {children || <ContentTypeRender path={path} items={item} />}
-    </Wrapper>
+    </Button>
   );
 };
 
-export default withRouter(SessionLogout);
+export default SessionLogout;

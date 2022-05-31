@@ -1,10 +1,14 @@
-import { withRouter } from "react-router";
 import app from "nystem";
+import { UseLocation } from "nystem-components";
+
+const { history: routerHistory } = window;
 
 let history = [];
 let at = 0;
 
-const RouterHistory = ({ location, history: routerHistory }) => {
+const RouterHistory = () => {
+  const location = UseLocation();
+
   let atNew =
     history.reduce(
       (found, item, index) => found || (location.key === item.key && index + 1),
@@ -24,4 +28,4 @@ const RouterHistory = ({ location, history: routerHistory }) => {
   return null;
 };
 
-export default withRouter(RouterHistory);
+export default RouterHistory;

@@ -1,10 +1,10 @@
 import React, { useState, useRef, useEffect } from "react";
-import { ContentTypeRender } from "nystem-components";
-import { withRouter } from "react-router";
+import { ContentTypeRender, UseLocation } from "nystem-components";
 
 const exclude = ["style"].map((item) => item.toUpperCase());
 
-const RouterPageNotFound = ({ model, path, children, location, ...rest }) => {
+const RouterPageNotFound = ({ model, path, children, ...rest }) => {
+  const location = UseLocation();
   const { className, renderAs, item } = model || rest;
   const [is404, setIs404] = useState(false);
   const ref = useRef();
@@ -32,4 +32,4 @@ const RouterPageNotFound = ({ model, path, children, location, ...rest }) => {
     </div>
   );
 };
-export default withRouter(RouterPageNotFound);
+export default RouterPageNotFound;

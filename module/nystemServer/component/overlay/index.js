@@ -1,13 +1,14 @@
 import React, { useState, useEffect } from "react";
 import app from "nystem";
-import { withRouter } from "react-router";
+import { UseLocation } from "nystem-components";
 import { OverlayContextProvider } from "./context";
 
 let atPath = "";
 
-const OverlayIndex = withRouter(({ children, match }) => {
+const OverlayIndex = ({ children, match }) => {
   // eslint-disable-next-line prefer-const
   let [open, setOpenState] = useState({});
+  const { pathname: path } = UseLocation();
 
   const overlayEvent = ({ event, overlayId }) => {
     if (event === "open") open[overlayId] = true;
@@ -25,7 +26,6 @@ const OverlayIndex = withRouter(({ children, match }) => {
     };
   });
 
-  const { path } = match;
   if (path !== atPath) app().event("overlay", { event: "close" });
   atPath = path;
 
@@ -42,6 +42,6 @@ const OverlayIndex = withRouter(({ children, match }) => {
         {child}
       </OverlayContextProvider>
     ));
-});
+};
 
 export default OverlayIndex;

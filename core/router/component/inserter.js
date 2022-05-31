@@ -1,5 +1,4 @@
-import { ContentTypeView, Wrapper } from "nystem-components";
-import { useLocation } from "react-router-dom";
+import { ContentTypeView, Wrapper, UseLocation } from "nystem-components";
 import React from "react";
 
 const checkMatch = {
@@ -10,32 +9,35 @@ const checkMatch = {
   exact: (path, match) => path === match,
 };
 
+const matchType = (path, match) => {
+  if (!match || match === "*") return "exact";
+
+  if (!(match instanceof Array)) match = [match];
+
+  let checkType;
+  return (
+    match.find((match) => {
+      checkType = match.endsWith("*") ? "start" : "exact";
+
+      if (match.startsWith("*"))
+        checkType = checkType === "start" ? "includes" : "end";
+
+      return checkMatch[checkType](path, match);
+    }) && checkType
+  );
+};
+
 const Inserter = (props) => {
-  const { pathname } = useLocation();
-  const { className, children, source, exclude } = props;
-  let { match } = props;
+  const { pathname } = UseLocation();
+  const { className, children, source, exclude, match } = props;
 
   let path = pathname;
   if (path[2] === ":") path = path.substring(3);
 
   if (exclude === path) return null;
 
-  let checkType = "exact";
-
-  if (match && match !== "*") {
-    if (!(match instanceof Array)) match = [match];
-
-    match = match.find((match) => {
-      if (match.endsWith("*")) checkType = "start";
-
-      if (match.startsWith("*"))
-        checkType = checkType === "start" ? "includes" : "end";
-
-      return checkMatch[checkType](path, match);
-    });
-
-    if (!match) return null;
-  }
+  const checkType = matchType(path, props.match);
+  if (!checkType) return null;
 
   if (children)
     return children instanceof Array && children.length ? (

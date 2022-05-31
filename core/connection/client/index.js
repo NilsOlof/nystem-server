@@ -27,7 +27,15 @@ module.exports = (app) => {
       callback(message);
     });
 
+  let res = "";
   const receiveSocket = (message) => {
+    if (message.length === 64000) {
+      res += message;
+      return;
+    }
+    message = res + message;
+    res = "";
+
     const data = JSON.parse(message);
 
     if (callbacks[data.callbackClient]) {
@@ -60,7 +68,7 @@ module.exports = (app) => {
     webSocket.onopen = () => {
       connection.on("emit", sendSocket);
       connection.event("connection", { connected: true });
-      timer = setInterval(() => webSocket.send("li"), 15000);
+      timer = setInterval(() => webSocket.send("{}"), 15000);
     };
 
     webSocket.onmessage = (message) => receiveSocket(message.data);

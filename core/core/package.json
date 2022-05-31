@@ -1,18 +1,14 @@
 {
   "scripts": {
     "start": "node server.js",
-    "deploy": "node app.js core/core/deploy.js",
-    "lint": "eslint .",
-    "lint:fix": "eslint . --fix"
+    "deploy": "node app.js core/core/deploy.js"
   },
   "license": "ISC",
   "dependencies": {
-    "express": "*",
     "fs-extra": "*"
   },
   "devDependencies": {
     "chokidar": "*",
-    "http-proxy": "*",
     "babel-eslint": "^10.0.1",
     "eslint": "^5.15.3",
     "eslint-config-airbnb-base": "^13.1.0",

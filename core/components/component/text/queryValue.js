@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
-import { useHistory } from "react-router-dom";
+import { UseLocation } from "nystem-components";
 
 const toType = {
   reference: (val) => val,
@@ -12,10 +12,9 @@ const toType = {
 
 const TextQueryValue = ({ model, setValue, value }) => {
   const { saveId, type, push } = model;
-  const history = useHistory();
   const [enabled, setEnabled] = useState(false);
 
-  const { search } = history.location;
+  const { search } = UseLocation();
 
   const getQueryValue = useCallback(
     (query) => {
@@ -30,14 +29,14 @@ const TextQueryValue = ({ model, setValue, value }) => {
   const setRouterValue = (value) => {
     if (!saveId) return;
 
-    const { pathname, search } = history.location;
+    const { pathname, search } = window.location;
 
     const reg = `(^\\?)|(\\&${saveId}=[^\\s&]*)`;
     const rest = search.replace(new RegExp(reg, "gi"), "");
     const add = value ? `&${saveId}=${value}` : "";
 
     setTimeout(() => {
-      history[push ? "push" : "replace"](`${pathname}?${rest}${add}`);
+      window.history[push ? "push" : "replace"](`${pathname}?${rest}${add}`);
     }, 0);
   };
 

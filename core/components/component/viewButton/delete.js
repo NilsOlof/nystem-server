@@ -1,9 +1,8 @@
 import React, { useState } from "react";
 import app from "nystem";
 import { Button } from "nystem-components";
-import { withRouter } from "react-router";
 
-const ViewButtonDelete = ({ view, model, history }) => {
+const ViewButtonDelete = ({ view, model }) => {
   const { className, size, btnType, deletedText } = model;
   const [text, setText] = useState(model.text);
 
@@ -15,7 +14,7 @@ const ViewButtonDelete = ({ view, model, history }) => {
         .database[view.contentType].delete({ id: view.value._id })
         .then(() =>
           model.redirectURL
-            ? history.replace(model.redirectURL)
+            ? window.history.replaceState({}, "", model.redirectURL)
             : setText(deletedText)
         );
   };
@@ -35,4 +34,4 @@ const ViewButtonDelete = ({ view, model, history }) => {
   );
 };
 
-export default withRouter(ViewButtonDelete);
+export default ViewButtonDelete;

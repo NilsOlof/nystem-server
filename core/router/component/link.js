@@ -1,22 +1,26 @@
 import React from "react";
+import { UseLocation, Wrapper } from "nystem-components";
 
-import { Route, Link as RLink } from "react-router-dom";
+const Link = ({ to, className, match, children, exact }) => {
+  const { isMatch, pathname } = UseLocation(match || to, exact);
 
-const toClassString = (className, match) => {
-  className = className instanceof Array ? className.join(" ") : className;
-  return match ? `${className} active` : className;
+  if (to === pathname || !to)
+    return (
+      <Wrapper className={[className, isMatch && "active"]}>{children}</Wrapper>
+    );
+
+  return (
+    <Wrapper
+      renderAs="a"
+      href={to || "/"}
+      className={[className, isMatch && "active"]}
+      onClick={(event) => {
+        event.preventDefault();
+        window.history.pushState({}, "", to);
+      }}
+    >
+      {children}
+    </Wrapper>
+  );
 };
-
-const Link = ({ to, className, match, children, exact }) => (
-  <Route
-    exact={Boolean(exact)}
-    path={match || (typeof to === "object" ? to.pathname : to)}
-  >
-    {({ match }) => (
-      <RLink to={to || "/"} className={toClassString(className, match)}>
-        {children}
-      </RLink>
-    )}
-  </Route>
-);
 export default Link;

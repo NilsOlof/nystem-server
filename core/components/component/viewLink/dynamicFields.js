@@ -24,7 +24,7 @@ const ViewLinkDynamicFields = ({ view, path, model }) => {
     <Link
       className={className}
       to={insertVal(href)}
-      match={match}
+      match={insertVal(match)}
       exact={exact}
     >
       <ContentTypeRender path={path} items={item} />

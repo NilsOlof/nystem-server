@@ -70,7 +70,7 @@ const MultigroupCopyItem = ({ model, value = [], path, view, setValue }) => {
         title={model.direction}
       >
         {["copy", "paste"].includes(model.text) ? (
-          <Icon className="h-6 w-6" icon={model.text} alt={model.text} />
+          <Icon className="h-4 w-4" icon={model.text} alt={model.text} />
         ) : (
           app().t(model.text)
         )}

@@ -1,100 +1,77 @@
+const http = require("http");
+
 module.exports = (app) => {
+  app.file = app.addeventhandler();
+
   require("./logToFile")(app);
+  require("./http")(app);
 
   // Clear all caches
-  app.express.get("/clearcache", (req, res) => {
+  app.file.on("/clearcache", (req, res) => {
     app.cacheTimeStart = new Date();
     app.event("clearcache");
     res.end("Done");
   });
 
   const { fs } = app;
-  const stream = require("stream");
-  const zlib = require("zlib");
-
-  // Return not updated (304) if cache not cleared and not debug
-  // otherwise return false and process request
-  app.isCached = (type, req, res, debug) => {
-    const age = debug ? 1 : 180;
-    res.setHeader("Cache-Control", `max-age=${age}, must-revalidate`);
-    res.setHeader("Expires", new Date(Date.now() + age * 1000).toUTCString());
-    const etag = `hepp--${app.cacheTimeStart.getTime()}`;
-    if (!debug && req && req.headers["if-none-match"] === etag) {
-      res.setHeader("Content-Type", type);
-      res.statusCode = 304;
-      res.end();
-      return true;
-    }
-    res.setHeader("Last-Modified", app.cacheTimeStart);
-    res.setHeader("ETag", etag);
-    res.setHeader("Content-Type", type);
-    res.statusCode = 200;
-    return false;
-  };
-
-  // Gzip the response
-  app.compressRes = (data, req, res) => {
-    if (app.atHost.debug) {
-      res.end(data);
-      return;
-    }
-    let acceptEncoding = req.headers["accept-encoding"];
-    const s = new stream.Readable();
-    s._read = function () {
-      if (sent) this.push(null);
-      else this.push(data);
-      sent = true;
-    };
-    let sent = false;
-    if (!acceptEncoding) acceptEncoding = "";
-    if (acceptEncoding.match(/\bgzip\b/)) {
-      res.writeHead(200, { "content-encoding": "gzip" });
-      s.pipe(zlib.createGzip()).pipe(res);
-    } else if (acceptEncoding.match(/\bdeflate\b/)) {
-      res.writeHead(200, { "content-encoding": "deflate" });
-      s.pipe(zlib.createDeflate()).pipe(res);
-    } else {
-      res.writeHead(200, {});
-      res.end(data);
-    }
-  };
-
-  let pipeFileCache = {};
-  // Stream file
-  app.pipeFile = (path, res) => {
-    if (!fs.existsSync(`${app.__dirname}/${path}`)) return false;
-    if (!app.atHost.debug) {
-      if (!pipeFileCache[path])
-        pipeFileCache[path] = fs.readFileSync(`${app.__dirname}/${path}`);
-      res.end(pipeFileCache[path]);
-      return true;
-    }
-    const fileStream = fs.createReadStream(`${app.__dirname}/${path}`);
-    fileStream.on("error", (err) => {
-      console.log(err.errno);
-    });
-    fileStream.on("data", (data) => {
-      res.write(data);
-    });
-    fileStream.on("end", () => {
-      res.end();
-    });
-    return true;
-  };
-
-  app.on("clearcache", () => {
-    pipeFileCache = {};
-  });
 
   app.on("start", 100, () => {
-    app.express.get("/image/*", (req, res) => {
-      const type = require("mime").getType(req.params[0]);
-      res.setHeader("Content-Type", type);
-      res.setHeader("Cache-Control", "max-age=31536000");
-      app.pipeFile(
-        `files/image/original/${req.params[0].replace(/\.\.\//g, "")}`,
-        res
-      );
+    if (app.settings.port) {
+      const server = http.createServer((req, res) => {
+        const method = req.method.toLowerCase();
+
+        app.file.event(method, {
+          req,
+          res,
+          id: app.uuid(),
+          method,
+        });
+      });
+
+      server.on("upgrade", (req, socket, head) => {
+        app.file.event("socket", { req, socket, head, id: app.uuid() });
+      });
+
+      server.listen(app.settings.port, app.settings.host);
+    }
+
+    app.file.on("get", -10, async ({ id, url, type }) => {
+      if (!url?.startsWith("/image/")) return;
+
+      const parts = url.split("/");
+      const fullPath = `${app.__dirname}/files/image/original/${
+        parts[parts.length - 1]
+      }`;
+
+      app.file.event("pipeFile", { id, type, fullPath });
+      return {};
+    });
+  });
+
+  app.file.on("pipeFile", ({ fullPath, id, secure, type }) => {
+    app.file.event("response", {
+      id,
+      headers: {
+        "content-type": type,
+        "Cache-Control": `max-age=${secure ? 0 : 31536000}`,
+      },
+    });
+
+    if (!fullPath) {
+      app.file.event("response", { id, closed: true });
+      return;
+    }
+
+    const fileStream = fs.createReadStream(fullPath);
+    fileStream.on("error", (err) => {
+      console.log(err);
+    });
+
+    fileStream.on("data", (data) => {
+      app.file.event("response", { id, data });
+    });
+    fileStream.on("end", () => {
+      app.file.event("response", { id, closed: true });
     });
   });
 };

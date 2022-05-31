@@ -1,10 +1,9 @@
 import { useEffect, useContext } from "react";
-import { useLocation } from "react-router-dom";
-import { PanelContext } from "nystem-components";
+import { PanelContext, UseLocation } from "nystem-components";
 
 const BootstrapPanelOpenByPath = ({ model, path, view }) => {
   const { toggleExpand, expanded } = useContext(PanelContext);
-  const { pathname } = useLocation();
+  const { pathname } = UseLocation();
 
   useEffect(() => {
     const insertVal = (val) =>
