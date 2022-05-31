@@ -52,7 +52,7 @@ const RouterUseQueryStore = (saveId, type, push) => {
     );
   };
 
-  return [value, setRouterValue, ref];
+  return [value === "" ? undefined : value, setRouterValue, ref];
 };
 
 export default RouterUseQueryStore;
