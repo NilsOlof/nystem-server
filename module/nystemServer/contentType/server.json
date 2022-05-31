@@ -1107,7 +1107,7 @@
 														},
 														{
 															"type": "copyToClipBoard",
-															"text": "edit-copy",
+															"text": "copy",
 															"field": "_id",
 															"btnSize": "xs",
 															"gotoOnClick": false,
@@ -1130,7 +1130,7 @@
 															"item": [
 																{
 																	"type": "copyToClipBoard",
-																	"text": "edit-copy",
+																	"text": "copy",
 																	"btnSize": "xs",
 																	"btnType": "default",
 																	"className": [

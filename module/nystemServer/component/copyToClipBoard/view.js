@@ -49,7 +49,7 @@ const CopyToClipBoardView = ({ model, value }) => {
         onClick={doVopyVal}
         size={model.btnSize}
       >
-        {["edit-copy", "paste"].includes(model.text) ? (
+        {["copy", "paste"].includes(model.text) ? (
           <Icon className="h-4 w-4" icon={model.text} alt={model.text} />
         ) : (
           app().t(model.text)

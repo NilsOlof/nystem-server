@@ -303,8 +303,8 @@
 							"btnType": "primary",
 							"falseBtnType": "primary",
 							"size": "xs",
-							"text": "terminal",
-							"falseText": "terminal"
+							"text": "terminal-solid",
+							"falseText": "terminal-solid"
 						},
 						{
 							"category": "contentTypeField",
