@@ -40,12 +40,11 @@
       "option": [
         "default",
         "primary",
+        "secondary",
         "info",
         "warning",
         "danger",
-        "success",
-        "ehc-primary",
-        "ehc-secondary"
+        "success"
       ],
       "limit": 1,
       "inline": true

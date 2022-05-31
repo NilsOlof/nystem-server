@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useMemo, useCallback } from "react";
 import app from "nystem";
 import { Button, Wrapper } from "nystem-components";
-import { withRouter } from "react-router";
 
 const baseButtonStates = {
   default: {
@@ -22,20 +21,17 @@ const baseButtonStates = {
   },
 };
 
-const ViewButtonInput = ({ view, model, value, history, location }) => {
+const ViewButtonInput = ({ view, model, value, location }) => {
   const { text, btnType } = model;
 
   const buttonStates = useMemo(
-    () =>
-      text
-        ? {
-            ...baseButtonStates,
-            default: {
-              text,
-              type: `${btnType || "secondary"}`,
-            },
-          }
-        : baseButtonStates,
+    () => ({
+      ...baseButtonStates,
+      default: {
+        text: text || baseButtonStates.default.text,
+        type: `${btnType || "secondary"}`,
+      },
+    }),
     [btnType, text]
   );
   const [button, setButton] = useState("default");
@@ -90,19 +86,28 @@ const ViewButtonInput = ({ view, model, value, history, location }) => {
     }
 
     const saved = await view.event("save", data);
-    const { pathname } = location;
+    const { pathname } = window.location;
 
     if (data && view.value._id && view.value._id !== data._id) {
-      history.replace(
+      window.window.history.replaceState(
+        {},
+        "",
         pathname.replace(`/${view.value._id}`, `/${data._id || ""}`)
       );
       return;
     }
 
-    if (!model.noRedirect && !view.value._id) {
+    if (!view.value._id) {
       view.setValue({ path: "_id", value: data._id });
-      history.replace(`${model.redirectURL || pathname}/${data._id || ""}`);
-      return;
+
+      if (!model.noRedirect) {
+        window.window.history.replaceState(
+          {},
+          "",
+          `${model.redirectURL || pathname}/${data._id || ""}`
+        );
+        return;
+      }
     }
 
     if (!saved) return;
@@ -110,13 +115,16 @@ const ViewButtonInput = ({ view, model, value, history, location }) => {
     if (model.clearOnSave) view.setValue({ value: {} });
 
     setButton("success");
-    setSavedTimer(
-      setTimeout(() => {
-        setButton("default");
-        setSavedTimer(false);
-      }, 1000)
-    );
-  }, [button, history, location, model, value, view]);
+
+    if (model.backOnSave) setTimeout(() => window.history.go(-1), 50);
+    else
+      setSavedTimer(
+        setTimeout(() => {
+          setButton("default");
+          setSavedTimer(false);
+        }, 1000)
+      );
+  }, [button, model, value, view]);
 
   useEffect(() => () => savedTimer && clearTimeout(savedTimer), [savedTimer]);
 
@@ -138,6 +146,18 @@ const ViewButtonInput = ({ view, model, value, history, location }) => {
     };
   }, [activeKeySaveView, handleSubmit, view]);
 
+  if (model.sendOnly && !error)
+    return (
+      <Button
+        className={model.className}
+        size={model.size}
+        onClick={handleSubmit}
+        type={buttonStates[button].type}
+      >
+        {app().t(buttonStates[button].text)}
+      </Button>
+    );
+
   return (
     <>
       <Wrapper className={model.className}>
@@ -158,14 +178,14 @@ const ViewButtonInput = ({ view, model, value, history, location }) => {
             </Button>
           </>
         )}
+        {error && (
+          <Wrapper className={`red py-2 px-1 ${savedTimer ? "font-bold" : ""}`}>
+            {error}
+          </Wrapper>
+        )}
       </Wrapper>
-      {error && (
-        <Wrapper className={`red py-2 px-1 ${savedTimer ? "font-bold" : ""}`}>
-          {error}
-        </Wrapper>
-      )}
     </>
   );
 };
 
-export default withRouter(ViewButtonInput);
+export default ViewButtonInput;

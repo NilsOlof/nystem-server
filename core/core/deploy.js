@@ -87,6 +87,8 @@ const saveContentTypes = () => {
   fs.writeFile(`${dirname}/web/src/contenttype.json`, JSON.stringify(out));
 };
 
+const delay = (delay) => new Promise((resolve) => setTimeout(resolve, delay));
+
 const deploy = async () => {
   try {
     saveContentTypes();
@@ -103,6 +105,7 @@ const deploy = async () => {
 
     // await runCommand("npm run build:css:prod", "/web");
     await runCommand("npm run build", "/web");
+    await delay(500);
     console.log("Build done, copying");
 
     const items = await fs.readdir(`${folderAsUnix}/web/build`);
@@ -127,6 +130,7 @@ const deploy = async () => {
     );
 
     console.log("Copy done, adding to git");
+    await delay(500);
     await runGitCommand("add *");
     await runGitCommand("commit -m Build");
 
@@ -137,6 +141,7 @@ const deploy = async () => {
     else await runGitCommand("push");
 
     await runGitCommand("status");
+    await delay(500);
     await runGitCommand("checkout develop");
     // await runCommand("npm run build:css", "/web");
     console.log("Deploy done");

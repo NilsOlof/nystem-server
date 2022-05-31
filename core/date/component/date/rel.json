@@ -1,0 +1,32 @@
+{
+  "item": [
+    {
+      "id": "className",
+      "text": "Class",
+      "type": "gridselect"
+    },
+    {
+      "type": "select",
+      "render": "checkbox",
+      "id": "show",
+      "text": "Show",
+      "inline": true,
+      "option": ["year", "day", "hour", "minit"]
+    },
+    {
+      "type": "switchButtons",
+      "item": [
+        {
+          "text": "Add unit",
+          "type": "boolean",
+          "id": "addSub"
+        }
+      ]
+    },
+    {
+      "type": "text",
+      "id": "fallback",
+      "text": "Fallback"
+    }
+  ]
+}

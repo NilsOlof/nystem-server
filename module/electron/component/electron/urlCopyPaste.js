@@ -1,12 +1,10 @@
 import React, { useRef } from "react";
-import { Button, Wrapper, Icon } from "nystem-components";
-import { useLocation, useHistory } from "react-router-dom";
+import { Button, Wrapper, Icon, UseLocation } from "nystem-components";
 import app from "nystem";
 
 const ElectronUrlCopyPaste = ({ model, ...rest }) => {
   const { className, btnType, paste, text, size, title } = model || rest;
-  const history = useHistory();
-  const location = useLocation();
+  const location = UseLocation();
   const ref = useRef();
 
   const doCopy = () => {
@@ -28,7 +26,7 @@ const ElectronUrlCopyPaste = ({ model, ...rest }) => {
   };
   const doPaste = async () => {
     const { pathname } = new URL(await navigator.clipboard.readText());
-    history.push(pathname);
+    window.history.pushState({}, "", pathname);
   };
 
   return (

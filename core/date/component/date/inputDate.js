@@ -43,13 +43,14 @@ const DateInputDate = ({ model, focus, setValue, value }) => {
         onSelect: setFromPicker,
         firstDay: 1,
       });
+      inputEl.current.value = inputVal;
     };
     start();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
-    <Wrapper className="relative w-1/2">
+    <Wrapper className="relative w-full">
       <input
         ref={inputEl}
         placeholder={app().t(text)}

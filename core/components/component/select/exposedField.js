@@ -2,13 +2,16 @@ import React, { useEffect } from "react";
 import { SelectInput, UseSearch, RouterUseQueryStore } from "nystem-components";
 
 const SelectExposedField = ({ model, view }) => {
-  const [value, setValue] = RouterUseQueryStore(model.saveId);
+  const [val, setValue] = RouterUseQueryStore(model.saveId);
+  const value =
+    val || (model.fallback === "false" ? false : model.fallback || undefined);
+
   UseSearch({ view, id: model.id, value, exact: model.exact });
 
   useEffect(() => {
-    if (value && !model.option.map((option) => option._id).includes(value))
+    if (val && !model.option.map((option) => option._id).includes(val))
       setValue(false);
-  }, [model.option, setValue, value]);
+  }, [model.option, setValue, val]);
 
   return (
     <SelectInput

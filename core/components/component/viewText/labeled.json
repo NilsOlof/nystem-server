@@ -21,6 +21,16 @@
       "id": "classNameInput"
     },
     {
+      "text": "Remove chars",
+      "type": "text",
+      "id": "removeChars"
+    },
+    {
+      "text": "Fallback",
+      "type": "text",
+      "id": "fallback"
+    },
+    {
       "type": "switchButtons",
       "item": [
         {
@@ -51,19 +61,10 @@
       ]
     },
     {
-      "type": "int",
-      "id": "height",
-      "text": "Height"
-    },
-    {
-      "type": "text",
-      "id": "info",
-      "text": "Info text"
-    },
-    {
-      "type": "text",
-      "id": "placeholder",
-      "text": "Placeholder"
+      "text": "Fields",
+      "id": "item",
+      "type": "viewCreator",
+      "expanded": true
     }
   ]
 }

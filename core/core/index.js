@@ -1,34 +1,13 @@
 /* eslint-disable import/extensions */
-const http = require("http");
+
+const crypto = require("crypto");
 const app = require("./init");
 
-require("./package.js")(app);
-
 console.time("load"); // eslint-disable-line no-console
-app.cacheTimeStart = new Date();
-
-if (app.settings.client.domain) {
-  try {
-    app.express = require("express")();
-
-    app.server = http.createServer(app.express);
-
-    app.express.use((req, res, next) => {
-      res.removeHeader("x-powered-by");
-      next();
-    });
-  } catch (e) {
-    console.log("Modules missing, exiting.");
-    return;
-  }
-} else app.express = { get: () => {}, post: () => {} };
-
+require("./package.js")(app);
 require("./exit.js")(app);
 
-const S4 = () =>
-  // eslint-disable-next-line no-bitwise
-  (((1 + Math.random()) * 0x10000) | 0).toString(16).substring(1);
-app.uuid = () => S4() + S4() + S4() + S4() + S4() + S4() + S4() + S4();
+app.uuid = () => crypto.randomUUID().replace(/-/g, "");
 app.capFirst = (text) =>
   text && text.substring(0, 1).toUpperCase() + text.substring(1);
 
@@ -57,10 +36,8 @@ app.filePaths.forEach((path) => {
   await app.event("start", app);
 
   console.timeEnd("load"); // eslint-disable-line no-console
-  if (app.settings.port)
-    app.server.listen(app.settings.port, app.settings.host);
-
   await app.event("started", app);
+
   console.log("Started");
 })();
 

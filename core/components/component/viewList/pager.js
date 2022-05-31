@@ -4,14 +4,15 @@ import {
   Wrapper,
   RouterUseQueryStore,
   DatabaseSearchContext,
+  UseLocation,
 } from "nystem-components";
-import { useHistory } from "react-router-dom";
+
 import app from "nystem";
 
 const ViewListPager = ({ view, model }) => {
   const { search } = useContext(DatabaseSearchContext);
   const [value, setValue, ref] = RouterUseQueryStore(model.saveId, "int", true);
-  const history = useHistory();
+  const location = UseLocation();
 
   const last = useRef(false);
 
@@ -36,7 +37,7 @@ const ViewListPager = ({ view, model }) => {
 
     if (!saveId) return;
 
-    const { pathname, search } = history.location;
+    const { pathname, search } = location;
 
     const reg = `(^\\?)|(\\&${saveId}=[^\\s&]*)`;
     const rest = search.replace(new RegExp(reg, "gi"), "");

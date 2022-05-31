@@ -1,7 +1,7 @@
 import * as components from "nystem-components";
 
 const React = require("react");
-const ReactDOM = require("react-dom");
+const ReactDOM = require("react-dom/client");
 
 const base = document.createElement("div");
 base.className = "react-root";
@@ -9,8 +9,11 @@ base.id = "react-root";
 document.body.appendChild(base);
 
 export default (app) => {
-  let comp;
+  let root;
+
   const loadDom = async () => {
+    if (root) return;
+
     const { renderer, component, element } = await app.event(
       "getElementContext",
       {
@@ -19,14 +22,16 @@ export default (app) => {
         element: base,
       }
     );
-    comp = element;
-    renderer.render(React.createElement(components[component]), element);
+
+    root = renderer.createRoot(element);
+    root.render(React.createElement(components[component]));
   };
 
   app.on("loaded", loadDom);
   app.on("reload", loadDom);
 
   app.on("unmount", () => {
-    ReactDOM.unmountComponentAtNode(comp);
+    root.unmount();
+    root = undefined;
   });
 };

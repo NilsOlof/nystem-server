@@ -8,8 +8,10 @@ module.exports = (app) => {
     if (exist) cached = await load(cachePath);
   });
 
-  app.express.get("/geticon/*", async (req, res) => {
-    const name = req.params[0].split(/[/.]/)[0];
+  app.file.on("get", async ({ id, url = "" }) => {
+    if (!url.startsWith("/geticon/")) return;
+
+    const name = url.split(/[/.]/)[2];
 
     let data = cached[name];
 
@@ -24,8 +26,9 @@ module.exports = (app) => {
         }, 1000);
       }
     }
+    if (!data) data = "missing";
 
-    res.setHeader("content-type", "text/plain");
-    res.end(data || "missing");
+    app.file.event("response", { id, data, closed: true });
+    return {};
   });
 };

@@ -1,7 +1,30 @@
 module.exports = function (app) {
   if (!app.settings.chromextension) return;
 
-  const fetch = require("node-fetch");
+  const http = require("http");
+
+  const fetch = (url) =>
+    new Promise((resolve, reject) => {
+      http
+        .request(url, (response) => {
+          const bufs = [];
+
+          response.on("data", (chunk) => {
+            bufs.push(chunk);
+          });
+
+          response.on("end", () => {
+            resolve(Buffer.concat(bufs));
+          });
+
+          response.on("error", (error) => {
+            console.log(error);
+            reject(error);
+          });
+        })
+        .end();
+    });
+
   let timer;
   const { name } = app.settings.client;
 
@@ -28,14 +51,14 @@ module.exports = function (app) {
     console.log("Update extension");
     clearTimeout(timer);
 
-    const indexHtml = await fetch(host).then((response) => response.text());
+    const indexHtml = (await fetch(host)).toString();
 
     const files = await Promise.all(
       getIncludes(indexHtml)
         .filter((path) => !path.includes("manifest.json"))
         .map(async (path) => ({
           path,
-          contents: await fetch(`${host}/${path}`).then((res) => res.buffer()),
+          contents: await fetch(`${host}/${path}`),
         }))
     );
 
@@ -75,11 +98,9 @@ module.exports = function (app) {
     update();
     require("./manifest.js")(app);
     [16, 24, 32, 48, 128, 512].forEach((size) => {
-      fetch(`${host}/icon/${size}.png`)
-        .then((res) => res.buffer())
-        .then((buffer) => {
-          fs.outputFile(`${extPath}/icon/${size}.png`, buffer);
-        });
+      fetch(`${host}/icon/${size}.png`).then((buffer) => {
+        fs.outputFile(`${extPath}/icon/${size}.png`, buffer);
+      });
     });
   };
 

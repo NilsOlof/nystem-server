@@ -27,6 +27,11 @@
           "type": "boolean",
           "id": "clearOnSave",
           "text": "Clear on save"
+        },
+        {
+          "type": "boolean",
+          "id": "backOnSave",
+          "text": "Go back on save"
         }
       ]
     },

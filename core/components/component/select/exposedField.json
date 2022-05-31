@@ -30,6 +30,11 @@
       "text": "Limit"
     },
     {
+      "type": "text",
+      "id": "fallback",
+      "text": "Fallback"
+    },
+    {
       "text": "Dropdown text",
       "type": "text",
       "id": "dropdownText"
@@ -66,6 +71,11 @@
           "text": "Focus",
           "type": "boolean",
           "id": "focus"
+        },
+        {
+          "text": "Exact",
+          "type": "boolean",
+          "id": "exact"
         }
       ]
     }

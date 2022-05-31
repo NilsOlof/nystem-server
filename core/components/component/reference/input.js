@@ -27,7 +27,7 @@ const InputSpes = ({ focus, onBlur, onFocus, ...props }) => {
     <Input
       ref={inputEl}
       {...props}
-      className={className || "w-full sm:w-1/2"}
+      className={className || "w-full"}
       onChange={props.onChange}
       onFocus={() => {
         setInFocus(true);

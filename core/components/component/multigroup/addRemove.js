@@ -21,7 +21,7 @@ const MultigroupAddRemove = ({ model, view, setValue, value, path }) => {
   return (
     <Button
       renderAs="button"
-      className={model.className}
+      className={[model.className, "rounded"]}
       type={model.btnType}
       onClick={action === "Add" ? doAdd : doDelete}
       size={model.btnSize}
@@ -29,7 +29,7 @@ const MultigroupAddRemove = ({ model, view, setValue, value, path }) => {
     >
       {!model.buttonText ? (
         <Icon
-          className={["h-6 w-6", action === "Add" && "transform rotate-45"]}
+          className={["h-4 w-4 ", action === "Add" && "rotate-45 transform"]}
           icon="xmark"
           title={action}
         />

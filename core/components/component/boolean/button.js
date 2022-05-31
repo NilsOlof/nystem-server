@@ -23,6 +23,8 @@ const BooleanButton = ({ setValue, model, value }) => {
         "play",
         "folder",
         "gear",
+        "wallet",
+        "location",
         "terminal-solid",
         "brands-github",
       ].includes(text) ? (

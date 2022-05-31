@@ -20,12 +20,12 @@ module.exports = (app) => {
   let icoBuffer = "";
   const sizes = [16, 24, 32, 48, 64, 128, 192];
   const buffers = {};
+  const buffersWebp = {};
   let original = false;
 
   const bgColor = hexToRgb(app.settings.bgColor || "#FFFFFF00");
 
   app.on("generateIconSize", async ({ width, height }) => {
-    console.log("Do generateIconSize", width, typeof original);
     if (!original) return;
 
     const id = width + (height ? `x${height}` : "");
@@ -33,11 +33,14 @@ module.exports = (app) => {
     let density = (width / original.width) * 72;
     density = density < 1 ? 1 : density;
 
-    buffers[id] = await sharp(original.buffer, { density })
-      .resize(width, height || width, { fit: "contain", background: bgColor })
-      .toBuffer();
+    const image = await sharp(original.buffer, { density }).resize(
+      width,
+      height || width,
+      { fit: "contain", background: bgColor }
+    );
+    buffers[id] = await image.toBuffer();
+    buffersWebp[id] = await image.webp().toBuffer();
 
-    console.log("generateIconSize done");
     return { buffer: buffers[id] };
   });
 
@@ -61,29 +64,44 @@ module.exports = (app) => {
   if (app.settings.favicon)
     app.event("favicon", { file: app.settings.favicon });
 
-  app.express.get("/favicon.ico", (req, res) => {
-    const type = require("mime").getType(".ico");
-    if (app.isCached(type, req, res)) return;
+  app.file.on("get", ({ id, url, type }) => {
+    if (url !== "/favicon.ico") return;
 
-    res.setHeader("Content-Type", type);
-    res.end(icoBuffer);
+    app.file.event("response", {
+      id,
+      data: icoBuffer,
+      closed: true,
+      headers: { "content-type": type },
+    });
+    return {};
   });
 
   const toInt = (val) => parseInt(val, 10);
 
-  app.express.get("/icon/*", async (req, res) => {
-    const [width, height, ext] = req.params[0].split(/[x.]/);
-    const type = require("mime").getType(".png");
-    if (app.isCached(type, req, res)) return;
+  app.file.on("get", async ({ id, url, type, headers }) => {
+    if (!url?.startsWith("/icon/")) return;
+    const [, , width, height, ext] = url.split(/[/x.]/);
 
-    const id = width + (ext ? `x${height}` : "");
-    if (!buffers[id])
+    let data;
+    const name = width + (ext ? `x${height}` : "");
+
+    if (!buffers[name])
       await app.event("generateIconSize", {
         width: toInt(width),
         height: ext && toInt(height),
       });
 
-    res.setHeader("Content-Type", type);
-    res.end(buffers[id] || "");
+    if (headers.accept?.includes("image/webp")) {
+      type = "image/webp";
+      data = buffersWebp[name];
+    } else data = buffers[name];
+
+    app.file.event("response", {
+      id,
+      data,
+      closed: true,
+      headers: { "content-type": type },
+    });
+    return {};
   });
 };
