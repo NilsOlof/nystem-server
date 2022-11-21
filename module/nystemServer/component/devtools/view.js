@@ -56,8 +56,6 @@ const DevtoolsView = () => {
   }, []);
 
   useEffect(() => {
-    console.log("DevtoolsView 23.1");
-    setPro("23.1");
     let domain = "";
     const { tabId } = window.chrome.devtools.inspectedWindow;
     window.chrome.tabs.get(tabId, (tab) => {
@@ -66,14 +64,13 @@ const DevtoolsView = () => {
       console.log("DevtoolsView 23.2");
       console.log("listning to", domain);
     });
-    console.log("DevtoolsView 23.3");
-    setPro("23.3");
 
-    console.log("DevtoolsViewDevtoolsView", domain);
     const onNew = (tab) => {
-      console.log("DevtoolsView 23.4");
-      setPro("23.4");
-      console.log(tab.pendingUrl, `nystem://${domain}`);
+      setPro(
+        ` ${tab.pendingUrl} nystem://${domain} ${tab.pendingUrl.startsWith(
+          `nystem://${domain}`
+        )}`
+      );
       if (!tab.pendingUrl.startsWith(`nystem://${domain}`)) return;
 
       app()
@@ -99,8 +96,8 @@ const DevtoolsView = () => {
       window.chrome.tabs.onCreated.removeListener(onNew);
     };
   }, []);
-  console.log("DevtoolsView 23.0");
-  return `DevtoolsView 24 ${pro}`;
+
+  return `DevtoolsView 25 ${pro}`;
 };
 
 export default DevtoolsView;
