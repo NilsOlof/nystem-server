@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import app from "nystem";
 
 const sendMessage = (message) =>
@@ -59,21 +59,15 @@ const DevtoolsView = () => {
     window.chrome.tabs.get(tabId, (tab) => {
       // eslint-disable-next-line prefer-destructuring
       domain = tab.url.split("/")[2].split(".")[0];
-      console.log("DevtoolsView 23.2");
-      console.log("listning to", domain);
     });
 
     const onNew = (tab) => {
-      const url = tab.pendingUrl.replace(
-        new RegExp("nystem:\\/\\/[a-z\\/:]+\\/underproduktion\\/", "img"),
-        `nystem://${domain}/`
-      );
-      if (!url.startsWith(`nystem://${domain}`)) return;
+      if (!tab.pendingUrl.startsWith(`nystem://${domain}`)) return;
 
       app()
         .event("devtools", { path: "", event: "devtoolsnystvscode" })
         .then(({ base }) => {
-          let path = url
+          let path = tab.pendingUrl
             .replace(`nystem://${domain}`, base)
             .replace(/\.([0-9]+)$/, ":$1")
             .split("/");
@@ -94,7 +88,7 @@ const DevtoolsView = () => {
     };
   }, []);
 
-  return null; // `DevtoolsView 25 ${pro}`;
+  return null;
 };
 
 export default DevtoolsView;
