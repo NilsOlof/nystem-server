@@ -1,1223 +1,933 @@
 {
-	"name": "server",
-	"_roles": {
-		"save": []
-	},
-	"default": {
-		"length": "50",
-		"text_mandatory": "Field is mandatory",
-		"mandatory": true,
-		"type": "text"
-	},
-	"item": [
-		{
-			"id": "name",
-			"text": "Name",
-			"type": "text"
-		},
-		{
-			"id": "host",
-			"text": "Host",
-			"type": "multilinetext"
-		},
-		{
-			"id": "path",
-			"text": "Path",
-			"type": "text",
-			"length": "100"
-		},
-		{
-			"type": "int",
-			"id": "port",
-			"text": "Port"
-		},
-		{
-			"id": "showinoverview",
-			"text": "In overview",
-			"type": "boolean",
-			"mandatory": false
-		}
-	],
-	"machinename": "server",
-	"storage": "data",
-	"views": [
-		{
-			"name": "devtools",
-			"item": [
-				{
-					"category": "view",
-					"type": "extension",
-					"item": [
-						{
-							"category": "view",
-							"type": "extension",
-							"format": "tab",
-							"item": [
-								{
-									"category": "view",
-									"type": "extension",
-									"item": [
-										{
-											"type": "viewText",
-											"text": "Hepp"
-										}
-									],
-									"format": "search",
-									"field": "host",
-									"extract": "(\\/\\/)([^\\/]+)"
-								},
-								{
-									"category": "view",
-									"type": "style",
-									"item": [
-										{
-											"category": "view",
-											"type": "bootstrap",
-											"format": "panel",
-											"header": [
-												{
-													"category": "view",
-													"type": "style",
-													"item": [
-														{
-															"category": "view",
-															"type": "bootstrap",
-															"format": "panelToggle",
-															"item": [
-																{
-																	"category": "contentTypeField",
-																	"type": "text",
-																	"id": "name",
-																	"renderAs": "div",
-																	"className": [
-																		""
-																	],
-																	"format": "view"
-																}
-															],
-															"icon": true,
-															"className": [
-																"flex",
-																"items-center",
-																"content-center",
-																"py-1",
-																"",
-																"flex-grow"
-															]
-														},
-														{
-															"category": "view",
-															"type": "viewInView",
-															"contentType": "serverStatus",
-															"view": "controlnohide",
-															"className": [
-																""
-															],
-															"format": "empty",
-															"viewId": "{_id}"
-														}
-													],
-													"className": [
-														"flex",
-														"items-center"
-													]
-												}
-											],
-											"item": [
-												{
-													"category": "view",
-													"type": "viewInView",
-													"contentType": "serverStatus",
-													"view": "status",
-													"viewId": "{_id}",
-													"format": "empty"
-												}
-											],
-											"typeClass": "defaultWithoutPadding",
-											"stateStore": "disabled",
-											"expanded": true
-										}
-									],
-									"format": "onOverHandle",
-									"className": [
-										"m-3",
-										"max-w-4xl"
-									]
-								}
-							],
-							"match": "localhost"
-						},
-						{
-							"type": "devtools"
-						},
-						{
-							"type": "viewInView",
-							"contentType": "dbexplorer",
-							"view": "list"
-						},
-						{
-							"type": "viewInView",
-							"contentType": "server",
-							"view": "devtoolsettings"
-						}
-					]
-				}
-			]
-		},
-		{
-			"name": "devtoolsettings",
-			"item": [
-				{
-					"type": "bootstrap",
-					"format": "panel",
-					"stateStore": "disabled",
-					"header": [
-						{
-							"type": "bootstrap",
-							"format": "panelToggle",
-							"icon": true,
-							"className": [
-								"flex",
-								"items-center"
-							],
-							"item": [
-								{
-									"type": "viewText",
-									"text": "Settings",
-									"className": [
-										"py-2"
-									]
-								}
-							]
-						}
-					],
-					"item": [
-						{
-							"type": "devtools",
-							"format": "settings"
-						},
-						{
-							"type": "viewText",
-							"format": "codemirror",
-							"className": [
-								"h-96"
-							]
-						}
-					],
-					"className": [
-						"m-3",
-						"shadow"
-					],
-					"typeClass": "defaultWithoutPadding"
-				}
-			]
-		},
-		{
-			"name": "extension",
-			"item": [
-				{
-					"category": "view",
-					"type": "extension",
-					"item": [
-						{
-							"category": "view",
-							"type": "extension",
-							"format": "tab",
-							"item": [
-								{
-									"category": "view",
-									"type": "extension",
-									"format": "search",
-									"field": "host",
-									"extract": "(\\/\\/)([^\\/]+)",
-									"item": [
-										{
-											"category": "view",
-											"type": "router",
-											"format": "redirect",
-											"to": "/"
-										}
-									]
-								},
-								{
-									"category": "view",
-									"type": "style",
-									"item": [
-										{
-											"category": "contentTypeField",
-											"type": "text",
-											"id": "name",
-											"renderAs": "div",
-											"className": [
-												"flex-grow",
-												"pt-3",
-												"pl-2"
-											]
-										},
-										{
-											"category": "view",
-											"type": "viewInView",
-											"contentType": "serverStatus",
-											"view": "controlnohide",
-											"className": [
-												""
-											],
-											"format": "empty",
-											"viewId": "{_id}"
-										}
-									],
-									"className": [
-										"flex",
-										"items-center",
-										"p-1",
-										"pt-0"
-									]
-								},
-								{
-									"category": "view",
-									"type": "viewInView",
-									"contentType": "serverStatus",
-									"view": "status",
-									"viewId": "{_id}",
-									"format": "empty"
-								}
-							],
-							"match": "localhost"
-						},
-						{
-							"category": "view",
-							"type": "extension",
-							"format": "tab",
-							"match": "localhost",
-							"invert": true,
-							"item": [
-								{
-									"category": "view",
-									"type": "router",
-									"format": "redirect",
-									"to": "/"
-								}
-							]
-						}
-					]
-				}
-			]
-		},
-		{
-			"name": "input",
-			"format": "input",
-			"item": [
-				{
-					"category": "view",
-					"type": "style",
-					"item": [
-						{
-							"category": "view",
-							"type": "bootstrap",
-							"format": "panel",
-							"header": [
-								{
-									"category": "view",
-									"type": "style",
-									"item": [
-										{
-											"category": "view",
-											"type": "bootstrap",
-											"format": "panelToggle",
-											"item": [
-												{
-													"category": "contentTypeField",
-													"type": "text",
-													"id": "name",
-													"renderAs": "div",
-													"className": [
-														""
-													],
-													"format": "view"
-												}
-											],
-											"icon": true,
-											"className": [
-												"flex",
-												"items-center",
-												"content-center",
-												"py-1",
-												"",
-												"flex-grow"
-											]
-										},
-										{
-											"category": "view",
-											"type": "viewInView",
-											"contentType": "serverStatus",
-											"view": "controlnohide",
-											"className": [
-												""
-											],
-											"format": "empty",
-											"viewId": "{_id}"
-										}
-									],
-									"className": [
-										"flex",
-										"items-center"
-									]
-								}
-							],
-							"item": [
-								{
-									"category": "view",
-									"type": "viewInView",
-									"contentType": "serverStatus",
-									"view": "status",
-									"viewId": "{_id}",
-									"format": "empty"
-								}
-							],
-							"typeClass": "defaultWithoutPadding",
-							"stateStore": "byUrl"
-						}
-					],
-					"format": "onOverHandle",
-					"className": [
-						"p-3",
-						"max-w-4xl"
-					]
-				},
-				{
-					"type": "bootstrap",
-					"category": "view",
-					"row": true,
-					"format": "view",
-					"item": [
-						{
-							"category": "contentTypeField",
-							"type": "text",
-							"id": "name",
-							"format": "view",
-							"renderAs": "h4"
-						},
-						{
-							"id": "name",
-							"type": "text",
-							"category": "contentTypeField",
-							"mandatory": true
-						},
-						{
-							"id": "host",
-							"type": "multilinetext",
-							"category": "contentTypeField"
-						},
-						{
-							"category": "contentTypeField",
-							"type": "int",
-							"id": "port"
-						},
-						{
-							"id": "path",
-							"type": "text",
-							"category": "contentTypeField",
-							"mandatory": true
-						},
-						{
-							"category": "contentTypeField",
-							"type": "boolean",
-							"id": "showinoverview",
-							"text": "In overview"
-						},
-						{
-							"type": "viewButton",
-							"category": "view"
-						}
-					],
-					"className": [
-						"px-4"
-					]
-				}
-			]
-		},
-		{
-			"name": "link",
-			"format": "view",
-			"item": [
-				{
-					"category": "contentTypeField",
-					"type": "multilinetext",
-					"id": "host",
-					"format": "fields",
-					"limit": "1",
-					"item": [
-						{
-							"type": "icon",
-							"icon": "arrow-up-right-from-square",
-							"className": [
-								"w-4",
-								"h-4"
-							]
-						}
-					],
-					"className": [
-						""
-					]
-				}
-			]
-		},
-		{
-			"name": "list",
-			"item": [
-				{
-					"category": "view",
-					"type": "style",
-					"className": [
-						"flex",
-						"items-center",
-						"max-w-xl",
-						"pl-4"
-					],
-					"item": [
-						{
-							"type": "viewText",
-							"category": "view",
-							"text": "Servers",
-							"renderAs": "h4",
-							"className": [
-								"flex-grow"
-							]
-						},
-						{
-							"category": "view",
-							"type": "viewList",
-							"format": "search",
-							"text": "Search",
-							"className": [
-								""
-							]
-						},
-						{
-							"type": "viewLink",
-							"category": "view",
-							"className": [
-								"bg-blue-500",
-								"hover:bg-blue-500",
-								"text-white",
-								"rounded",
-								"shadow-sm",
-								"px-3",
-								"py-2"
-							],
-							"text": "Add",
-							"href": "/server/input",
-							"renderType": "primary",
-							"format": "button"
-						}
-					]
-				},
-				{
-					"category": "view",
-					"type": "database",
-					"format": "search"
-				},
-				{
-					"type": "viewList",
-					"category": "view",
-					"renderFormat": "table",
-					"autoupdate": true,
-					"reversesortby": true,
-					"item": [
-						{
-							"id": "name",
-							"type": "text",
-							"category": "contentTypeField",
-							"format": "link",
-							"toFormat": "input",
-							"className": [
-								"font-bold",
-								"py-1",
-								"px-2",
-								"block"
-							]
-						},
-						{
-							"id": "path",
-							"type": "text",
-							"category": "contentTypeField",
-							"className": [
-								"",
-								"py-1",
-								"px-2"
-							]
-						},
-						{
-							"id": "port",
-							"type": "text",
-							"category": "contentTypeField",
-							"className": [
-								"",
-								"py-1",
-								"px-2"
-							]
-						},
-						{
-							"id": "showinoverview",
-							"type": "boolean",
-							"category": "contentTypeField",
-							"format": "view",
-							"className": [
-								"",
-								"my-1",
-								"mx-2",
-								"w-4",
-								"h-4"
-							]
-						}
-					],
-					"headerFields": [
-						{
-							"id": "name",
-							"type": "text",
-							"category": "contentTypeField",
-							"format": "sortBy",
-							"text": "Name",
-							"className": [
-								"",
-								"py-1",
-								"px-2",
-								"block"
-							]
-						},
-						{
-							"category": "contentTypeField",
-							"type": "text",
-							"id": "path",
-							"format": "sortBy",
-							"className": [
-								"",
-								"py-1",
-								"px-2"
-							]
-						},
-						{
-							"category": "contentTypeField",
-							"type": "int",
-							"id": "port",
-							"format": "sortBy",
-							"className": [
-								"",
-								"py-1",
-								"px-2"
-							]
-						},
-						{
-							"category": "view",
-							"type": "viewText",
-							"text": "Overview",
-							"className": [
-								"",
-								"py-1",
-								"px-2"
-							]
-						}
-					],
-					"sortby": {
-						"id": "_chdate",
-						"text": "Change date"
-					},
-					"filter": [],
-					"className": [
-						"table-striped"
-					],
-					"rowClassName": [
-						""
-					]
-				}
-			]
-		},
-		{
-			"name": "menu",
-			"format": "view",
-			"item": [
-				{
-					"type": "router",
-					"match": "index.html",
-					"item": [
-						{
-							"type": "router",
-							"format": "redirect",
-							"to": "/"
-						}
-					]
-				},
-				{
-					"type": "style",
-					"item": [
-						{
-							"type": "electron",
-							"className": [
-								"flex",
-								"items-center",
-								"max-w-4xl",
-								"w-full",
-								"px-4"
-							],
-							"item": [
-								{
-									"category": "view",
-									"type": "viewLink",
-									"format": "fields",
-									"contentType": "settings",
-									"view": "menu",
-									"item": [
-										{
-											"category": "view",
-											"type": "icon",
-											"className": [
-												"w-8",
-												"h-8",
-												"p-2",
-												"select-none"
-											],
-											"icon": "bars"
-										}
-									]
-								},
-								{
-									"category": "view",
-									"type": "viewLink",
-									"format": "link",
-									"text": "Nystem server",
-									"href": "/",
-									"className": [
-										"pl-1",
-										"flex-grow",
-										"select-none"
-									]
-								},
-								{
-									"type": "connection",
-									"item": [
-										{
-											"category": "view",
-											"type": "viewImage",
-											"className": [
-												"w-10",
-												"h-10",
-												"grayscale",
-												"mb-1",
-												"select-none",
-												"opacity-30"
-											],
-											"filename": "logo3.svg"
-										}
-									],
-									"offline": true
-								},
-								{
-									"type": "connection",
-									"item": [
-										{
-											"category": "view",
-											"type": "viewImage",
-											"className": [
-												"w-10",
-												"h-10",
-												"mb-1",
-												"select-none"
-											],
-											"filename": "logo3.svg"
-										}
-									]
-								}
-							],
-							"format": "moveWindow"
-						},
-						{
-							"type": "viewText",
-							"className": [
-								"flex-grow",
-								"select-none"
-							]
-						},
-						{
-							"type": "electron",
-							"item": [
-								{
-									"type": "electron",
-									"format": "appButton",
-									"buttonActive": "",
-									"className": [
-										"p-2",
-										"w-8",
-										"h-8",
-										"cursor-pointer",
-										"hover:bg-gray-200",
-										"rounded"
-									],
-									"button": "window-minimize"
-								},
-								{
-									"type": "electron",
-									"format": "appButton",
-									"buttonActive": "rectangle",
-									"className": [
-										"p-2",
-										"w-8",
-										"h-8",
-										"cursor-pointer",
-										"hover:bg-gray-200",
-										"rounded"
-									],
-									"button": "regular-square-full"
-								},
-								{
-									"type": "electron",
-									"format": "appButton",
-									"buttonActive": "",
-									"className": [
-										"p-2",
-										"w-8",
-										"h-8",
-										"cursor-pointer",
-										"hover:bg-gray-200",
-										"rounded",
-										"mr-1"
-									],
-									"button": "xmark"
-								}
-							]
-						}
-					],
-					"className": [
-						"flex",
-						"text-left",
-						"font-bold",
-						"py-2",
-						"pb-0",
-						"items-center",
-						"w-full"
-					]
-				}
-			]
-		},
-		{
-			"name": "menupage",
-			"format": "view"
-		},
-		{
-			"name": "overview",
-			"format": "list",
-			"item": [
-				{
-					"category": "view",
-					"type": "database",
-					"format": "search",
-					"filter": [
-						{
-							"and": [
-								[
-									"showinoverview",
-									"true"
-								]
-							]
-						}
-					],
-					"sortby": {
-						"id": "name",
-						"text": "name"
-					}
-				},
-				{
-					"category": "view",
-					"type": "viewList",
-					"item": [
-						{
-							"category": "view",
-							"type": "style",
-							"item": [
-								{
-									"category": "view",
-									"type": "bootstrap",
-									"format": "panel",
-									"header": [
-										{
-											"category": "view",
-											"type": "style",
-											"item": [
-												{
-													"category": "view",
-													"type": "bootstrap",
-													"format": "panelToggle",
-													"item": [
-														{
-															"category": "contentTypeField",
-															"type": "text",
-															"id": "name",
-															"renderAs": "div",
-															"className": [
-																""
-															]
-														}
-													],
-													"icon": true,
-													"className": [
-														"flex",
-														"items-center",
-														"content-center",
-														"py-1",
-														"",
-														"flex-grow"
-													]
-												},
-												{
-													"category": "view",
-													"type": "viewInView",
-													"contentType": "serverStatus",
-													"view": "control",
-													"className": [
-														""
-													],
-													"format": "empty",
-													"viewId": "{_id}"
-												}
-											],
-											"className": [
-												"flex",
-												"items-center"
-											]
-										}
-									],
-									"item": [
-										{
-											"category": "view",
-											"type": "viewInView",
-											"contentType": "serverStatus",
-											"view": "status",
-											"viewId": "{_id}",
-											"format": "empty"
-										}
-									],
-									"typeClass": "defaultWithoutPadding"
-								}
-							],
-							"format": "onOverHandle",
-							"className": [
-								""
-							]
-						}
-					],
-					"renderFormat": "div",
-					"headerFields": [],
-					"className": [
-						"p-3",
-						"max-w-4xl"
-					]
-				}
-			]
-		},
-		{
-			"name": "test",
-			"format": "list",
-			"item": [
-				{
-					"type": "bootstrap",
-					"format": "panel",
-					"stateStore": "disabled",
-					"header": [
-						{
-							"type": "bootstrap",
-							"format": "panelToggle",
-							"icon": true,
-							"className": [
-								"flex",
-								"items-center"
-							],
-							"item": [
-								{
-									"type": "viewText",
-									"text": "Database explorer"
-								}
-							]
-						}
-					],
-					"item": [
-						{
-							"type": "database",
-							"format": "search",
-							"count": 20,
-							"sortby": [
-								{
-									"id": "_chdate",
-									"type": "date"
-								}
-							],
-							"reversesortby": true
-						},
-						{
-							"type": "devtools",
-							"format": "selectContenttype",
-							"limit": 1,
-							"inline": true,
-							"render": "button"
-						},
-						{
-							"type": "style",
-							"item": [
-								{
-									"type": "viewList",
-									"format": "search",
-									"className": [
-										"w-96"
-									]
-								},
-								{
-									"type": "viewText",
-									"text": "Count",
-									"className": [
-										"ml-6"
-									]
-								},
-								{
-									"type": "viewList",
-									"format": "listStat",
-									"show": [
-										"searchTotal",
-										"total"
-									],
-									"text": "",
-									"className": [
-										"ml-6"
-									]
-								}
-							],
-							"className": [
-								"flex",
-								"items-center",
-								"my-3"
-							]
-						},
-						{
-							"type": "style",
-							"item": [
-								{
-									"id": "_crdate",
-									"type": "date",
-									"format": "sortBy",
-									"text": "Created",
-									"className": [
-										"w-40"
-									]
-								},
-								{
-									"id": "_chdate",
-									"type": "date",
-									"format": "sortBy",
-									"text": "Changed",
-									"className": [
-										"w-40"
-									]
-								},
-								{
-									"type": "text",
-									"id": "name",
-									"format": "sortBy",
-									"className": [
-										"w-40"
-									]
-								},
-								{
-									"id": "_id",
-									"type": "text",
-									"format": "sortBy",
-									"text": "Id",
-									"className": [
-										"w-32"
-									]
-								}
-							],
-							"className": [
-								"flex",
-								"ml-6",
-								"mb-6"
-							]
-						},
-						{
-							"type": "viewList",
-							"format": "infinite",
-							"item": [
-								{
-									"type": "viewList",
-									"rowClassName": [
-										""
-									],
-									"item": [
-										{
-											"type": "bootstrap",
-											"format": "panel",
-											"stateStore": "byUrl",
-											"header": [
-												{
-													"type": "bootstrap",
-													"format": "panelToggle",
-													"iconClassName": [
-														"w-4",
-														"h-4"
-													],
-													"icon": true,
-													"item": [
-														{
-															"id": "_crdate",
-															"type": "date",
-															"className": [
-																"w-40"
-															]
-														},
-														{
-															"id": "_chdate",
-															"type": "date",
-															"className": [
-																"w-40"
-															]
-														},
-														{
-															"type": "text",
-															"id": "name"
-														},
-														{
-															"type": "conditional",
-															"condition": [
-																[
-																	"name",
-																	"false"
-																]
-															],
-															"item": [
-																{
-																	"id": "_id",
-																	"type": "text",
-																	"className": [
-																		"w-32"
-																	]
-																}
-															]
-														},
-														{
-															"type": "viewText",
-															"className": [
-																"flex-grow"
-															]
-														},
-														{
-															"type": "copyToClipBoard",
-															"text": "copy",
-															"field": "_id",
-															"btnSize": "xs",
-															"gotoOnClick": false,
-															"btnType": "primary"
-														}
-													],
-													"className": [
-														"flex",
-														"items-center",
-														"py-1"
-													]
-												}
-											],
-											"item": [
-												{
-													"type": "style",
-													"item": [
-														{
-															"type": "style",
-															"item": [
-																{
-																	"type": "copyToClipBoard",
-																	"text": "copy",
-																	"btnSize": "xs",
-																	"btnType": "default",
-																	"className": [
-																		"rounded",
-																		"mr-1"
-																	]
-																},
-																{
-																	"type": "viewButton",
-																	"format": "input",
-																	"text": "",
-																	"event": "",
-																	"btnType": "default",
-																	"className": [
-																		""
-																	],
-																	"size": "sm"
-																}
-															],
-															"className": [
-																"opacity-60",
-																"hover:opacity-100",
-																"absolute",
-																"right-0",
-																"z-20",
-																"flex",
-																"m-1"
-															]
-														}
-													],
-													"className": [
-														"relative",
-														"z-20"
-													]
-												},
-												{
-													"type": "viewText",
-													"text": "content",
-													"format": "codemirror",
-													"className": [
-														"h-96",
-														"w-full",
-														"z-10",
-														"relative"
-													]
-												}
-											],
-											"className": [
-												"w-full",
-												"my-3"
-											],
-											"typeClass": "defaultWithoutPadding"
-										}
-									],
-									"headerFields": [],
-									"className": [
-										""
-									],
-									"header": [
-										{
-											"type": "viewText",
-											"text": "Database explorer"
-										}
-									],
-									"emptyFields": [
-										{
-											"type": "viewText",
-											"text": "No data found",
-											"renderAs": "h3",
-											"className": [
-												"ml-6",
-												"font-bold"
-											]
-										}
-									]
-								}
-							],
-							"slotLimit": 5
-						}
-					],
-					"expanded": true,
-					"className": [
-						"mx-3",
-						"mt-3"
-					]
-				}
-			]
-		}
-	]
+  "name": "server",
+  "_roles": { "save": [] },
+  "default": {
+    "length": "50",
+    "text_mandatory": "Field is mandatory",
+    "mandatory": true,
+    "type": "text"
+  },
+  "item": [
+    { "id": "name", "text": "Name", "type": "text" },
+    { "id": "host", "text": "Host", "type": "multilinetext" },
+    { "id": "path", "text": "Path", "type": "text", "length": "100" },
+    { "type": "int", "id": "port", "text": "Port" },
+    {
+      "id": "showinoverview",
+      "text": "In overview",
+      "type": "boolean",
+      "mandatory": false
+    }
+  ],
+  "machinename": "server",
+  "storage": "data",
+  "views": [
+    {
+      "name": "devtools",
+      "item": [
+        {
+          "category": "view",
+          "type": "extension",
+          "item": [
+            {
+              "category": "view",
+              "type": "extension",
+              "format": "tab",
+              "item": [
+                {
+                  "category": "view",
+                  "type": "extension",
+                  "item": [{ "type": "viewText", "text": "Hepp" }],
+                  "format": "search",
+                  "field": "host",
+                  "extract": "(\\/\\/)([^\\/]+)"
+                },
+                {
+                  "category": "view",
+                  "type": "style",
+                  "item": [
+                    {
+                      "category": "view",
+                      "type": "bootstrap",
+                      "format": "panel",
+                      "header": [
+                        {
+                          "category": "view",
+                          "type": "style",
+                          "item": [
+                            {
+                              "category": "view",
+                              "type": "bootstrap",
+                              "format": "panelToggle",
+                              "item": [
+                                {
+                                  "category": "contentTypeField",
+                                  "type": "text",
+                                  "id": "name",
+                                  "renderAs": "div",
+                                  "className": [""],
+                                  "format": "view"
+                                }
+                              ],
+                              "icon": true,
+                              "className": [
+                                "flex",
+                                "items-center",
+                                "content-center",
+                                "py-1",
+                                "",
+                                "flex-grow"
+                              ]
+                            },
+                            {
+                              "category": "view",
+                              "type": "viewInView",
+                              "contentType": "serverStatus",
+                              "view": "controlnohide",
+                              "className": [""],
+                              "format": "empty",
+                              "viewId": "{_id}"
+                            }
+                          ],
+                          "className": ["flex", "items-center"]
+                        }
+                      ],
+                      "item": [
+                        {
+                          "category": "view",
+                          "type": "viewInView",
+                          "contentType": "serverStatus",
+                          "view": "status",
+                          "viewId": "{_id}",
+                          "format": "empty"
+                        }
+                      ],
+                      "typeClass": "defaultWithoutPadding",
+                      "stateStore": "disabled",
+                      "expanded": true
+                    }
+                  ],
+                  "format": "onOverHandle",
+                  "className": ["m-3", "max-w-4xl"]
+                }
+              ],
+              "match": "localhost"
+            },
+            { "type": "devtools" },
+            {
+              "type": "viewInView",
+              "contentType": "dbexplorer",
+              "view": "list"
+            },
+            {
+              "type": "viewInView",
+              "contentType": "server",
+              "view": "devtoolsettings"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "devtoolsettings",
+      "item": [
+        {
+          "type": "bootstrap",
+          "format": "panel",
+          "stateStore": "disabled",
+          "header": [
+            {
+              "type": "bootstrap",
+              "format": "panelToggle",
+              "icon": true,
+              "className": ["flex", "items-center"],
+              "item": [
+                {
+                  "type": "viewText",
+                  "text": "Settings",
+                  "className": ["py-2"]
+                }
+              ]
+            }
+          ],
+          "item": [
+            { "type": "devtools", "format": "settings" },
+            {
+              "type": "viewText",
+              "format": "codemirror",
+              "className": ["h-96"]
+            }
+          ],
+          "className": ["m-3", "shadow"],
+          "typeClass": "defaultWithoutPadding"
+        }
+      ]
+    },
+    {
+      "name": "extension",
+      "item": [
+        {
+          "category": "view",
+          "type": "extension",
+          "item": [
+            {
+              "category": "view",
+              "type": "extension",
+              "format": "tab",
+              "item": [
+                {
+                  "category": "view",
+                  "type": "extension",
+                  "format": "search",
+                  "field": "host",
+                  "extract": "(\\/\\/)([^\\/]+)",
+                  "item": [
+                    {
+                      "category": "view",
+                      "type": "router",
+                      "format": "redirect",
+                      "to": "/"
+                    }
+                  ]
+                },
+                {
+                  "category": "view",
+                  "type": "style",
+                  "item": [
+                    {
+                      "category": "contentTypeField",
+                      "type": "text",
+                      "id": "name",
+                      "renderAs": "div",
+                      "className": ["flex-grow", "pt-3", "pl-2"]
+                    },
+                    {
+                      "category": "view",
+                      "type": "viewInView",
+                      "contentType": "serverStatus",
+                      "view": "controlnohide",
+                      "className": [""],
+                      "format": "empty",
+                      "viewId": "{_id}"
+                    }
+                  ],
+                  "className": ["flex", "items-center", "p-1", "pt-0"]
+                },
+                {
+                  "category": "view",
+                  "type": "viewInView",
+                  "contentType": "serverStatus",
+                  "view": "status",
+                  "viewId": "{_id}",
+                  "format": "empty"
+                }
+              ],
+              "match": "localhost"
+            },
+            {
+              "category": "view",
+              "type": "extension",
+              "format": "tab",
+              "match": "localhost",
+              "invert": true,
+              "item": [
+                {
+                  "category": "view",
+                  "type": "router",
+                  "format": "redirect",
+                  "to": "/"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "input",
+      "format": "input",
+      "item": [
+        {
+          "category": "view",
+          "type": "style",
+          "item": [
+            {
+              "category": "view",
+              "type": "bootstrap",
+              "format": "panel",
+              "header": [
+                {
+                  "category": "view",
+                  "type": "style",
+                  "item": [
+                    {
+                      "category": "view",
+                      "type": "bootstrap",
+                      "format": "panelToggle",
+                      "item": [
+                        {
+                          "category": "contentTypeField",
+                          "type": "text",
+                          "id": "name",
+                          "renderAs": "div",
+                          "className": [""],
+                          "format": "view"
+                        }
+                      ],
+                      "icon": true,
+                      "className": [
+                        "flex",
+                        "items-center",
+                        "content-center",
+                        "py-1",
+                        "",
+                        "flex-grow"
+                      ]
+                    },
+                    {
+                      "category": "view",
+                      "type": "viewInView",
+                      "contentType": "serverStatus",
+                      "view": "controlnohide",
+                      "className": [""],
+                      "format": "empty",
+                      "viewId": "{_id}"
+                    }
+                  ],
+                  "className": ["flex", "items-center"]
+                }
+              ],
+              "item": [
+                {
+                  "category": "view",
+                  "type": "viewInView",
+                  "contentType": "serverStatus",
+                  "view": "status",
+                  "viewId": "{_id}",
+                  "format": "empty"
+                }
+              ],
+              "typeClass": "defaultWithoutPadding",
+              "stateStore": "byUrl"
+            }
+          ],
+          "format": "onOverHandle",
+          "className": ["p-3", "max-w-4xl"]
+        },
+        {
+          "type": "bootstrap",
+          "category": "view",
+          "row": true,
+          "format": "view",
+          "item": [
+            {
+              "category": "contentTypeField",
+              "type": "text",
+              "id": "name",
+              "format": "view",
+              "renderAs": "h4"
+            },
+            {
+              "id": "name",
+              "type": "text",
+              "category": "contentTypeField",
+              "mandatory": true
+            },
+            {
+              "id": "host",
+              "type": "multilinetext",
+              "category": "contentTypeField"
+            },
+            { "category": "contentTypeField", "type": "int", "id": "port" },
+            {
+              "id": "path",
+              "type": "text",
+              "category": "contentTypeField",
+              "mandatory": true
+            },
+            {
+              "category": "contentTypeField",
+              "type": "boolean",
+              "id": "showinoverview",
+              "text": "In overview"
+            },
+            { "type": "viewButton", "category": "view" }
+          ],
+          "className": ["px-4"]
+        }
+      ]
+    },
+    {
+      "name": "link",
+      "format": "view",
+      "item": [
+        {
+          "category": "contentTypeField",
+          "type": "multilinetext",
+          "id": "host",
+          "format": "fields",
+          "limit": "1",
+          "item": [
+            {
+              "type": "icon",
+              "icon": "arrow-up-right-from-square",
+              "className": ["w-4", "h-4"]
+            }
+          ],
+          "className": [""]
+        }
+      ]
+    },
+    {
+      "name": "list",
+      "item": [
+        {
+          "category": "view",
+          "type": "style",
+          "className": ["flex", "items-center", "max-w-xl", "pl-4"],
+          "item": [
+            {
+              "type": "viewText",
+              "category": "view",
+              "text": "Servers",
+              "renderAs": "h4",
+              "className": ["flex-grow"]
+            },
+            {
+              "category": "view",
+              "type": "viewList",
+              "format": "search",
+              "text": "Search",
+              "className": [""]
+            },
+            {
+              "type": "viewLink",
+              "category": "view",
+              "className": [
+                "bg-blue-500",
+                "hover:bg-blue-500",
+                "text-white",
+                "rounded",
+                "shadow-sm",
+                "px-3",
+                "py-2"
+              ],
+              "text": "Add",
+              "href": "/server/input",
+              "renderType": "primary",
+              "format": "button"
+            }
+          ]
+        },
+        { "category": "view", "type": "database", "format": "search" },
+        {
+          "type": "viewList",
+          "category": "view",
+          "renderFormat": "table",
+          "autoupdate": true,
+          "reversesortby": true,
+          "item": [
+            {
+              "id": "name",
+              "type": "text",
+              "category": "contentTypeField",
+              "format": "link",
+              "toFormat": "input",
+              "className": ["font-bold", "py-1", "px-2", "block"]
+            },
+            {
+              "id": "path",
+              "type": "text",
+              "category": "contentTypeField",
+              "className": ["", "py-1", "px-2"]
+            },
+            {
+              "id": "port",
+              "type": "text",
+              "category": "contentTypeField",
+              "className": ["", "py-1", "px-2"]
+            },
+            {
+              "id": "showinoverview",
+              "type": "boolean",
+              "category": "contentTypeField",
+              "format": "view",
+              "className": ["", "my-1", "mx-2", "w-4", "h-4"]
+            }
+          ],
+          "headerFields": [
+            {
+              "id": "name",
+              "type": "text",
+              "category": "contentTypeField",
+              "format": "sortBy",
+              "text": "Name",
+              "className": ["", "py-1", "px-2", "block"]
+            },
+            {
+              "category": "contentTypeField",
+              "type": "text",
+              "id": "path",
+              "format": "sortBy",
+              "className": ["", "py-1", "px-2"]
+            },
+            {
+              "category": "contentTypeField",
+              "type": "int",
+              "id": "port",
+              "format": "sortBy",
+              "className": ["", "py-1", "px-2"]
+            },
+            {
+              "category": "view",
+              "type": "viewText",
+              "text": "Overview",
+              "className": ["", "py-1", "px-2"]
+            }
+          ],
+          "sortby": { "id": "_chdate", "text": "Change date" },
+          "filter": [],
+          "className": ["table-striped"],
+          "rowClassName": [""]
+        }
+      ]
+    },
+    {
+      "name": "menu",
+      "format": "view",
+      "item": [
+        {
+          "type": "router",
+          "match": "index.html",
+          "item": [{ "type": "router", "format": "redirect", "to": "/" }]
+        },
+        {
+          "type": "style",
+          "item": [
+            {
+              "type": "electron",
+              "className": [
+                "flex",
+                "items-center",
+                "max-w-4xl",
+                "w-full",
+                "px-4"
+              ],
+              "item": [
+                {
+                  "category": "view",
+                  "type": "viewLink",
+                  "format": "fields",
+                  "contentType": "settings",
+                  "view": "menu",
+                  "item": [
+                    {
+                      "category": "view",
+                      "type": "icon",
+                      "className": ["w-8", "h-8", "p-2", "select-none"],
+                      "icon": "bars"
+                    }
+                  ]
+                },
+                {
+                  "category": "view",
+                  "type": "viewLink",
+                  "format": "link",
+                  "text": "Nystem server",
+                  "href": "/",
+                  "className": ["pl-1", "flex-grow", "select-none"]
+                },
+                {
+                  "type": "connection",
+                  "item": [
+                    {
+                      "category": "view",
+                      "type": "viewImage",
+                      "className": [
+                        "w-10",
+                        "h-10",
+                        "grayscale",
+                        "mb-1",
+                        "select-none",
+                        "opacity-30"
+                      ],
+                      "filename": "logo3.svg"
+                    }
+                  ],
+                  "offline": true
+                },
+                {
+                  "type": "connection",
+                  "item": [
+                    {
+                      "category": "view",
+                      "type": "viewImage",
+                      "className": ["w-10", "h-10", "mb-1", "select-none"],
+                      "filename": "logo3.svg"
+                    }
+                  ]
+                }
+              ],
+              "format": "moveWindow"
+            },
+            { "type": "viewText", "className": ["flex-grow", "select-none"] },
+            {
+              "type": "electron",
+              "item": [
+                {
+                  "type": "electron",
+                  "format": "appButton",
+                  "buttonActive": "",
+                  "className": [
+                    "p-2",
+                    "w-8",
+                    "h-8",
+                    "cursor-pointer",
+                    "hover:bg-gray-200",
+                    "rounded"
+                  ],
+                  "button": "window-minimize"
+                },
+                {
+                  "type": "electron",
+                  "format": "appButton",
+                  "buttonActive": "rectangle",
+                  "className": [
+                    "p-2",
+                    "w-8",
+                    "h-8",
+                    "cursor-pointer",
+                    "hover:bg-gray-200",
+                    "rounded"
+                  ],
+                  "button": "regular-square-full"
+                },
+                {
+                  "type": "electron",
+                  "format": "appButton",
+                  "buttonActive": "",
+                  "className": [
+                    "p-2",
+                    "w-8",
+                    "h-8",
+                    "cursor-pointer",
+                    "hover:bg-gray-200",
+                    "rounded",
+                    "mr-1"
+                  ],
+                  "button": "xmark"
+                }
+              ]
+            }
+          ],
+          "className": [
+            "flex",
+            "text-left",
+            "font-bold",
+            "py-2",
+            "pb-0",
+            "items-center",
+            "w-full"
+          ]
+        }
+      ]
+    },
+    { "name": "menupage", "format": "view" },
+    {
+      "name": "overview",
+      "format": "list",
+      "item": [
+        {
+          "category": "view",
+          "type": "database",
+          "format": "search",
+          "filter": [{ "and": [["showinoverview", "true"]] }],
+          "sortby": { "id": "name", "text": "name" }
+        },
+        {
+          "category": "view",
+          "type": "viewList",
+          "item": [
+            {
+              "category": "view",
+              "type": "style",
+              "item": [
+                {
+                  "category": "view",
+                  "type": "bootstrap",
+                  "format": "panel",
+                  "header": [
+                    {
+                      "category": "view",
+                      "type": "style",
+                      "item": [
+                        {
+                          "category": "view",
+                          "type": "bootstrap",
+                          "format": "panelToggle",
+                          "item": [
+                            {
+                              "category": "contentTypeField",
+                              "type": "text",
+                              "id": "name",
+                              "renderAs": "div",
+                              "className": [""]
+                            }
+                          ],
+                          "icon": true,
+                          "className": [
+                            "flex",
+                            "items-center",
+                            "content-center",
+                            "py-1",
+                            "",
+                            "flex-grow"
+                          ]
+                        },
+                        {
+                          "category": "view",
+                          "type": "viewInView",
+                          "contentType": "serverStatus",
+                          "view": "control",
+                          "className": [""],
+                          "format": "empty",
+                          "viewId": "{_id}"
+                        }
+                      ],
+                      "className": ["flex", "items-center"]
+                    }
+                  ],
+                  "item": [
+                    {
+                      "category": "view",
+                      "type": "viewInView",
+                      "contentType": "serverStatus",
+                      "view": "status",
+                      "viewId": "{_id}",
+                      "format": "empty"
+                    }
+                  ],
+                  "typeClass": "defaultWithoutPadding"
+                }
+              ],
+              "format": "onOverHandle",
+              "className": [""]
+            }
+          ],
+          "renderFormat": "div",
+          "headerFields": [],
+          "className": ["p-3", "max-w-4xl"]
+        }
+      ]
+    },
+    {
+      "name": "test",
+      "format": "list",
+      "item": [
+        {
+          "type": "bootstrap",
+          "format": "panel",
+          "stateStore": "disabled",
+          "header": [
+            {
+              "type": "bootstrap",
+              "format": "panelToggle",
+              "icon": true,
+              "className": ["flex", "items-center"],
+              "item": [{ "type": "viewText", "text": "Database explorer" }]
+            }
+          ],
+          "item": [
+            {
+              "type": "database",
+              "format": "search",
+              "count": 20,
+              "sortby": [{ "id": "_chdate", "type": "date" }],
+              "reversesortby": true
+            },
+            {
+              "type": "devtools",
+              "format": "selectContenttype",
+              "limit": 1,
+              "inline": true,
+              "render": "button"
+            },
+            {
+              "type": "style",
+              "item": [
+                {
+                  "type": "viewList",
+                  "format": "search",
+                  "className": ["w-96"]
+                },
+                { "type": "viewText", "text": "Count", "className": ["ml-6"] },
+                {
+                  "type": "viewList",
+                  "format": "listStat",
+                  "show": ["searchTotal", "total"],
+                  "text": "",
+                  "className": ["ml-6"]
+                }
+              ],
+              "className": ["flex", "items-center", "my-3"]
+            },
+            {
+              "type": "style",
+              "item": [
+                {
+                  "id": "_crdate",
+                  "type": "date",
+                  "format": "sortBy",
+                  "text": "Created",
+                  "className": ["w-40"]
+                },
+                {
+                  "id": "_chdate",
+                  "type": "date",
+                  "format": "sortBy",
+                  "text": "Changed",
+                  "className": ["w-40"]
+                },
+                {
+                  "type": "text",
+                  "id": "name",
+                  "format": "sortBy",
+                  "className": ["w-40"]
+                },
+                {
+                  "id": "_id",
+                  "type": "text",
+                  "format": "sortBy",
+                  "text": "Id",
+                  "className": ["w-32"]
+                }
+              ],
+              "className": ["flex", "ml-6", "mb-6"]
+            },
+            {
+              "type": "viewList",
+              "format": "infinite",
+              "item": [
+                {
+                  "type": "viewList",
+                  "rowClassName": [""],
+                  "item": [
+                    {
+                      "type": "bootstrap",
+                      "format": "panel",
+                      "stateStore": "byUrl",
+                      "header": [
+                        {
+                          "type": "bootstrap",
+                          "format": "panelToggle",
+                          "iconClassName": ["w-4", "h-4"],
+                          "icon": true,
+                          "item": [
+                            {
+                              "id": "_crdate",
+                              "type": "date",
+                              "className": ["w-40"]
+                            },
+                            {
+                              "id": "_chdate",
+                              "type": "date",
+                              "className": ["w-40"]
+                            },
+                            { "type": "text", "id": "name" },
+                            {
+                              "type": "conditional",
+                              "condition": [["name", "false"]],
+                              "item": [
+                                {
+                                  "id": "_id",
+                                  "type": "text",
+                                  "className": ["w-32"]
+                                }
+                              ]
+                            },
+                            { "type": "viewText", "className": ["flex-grow"] },
+                            {
+                              "type": "copyToClipBoard",
+                              "text": "copy",
+                              "field": "_id",
+                              "btnSize": "xs",
+                              "gotoOnClick": false,
+                              "btnType": "primary"
+                            }
+                          ],
+                          "className": ["flex", "items-center", "py-1"]
+                        }
+                      ],
+                      "item": [
+                        {
+                          "type": "style",
+                          "item": [
+                            {
+                              "type": "style",
+                              "item": [
+                                {
+                                  "type": "copyToClipBoard",
+                                  "text": "copy",
+                                  "btnSize": "xs",
+                                  "btnType": "default",
+                                  "className": ["rounded", "mr-1"]
+                                },
+                                {
+                                  "type": "viewButton",
+                                  "format": "input",
+                                  "text": "",
+                                  "event": "",
+                                  "btnType": "default",
+                                  "className": [""],
+                                  "size": "sm"
+                                }
+                              ],
+                              "className": [
+                                "opacity-60",
+                                "hover:opacity-100",
+                                "absolute",
+                                "right-0",
+                                "z-20",
+                                "flex",
+                                "m-1"
+                              ]
+                            }
+                          ],
+                          "className": ["relative", "z-20"]
+                        },
+                        {
+                          "type": "viewText",
+                          "text": "content",
+                          "format": "codemirror",
+                          "className": ["h-96", "w-full", "z-10", "relative"]
+                        }
+                      ],
+                      "className": ["w-full", "my-3"],
+                      "typeClass": "defaultWithoutPadding"
+                    }
+                  ],
+                  "headerFields": [],
+                  "className": [""],
+                  "header": [
+                    { "type": "viewText", "text": "Database explorer" }
+                  ],
+                  "emptyFields": [
+                    {
+                      "type": "viewText",
+                      "text": "No data found",
+                      "renderAs": "h3",
+                      "className": ["ml-6", "font-bold"]
+                    }
+                  ]
+                }
+              ],
+              "slotLimit": 5
+            }
+          ],
+          "expanded": true,
+          "className": ["mx-3", "mt-3"]
+        }
+      ]
+    }
+  ]
 }

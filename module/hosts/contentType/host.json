@@ -1,239 +1,180 @@
 {
-	"name": "host",
-	"_roles": {
-		"save": "config"
-	},
-	"default": {
-		"length": "50",
-		"text_mandatory": "Field is mandatory",
-		"mandatory": true,
-		"type": "text"
-	},
-	"input": {
-		"add": {
-			"title": "New host"
-		},
-		"edit": {
-			"title": "Edit host"
-		},
-		"message": {
-			"send": "Sending"
-		},
-		"button": "Save"
-	},
-	"list": {
-		"title": "Hosts",
-		"add": "Add host",
-		"fields": [
-			{
-				"format": "link",
-				"text": "Name",
-				"id": "name",
-				"link": "host/form/",
-				"sortable": true
-			},
-			{
-				"format": "list",
-				"text": "Host",
-				"id": "host",
-				"type": "multilinetext",
-				"sortable": true
-			},
-			{
-				"format": "list",
-				"text": "IP Address",
-				"id": "ip",
-				"type": "text",
-				"sortable": true
-			},
-			{
-				"format": "list",
-				"text": "Change date",
-				"id": "_chdate",
-				"type": "date",
-				"sortable": true
-			}
-		]
-	},
-	"item": [
-		{
-			"id": "name",
-			"text": "Name",
-			"type": "text"
-		},
-		{
-			"id": "host",
-			"text": "Host",
-			"type": "multilinetext"
-		},
-		{
-			"id": "ip",
-			"text": "IP Address",
-			"type": "text"
-		}
-	],
-	"machinename": "host",
-	"views": [
-		{
-			"id": "916fe9e0e66c842177c0c4977f9a462a",
-			"format": "input",
-			"name": "input",
-			"focus": true,
-			"item": [
-				{
-					"id": "name",
-					"type": "text",
-					"category": "view",
-					"format": "view",
-					"text": "New host",
-					"fallback": "New host",
-					"renderAs": "h3"
-				},
-				{
-					"id": "name",
-					"type": "text",
-					"category": "view",
-					"text": "Name"
-				},
-				{
-					"id": "host",
-					"type": "multilinetext",
-					"category": "view",
-					"text": "Host"
-				},
-				{
-					"id": "ip",
-					"type": "text",
-					"category": "view",
-					"text": "IP"
-				},
-				{
-					"type": "viewButton",
-					"category": "view"
-				}
-			]
-		},
-		{
-			"id": "246238b5b9ba054973725dab0afbe039",
-			"format": "list",
-			"name": "list",
-			"item": [
-				{
-					"category": "view",
-					"type": "database",
-					"format": "search"
-				},
-				{
-					"category": "view",
-					"type": "style",
-					"item": [
-						{
-							"type": "viewText",
-							"category": "view",
-							"text": "Hosts",
-							"format": "h3",
-							"renderAs": "h4",
-							"className": [
-								"flex-grow"
-							]
-						},
-						{
-							"type": "viewLink",
-							"category": "view",
-							"className": [
-								"bg-blue-500",
-								"hover:bg-blue-500",
-								"text-white",
-								"rounded",
-								"shadow-sm",
-								"px-3",
-								"py-2",
-								"btn-primary",
-								"btn",
-								"my-3",
-								"block"
-							],
-							"text": "Add",
-							"href": "/host/input",
-							"renderType": "default",
-							"format": "button"
-						}
-					],
-					"className": [
-						"flex"
-					]
-				},
-				{
-					"type": "viewList",
-					"category": "view",
-					"renderFormat": "table",
-					"reversesortby": true,
-					"autoupdate": true,
-					"item": [
-						{
-							"id": "name",
-							"type": "text",
-							"category": "view",
-							"format": "link",
-							"toFormat": "input",
-							"className": [
-								"p-2",
-								"block"
-							]
-						},
-						{
-							"id": "host",
-							"type": "multilinetext",
-							"category": "view",
-							"className": [
-								"p-2",
-								"block"
-							]
-						},
-						{
-							"id": "ip",
-							"type": "text",
-							"category": "view",
-							"className": [
-								"p-2",
-								"block"
-							]
-						}
-					],
-					"headerFields": [
-						{
-							"id": "name",
-							"type": "text",
-							"category": "view",
-							"format": "sortBy",
-							"className": [
-								"p-2",
-								"block"
-							]
-						},
-						{
-							"type": "viewText",
-							"category": "view",
-							"text": "Host",
-							"format": "span",
-							"className": [
-								"p-2",
-								"block"
-							]
-						},
-						{
-							"id": "ip",
-							"type": "text",
-							"category": "view",
-							"format": "sortBy",
-							"className": [
-								"p-2",
-								"block"
-							]
-						}
-					]
-				}
-			]
-		}
-	]
+  "name": "host",
+  "_roles": { "save": "config" },
+  "default": {
+    "length": "50",
+    "text_mandatory": "Field is mandatory",
+    "mandatory": true,
+    "type": "text"
+  },
+  "input": {
+    "add": { "title": "New host" },
+    "edit": { "title": "Edit host" },
+    "message": { "send": "Sending" },
+    "button": "Save"
+  },
+  "list": {
+    "title": "Hosts",
+    "add": "Add host",
+    "fields": [
+      {
+        "format": "link",
+        "text": "Name",
+        "id": "name",
+        "link": "host/form/",
+        "sortable": true
+      },
+      {
+        "format": "list",
+        "text": "Host",
+        "id": "host",
+        "type": "multilinetext",
+        "sortable": true
+      },
+      {
+        "format": "list",
+        "text": "IP Address",
+        "id": "ip",
+        "type": "text",
+        "sortable": true
+      },
+      {
+        "format": "list",
+        "text": "Change date",
+        "id": "_chdate",
+        "type": "date",
+        "sortable": true
+      }
+    ]
+  },
+  "item": [
+    { "id": "name", "text": "Name", "type": "text" },
+    { "id": "host", "text": "Host", "type": "multilinetext" },
+    { "id": "ip", "text": "IP Address", "type": "text" }
+  ],
+  "machinename": "host",
+  "views": [
+    {
+      "id": "916fe9e0e66c842177c0c4977f9a462a",
+      "format": "input",
+      "name": "input",
+      "focus": true,
+      "item": [
+        {
+          "id": "name",
+          "type": "text",
+          "category": "view",
+          "format": "view",
+          "text": "New host",
+          "fallback": "New host",
+          "renderAs": "h3"
+        },
+        { "id": "name", "type": "text", "category": "view", "text": "Name" },
+        {
+          "id": "host",
+          "type": "multilinetext",
+          "category": "view",
+          "text": "Host"
+        },
+        { "id": "ip", "type": "text", "category": "view", "text": "IP" },
+        { "type": "viewButton", "category": "view" }
+      ]
+    },
+    {
+      "id": "246238b5b9ba054973725dab0afbe039",
+      "format": "list",
+      "name": "list",
+      "item": [
+        { "category": "view", "type": "database", "format": "search" },
+        {
+          "category": "view",
+          "type": "style",
+          "item": [
+            {
+              "type": "viewText",
+              "category": "view",
+              "text": "Hosts",
+              "format": "h3",
+              "renderAs": "h4",
+              "className": ["flex-grow"]
+            },
+            {
+              "type": "viewLink",
+              "category": "view",
+              "className": [
+                "bg-blue-500",
+                "hover:bg-blue-500",
+                "text-white",
+                "rounded",
+                "shadow-sm",
+                "px-3",
+                "py-2",
+                "btn-primary",
+                "btn",
+                "my-3",
+                "block"
+              ],
+              "text": "Add",
+              "href": "/host/input",
+              "renderType": "default",
+              "format": "button"
+            }
+          ],
+          "className": ["flex"]
+        },
+        {
+          "type": "viewList",
+          "category": "view",
+          "renderFormat": "table",
+          "reversesortby": true,
+          "autoupdate": true,
+          "item": [
+            {
+              "id": "name",
+              "type": "text",
+              "category": "view",
+              "format": "link",
+              "toFormat": "input",
+              "className": ["p-2", "block"]
+            },
+            {
+              "id": "host",
+              "type": "multilinetext",
+              "category": "view",
+              "className": ["p-2", "block"]
+            },
+            {
+              "id": "ip",
+              "type": "text",
+              "category": "view",
+              "className": ["p-2", "block"]
+            }
+          ],
+          "headerFields": [
+            {
+              "id": "name",
+              "type": "text",
+              "category": "view",
+              "format": "sortBy",
+              "className": ["p-2", "block"]
+            },
+            {
+              "type": "viewText",
+              "category": "view",
+              "text": "Host",
+              "format": "span",
+              "className": ["p-2", "block"]
+            },
+            {
+              "id": "ip",
+              "type": "text",
+              "category": "view",
+              "format": "sortBy",
+              "className": ["p-2", "block"]
+            }
+          ]
+        }
+      ]
+    }
+  ]
 }

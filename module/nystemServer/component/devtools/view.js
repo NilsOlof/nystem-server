@@ -62,6 +62,7 @@ const DevtoolsView = () => {
     });
 
     const onNew = (tab) => {
+      console.log(tab.pendingUrl, `nystem://${domain}`);
       if (!tab.pendingUrl.startsWith(`nystem://${domain}`)) return;
 
       app()
