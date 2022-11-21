@@ -59,9 +59,10 @@ const DevtoolsView = () => {
     window.chrome.tabs.get(tabId, (tab) => {
       // eslint-disable-next-line prefer-destructuring
       domain = tab.url.split("/")[2].split(".")[0];
+      console.log("listning to", domain);
     });
 
-    console.log("listning to", domain);
+    console.log("DevtoolsViewDevtoolsView", domain);
     const onNew = (tab) => {
       console.log(tab.pendingUrl, `nystem://${domain}`);
       if (!tab.pendingUrl.startsWith(`nystem://${domain}`)) return;
@@ -90,7 +91,7 @@ const DevtoolsView = () => {
     };
   }, []);
 
-  return null;
+  return "DevtoolsView 22";
 };
 
 export default DevtoolsView;
