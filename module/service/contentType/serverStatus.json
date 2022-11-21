@@ -1,441 +1,358 @@
 {
-	"machinename": "serverStatus",
-	"name": "serverStatus",
-	"storage": "memory",
-	"_features": [
-		"access"
-	],
-	"item": [
-		{
-			"type": "boolean",
-			"id": "running",
-			"text": "Running"
-		},
-		{
-			"type": "textarea",
-			"id": "log",
-			"text": "Log"
-		},
-		{
-			"type": "boolean",
-			"id": "vscode",
-			"text": "Code editor"
-		},
-		{
-			"type": "boolean",
-			"id": "term",
-			"text": "Term"
-		},
-		{
-			"type": "boolean",
-			"id": "sourcetree",
-			"text": "Sourcetree"
-		},
-		{
-			"type": "boolean",
-			"id": "filexplorer",
-			"text": "File explorer"
-		},
-		{
-			"type": "boolean",
-			"id": "manager",
-			"text": "Manager"
-		}
-	],
-	"views": [
-		{
-			"name": "control",
-			"item": [
-				{
-					"category": "view",
-					"type": "style",
-					"item": [
-						{
-							"type": "bootstrap",
-							"item": [
-								{
-									"category": "view",
-									"type": "style",
-									"item": [
-										{
-											"category": "contentTypeField",
-											"type": "boolean",
-											"id": "manager",
-											"format": "button",
-											"btnType": "danger",
-											"falseBtnType": "primary",
-											"size": "xs",
-											"className": [
-												"mr-1",
-												"transition",
-												"transition-opacity",
-												"duration-500",
-												"ease-in-out"
-											],
-											"text": "gear",
-											"falseText": "gear:hide-on-false"
-										},
-										{
-											"category": "contentTypeField",
-											"type": "boolean",
-											"id": "vscode",
-											"format": "button",
-											"btnType": "success",
-											"falseBtnType": "success",
-											"size": "xs",
-											"className": [
-												"mr-1",
-												"transition",
-												"transition-opacity",
-												"duration-500",
-												"ease-in-out"
-											],
-											"text": "code",
-											"falseText": "code:hide-on-false"
-										},
-										{
-											"category": "contentTypeField",
-											"type": "boolean",
-											"id": "term",
-											"format": "button",
-											"className": [
-												"mr-1",
-												"transition",
-												"transition-opacity",
-												"duration-500",
-												"ease-in-out"
-											],
-											"btnType": "primary",
-											"falseBtnType": "primary",
-											"size": "xs",
-											"text": "terminal-solid",
-											"falseText": "terminal-solid:hide-on-false"
-										},
-										{
-											"category": "contentTypeField",
-											"type": "boolean",
-											"id": "sourcetree",
-											"format": "button",
-											"btnType": "primary",
-											"falseBtnType": "primary",
-											"size": "xs",
-											"className": [
-												"mr-1",
-												"transition",
-												"transition-opacity",
-												"duration-500",
-												"ease-in-out"
-											],
-											"text": "brands-github",
-											"falseText": "brands-github:hide-on-false"
-										},
-										{
-											"category": "contentTypeField",
-											"type": "boolean",
-											"id": "filexplorer",
-											"format": "button",
-											"btnType": "primary",
-											"falseBtnType": "primary",
-											"size": "xs",
-											"className": [
-												"mr-1",
-												"transition",
-												"transition-opacity",
-												"duration-500",
-												"ease-in-out"
-											],
-											"text": "folder",
-											"falseText": "folder:hide-on-false"
-										},
-										{
-											"category": "view",
-											"type": "viewInView",
-											"contentType": "server",
-											"view": "link",
-											"viewId": "{id}",
-											"format": "view",
-											"className": [
-												"py-2",
-												"transition",
-												"transition-opacity",
-												"duration-500",
-												"ease-in-out",
-												"hide-on-false",
-												"bg-blue-500",
-												"hover:bg-blue-500",
-												"text-white",
-												"rounded",
-												"shadow-sm",
-												"py-1",
-												"px-2",
-												"mr-1"
-											]
-										},
-										{
-											"category": "view",
-											"type": "viewText",
-											"format": "titlePopup",
-											"item": [
-												{
-													"category": "contentTypeField",
-													"type": "boolean",
-													"id": "running",
-													"format": "button",
-													"text": "pause",
-													"falseText": "play:hide-on-false",
-													"btnType": "danger",
-													"falseBtnType": "primary",
-													"size": "xs",
-													"className": [
-														"py-2",
-														"transition",
-														"transition-opacity",
-														"duration-500",
-														"ease-in-out"
-													]
-												}
-											],
-											"popup": [
-												{
-													"category": "contentTypeField",
-													"type": "textarea",
-													"id": "log",
-													"format": "log",
-													"className": [
-														"bg-black",
-														"text-gray-400",
-														"p-3"
-													],
-													"wrapperClass": [
-														"flex",
-														"flex-col-reverse",
-														"max-h-128",
-														"overflow-hidden",
-														"bg-black",
-														"w-64",
-														"rounded",
-														"shadow"
-													]
-												}
-											],
-											"className": [
-												""
-											]
-										}
-									],
-									"className": [
-										"flex",
-										"py-1"
-									],
-									"format": "onOver",
-									"classNameOver": [
-										"is-over"
-									],
-									"classNameOut": [
-										"is-out"
-									]
-								}
-							],
-							"format": "panelOpen",
-							"classNameOpen": [
-								"is-open"
-							],
-							"className": [
-								""
-							]
-						}
-					],
-					"className": [
-						"flex"
-					]
-				},
-				{
-					"category": "view",
-					"type": "viewButton",
-					"format": "autoSave"
-				}
-			],
-			"format": "view"
-		},
-		{
-			"name": "controlnohide",
-			"item": [
-				{
-					"category": "view",
-					"type": "style",
-					"item": [
-						{
-							"category": "contentTypeField",
-							"type": "boolean",
-							"id": "manager",
-							"format": "button",
-							"btnType": "danger",
-							"falseBtnType": "primary",
-							"size": "xs",
-							"className": [
-								"mr-1"
-							],
-							"text": "gear",
-							"falseText": "gear"
-						},
-						{
-							"category": "contentTypeField",
-							"type": "boolean",
-							"id": "vscode",
-							"format": "button",
-							"btnType": "success",
-							"falseBtnType": "success",
-							"size": "xs",
-							"className": [
-								"mr-1"
-							],
-							"text": "code",
-							"falseText": "code"
-						},
-						{
-							"category": "contentTypeField",
-							"type": "boolean",
-							"id": "term",
-							"format": "button",
-							"className": [
-								"mr-1"
-							],
-							"btnType": "primary",
-							"falseBtnType": "primary",
-							"size": "xs",
-							"text": "terminal-solid",
-							"falseText": "terminal-solid"
-						},
-						{
-							"category": "contentTypeField",
-							"type": "boolean",
-							"id": "sourcetree",
-							"format": "button",
-							"btnType": "primary",
-							"falseBtnType": "primary",
-							"size": "xs",
-							"className": [
-								"mr-1"
-							],
-							"text": "brands-github",
-							"falseText": "brands-github"
-						},
-						{
-							"category": "contentTypeField",
-							"type": "boolean",
-							"id": "filexplorer",
-							"format": "button",
-							"btnType": "primary",
-							"falseBtnType": "primary",
-							"size": "xs",
-							"className": [
-								"mr-1"
-							],
-							"text": "folder",
-							"falseText": "folder"
-						},
-						{
-							"category": "view",
-							"type": "viewInView",
-							"contentType": "server",
-							"view": "link",
-							"viewId": "{id}",
-							"format": "view",
-							"className": [
-								"bg-blue-500",
-								"hover:bg-blue-500",
-								"text-white",
-								"rounded",
-								"shadow-sm",
-								"py-2",
-								"px-2",
-								"mr-1"
-							]
-						},
-						{
-							"category": "contentTypeField",
-							"type": "boolean",
-							"id": "running",
-							"format": "button",
-							"text": "pause",
-							"falseText": "play",
-							"btnType": "danger",
-							"falseBtnType": "primary",
-							"size": "xs",
-							"className": [
-								"w-8",
-								"h-8"
-							]
-						}
-					],
-					"className": [
-						"flex",
-						"py-1"
-					]
-				},
-				{
-					"category": "view",
-					"type": "viewButton",
-					"format": "autoSave"
-				}
-			]
-		},
-		{
-			"name": "status",
-			"format": "input",
-			"item": [
-				{
-					"category": "view",
-					"type": "viewInView",
-					"format": "setBaseViewValue",
-					"fromField": "_id",
-					"toField": "_id"
-				},
-				{
-					"type": "style",
-					"item": [
-						{
-							"type": "viewButton",
-							"format": "view",
-							"text": "Clear",
-							"event": "clearlog",
-							"btnType": "default",
-							"className": [
-								"opacity-20",
-								"absolute",
-								"right-0"
-							]
-						}
-					],
-					"className": [
-						"relative"
-					]
-				},
-				{
-					"category": "contentTypeField",
-					"type": "textarea",
-					"id": "log",
-					"format": "log",
-					"height": "200",
-					"className": [
-						"bg-black",
-						"text-gray-400",
-						"p-3"
-					],
-					"wrapperClass": [
-						"flex",
-						"flex-col-reverse",
-						"max-h-128",
-						"overflow-auto",
-						"min-h-8",
-						"bg-black",
-						"h-100",
-						"scrollbar",
-						"scrollbar-dark"
-					],
-					"event": "log"
-				}
-			]
-		}
-	]
+  "machinename": "serverStatus",
+  "name": "serverStatus",
+  "storage": "memory",
+  "_features": ["access"],
+  "item": [
+    { "type": "boolean", "id": "running", "text": "Running" },
+    { "type": "textarea", "id": "log", "text": "Log" },
+    { "type": "boolean", "id": "vscode", "text": "Code editor" },
+    { "type": "boolean", "id": "term", "text": "Term" },
+    { "type": "boolean", "id": "sourcetree", "text": "Sourcetree" },
+    { "type": "boolean", "id": "filexplorer", "text": "File explorer" },
+    { "type": "boolean", "id": "manager", "text": "Manager" }
+  ],
+  "views": [
+    {
+      "name": "control",
+      "item": [
+        {
+          "category": "view",
+          "type": "style",
+          "item": [
+            {
+              "type": "bootstrap",
+              "item": [
+                {
+                  "category": "view",
+                  "type": "style",
+                  "item": [
+                    {
+                      "category": "contentTypeField",
+                      "type": "boolean",
+                      "id": "manager",
+                      "format": "button",
+                      "btnType": "danger",
+                      "falseBtnType": "primary",
+                      "size": "xs",
+                      "className": [
+                        "mr-1",
+                        "transition",
+                        "transition-opacity",
+                        "duration-500",
+                        "ease-in-out"
+                      ],
+                      "text": "gear",
+                      "falseText": "gear:hide-on-false"
+                    },
+                    {
+                      "category": "contentTypeField",
+                      "type": "boolean",
+                      "id": "vscode",
+                      "format": "button",
+                      "btnType": "success",
+                      "falseBtnType": "success",
+                      "size": "xs",
+                      "className": [
+                        "mr-1",
+                        "transition",
+                        "transition-opacity",
+                        "duration-500",
+                        "ease-in-out"
+                      ],
+                      "text": "code",
+                      "falseText": "code:hide-on-false"
+                    },
+                    {
+                      "category": "contentTypeField",
+                      "type": "boolean",
+                      "id": "term",
+                      "format": "button",
+                      "className": [
+                        "mr-1",
+                        "transition",
+                        "transition-opacity",
+                        "duration-500",
+                        "ease-in-out"
+                      ],
+                      "btnType": "primary",
+                      "falseBtnType": "primary",
+                      "size": "xs",
+                      "text": "terminal-solid",
+                      "falseText": "terminal-solid:hide-on-false"
+                    },
+                    {
+                      "category": "contentTypeField",
+                      "type": "boolean",
+                      "id": "sourcetree",
+                      "format": "button",
+                      "btnType": "primary",
+                      "falseBtnType": "primary",
+                      "size": "xs",
+                      "className": [
+                        "mr-1",
+                        "transition",
+                        "transition-opacity",
+                        "duration-500",
+                        "ease-in-out"
+                      ],
+                      "text": "brands-github",
+                      "falseText": "brands-github:hide-on-false"
+                    },
+                    {
+                      "category": "contentTypeField",
+                      "type": "boolean",
+                      "id": "filexplorer",
+                      "format": "button",
+                      "btnType": "primary",
+                      "falseBtnType": "primary",
+                      "size": "xs",
+                      "className": [
+                        "mr-1",
+                        "transition",
+                        "transition-opacity",
+                        "duration-500",
+                        "ease-in-out"
+                      ],
+                      "text": "folder",
+                      "falseText": "folder:hide-on-false"
+                    },
+                    {
+                      "category": "view",
+                      "type": "viewInView",
+                      "contentType": "server",
+                      "view": "link",
+                      "viewId": "{id}",
+                      "format": "view",
+                      "className": [
+                        "py-2",
+                        "transition",
+                        "transition-opacity",
+                        "duration-500",
+                        "ease-in-out",
+                        "hide-on-false",
+                        "bg-blue-500",
+                        "hover:bg-blue-500",
+                        "text-white",
+                        "rounded",
+                        "shadow-sm",
+                        "py-1",
+                        "px-2",
+                        "mr-1"
+                      ]
+                    },
+                    {
+                      "category": "view",
+                      "type": "viewText",
+                      "format": "titlePopup",
+                      "item": [
+                        {
+                          "category": "contentTypeField",
+                          "type": "boolean",
+                          "id": "running",
+                          "format": "button",
+                          "text": "pause",
+                          "falseText": "play:hide-on-false",
+                          "btnType": "danger",
+                          "falseBtnType": "primary",
+                          "size": "xs",
+                          "className": [
+                            "py-2",
+                            "transition",
+                            "transition-opacity",
+                            "duration-500",
+                            "ease-in-out"
+                          ]
+                        }
+                      ],
+                      "popup": [
+                        {
+                          "category": "contentTypeField",
+                          "type": "textarea",
+                          "id": "log",
+                          "format": "log",
+                          "className": ["bg-black", "text-gray-400", "p-3"],
+                          "wrapperClass": [
+                            "flex",
+                            "flex-col-reverse",
+                            "max-h-128",
+                            "overflow-hidden",
+                            "bg-black",
+                            "w-64",
+                            "rounded",
+                            "shadow"
+                          ]
+                        }
+                      ],
+                      "className": [""]
+                    }
+                  ],
+                  "className": ["flex", "py-1"],
+                  "format": "onOver",
+                  "classNameOver": ["is-over"],
+                  "classNameOut": ["is-out"]
+                }
+              ],
+              "format": "panelOpen",
+              "classNameOpen": ["is-open"],
+              "className": [""]
+            }
+          ],
+          "className": ["flex"]
+        },
+        { "category": "view", "type": "viewButton", "format": "autoSave" }
+      ],
+      "format": "view"
+    },
+    {
+      "name": "controlnohide",
+      "item": [
+        {
+          "category": "view",
+          "type": "style",
+          "item": [
+            {
+              "category": "contentTypeField",
+              "type": "boolean",
+              "id": "manager",
+              "format": "button",
+              "btnType": "danger",
+              "falseBtnType": "primary",
+              "size": "xs",
+              "className": ["mr-1"],
+              "text": "gear",
+              "falseText": "gear"
+            },
+            {
+              "category": "contentTypeField",
+              "type": "boolean",
+              "id": "vscode",
+              "format": "button",
+              "btnType": "success",
+              "falseBtnType": "success",
+              "size": "xs",
+              "className": ["mr-1"],
+              "text": "code",
+              "falseText": "code"
+            },
+            {
+              "category": "contentTypeField",
+              "type": "boolean",
+              "id": "term",
+              "format": "button",
+              "className": ["mr-1"],
+              "btnType": "primary",
+              "falseBtnType": "primary",
+              "size": "xs",
+              "text": "terminal-solid",
+              "falseText": "terminal-solid"
+            },
+            {
+              "category": "contentTypeField",
+              "type": "boolean",
+              "id": "sourcetree",
+              "format": "button",
+              "btnType": "primary",
+              "falseBtnType": "primary",
+              "size": "xs",
+              "className": ["mr-1"],
+              "text": "brands-github",
+              "falseText": "brands-github"
+            },
+            {
+              "category": "contentTypeField",
+              "type": "boolean",
+              "id": "filexplorer",
+              "format": "button",
+              "btnType": "primary",
+              "falseBtnType": "primary",
+              "size": "xs",
+              "className": ["mr-1"],
+              "text": "folder",
+              "falseText": "folder"
+            },
+            {
+              "category": "view",
+              "type": "viewInView",
+              "contentType": "server",
+              "view": "link",
+              "viewId": "{id}",
+              "format": "view",
+              "className": [
+                "bg-blue-500",
+                "hover:bg-blue-500",
+                "text-white",
+                "rounded",
+                "shadow-sm",
+                "py-2",
+                "px-2",
+                "mr-1"
+              ]
+            },
+            {
+              "category": "contentTypeField",
+              "type": "boolean",
+              "id": "running",
+              "format": "button",
+              "text": "pause",
+              "falseText": "play",
+              "btnType": "danger",
+              "falseBtnType": "primary",
+              "size": "xs",
+              "className": ["w-8", "h-8"]
+            }
+          ],
+          "className": ["flex", "py-1"]
+        },
+        { "category": "view", "type": "viewButton", "format": "autoSave" }
+      ]
+    },
+    {
+      "name": "status",
+      "format": "input",
+      "item": [
+        {
+          "category": "view",
+          "type": "viewInView",
+          "format": "setBaseViewValue",
+          "fromField": "_id",
+          "toField": "_id"
+        },
+        {
+          "type": "style",
+          "item": [
+            {
+              "type": "viewButton",
+              "format": "view",
+              "text": "Clear",
+              "event": "clearlog",
+              "btnType": "default",
+              "className": ["opacity-20", "absolute", "right-0"]
+            }
+          ],
+          "className": ["relative"]
+        },
+        {
+          "category": "contentTypeField",
+          "type": "textarea",
+          "id": "log",
+          "format": "log",
+          "height": "200",
+          "className": ["bg-black", "text-gray-400", "p-3"],
+          "wrapperClass": [
+            "flex",
+            "flex-col-reverse",
+            "max-h-128",
+            "overflow-auto",
+            "min-h-8",
+            "bg-black",
+            "h-100",
+            "scrollbar",
+            "scrollbar-dark"
+          ],
+          "event": "log"
+        }
+      ]
+    }
+  ]
 }

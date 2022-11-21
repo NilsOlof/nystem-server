@@ -1,352 +1,236 @@
 {
-	"storage": "memory",
-	"_features": [
-		"date",
-		"access"
-	],
-	"name": "dbexplorer",
-	"machinename": "dbexplorer",
-	"views": [
-		{
-			"format": "list",
-			"name": "list",
-			"item": [
-				{
-					"type": "bootstrap",
-					"format": "panel",
-					"stateStore": "disabled",
-					"header": [
-						{
-							"type": "bootstrap",
-							"format": "panelToggle",
-							"icon": true,
-							"className": [
-								"flex",
-								"items-center"
-							],
-							"item": [
-								{
-									"type": "viewText",
-									"text": "Database explorer"
-								}
-							]
-						}
-					],
-					"item": [
-						{
-							"type": "database",
-							"format": "search",
-							"count": 20,
-							"sortby": [
-								{
-									"id": "_chdate",
-									"type": "date"
-								}
-							],
-							"reversesortby": true
-						},
-						{
-							"type": "devtools",
-							"format": "selectContenttype",
-							"limit": 1,
-							"inline": true,
-							"render": "button"
-						},
-						{
-							"type": "devtools",
-							"format": "urlPartFilter",
-							"text": "Filter",
-							"includeId": true
-						},
-						{
-							"type": "style",
-							"item": [
-								{
-									"type": "viewList",
-									"format": "search",
-									"className": [
-										"w-96"
-									],
-									"includeId": true
-								},
-								{
-									"type": "viewText",
-									"text": "Count",
-									"className": [
-										"ml-6"
-									]
-								},
-								{
-									"type": "viewList",
-									"format": "listStat",
-									"show": [
-										"searchTotal",
-										"total"
-									],
-									"text": "",
-									"className": [
-										"ml-6"
-									]
-								}
-							],
-							"className": [
-								"flex",
-								"items-center",
-								"my-3"
-							]
-						},
-						{
-							"type": "style",
-							"item": [
-								{
-									"id": "_crdate",
-									"type": "date",
-									"format": "sortBy",
-									"text": "Created",
-									"className": [
-										"w-40"
-									]
-								},
-								{
-									"id": "_chdate",
-									"type": "date",
-									"format": "sortBy",
-									"text": "Changed",
-									"className": [
-										"w-40"
-									]
-								},
-								{
-									"type": "text",
-									"id": "name",
-									"format": "sortBy",
-									"className": [
-										"w-40"
-									]
-								},
-								{
-									"id": "_id",
-									"type": "text",
-									"format": "sortBy",
-									"text": "Id",
-									"className": [
-										"w-32"
-									]
-								}
-							],
-							"className": [
-								"flex",
-								"ml-6",
-								"mb-6"
-							]
-						},
-						{
-							"type": "viewList",
-							"format": "infinite",
-							"item": [
-								{
-									"type": "viewList",
-									"rowClassName": [
-										""
-									],
-									"item": [
-										{
-											"type": "bootstrap",
-											"format": "panel",
-											"stateStore": "byUrl",
-											"header": [
-												{
-													"type": "bootstrap",
-													"format": "panelToggle",
-													"iconClassName": [
-														"w-4",
-														"h-4"
-													],
-													"icon": true,
-													"item": [
-														{
-															"id": "_crdate",
-															"type": "date",
-															"className": [
-																"w-40"
-															]
-														},
-														{
-															"id": "_chdate",
-															"type": "date",
-															"className": [
-																"w-40"
-															]
-														},
-														{
-															"type": "text",
-															"id": "name"
-														},
-														{
-															"type": "text",
-															"id": "title"
-														},
-														{
-															"type": "conditional",
-															"condition": [
-																[
-																	"name",
-																	"false"
-																]
-															],
-															"item": [
-																{
-																	"type": "conditional",
-																	"item": [
-																		{
-																			"id": "_id",
-																			"type": "text",
-																			"className": [
-																				"w-32"
-																			]
-																		}
-																	],
-																	"condition": [
-																		[
-																			"title",
-																			"false"
-																		]
-																	]
-																}
-															]
-														},
-														{
-															"type": "viewText",
-															"className": [
-																"flex-grow"
-															]
-														},
-														{
-															"type": "copyToClipBoard",
-															"text": "copy",
-															"field": "_id",
-															"btnSize": "xs",
-															"gotoOnClick": false,
-															"btnType": "primary"
-														}
-													],
-													"className": [
-														"flex",
-														"items-center",
-														"py-1"
-													]
-												}
-											],
-											"item": [
-												{
-													"type": "style",
-													"item": [
-														{
-															"type": "style",
-															"item": [
-																{
-																	"type": "copyToClipBoard",
-																	"text": "copy",
-																	"btnSize": "xs",
-																	"btnType": "default",
-																	"className": [
-																		"rounded",
-																		"mr-1"
-																	]
-																},
-																{
-																	"type": "viewButton",
-																	"format": "input",
-																	"text": "",
-																	"event": "",
-																	"btnType": "default",
-																	"className": [
-																		""
-																	],
-																	"size": "sm"
-																}
-															],
-															"className": [
-																"opacity-60",
-																"hover:opacity-100",
-																"absolute",
-																"right-0",
-																"z-20",
-																"flex",
-																"m-1"
-															]
-														}
-													],
-													"className": [
-														"relative",
-														"z-20"
-													]
-												},
-												{
-													"type": "viewText",
-													"text": "content",
-													"format": "codemirror",
-													"className": [
-														"h-96",
-														"w-full",
-														"z-10",
-														"relative"
-													]
-												}
-											],
-											"className": [
-												"w-full",
-												"my-3"
-											],
-											"typeClass": "defaultWithoutPadding"
-										}
-									],
-									"headerFields": [],
-									"className": [
-										""
-									],
-									"header": [
-										{
-											"type": "viewText",
-											"text": "Database explorer"
-										}
-									],
-									"emptyFields": [
-										{
-											"type": "viewText",
-											"text": "No data found",
-											"renderAs": "h3",
-											"className": [
-												"ml-6",
-												"font-bold"
-											]
-										}
-									]
-								}
-							],
-							"slotLimit": 5
-						}
-					],
-					"expanded": true,
-					"className": [
-						"mx-3",
-						"mt-3"
-					]
-				}
-			]
-		}
-	],
-	"item": [
-		{
-			"type": "text",
-			"text": "Name",
-			"id": "name"
-		},
-		{
-			"type": "text",
-			"text": "Title",
-			"id": "title"
-		}
-	],
-	"noClientCache": true
+  "storage": "memory",
+  "_features": ["date", "access"],
+  "name": "dbexplorer",
+  "machinename": "dbexplorer",
+  "views": [
+    {
+      "format": "list",
+      "name": "list",
+      "item": [
+        {
+          "type": "bootstrap",
+          "format": "panel",
+          "stateStore": "disabled",
+          "header": [
+            {
+              "type": "bootstrap",
+              "format": "panelToggle",
+              "icon": true,
+              "className": ["flex", "items-center"],
+              "item": [{ "type": "viewText", "text": "Database explorer" }]
+            }
+          ],
+          "item": [
+            {
+              "type": "database",
+              "format": "search",
+              "count": 20,
+              "sortby": [{ "id": "_chdate", "type": "date" }],
+              "reversesortby": true
+            },
+            {
+              "type": "devtools",
+              "format": "selectContenttype",
+              "limit": 1,
+              "inline": true,
+              "render": "button"
+            },
+            {
+              "type": "devtools",
+              "format": "urlPartFilter",
+              "text": "Filter",
+              "includeId": true
+            },
+            {
+              "type": "style",
+              "item": [
+                {
+                  "type": "viewList",
+                  "format": "search",
+                  "className": ["w-96"],
+                  "includeId": true
+                },
+                { "type": "viewText", "text": "Count", "className": ["ml-6"] },
+                {
+                  "type": "viewList",
+                  "format": "listStat",
+                  "show": ["searchTotal", "total"],
+                  "text": "",
+                  "className": ["ml-6"]
+                }
+              ],
+              "className": ["flex", "items-center", "my-3"]
+            },
+            {
+              "type": "style",
+              "item": [
+                {
+                  "id": "_crdate",
+                  "type": "date",
+                  "format": "sortBy",
+                  "text": "Created",
+                  "className": ["w-40"]
+                },
+                {
+                  "id": "_chdate",
+                  "type": "date",
+                  "format": "sortBy",
+                  "text": "Changed",
+                  "className": ["w-40"]
+                },
+                {
+                  "type": "text",
+                  "id": "name",
+                  "format": "sortBy",
+                  "className": ["w-40"]
+                },
+                {
+                  "id": "_id",
+                  "type": "text",
+                  "format": "sortBy",
+                  "text": "Id",
+                  "className": ["w-32"]
+                }
+              ],
+              "className": ["flex", "ml-6", "mb-6"]
+            },
+            {
+              "type": "viewList",
+              "format": "infinite",
+              "item": [
+                {
+                  "type": "viewList",
+                  "rowClassName": [""],
+                  "item": [
+                    {
+                      "type": "bootstrap",
+                      "format": "panel",
+                      "stateStore": "byUrl",
+                      "header": [
+                        {
+                          "type": "bootstrap",
+                          "format": "panelToggle",
+                          "iconClassName": ["w-4", "h-4"],
+                          "icon": true,
+                          "item": [
+                            {
+                              "id": "_crdate",
+                              "type": "date",
+                              "className": ["w-40"]
+                            },
+                            {
+                              "id": "_chdate",
+                              "type": "date",
+                              "className": ["w-40"]
+                            },
+                            { "type": "text", "id": "name" },
+                            { "type": "text", "id": "title" },
+                            {
+                              "type": "conditional",
+                              "condition": [["name", "false"]],
+                              "item": [
+                                {
+                                  "type": "conditional",
+                                  "item": [
+                                    {
+                                      "id": "_id",
+                                      "type": "text",
+                                      "className": ["w-32"]
+                                    }
+                                  ],
+                                  "condition": [["title", "false"]]
+                                }
+                              ]
+                            },
+                            { "type": "viewText", "className": ["flex-grow"] },
+                            {
+                              "type": "copyToClipBoard",
+                              "text": "copy",
+                              "field": "_id",
+                              "btnSize": "xs",
+                              "gotoOnClick": false,
+                              "btnType": "primary"
+                            }
+                          ],
+                          "className": ["flex", "items-center", "py-1"]
+                        }
+                      ],
+                      "item": [
+                        {
+                          "type": "style",
+                          "item": [
+                            {
+                              "type": "style",
+                              "item": [
+                                {
+                                  "type": "copyToClipBoard",
+                                  "text": "copy",
+                                  "btnSize": "xs",
+                                  "btnType": "default",
+                                  "className": ["rounded", "mr-1"]
+                                },
+                                {
+                                  "type": "viewButton",
+                                  "format": "input",
+                                  "text": "",
+                                  "event": "",
+                                  "btnType": "default",
+                                  "className": [""],
+                                  "size": "sm"
+                                }
+                              ],
+                              "className": [
+                                "opacity-60",
+                                "hover:opacity-100",
+                                "absolute",
+                                "right-0",
+                                "z-20",
+                                "flex",
+                                "m-1"
+                              ]
+                            }
+                          ],
+                          "className": ["relative", "z-20"]
+                        },
+                        {
+                          "type": "viewText",
+                          "text": "content",
+                          "format": "codemirror",
+                          "className": ["h-96", "w-full", "z-10", "relative"]
+                        }
+                      ],
+                      "className": ["w-full", "my-3"],
+                      "typeClass": "defaultWithoutPadding"
+                    }
+                  ],
+                  "headerFields": [],
+                  "className": [""],
+                  "header": [
+                    { "type": "viewText", "text": "Database explorer" }
+                  ],
+                  "emptyFields": [
+                    {
+                      "type": "viewText",
+                      "text": "No data found",
+                      "renderAs": "h3",
+                      "className": ["ml-6", "font-bold"]
+                    }
+                  ]
+                }
+              ],
+              "slotLimit": 5
+            }
+          ],
+          "expanded": true,
+          "className": ["mx-3", "mt-3"]
+        }
+      ]
+    }
+  ],
+  "item": [
+    { "type": "text", "text": "Name", "id": "name" },
+    { "type": "text", "text": "Title", "id": "title" }
+  ],
+  "noClientCache": true
 }
