@@ -61,6 +61,7 @@ const DevtoolsView = () => {
       domain = tab.url.split("/")[2].split(".")[0];
     });
 
+    console.log("listning to", domain);
     const onNew = (tab) => {
       console.log(tab.pendingUrl, `nystem://${domain}`);
       if (!tab.pendingUrl.startsWith(`nystem://${domain}`)) return;
