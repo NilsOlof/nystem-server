@@ -11,8 +11,6 @@ const sendMessage = (message) =>
   );
 
 const DevtoolsView = () => {
-  const [pro, setPro] = useState("bas");
-
   useEffect(() => {
     if (!window.chrome) return;
 
@@ -66,17 +64,16 @@ const DevtoolsView = () => {
     });
 
     const onNew = (tab) => {
-      setPro(
-        ` ${tab.pendingUrl} nystem://${domain} ${tab.pendingUrl.startsWith(
-          `nystem://${domain}`
-        )}`
+      const url = tab.pendingUrl.replace(
+        new RegExp("nystem:\\/\\/[a-z\\/:]+\\/underproduktion\\/", "img"),
+        `nystem://${domain}/`
       );
-      if (!tab.pendingUrl.startsWith(`nystem://${domain}`)) return;
+      if (!url.startsWith(`nystem://${domain}`)) return;
 
       app()
         .event("devtools", { path: "", event: "devtoolsnystvscode" })
         .then(({ base }) => {
-          let path = tab.pendingUrl
+          let path = url
             .replace(`nystem://${domain}`, base)
             .replace(/\.([0-9]+)$/, ":$1")
             .split("/");
@@ -97,7 +94,7 @@ const DevtoolsView = () => {
     };
   }, []);
 
-  return `DevtoolsView 25 ${pro}`;
+  return null; // `DevtoolsView 25 ${pro}`;
 };
 
 export default DevtoolsView;
