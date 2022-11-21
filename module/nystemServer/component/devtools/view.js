@@ -54,16 +54,20 @@ const DevtoolsView = () => {
   }, []);
 
   useEffect(() => {
+    console.log("DevtoolsView 23.1");
     let domain = "";
     const { tabId } = window.chrome.devtools.inspectedWindow;
     window.chrome.tabs.get(tabId, (tab) => {
       // eslint-disable-next-line prefer-destructuring
       domain = tab.url.split("/")[2].split(".")[0];
+      console.log("DevtoolsView 23.2");
       console.log("listning to", domain);
     });
+    console.log("DevtoolsView 23.3");
 
     console.log("DevtoolsViewDevtoolsView", domain);
     const onNew = (tab) => {
+      console.log("DevtoolsView 23.4");
       console.log(tab.pendingUrl, `nystem://${domain}`);
       if (!tab.pendingUrl.startsWith(`nystem://${domain}`)) return;
 
@@ -90,8 +94,8 @@ const DevtoolsView = () => {
       window.chrome.tabs.onCreated.removeListener(onNew);
     };
   }, []);
-
-  return "DevtoolsView 22";
+  console.log("DevtoolsView 23.0");
+  return "DevtoolsView 23";
 };
 
 export default DevtoolsView;
