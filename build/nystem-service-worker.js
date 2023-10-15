@@ -39,14 +39,21 @@ const init = () => {
     let { pathname, hostname } = new URL(request.url);
 
     const { host } = target.location;
+    const path = pathname.toString();
+
     if (
       request.method !== "GET" ||
-      (host.endsWith(".localhost") && !pathname.toString().endsWith(".webm"))
+      (host.endsWith(".localhost") && !path.endsWith(".webm")) ||
+      path.includes(".mp3") ||
+      path.includes(".m4a") ||
+      path.startsWith("/feed/") ||
+      self.location.hostname !== hostname
     )
       return;
 
-    if (host === hostname && !/\/[^/]+\.[a-z]+$/im.test(pathname.toString()))
+    if (host === hostname && !/\/[^/]+\.[a-z0-9]+$/im.test(pathname.toString()))
       pathname = "/index.html";
+    else pathname = request.url;
 
     event.respondWith(
       (async () => {
@@ -61,7 +68,8 @@ const init = () => {
           if (
             response.headers.get("Cache-Control") !==
               "max-age=0, must-revalidate" &&
-            response.status !== 206
+            response.status !== 206 &&
+            response.status < 300
           )
             cache.put(pathname, response.clone());
 
