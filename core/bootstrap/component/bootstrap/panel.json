@@ -7,6 +7,11 @@
       "type": "gridselect"
     },
     {
+      "id": "expandedClass",
+      "text": "Expanded class",
+      "type": "gridselect"
+    },
+    {
       "id": "expanded",
       "text": "Expanded",
       "type": "boolean"
@@ -30,7 +35,7 @@
           "_id": "disabled"
         }
       ],
-      "limit": "1",
+      "limit": 1,
       "render": "button",
       "default": "byUrl"
     },
@@ -57,7 +62,7 @@
           "_id": "compact"
         }
       ],
-      "limit": "1",
+      "limit": 1,
       "render": "button"
     },
     {

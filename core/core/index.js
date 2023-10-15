@@ -3,11 +3,12 @@
 const crypto = require("crypto");
 const app = require("./init");
 
-console.time("load"); // eslint-disable-line no-console
+const stTime = performance.now();
 require("./package.js")(app);
 require("./exit.js")(app);
 
 app.uuid = () => crypto.randomUUID().replace(/-/g, "");
+app.delay = (delay) => new Promise((resolve) => setTimeout(resolve, delay));
 app.capFirst = (text) =>
   text && text.substring(0, 1).toUpperCase() + text.substring(1);
 
@@ -35,7 +36,7 @@ app.filePaths.forEach((path) => {
   await app.event("load", app);
   await app.event("start", app);
 
-  console.timeEnd("load"); // eslint-disable-line no-console
+  console.log(`load ${(performance.now() - stTime).toFixed(2)}ms`);
   await app.event("started", app);
 
   console.log("Started");

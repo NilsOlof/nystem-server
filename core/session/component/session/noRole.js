@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import app from "nystem";
 import { Wrapper, ContentTypeRender } from "nystem-components";
 
-const hasNoRole = user => user && !user.role;
+const hasNoRole = (user) => user && !user.role;
 
 const SessionNoRole = ({ model = {}, children, path, className }) => {
   const [visible, setVisible] = useState(hasNoRole(app().session.user));

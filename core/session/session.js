@@ -3,16 +3,14 @@
  */
 module.exports = (app) => {
   const requestSessions = {};
-  let sessions = {};
 
   app.session = app.addeventhandler({}, ["add", "login", "logout"], "session");
 
   // Load old sessions from disc
-  const filePath = `${app.__dirname}/data/db/sessionStore.json`;
-  if (app.fs.existsSync(filePath))
-    sessions = JSON.parse(app.fs.readFileSync(filePath));
+  const filePath = `${app.__dirname}/data/db/sessionStore`;
+  const storage = app.debounceStorageFile(filePath, {});
+  const sessions = storage.get();
 
-  const saveDB = () => app.writeFileChanged(filePath, JSON.stringify(sessions));
   const getKeys = (expr, store) =>
     Object.entries(store)
       .filter(([, value]) => expr(value))
@@ -29,34 +27,22 @@ module.exports = (app) => {
         return query;
       }
 
-      let contentType = query.contentType ? query.contentType : "adminUser";
+      let contentType = query.data.contentType
+        ? query.data.contentType
+        : "adminUser";
       const login = async (lastError) => {
-        let { error, user } = await app.database[contentType].event(
+        const { error, user } = await app.database[contentType].event(
           "checkPassword",
           query.data
         );
+        query.user = user;
 
         if (error === "missing" && contentType !== "adminUser") {
           contentType = "adminUser";
           return login(error);
         }
 
-        if (!error) {
-          user = {
-            role: user.role,
-            _id: user._id,
-            sessionid: app.uuid(),
-            contentType,
-            _crdate: Date.now(),
-          };
-          console.log(`New session ${user.sessionid}`);
-          requestSessions[query.id] = user;
-          sessions[user.sessionid] = user;
-          saveDB();
-          query.user = user;
-
-          return query;
-        }
+        if (!error) return app.session.login({ ...query, contentType });
 
         query.data = false;
         query.error = lastError === "password" ? lastError : error;
@@ -66,8 +52,8 @@ module.exports = (app) => {
     });
 
     const logout = (data) => {
-      delete sessions[requestSessions[data.id].sessionid];
-      saveDB();
+      delete sessions[requestSessions[data.id]?.sessionid];
+      storage.save(sessions);
       delete requestSessions[data.id];
       app.connection.emit(data);
     };
@@ -78,7 +64,7 @@ module.exports = (app) => {
       if (id) {
         getKeys((val) => val._id === id, sessions).forEach((key) => {
           delete sessions[key];
-          saveDB();
+          storage.save(sessions);
         });
         getKeys((val) => val._id === id, requestSessions).forEach((key) =>
           logout({ id: key, type: "logout" })
@@ -102,13 +88,26 @@ module.exports = (app) => {
       }
     });
 
-    app.session.on("login", (query) => {
+    app.session.on("login", async (query) => {
       const { user, type, id } = query;
       user.sessionid = user.sessionid || app.uuid();
-      requestSessions[id] = user;
-      query.type = type || "autologin";
+      query.sessionid = user.sessionid;
 
-      app.connection.emit({ ...query, request: undefined });
+      query.type = type;
+      if (type !== "autologin") {
+        query.user = await app.session.event("createSession", {
+          role: user.role,
+          _id: user._id,
+          sessionid: user.sessionid,
+          contentType: query.contentType,
+          _crdate: Date.now(),
+        });
+
+        sessions[user.sessionid] = query.user;
+        storage.save(sessions);
+        console.log(`New session ${user.sessionid}`);
+      }
+      requestSessions[id] = query.user;
     });
 
     // Autologin as user from certain IP addresses
@@ -121,8 +120,14 @@ module.exports = (app) => {
         if (!ip || app.settings.autologin.IP.indexOf(ip) === -1) return;
 
         app.database.adminUser
-          .find({ field: "login", value: app.atHost.autologin.user })
-          .then(({ user: data }) => app.session.login({ id: data.id, user }));
+          .find({
+            field: "login",
+            value: app.atHost.autologin.user,
+            role: "super",
+          })
+          .then(({ data }) =>
+            app.session.login({ id: data.id, user: data, type: "autologin" })
+          );
       });
   });
 
@@ -134,7 +139,7 @@ module.exports = (app) => {
 
       getKeys((val) => val._crdate < limit, sessions).forEach((key) => {
         delete sessions[key];
-        saveDB();
+        storage.save(sessions);
       });
     }, 1000 * 60 * 5);
 };

@@ -1,45 +1,35 @@
 {
-	"item": [
-		{
-			"id": "className",
-			"text": "Class",
-			"type": "gridselect"
-		},
-		{
-			"id": "toFormat",
-			"text": "To format",
-			"type": "viewSelect",
-			"limit": "1",
-			"inline": true,
-			"default": "view"
-		},
-		{
-			"id": "renderAs",
-			"text": "Render as",
-			"type": "select",
-			"render": "button",
-			"option": [
-				"h1",
-				"h2",
-				"h3",
-				"h4",
-				"h5",
-				"h6",
-				"p",
-				"div",
-				"span"
-			],
-			"limit": 1
-		},
-		{
-			"type": "text",
-			"id": "fallback",
-			"text": "Fallback text"
-		},
-		{
-			"type": "text",
-			"id": "addToPath",
-			"text": "Add to path"
-		}
-	]
+  "item": [
+    {
+      "id": "className",
+      "text": "Class",
+      "type": "gridselect"
+    },
+    {
+      "id": "toFormat",
+      "text": "To format",
+      "type": "viewSelect",
+      "limit": 1,
+      "inline": true,
+      "default": "view"
+    },
+    {
+      "id": "renderAs",
+      "text": "Render as",
+      "type": "select",
+      "render": "button",
+      "option": ["h1", "h2", "h3", "h4", "h5", "h6", "p", "div", "span"],
+      "limit": 1
+    },
+    {
+      "type": "text",
+      "id": "fallback",
+      "text": "Fallback text"
+    },
+    {
+      "type": "text",
+      "id": "addToPath",
+      "text": "Add to path"
+    }
+  ]
 }

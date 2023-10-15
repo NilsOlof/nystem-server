@@ -1,6 +1,4 @@
-import React, { useState, useEffect } from "react";
-import app from "nystem";
-import { Wrapper, ContentTypeRender } from "nystem-components";
+import { Wrapper, ContentTypeRender, UseUser } from "nystem-components";
 
 const contains = (array1, array2) => {
   if (!(array1 instanceof Array)) array1 = [array1];
@@ -12,29 +10,14 @@ const contains = (array1, array2) => {
 };
 
 const SessionRole = ({ userrole, model = {}, children, path, className }) => {
-  const [visible, setVisible] = useState(false);
+  const user = UseUser();
 
-  useEffect(() => {
-    const updateVisibility = () => {
-      let reqRole = model.role || userrole;
-      reqRole = typeof reqRole === "string" ? reqRole.split(" ") : reqRole;
+  let reqRole = model.role || userrole;
+  reqRole = typeof reqRole === "string" ? reqRole.split(" ") : reqRole;
+  const { role } = user || {};
+  const userRole = role ? ["logged-in"].concat(role) : "logged-out";
 
-      const { role } = app().session.user || {};
-
-      const userRole = role ? ["logged-in"].concat(role) : "logged-out";
-
-      setVisible(contains(userRole, reqRole));
-    };
-
-    app().on("logout", -1000, updateVisibility);
-    app().on("login", -1000, updateVisibility);
-
-    updateVisibility();
-    return () => {
-      app().off("login", updateVisibility);
-      app().off("logout", updateVisibility);
-    };
-  }, [model.role, userrole]);
+  const visible = contains(userRole, reqRole);
 
   if (!visible) return null;
 

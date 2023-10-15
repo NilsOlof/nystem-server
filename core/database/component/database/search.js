@@ -21,7 +21,9 @@ const DatabaseSearch = ({ view, model, path, children }) => {
         val.replace(/\{([a-z_.0-9]+)\}/gim, (str, p1) => {
           let val = "";
           if (p1 === "_language") val = app().settings.lang;
+          else if (p1 === "_userid") val = app().session.user?._id;
           else if (p1 === "id") val = view.id;
+          else if (p1 === "now") val = Date.now();
           else if (p1.indexOf("params.") === 0)
             val = view.params[p1.replace("params.", "")];
           else if (p1.indexOf("baseView.") !== 0)

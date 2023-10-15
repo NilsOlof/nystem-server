@@ -25,10 +25,10 @@ module.exports = (app) => {
 
     const response = await fetch("/httpsfallback", {
       method: "post",
-      body: "li",
+      body: "{}",
     });
 
-    if ((await response.text()) !== "li") return;
+    if ((await response.text()) !== "{}") return;
 
     app.connection.on("emit", onEmit);
     app.connection.event("connection", { connected: true, fallback: true });

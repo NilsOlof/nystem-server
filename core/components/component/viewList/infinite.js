@@ -1,11 +1,35 @@
 /* eslint-disable space-in-parens */
-import React, { useState, useEffect, useRef, useContext } from "react";
+import { useState, useEffect, useRef, useContext } from "react";
 import app from "nystem";
 import {
   Wrapper,
   DatabaseSearchContext,
   ContentTypeRender,
 } from "nystem-components";
+
+const canScroll = (el, scrollAxis) => {
+  if (el[scrollAxis] === 0) {
+    el[scrollAxis] = 1;
+    if (el[scrollAxis] === 1) {
+      el[scrollAxis] = 0;
+      return true;
+    }
+  } else return true;
+
+  return false;
+};
+
+const isScrollableX = (el) =>
+  el.scrollWidth > el.clientWidth &&
+  canScroll(el, "scrollLeft") &&
+  getComputedStyle(el).overflowX !== "hidden";
+
+const isScrollableY = (el) =>
+  el.scrollHeight > el.clientHeight &&
+  canScroll(el, "scrollTop") &&
+  getComputedStyle(el).overflowY !== "hidden";
+
+const isScrollable = (el) => isScrollableX(el) || isScrollableY(el);
 
 function getScrollParent(element, includeHidden) {
   let { position, overflowY, overflowX, overflow } = getComputedStyle(element);
@@ -20,7 +44,11 @@ function getScrollParent(element, includeHidden) {
     ({ position, overflowY, overflowX, overflow } = getComputedStyle(parent));
 
     if (position === "absolute" && position === "static") continue;
-    if (overflowRegex.test(overflow + overflowY + overflowX)) return parent;
+    if (
+      overflowRegex.test(overflow + overflowY + overflowX) &&
+      overflowX !== "hidden"
+    )
+      return parent;
   }
 
   return document.body;
@@ -162,7 +190,8 @@ const ViewListInfinite = ({ view, model }) => {
       if (newTop > 0) top = newTop;
 
       element = getScrollParent(element, true);
-      if (element === window.document.body) element = window;
+      if (element === window.document.body || element.tagName === "HTML")
+        element = window;
 
       element.addEventListener("scroll", scrollEvent);
       element.addEventListener("resize", resizeEvent);

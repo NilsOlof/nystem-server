@@ -1,10 +1,9 @@
-import React from "react";
 import { UseLocation, Wrapper } from "nystem-components";
 
-const Link = ({ to, className, match, children, exact }) => {
-  const { isMatch, pathname } = UseLocation(match || to, exact);
+const Link = ({ to, className, match, children }) => {
+  const { isMatch, pathname, search } = UseLocation(match || to);
 
-  if (to === pathname || !to)
+  if ((to === pathname || !to) && !search)
     return (
       <Wrapper className={[className, isMatch && "active"]}>{children}</Wrapper>
     );
@@ -13,7 +12,7 @@ const Link = ({ to, className, match, children, exact }) => {
     <Wrapper
       renderAs="a"
       href={to || "/"}
-      className={[className, isMatch && "active"]}
+      className={[className, isMatch && !search && "active"]}
       onClick={(event) => {
         event.preventDefault();
         window.history.pushState({}, "", to);

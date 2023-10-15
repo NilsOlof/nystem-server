@@ -15,7 +15,7 @@ const setPos = () => {
     return;
   }
 
-  document.documentElement.scrollTop = positions[window.location.pathname];
+  document.documentElement.scrollTop = positions[window.location.pathname] || 0;
   setTimeout(setPos, 120);
 };
 
@@ -25,6 +25,12 @@ const RouterScrollpos = () => {
       "popstate",
       () => positions[window.location.pathname] && setTimeout(setPos, 120)
     );
+    window.addEventListener("pushstate", () => {
+      document.documentElement.scrollTop = 0;
+      setTimeout(() => {
+        document.documentElement.scrollTop = 0;
+      }, 100);
+    });
 
     window.addEventListener("scroll", () => {
       positions[window.location.pathname] = document.documentElement.scrollTop;

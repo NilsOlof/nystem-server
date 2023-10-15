@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Wrapper, PanelContext } from "nystem-components";
 import app from "nystem";
 
@@ -19,7 +19,7 @@ const types = {
     header: "bg-gray-200 pointer pl-2 pr-1",
   },
   compact: {
-    wrapper: "mb-1",
+    wrapper: "",
     body: "",
     header: "",
   },

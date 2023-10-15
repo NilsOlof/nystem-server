@@ -1,4 +1,4 @@
-import React, { useRef, useMemo, useEffect, useState } from "react";
+import { useRef, useMemo, useEffect, useState } from "react";
 import app from "nystem";
 import {
   InputWrapper,
@@ -26,10 +26,10 @@ const RenderButton = ({ option, handleChange, value, model }) => (
     {option.map(({ text, _id }) => (
       <Button
         onClick={() => handleChange(_id)}
-        className={[model.classNameItem, "my-1 mr-2"]}
+        className={model.classNameItem}
         key={_id}
         type={value.indexOf(_id) !== -1 ? "primary" : "secondary"}
-        size="xs"
+        size={model.size || "xs"}
       >
         {app().t(text)}
       </Button>
@@ -116,7 +116,7 @@ const SelectInput = ({ model, value, view, setValue }) => {
   const { placeholder, inline, render } = model;
 
   const limit = render === "dropdown" ? 1 : parseInt(model.limit, 10);
-  if (!value) value = [];
+  if (value === undefined) value = [];
   if (!(value instanceof Array)) value = [value];
 
   const option = useMemo(() => normalizeOption(model), [model]);

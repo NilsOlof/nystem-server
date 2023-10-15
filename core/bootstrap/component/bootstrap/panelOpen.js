@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import { useContext } from "react";
 import { Wrapper, ContentTypeRender, PanelContext } from "nystem-components";
 
 const classNames = (className) =>

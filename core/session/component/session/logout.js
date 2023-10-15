@@ -1,4 +1,3 @@
-import React from "react";
 import app from "nystem";
 import { Button, ContentTypeRender } from "nystem-components";
 
@@ -9,7 +8,6 @@ const SessionLogout = ({ children, model, path, ...props }) => {
       {...rest}
       type={btnType}
       onClick={(e) => {
-        e.preventDefault();
         app().session.logout();
         if (!to) return;
 

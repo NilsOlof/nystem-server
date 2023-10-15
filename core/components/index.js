@@ -1,7 +1,11 @@
 module.exports = (app) => {
   const addListner = ({ source, collection, fieldId }) => {
     if (!app.database[source] || !app.database[source].on) {
-      console.error("Missing reference", source);
+      console.error(
+        "Missing reference",
+        collection.contentType.machinename,
+        source
+      );
       return;
     }
 
@@ -18,7 +22,12 @@ module.exports = (app) => {
             role: "super",
             data: {
               ...item,
-              [fieldId]: item[fieldId].filter((id) => id !== _id),
+              [fieldId]:
+                item[fieldId] instanceof Array
+                  ? item[fieldId]?.filter((id) => id !== _id)
+                  : item[fieldId] === _id
+                  ? undefined
+                  : item[fieldId],
             },
           })
         );
@@ -32,12 +41,9 @@ module.exports = (app) => {
         if (item.type !== "reference") return;
         const fieldId = item.id;
 
-        if (app.database[item.source])
-          addListner({ source: item.source, collection, fieldId });
-        else
-          app.on("start", () =>
-            addListner({ source: item.source, collection, fieldId })
-          );
+        app.on("start", () =>
+          addListner({ source: item.source, collection, fieldId })
+        );
       });
     });
   });

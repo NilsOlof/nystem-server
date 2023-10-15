@@ -1,4 +1,4 @@
-import React, { useCallback } from "react";
+import { useCallback } from "react";
 import { Wrapper, ContentTypeRender } from "nystem-components";
 
 const byType = {
@@ -13,9 +13,11 @@ const ConditionalInt = ({ view, model, path }) => {
     const { condition } = model;
     for (let i = 0; i < condition.length; i++) {
       const [field, test] = condition[i];
-      const val = view.getValue(field);
+      const val = view.getValue(field) || 0;
 
-      const [, type, testVal] = test.match(/([<>=]{1,2})(.+)/im) || [];
+      // eslint-disable-next-line prefer-const
+      let [, type, testVal] = test.match(/([<>=]{1,2})(.+)/im) || [];
+      if (testVal === "now") testVal = Date.now();
       if (byType[type](parseFloat(val), parseFloat(testVal))) return true;
     }
     return false;

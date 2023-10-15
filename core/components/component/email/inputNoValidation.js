@@ -1,10 +1,32 @@
-import React, { useState } from "react";
+import { useState, useEffect } from "react";
 import { InputWrapper, Input } from "nystem-components";
 import app from "nystem";
 
-const EmailInputNoValidation = ({ model, focus, setValue, value, className }) => {
+const EmailInputNoValidation = ({
+  model,
+  focus,
+  setValue,
+  value,
+  className,
+  view,
+}) => {
   const { disabled, length, text, clearButton, classNameInput } = model;
   const [id] = useState(app().uuid);
+
+  useEffect(() => {
+    if (!model.mandatory) return;
+
+    const validator = async ({ errors, silent }) => {
+      const error = !value;
+      if (error) errors = [...(errors || []), error];
+      return errors ? { errors, silent } : undefined;
+    };
+    view.on("validate", validator);
+
+    return () => {
+      view.off("validate", validator);
+    };
+  }, [view, value, model]);
 
   const componentClassName = [
     className,
@@ -23,8 +45,8 @@ const EmailInputNoValidation = ({ model, focus, setValue, value, className }) =>
         maxLength={length}
         onChange={(value) => setValue(value)}
         disabled={disabled}
-        type="text"
-        focus={focus}
+        type="email"
+        focus={focus || model.focus}
       />
     </InputWrapper>
   );

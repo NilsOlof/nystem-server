@@ -7,9 +7,24 @@
       "type": "text"
     },
     {
-      "type": "boolean",
-      "id": "invert",
-      "text": "Invert"
+      "type": "switchButtons",
+      "item": [
+        {
+          "type": "boolean",
+          "id": "invert",
+          "text": "Invert"
+        },
+        {
+          "type": "boolean",
+          "id": "useSearch",
+          "text": "Use search"
+        },
+        {
+          "type": "boolean",
+          "id": "closeOnChange",
+          "text": "Close on change"
+        }
+      ]
     }
   ]
 }

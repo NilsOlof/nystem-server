@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import {
   InputWrapper,
   SelectInput,
@@ -52,11 +52,18 @@ const getByType = (utc, val, func) =>
   val ? new Date(val)[utc ? addUTC[func] : func]() : undefined;
 
 const DateExposedYearMonth = ({ model, view }) => {
-  const [years] = useState(getArray(model.from, model.to));
+  const [years] = useState(
+    getArray(model.from, model.to || new Date().getFullYear() + 1)
+  );
   const [from, setFrom] = RouterUseQueryStore(model.saveIdFrom, "int");
   const [to, setTo] = RouterUseQueryStore(model.saveIdTo, "int");
-  UseSearch({ view, id: model.id, value: from && `>${from - 1}` });
-  UseSearch({ view, id: model.id, value: to && `<${to + 1}` });
+  UseSearch({
+    view,
+    id: model.id,
+    value: from && `>${from - 1}`,
+    noListen: true,
+  });
+  UseSearch({ view, id: model.id, value: to && `<${to + 1}`, noListen: true });
 
   const { utc } = model;
 
@@ -64,11 +71,11 @@ const DateExposedYearMonth = ({ model, view }) => {
 
   const fromMonth = getByType(utc, from, "getMonth");
   const toMonth = getByType(utc, to, "getMonth");
-  const month = fromMonth === toMonth ? months[fromMonth] : null;
+  const month = fromMonth === toMonth ? months[fromMonth] : undefined;
 
   const fromDay = getByType(utc, from, "getDate");
   const toDay = getByType(utc, to, "getDate");
-  const day = fromDay === toDay ? toDay : null;
+  const day = fromDay === toDay ? toDay : undefined;
 
   const setYear = (year) => {
     setFrom(year && getDate({ utc, year }));

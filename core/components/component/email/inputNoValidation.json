@@ -32,6 +32,21 @@
           "text": "Mandatory",
           "type": "boolean",
           "id": "mandatory"
+        },
+        {
+          "text": "No label",
+          "type": "boolean",
+          "id": "nolabel"
+        },
+        {
+          "text": "Float label",
+          "type": "boolean",
+          "id": "floatlabel"
+        },
+        {
+          "text": "Focus",
+          "type": "boolean",
+          "id": "focus"
         }
       ]
     }

@@ -1,4 +1,3 @@
-import React from "react";
 import { Vibration } from "react-native";
 class BooleanVibrate extends React.Component {
   UNSAFE_componentWillReceiveProps(nextProps) {

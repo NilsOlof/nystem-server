@@ -36,6 +36,7 @@ module.exports = (app) => {
     return new Promise((resolve, reject) => {
       collection.get({ id }).then(({ data }) => {
         resolve({ contentType, id, addMedia, value: data });
+        if (!data) return;
 
         items.forEach((item) => {
           addToCache(item, data[item.id], addMedia);

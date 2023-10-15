@@ -30,7 +30,15 @@ const typeByFormat = {
   M: new Intl.DateTimeFormat("sv-SE", { month: "numeric" }),
   D: new Intl.DateTimeFormat("sv-SE", { day: "numeric" }),
   HH: new Intl.DateTimeFormat("sv-SE", { hour: "2-digit" }),
-  ss: new Intl.DateTimeFormat("sv-SE", { second: "2-digit" }),
+  ss: {
+    format: (at) => {
+      const val = new Intl.DateTimeFormat("sv-SE", {
+        second: "2-digit",
+      }).format(at);
+
+      return val < 10 ? `0${val}` : val;
+    },
+  },
   mm: {
     format: (at) => {
       const val = new Intl.DateTimeFormat("sv-SE", {
@@ -54,7 +62,9 @@ const myMoment = (val) => {
   return {
     startOf: (isUTC) =>
       myMoment(
-        (isUTC ? Date.UTC : Date)(at.getFullYear(), at.getMonth(), at.getDate())
+        isUTC
+          ? Date.UTC(at.getFullYear(), at.getMonth(), at.getDate())
+          : new Date(at.getFullYear(), at.getMonth(), at.getDate())
       ),
     valueOf: () => at.getTime(),
     format: (format) => {

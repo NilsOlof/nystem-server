@@ -42,12 +42,12 @@
       "render": "button",
       "id": "btnType",
       "text": "Type",
-      "limit": "1"
+      "limit": 1
     },
     {
       "type": "text",
       "render": ["button"],
-      "limit": "1",
+      "limit": 1,
       "id": "trueState",
       "text": "On state",
       "inline": true
@@ -96,13 +96,13 @@
       "render": "button",
       "id": "falseBtnType",
       "text": "Type",
-      "limit": "1"
+      "limit": 1
     },
     {
       "type": "text",
       "id": "falseState",
       "text": "Off state",
-      "limit": "1",
+      "limit": 1,
       "render": ["button"],
       "inline": true
     },
@@ -112,6 +112,40 @@
       "text": "Off on state",
       "render": ["button"],
       "inline": true
+    },
+    {
+      "type": "select",
+      "option": [
+        {
+          "text": "xs",
+          "_id": "xs"
+        },
+        {
+          "text": "sm",
+          "_id": "sm"
+        },
+        {
+          "text": "base",
+          "_id": "base"
+        },
+        {
+          "text": "lg",
+          "_id": "lg"
+        },
+        {
+          "text": "xl",
+          "_id": "xl"
+        },
+        {
+          "text": "2xl",
+          "_id": "2xl"
+        }
+      ],
+      "inline": true,
+      "render": "button",
+      "id": "size",
+      "text": "Size",
+      "limit": 1
     }
   ]
 }

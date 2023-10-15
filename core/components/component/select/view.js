@@ -1,21 +1,26 @@
-import React from "react";
 import app from "nystem";
 import { Wrapper } from "nystem-components";
 
 const SelectView = ({ model, value }) => {
-  const { className, renderAs, option } = model;
-  let val = value || model.fallback;
+  const { renderAs, className, option = [], itemClassName } = model;
+  value = value instanceof Array ? value : [value || model.fallback];
 
-  val =
+  const val =
     option
       .map((item) =>
         typeof item === "string" ? { _id: item, text: item } : item
       )
-      .find(({ _id }) => value === _id) || {};
+      .filter(({ _id }) => value.includes(_id)) || [];
+
+  const optionItem = (item, index) => (
+    <Wrapper key={index} className={itemClassName}>
+      {app().t(item.text)}
+    </Wrapper>
+  );
 
   return (
     <Wrapper renderAs={renderAs} className={className}>
-      {app().t(val.text)}
+      {val.map(optionItem)}
     </Wrapper>
   );
 };

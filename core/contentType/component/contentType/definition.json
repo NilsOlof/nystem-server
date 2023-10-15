@@ -53,8 +53,12 @@
           "text": "Init later"
         },
         {
-          "_id": "dataThreaded",
-          "text": "Threaded in data/db"
+          "_id": "circulatingStorageFile",
+          "text": "Circulating file in data/db"
+        },
+        {
+          "_id": "eventStorageFile",
+          "text": "Event storage file in data/db"
         }
       ],
       "inline": true,

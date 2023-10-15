@@ -10,7 +10,7 @@
       "addid": "format",
       "text": "Format",
       "type": "componentSelect",
-      "limit": "1",
+      "limit": 1,
       "inline": true,
       "default": "list",
       "typeFrom": "group"

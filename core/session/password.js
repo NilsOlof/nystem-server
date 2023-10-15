@@ -58,9 +58,13 @@ module.exports = (app) => {
         const { _id, password } = query.data;
 
         if (_id) {
-          if (typeof password === "string" && password.length > 2)
-            query.data.password = encryptPassword(password, _id);
-          else
+          if (typeof password === "string" && password.length > 2) {
+            if (
+              query.data.password !== query.oldData?.password &&
+              !query.passwordEncoded
+            )
+              query.data.password = encryptPassword(password, _id);
+          } else
             query.data.password = query.oldData ? query.oldData.password : "aa";
         } else {
           query.data._id = app.uuid();

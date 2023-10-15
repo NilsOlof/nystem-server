@@ -16,11 +16,6 @@
       "id": "classNameInput"
     },
     {
-      "text": "Float label",
-      "type": "boolean",
-      "id": "floatlabel"
-    },
-    {
       "type": "text",
       "id": "text",
       "text": "Text"
@@ -40,11 +35,6 @@
       "inline": true
     },
     {
-      "type": "boolean",
-      "id": "mandatory",
-      "text": "Mandatory"
-    },
-    {
       "text": "Inline add view",
       "id": "inlineAdd",
       "type": "viewSelect",
@@ -54,6 +44,36 @@
       "text": "Dropdown text",
       "type": "text",
       "id": "dropdownText"
+    },
+    {
+      "type": "switchButtons",
+      "item": [
+        {
+          "text": "Disabled",
+          "type": "boolean",
+          "id": "disabled"
+        },
+        {
+          "text": "Mandatory",
+          "type": "boolean",
+          "id": "mandatory"
+        },
+        {
+          "text": "No label",
+          "type": "boolean",
+          "id": "nolabel"
+        },
+        {
+          "text": "Float label",
+          "type": "boolean",
+          "id": "floatlabel"
+        },
+        {
+          "text": "Focus",
+          "type": "boolean",
+          "id": "focus"
+        }
+      ]
     }
   ]
 }

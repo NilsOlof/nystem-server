@@ -1,16 +1,16 @@
-import React from "react";
+import { Component } from "react";
 import { Button } from "nystem-components";
 
-class BootstrapDropdown extends React.Component {
+class BootstrapDropdown extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      expanded: this.props.expanded
+      expanded: this.props.expanded,
     };
   }
   toggleExpand() {
     this.setState({
-      expanded: !this.state.expanded
+      expanded: !this.state.expanded,
     });
   }
   render() {

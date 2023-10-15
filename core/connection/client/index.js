@@ -49,41 +49,61 @@ module.exports = (app) => {
   };
 
   const openconnection = () => {
-    console.log(`openconnection ${url}`);
-    let timer = false;
+    timer = -1;
+    let connectionCheck = false;
+    let isError = false;
     const sendSocket = emitSocket((message) => webSocket.send(message));
 
     const webSocket = new WebSocket(url);
 
     webSocket.onerror = (error) => {
+      isError = true;
+      timer = false;
+      connection.event("connection", { error, connected: false });
       connection.event("error", { error });
     };
-    webSocket.onclose = (error) => {
-      connection.event("connection", { error, connected: false });
-      if (!timer) return;
-      clearInterval(timer);
+    webSocket.onclose = () => {
+      timer = false;
+      if (!isError) connection.event("connection", { connected: false });
+      if (!connectionCheck) return;
+      clearInterval(connectionCheck);
       connection.off("emit", sendSocket);
     };
 
     webSocket.onopen = () => {
+      timer = false;
       connection.on("emit", sendSocket);
+
       connection.event("connection", { connected: true });
-      timer = setInterval(() => webSocket.send("{}"), 15000);
+      connectionCheck = setInterval(() => webSocket.send("{}"), 15000);
     };
 
     webSocket.onmessage = (message) => receiveSocket(message.data);
   };
 
-  let delay = 0;
   const url = `ws${app.settings.secure ? "s" : ""}://${app.settings.domain}`;
+  let delay = 0;
+  let timer;
+  const add = app.settings.debug ? 1 : 3;
+
+  const setOpenTimer = (e, setDelay = 0) => {
+    if (connection.connected || document.visibilityState !== "visible") return;
+    if (timer === -1) return;
+
+    delay = setDelay;
+    clearTimeout(timer);
+    timer = setTimeout(openconnection, 1000 * delay || 300);
+  };
+
+  document.addEventListener("visibilitychange", setOpenTimer);
+  window.addEventListener("focus", setOpenTimer);
+
   connection.on("connection", ({ connected, fallback }) => {
     if (fallback) return;
+    if (connected === true && delay !== 0) delay = 0;
+    if (connected !== false || timer) return;
 
-    if (connected === true) delay = 0;
-    if (connected !== false) return;
-
-    setTimeout(openconnection, 1000 * delay);
-    if (delay < 50) delay += app.settings.debug ? 1 : 5;
+    setOpenTimer(0, delay > 50 ? delay : delay + add);
   });
   openconnection();
 
@@ -126,4 +146,11 @@ module.exports = (app) => {
 
   httpsfallbackM(app);
   devtoolsM(app);
+
+  const { classList } = document.body;
+  classList.add("offline");
+  connection.on("connection", ({ connected }) => {
+    if (connected && classList.contains("offline")) classList.remove("offline");
+    if (!connected && !classList.contains("offline")) classList.add("offline");
+  });
 };

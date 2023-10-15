@@ -1,4 +1,3 @@
-import React from "react";
 import { Input, InputWrapper, UseValidator } from "nystem-components";
 import validate from "./validate";
 

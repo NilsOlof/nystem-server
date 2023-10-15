@@ -15,7 +15,7 @@ const objectMap = (object, mapFn) =>
 const deepCopy = (obj) => obj && JSON.parse(JSON.stringify(obj));
 
 const getId = ({ path = "", id = "" }) => {
-  if (path && id) return `${path}.${id}`;
+  if (path && id) return `${path}.${id.substring(id.lastIndexOf(".") + 1)}`;
   if (id) return id;
   return "";
 };

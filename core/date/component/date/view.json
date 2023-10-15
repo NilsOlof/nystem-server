@@ -18,11 +18,12 @@
       "render": "checkbox",
       "id": "dateFormat",
       "text": "Date format",
-      "limit": "1",
+      "limit": 1,
       "inline": true,
       "option": [
         "year",
         "dateLong",
+        "time",
         "timeLong",
         "dateTimeLong",
         "dateTimeNoYear",

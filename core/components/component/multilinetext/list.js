@@ -3,7 +3,7 @@ import React from "react";
 class MultilinetextList extends React.Component {
   render() {
     let { value } = this.props;
-    const createItem = function(item, index) {
+    const createItem = function (item, index) {
       const add = value.length !== index + 1 ? ", " : "";
       return (
         <span key={index}>

@@ -1,4 +1,3 @@
-import React from "react";
 import { Wrapper } from "nystem-components";
 
 const MultilinetextItemText = ({ model, value }) => (

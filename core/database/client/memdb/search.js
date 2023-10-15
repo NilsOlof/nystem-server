@@ -77,14 +77,7 @@ function field2IdType(contentType) {
   return field2IdType;
 }
 
-function setSearchDefaults(query, contentType) {
-  const items = contentType.item || [];
-  query.sortby = !query.sortby
-    ? items.find((item) => item.id === "title")
-      ? "title"
-      : "name"
-    : query.sortby;
-
+function setSearchDefaults(query) {
   query.sortby = query.sortby || "_chdate";
   query.position = query.position || 0;
   query.count = query.count || 200;
@@ -185,7 +178,7 @@ module.exports = (app) => {
 
       const { dbArray } = db;
       query.total = dbArray.length;
-      setSearchDefaults(query, contentType);
+      setSearchDefaults(query);
       let result = [];
 
       function filterResult(query) {

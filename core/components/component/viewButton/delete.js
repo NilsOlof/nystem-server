@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import app from "nystem";
 import { Button } from "nystem-components";
 

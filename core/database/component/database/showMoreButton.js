@@ -1,4 +1,4 @@
-import React, { useContext, useState, useEffect } from "react";
+import { useContext, useState, useEffect } from "react";
 import { Button, DatabaseSearchContext } from "nystem-components";
 
 const DatabaseShowMoreButton = ({ model, view }) => {

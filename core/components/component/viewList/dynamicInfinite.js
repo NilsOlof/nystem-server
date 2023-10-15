@@ -1,5 +1,5 @@
 /* eslint-disable space-in-parens */
-import React, { useState, useEffect, useRef, useContext } from "react";
+import { useState, useEffect, useRef, useContext } from "react";
 import app from "nystem";
 import {
   Wrapper,
@@ -20,7 +20,11 @@ function getScrollParent(element, includeHidden) {
     ({ position, overflowY, overflowX, overflow } = getComputedStyle(parent));
 
     if (position === "absolute" && position === "static") continue;
-    if (overflowRegex.test(overflow + overflowY + overflowX)) return parent;
+    if (
+      overflowRegex.test(overflow + overflowY + overflowX) &&
+      overflowX !== "hidden"
+    )
+      return parent;
   }
 
   return document.body;
@@ -51,7 +55,7 @@ const SlotContent = ({ slot, model, view }) => {
   }, [context.search, model.searchDelay, slot, view.contentType]);
 
   if (slot !== 0 && !slotSearch)
-    return <div className="loading p-4 m-4 rounded-lg shadow h-4 max-w-xl" />;
+    return <div className="loading m-4 h-4 max-w-xl rounded-lg p-4 shadow" />;
 
   if (slot !== 0 && context.search.count * slot === context.search.searchTotal)
     return null;
@@ -124,7 +128,11 @@ const ViewListDynamicInfinite = ({ view, model }) => {
   const [pos, setPos] = useState(0);
   const [heightTotal, setHeightTotal] = useState(0);
   const heights = useRef([]);
-  const slotsTotal = parseInt((searchTotal || 0) / search.count, 10) || 0;
+
+  const slotsTotal = parseInt(
+    Math.trunc((searchTotal || 0) / (search.count || 1)) + 1,
+    10
+  );
   let slotLimit = parseInt(slotCount || model.slotLimit || 3, 10);
   if (slotLimit > slotsTotal) slotLimit = slotsTotal;
 
@@ -137,6 +145,7 @@ const ViewListDynamicInfinite = ({ view, model }) => {
     let pos = 0;
     let top = 0;
     let innerHeight = 0;
+    const { slotMinHeight = 20 } = model;
     const slotHeights = new Array(slotsTotal);
     heights.current = slotHeights;
     let height = 0;
@@ -155,8 +164,8 @@ const ViewListDynamicInfinite = ({ view, model }) => {
       let topPos = 0;
       let newPos = 0;
       let toPos = 0;
-      while (newPos < slotsTotal && topPos < bottom + 200) {
-        topPos += slotHeights[newPos] || height;
+      while (newPos < slotsTotal && topPos < bottom + 200 && toPos < 5555000) {
+        topPos += slotHeights[newPos] || height || slotMinHeight;
         if (topPos < top) newPos++;
         toPos++;
       }
@@ -207,8 +216,9 @@ const ViewListDynamicInfinite = ({ view, model }) => {
     let heightTimer = false;
     const setHeight = () => {
       let totHeight = 0;
+
       for (let i = 0; i < slotsTotal; i++)
-        totHeight += slotHeights[i] || height;
+        totHeight += slotHeights[i] || height || slotMinHeight;
 
       setHeightTotal(totHeight);
       heightTimer = false;
@@ -224,6 +234,7 @@ const ViewListDynamicInfinite = ({ view, model }) => {
     return () => {
       if (timer) clearTimeout(timer);
       if (updateTimer) clearTimeout(updateTimer);
+
       view.off("getViewListHeight", getViewListHeight);
       view.off("setViewListHeight", setViewListHeight);
       view.off("setViewListHeight", setViewListHeightTotal);

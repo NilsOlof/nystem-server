@@ -5,18 +5,19 @@ module.exports = (app) => {
   app.on("start", -200, () => {
     app.file.on("get", -100, async ({ id, url, type }) => {
       if (!url) return;
+
       if (type === "text/html") url = "index.html";
 
       try {
         let data = cache[url];
         if (!data) {
-          data = await fs.readFile(`${app.__dirname}/build/${url}`, "utf8");
+          data = await fs.readFile(`${app.__dirname}/build/${url}`);
 
           cache[url] =
             url.indexOf("static/js/main") !== -1 && url.indexOf(".map") === -1
               ? `window.___settings___ = ${JSON.stringify(
                   app.settings.client
-                )};${data}`
+                )};${data.toString()}`
               : data;
         }
 

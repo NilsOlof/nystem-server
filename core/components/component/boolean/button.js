@@ -1,4 +1,3 @@
-import React from "react";
 import { Button, Icon } from "nystem-components";
 import app from "nystem";
 
@@ -24,7 +23,7 @@ const BooleanButton = ({ setValue, model, value }) => {
         "folder",
         "gear",
         "wallet",
-        "location",
+        "location-dot",
         "terminal-solid",
         "brands-github",
       ].includes(text) ? (

@@ -1,0 +1,46 @@
+{
+  "item": [
+    {
+      "id": "className",
+      "text": "Class",
+      "type": "gridselect"
+    },
+    {
+      "type": "gridselect",
+      "id": "rowClassName",
+      "text": "Row class"
+    },
+    {
+      "id": "renderFormat",
+      "text": "Render as",
+      "type": "select",
+      "inline": true,
+      "limit": 1,
+      "option": ["div", "table", "list"]
+    },
+    {
+      "text": "Header fields",
+      "id": "headerFields",
+      "type": "viewCreator",
+      "expanded": true
+    },
+    {
+      "text": "Empty result fields",
+      "id": "emptyFields",
+      "type": "viewCreator",
+      "expanded": false
+    },
+    {
+      "text": "Fields",
+      "id": "item",
+      "type": "viewCreator",
+      "expanded": true
+    },
+    {
+      "text": "Footer fields",
+      "id": "footerFields",
+      "type": "viewCreator",
+      "expanded": true
+    }
+  ]
+}

@@ -1,4 +1,3 @@
-import React from "react";
 import { Wrapper, ContentTypeRender } from "nystem-components";
 
 const isset = (val) => !!val && !(val instanceof Array && val.length === 0);

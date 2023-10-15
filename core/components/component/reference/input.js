@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef } from "react";
 import {
   InputWrapper,
   Wrapper,
@@ -93,17 +93,19 @@ const ReferenceInput = ({ model, view, value = [], setValue, path }) => {
       if (path !== atPath || modelId !== model.id) return;
 
       const newVal = [...value, addValue._id];
-      setValue(model.limit === 1 ? newVal[0] : newVal);
+
+      setValue(model.limit === 1 || model.limit === "1" ? newVal[0] : newVal);
 
       const addable = !model.limit || newVal.length < model.limit;
       if (!close) setInFocus(addable);
 
       setSearchVal("");
     };
-    const remove = ({ model, value: removeValue, path: atPath }) => {
+    const remove = ({ model, value: removeValue, path: atPath, viewId }) => {
       if (path !== atPath || modelId !== model.id) return;
+      if (!viewId) viewId = removeValue._id;
 
-      const newVal = value.filter((id) => `${id}` !== `${removeValue._id}`);
+      const newVal = value.filter((id) => `${id}` !== `${viewId}`);
       setValue(newVal.length ? newVal : undefined);
       setInFocus(true);
     };
@@ -125,7 +127,7 @@ const ReferenceInput = ({ model, view, value = [], setValue, path }) => {
       error={error}
     >
       {(value.length || null) && (
-        <Wrapper className="w-full max-w-sm px-1 pb-2 pt-1">
+        <Wrapper className="w-full px-1 pb-2 pt-1">
           <ReferenceSortable
             model={model}
             view={view}

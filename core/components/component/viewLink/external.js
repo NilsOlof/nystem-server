@@ -1,5 +1,4 @@
-import React from "react";
-import { Wrapper, ContentTypeRender } from "nystem-components";
+import { Link, Wrapper, ContentTypeRender } from "nystem-components";
 
 const ViewLinkExternal = ({ view, path, model }) => {
   const insertVal = (val) => {
@@ -12,6 +11,13 @@ const ViewLinkExternal = ({ view, path, model }) => {
 
   const { className, item, href } = model;
   let link = insertVal(href);
+  if (link.startsWith("/"))
+    return (
+      <Link className={className} to={link.replace("*", "")} match={link}>
+        <ContentTypeRender path={path} items={item} />
+      </Link>
+    );
+
   if (!/https?:\/\//im.test(link) && !link.startsWith("mailto:"))
     link = `https://${link}`;
 

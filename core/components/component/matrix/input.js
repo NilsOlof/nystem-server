@@ -1,4 +1,3 @@
-import React from "react";
 import { InputWrapper, Input } from "nystem-components";
 
 const MatrixInput = ({ value, model, setValue }) => {

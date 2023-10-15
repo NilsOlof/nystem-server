@@ -54,18 +54,19 @@ module.exports = (app) => {
     const masks = data.slice(indexFirstMask, indexFirstMask + 4);
     let i = indexFirstMask + 4;
     let index = 0;
-    let output = "";
     let para = 0;
 
     while (i < data.length) {
-      const char = String.fromCharCode(data[i++] ^ masks[index++ % 4]);
-      if (char === "{") para++;
-      if (char === "}") para--;
-      output += char;
+      const code = data[i] ^ masks[index++ % 4];
+      data[i++] = code;
+      if (code === 123) para++; // "{"
+      if (code === 125) para--; // "}"
       if (para === 0) break;
     }
 
-    callback(output);
+    callback(
+      new TextDecoder("utf-8").decode(data.slice(indexFirstMask + 4, i))
+    );
     decode(data.slice(i), callback);
   };
 
@@ -75,6 +76,7 @@ module.exports = (app) => {
       const sha1 = crypto.createHash("sha1");
       sha1.update(`${key}258EAFA5-E914-47DA-95CA-C5AB0DC85B11`);
       const acceptKey = sha1.digest("base64");
+      if (!socket.writable) return;
 
       socket.write(
         // eslint-disable-next-line prefer-template
@@ -139,6 +141,7 @@ module.exports = (app) => {
 
   app.connection.on("emit", (data) => {
     if (clients[data.id]) clients[data.id].emit(data);
+    else return { ...data, missing: true };
   });
 
   app.connection.on("broadcast", (data) => {
@@ -150,7 +153,7 @@ module.exports = (app) => {
   app.connection.on("count", (query) => {
     app.session.add(query);
 
-    if (query.session.role !== "super") return;
+    if (!["config", "super"].includes(query.session.role)) return;
     return { ...query, connectedCount };
   });
 };

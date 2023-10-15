@@ -1,4 +1,4 @@
-import React from "react";
+import { createContext } from "react";
 
-const PanelContext = React.createContext();
+const PanelContext = createContext();
 export default PanelContext;

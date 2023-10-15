@@ -1,4 +1,3 @@
-import React from "react";
 import { ContentTypeView, InputWrapper, Wrapper } from "nystem-components";
 
 const ReferenceView = ({ model, view, value = [], path }) => {

@@ -1,4 +1,3 @@
-import React from "react";
 import { Panel, ContentTypeRender } from "nystem-components";
 
 const BootstrapPanel = ({ model, path }) => {

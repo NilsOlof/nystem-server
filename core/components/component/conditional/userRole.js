@@ -8,7 +8,7 @@ class ConditionalUserRole extends React.Component {
     this.model = props.model;
     this.view = props.view;
     const state = {
-      value: props.value
+      value: props.value,
     };
     state.visible = app().session.user
       ? this.contains(app().session.user.role, this.model.role)

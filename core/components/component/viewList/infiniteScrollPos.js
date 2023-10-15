@@ -1,4 +1,3 @@
-import React from "react";
 import { Wrapper, UseEventListner } from "nystem-components";
 
 const ViewListInfiniteScrollPos = ({ model, view }) => {

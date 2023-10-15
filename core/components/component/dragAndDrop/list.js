@@ -102,7 +102,7 @@ const DragAndDropList = ({ value = [], model, path, view }) => {
                     value={provided.dragHandleProps}
                   >
                     <ContentTypeRender
-                      path={`${path ? `${path}.` : ""}${field.id}.${index}`}
+                      path={`${valuePath}.${index}`}
                       items={model.item}
                     />
                   </DragAndDropListContext.Provider>

@@ -1,4 +1,3 @@
-import React from "react";
 import { Link, ContentTypeRender } from "nystem-components";
 
 const ViewLinkFields = ({ model, value, path }) => {

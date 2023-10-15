@@ -44,7 +44,7 @@ module.exports = (app) => {
         : send("search", query)
     );
 
-    collection.on("updates", (query) => send("updates", query));
+    collection.on("updates", (query) => query.date && send("updates", query));
     collection.on("update", 200, (query) => ({
       ...query,
       offline: !connected,
@@ -62,6 +62,9 @@ module.exports = (app) => {
 
     app.connection.on("connection", ({ connected }) => {
       if (connected) collection.updates();
+    });
+    collection.on("init", -100, () => {
+      if (app.connection.connected) collection.updates();
     });
   });
 };

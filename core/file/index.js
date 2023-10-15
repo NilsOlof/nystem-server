@@ -5,6 +5,7 @@ module.exports = (app) => {
 
   require("./logToFile")(app);
   require("./http")(app);
+  require("./head")(app);
 
   // Clear all caches
   app.file.on("/clearcache", (req, res) => {
@@ -32,7 +33,13 @@ module.exports = (app) => {
         app.file.event("socket", { req, socket, head, id: app.uuid() });
       });
 
-      server.listen(app.settings.port, app.settings.host);
+      server.listen(
+        app.settings.port,
+        app.settings.host === "*" ? undefined : app.settings.host || "127.0.0.1"
+      );
+      app.on("exit", 100, () => {
+        server.close();
+      });
     }
 
     app.file.on("get", -10, async ({ id, url, type }) => {
@@ -48,7 +55,19 @@ module.exports = (app) => {
     });
   });
 
-  app.file.on("pipeFile", ({ fullPath, id, secure, type }) => {
+  app.file.on("pipeFile", ({ fullPath, id, secure, type, error }) => {
+    if (!fullPath || error) {
+      app.file.event("response", {
+        id,
+        closed: true,
+        statusCode: 404,
+        data: "404",
+        "content-type": type,
+        "Cache-Control": `max-age=${secure ? 0 : 31536000}`,
+      });
+      return;
+    }
+
     app.file.event("response", {
       id,
       headers: {
@@ -56,11 +75,6 @@ module.exports = (app) => {
         "Cache-Control": `max-age=${secure ? 0 : 31536000}`,
       },
     });
-
-    if (!fullPath) {
-      app.file.event("response", { id, closed: true });
-      return;
-    }
 
     const fileStream = fs.createReadStream(fullPath);
     fileStream.on("error", (err) => {

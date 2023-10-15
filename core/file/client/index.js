@@ -19,8 +19,10 @@ module.exports = (app) => {
 
     if (val === `nystemCache${data.id}`) {
       const nystemCache = await caches.open("nystem");
-      val = await nystemCache.match(val).then((req) => req.json());
+
+      val = await nystemCache.match(val).then((req) => req && req.json());
     }
+
     return {
       ...data,
       value: val && (val[0] === "[" || val[0] === "{") ? JSON.parse(val) : val,
@@ -28,6 +30,14 @@ module.exports = (app) => {
   });
 
   app.storage.on("setItem", async ({ id, value }) => {
+    if (!id) throw new Error("hej");
+    if (
+      app.settings.noLoggedOutStorage &&
+      !app.session.user &&
+      !["havereloaded", "session", "loginTokenId"].includes(id)
+    )
+      return;
+
     value =
       value === undefined || typeof value === "string"
         ? value

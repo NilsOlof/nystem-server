@@ -1,8 +1,7 @@
-import React, { useEffect, useRef, useState } from "react";
+import { forwardRef, useEffect, useRef, useState } from "react";
 
 const byType = {
-  text:
-    "appearance-none block bg-grey-lighter text-grey-darker border border-grey-lighter rounded py-1 px-3 shadow-sm",
+  text: "appearance-none block bg-grey-lighter text-grey-darker border border-grey-lighter rounded py-1 px-3 shadow-sm",
   password:
     "appearance-none block bg-grey-lighter text-grey-darker border border-grey-lighter rounded py-1 px-3 shadow-sm",
   checkbox: "m-4",
@@ -73,4 +72,4 @@ const Input = ({ type, value, ...props }, parentRef) => {
   );
 };
 
-export default React.forwardRef(Input);
+export default forwardRef(Input);

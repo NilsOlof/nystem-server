@@ -1,4 +1,4 @@
-module.exports = function (app) {
+module.exports = (app) => {
   const { fs } = app;
   const srcPath = `${app.__dirname}/web/src/contenttype.json`;
   const distPath = `${app.__dirname}/build/contenttype.json`;

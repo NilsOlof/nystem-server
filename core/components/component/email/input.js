@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { InputWrapper, Input, UseValidator } from "nystem-components";
 import app from "nystem";
 import validate from "./validate";
@@ -30,7 +30,7 @@ const EmailInput = ({ model, view, focus, setValue, value, className }) => {
         maxLength={length}
         onChange={(value) => setValue(value.toLowerCase())}
         disabled={disabled}
-        type="text"
+        type="email"
         focus={focus}
         onBlur={() => setValidated(true)}
       />

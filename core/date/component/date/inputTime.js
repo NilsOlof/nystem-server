@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { Wrapper, Input } from "nystem-components";
 import app from "nystem";
 import moment from "my-moment";
