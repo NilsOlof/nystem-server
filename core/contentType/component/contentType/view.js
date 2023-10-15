@@ -103,7 +103,7 @@ const useValue = ({ view, propvalue }) => {
     view.on("change", -999, setData);
 
     const saveData = (data) => {
-      savedData = data;
+      savedData = noAutoUpdate ? data : value;
     };
     view.on("save", -1000, saveData);
 

@@ -28,17 +28,18 @@ const start = (app) => {
     execService.on("exit", (code) => {
       evHandler.event("exit", { code });
       console.log(`Stopped ${path}/${program}`);
+      app.off("exit", killApp);
     });
 
     evHandler.on("stop", () => {
       execService.kill("SIGINT");
     });
 
-    app.on("exit", () => {
-      execService.kill("SIGINT");
+    const killApp = () => {
+      execService.kill("SIGTERM");
       console.log(`Kill ${path}/${program}`);
-    });
-
+    };
+    app.on("exit", killApp);
     return evHandler;
   };
 
@@ -61,15 +62,11 @@ const start = (app) => {
         }
       };
 
-      ev.on("exit", async () => {
+      ev.on("exit", () => {
         console.log(`Stop ${field}`);
-        const { data } = await app.database.serverStatus.get({ id, role });
-        await app.database.serverStatus.save({
-          data: { ...data, [field]: false },
-          role,
-        });
-        await app.database.serverStatus.save({
-          data: { ...data, [field]: false },
+        app.database.serverStatus.save({
+          data: { _id: id, [field]: false },
+          fields: true,
           role,
         });
       });
