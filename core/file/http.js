@@ -47,17 +47,19 @@ module.exports = (app) => {
 
   const responses = {};
 
-  app.file.on(["get", "post"], 990, ({ id, res, type }) => {
+  app.file.on(["get", "post", "head"], 990, ({ id, res, type }) => {
     if (!res) return;
 
     responses[id] = { res, type };
 
     res.on("abort", () => {
       delete responses[id];
+      res.destroy();
       app.file.event("response", { id, abort: true });
     });
     res.on("close", () => {
       delete responses[id];
+      res.destroy();
       app.file.event("response", { id, close: true });
     });
   });
@@ -83,26 +85,31 @@ module.exports = (app) => {
     });
 
   app.file.on("response", 10, (query) => {
-    const { id, headers, closed } = query;
-    if (closed === true && !headers && !responses[id].res.headersSent)
-      return { ...query, headers: {} };
+    const { id, headers, closed, type } = query;
+    if (closed === true && !responses[id]) {
+      console.log("Double response", query);
+      return;
+    }
+
+    if (closed === true && !headers && !responses[id].res.headersSent && type)
+      return { ...query, headers: { "Content-Type": type } };
   });
 
   const time = app.settings.debug ? 0 : 1000;
   app.file.on("response", -90, ({ headers, ...rest }) => {
     if (!headers) return;
 
-    return {
-      ...rest,
-      headers: {
-        Expires: new Date(Date.now() + 1000).toUTCString(),
-        "Cache-Control": `max-age=${time}, must-revalidate`,
+    headers = {
+      Expires: new Date(Date.now() + 1000).toUTCString(),
+      "Cache-Control": `max-age=${time}, must-revalidate`,
 
-        ETag: `hepp--${cacheTimeStart.getTime()}`,
-        "Last-Modified": cacheTimeStart,
-        ...headers,
-      },
+      ETag: `hepp--${cacheTimeStart.getTime()}`,
+      "Last-Modified": cacheTimeStart,
+      ...headers,
     };
+    if (!headers.ETag) delete headers.ETag;
+
+    return { ...rest, headers };
   });
 
   const zlib = require("zlib");
@@ -119,13 +126,14 @@ module.exports = (app) => {
       headers["accept-encoding"] &&
       (type.includes("text") ||
         type === "application/json" ||
+        type === "image/svg+xml" ||
         type === "application/javascript") &&
       headers["accept-encoding"].match(/\bgzip\b/)
     )
       compresses[id] = true;
   });
 
-  app.file.on("response", -90, ({ id, headers, data, closed }) => {
+  app.file.on("response", -90, ({ id, headers }) => {
     if (!headers || !compresses[id]) return;
 
     headers["content-encoding"] = "gzip";
@@ -166,18 +174,9 @@ module.exports = (app) => {
 
   app.file.on("response", -1000, ({ id, data, closed, abort }) => {
     if (!responses[id]) return;
+
     if (data) responses[id].res.write(data);
-
-    if (closed) {
-      responses[id].res.end();
-      responses[id].res.destroy();
-      delete responses[id];
-    }
-
-    if (abort) {
-      responses[id].res.abort();
-      responses[id].res.destroy();
-      delete responses[id];
-    }
+    if (closed) responses[id].res.end();
+    if (abort) responses[id].res.abort();
   });
 };

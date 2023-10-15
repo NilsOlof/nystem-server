@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { forwardRef, useState, useEffect } from "react";
 import { Wrapper } from "nystem-components";
 import icons from "../../../icons.json";
 
@@ -30,7 +30,13 @@ const Icon = ({ icon, className, renderAs, deg, ...props }, ref) => {
     data[icon] = icons.question;
   }
 
-  const [viewPort, path] = data[icon].split("|");
+  const [viewPort, path, pathProps] = data[icon].split("|");
+  let add = {};
+
+  if (pathProps) {
+    const parts = pathProps?.split(":");
+    add = { [parts[0]]: parts[1] };
+  }
 
   return (
     <Wrapper renderAs={renderAs} className={renderAs && className}>
@@ -50,12 +56,12 @@ const Icon = ({ icon, className, renderAs, deg, ...props }, ref) => {
         {...props}
       >
         <title>{props.title || icon}</title>
-        <path d={path} />
+        <path d={path} {...add} />
       </svg>
     </Wrapper>
   );
 };
-export default React.forwardRef(Icon);
+export default forwardRef(Icon);
 
 // https://www.zondicons.com/icons.html
 // https://fontawesome.com/icons

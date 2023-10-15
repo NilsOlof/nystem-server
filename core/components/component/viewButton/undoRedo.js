@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react";
+import { useEffect, useRef } from "react";
 import { Button, Wrapper, Icon } from "nystem-components";
 
 const ViewButtonUndoRedo = ({ model, view }) => {

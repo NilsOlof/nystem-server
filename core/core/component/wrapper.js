@@ -1,4 +1,4 @@
-import React from "react";
+import { forwardRef, createElement } from "react";
 
 const Wrapper = (
   {
@@ -37,10 +37,10 @@ const Wrapper = (
 
   if (!renderAs || renderAs === "input") renderAs = "div";
 
-  return React.createElement(
+  return createElement(
     renderAs,
     { ...props, title, ref, className, onClick, style },
     children
   );
 };
-export default React.forwardRef(Wrapper);
+export default forwardRef(Wrapper);

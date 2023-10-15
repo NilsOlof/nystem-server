@@ -1,11 +1,11 @@
-import React, { useState, useRef, useEffect } from "react";
-import { ContentTypeRender, UseLocation } from "nystem-components";
+import { useState, useRef, useEffect } from "react";
+import { ContentTypeRender, UseLocation, Wrapper } from "nystem-components";
 
 const exclude = ["style"].map((item) => item.toUpperCase());
 
 const RouterPageNotFound = ({ model, path, children, ...rest }) => {
   const location = UseLocation();
-  const { className, renderAs, item } = model || rest;
+  const { className, renderAs, item, limit } = model || rest;
   const [is404, setIs404] = useState(false);
   const ref = useRef();
 
@@ -16,20 +16,16 @@ const RouterPageNotFound = ({ model, path, children, ...rest }) => {
         .map((item) => item.nodeName)
         .filter((name) => !exclude.includes(name));
 
-      if (items.length < 2) setIs404(true);
-    }, 200);
-  }, [location.pathname, ref, setIs404]);
+      if (items.length < (limit || 2)) setIs404(true);
+    }, 700);
+  }, [limit, location.pathname, ref, setIs404]);
 
   if (!is404) return <div ref={ref} />;
 
   return (
-    <div
-      ref={ref}
-      className={className && className.join(" ")}
-      renderAs={renderAs}
-    >
+    <Wrapper ref={ref} className={className} renderAs={renderAs}>
       {children || <ContentTypeRender path={path} items={item} />}
-    </div>
+    </Wrapper>
   );
 };
 export default RouterPageNotFound;

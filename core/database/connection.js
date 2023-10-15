@@ -41,6 +41,7 @@ module.exports = (app) => {
       const data = await app.session.add(event);
       query.session = data.session;
       query.requestId = data.id;
+      query.role = query.role || data.session?.role;
       query = await collection[event.action](query);
 
       delete event.session;

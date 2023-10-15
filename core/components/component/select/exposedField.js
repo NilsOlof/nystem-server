@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import { useEffect } from "react";
 import { SelectInput, UseSearch, RouterUseQueryStore } from "nystem-components";
 
 const SelectExposedField = ({ model, view }) => {

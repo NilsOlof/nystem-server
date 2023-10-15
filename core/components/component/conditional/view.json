@@ -20,7 +20,7 @@
       "addid": "format",
       "text": "Format",
       "type": "componentSelect",
-      "limit": "1",
+      "limit": 1,
       "inline": true,
       "default": "view",
       "typeField": "type"
@@ -28,8 +28,12 @@
     {
       "text": "Fields",
       "id": "item",
-      "type": "viewCreator",
-      "expanded": true
+      "type": "viewCreator"
+    },
+    {
+      "text": "Fields if not",
+      "id": "itemNot",
+      "type": "viewCreator"
     },
     {
       "type": "boolean",

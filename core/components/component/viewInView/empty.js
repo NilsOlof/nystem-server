@@ -1,4 +1,3 @@
-import React from "react";
 import { ContentTypeView } from "nystem-components";
 import app from "nystem";
 

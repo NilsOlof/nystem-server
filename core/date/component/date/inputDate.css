@@ -1,0 +1,47 @@
+/* 
+.datepicker {
+  position: relative;
+  cursor: pointer;
+  box-sizing: border-box;
+  line-height: normal !important;
+}
+.datepicker::-webkit-calendar-picker-indicator {
+  position: absolute;
+  right: 0;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+*/
+.datepicker {
+  position: relative;
+  width: 150px;
+  height: 40px;
+  color: white;
+}
+
+.datepicker:before {
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  content: attr(data-date);
+  display: inline-block;
+  color: black;
+}
+
+.datepicker::-webkit-datetime-edit,
+.datepicker::-webkit-inner-spin-button,
+.datepicker::-webkit-clear-button {
+  display: none;
+}
+
+.datepicker::-webkit-calendar-picker-indicator {
+  position: absolute;
+  top: 3px;
+  right: 0;
+  color: black;
+  opacity: 1;
+}

@@ -1,0 +1,118 @@
+{
+  "item": [
+    {
+      "type": "gridselect",
+      "id": "className",
+      "text": "Class"
+    },
+    {
+      "type": "text",
+      "id": "text",
+      "text": "Text"
+    },
+    {
+      "id": "options",
+      "text": "Options",
+      "type": "matrix",
+      "rowLabel": ["Name", "Field", "Value"]
+    },
+    {
+      "type": "select",
+      "id": "render",
+      "text": "Render as",
+      "option": ["checkbox", "button", "dropdown"],
+      "limit": 1,
+      "inline": true,
+      "render": "checkbox"
+    },
+    {
+      "text": "Label class",
+      "type": "gridselect",
+      "id": "classNameLabel"
+    },
+    {
+      "text": "Input class",
+      "type": "gridselect",
+      "id": "classNameInput"
+    },
+    {
+      "text": "Item class",
+      "type": "gridselect",
+      "id": "classNameItem"
+    },
+    {
+      "type": "text",
+      "id": "saveId",
+      "text": "Save id"
+    },
+    {
+      "type": "switchButtons",
+      "item": [
+        {
+          "text": "Disabled",
+          "type": "boolean",
+          "id": "disabled"
+        },
+        {
+          "text": "Mandatory",
+          "type": "boolean",
+          "id": "mandatory"
+        },
+        {
+          "text": "No label",
+          "type": "boolean",
+          "id": "nolabel"
+        },
+        {
+          "type": "boolean",
+          "text": "Inline",
+          "id": "inline"
+        },
+        {
+          "text": "Float label",
+          "type": "boolean",
+          "id": "floatlabel"
+        },
+        {
+          "text": "Focus",
+          "type": "boolean",
+          "id": "focus"
+        }
+      ]
+    },
+    {
+      "type": "select",
+      "option": [
+        {
+          "text": "xs",
+          "_id": "xs"
+        },
+        {
+          "text": "sm",
+          "_id": "sm"
+        },
+        {
+          "text": "base",
+          "_id": "base"
+        },
+        {
+          "text": "lg",
+          "_id": "lg"
+        },
+        {
+          "text": "xl",
+          "_id": "xl"
+        },
+        {
+          "text": "2xl",
+          "_id": "2xl"
+        }
+      ],
+      "inline": true,
+      "render": "button",
+      "id": "size",
+      "text": "Size",
+      "limit": 1
+    }
+  ]
+}

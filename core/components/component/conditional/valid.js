@@ -1,5 +1,5 @@
 /* eslint-disable no-continue */
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Wrapper, ContentTypeRender } from "nystem-components";
 
 const ConditionalValid = ({ view, model, path }) => {

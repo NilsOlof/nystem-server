@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import app from "nystem";
 import { Button } from "nystem-components";
 
@@ -14,7 +14,7 @@ const ViewButtonLogin = ({ view, model }) => {
     }
     setSaveButton("Logging in");
     view.value.contentType = view.contentType;
-    const { error } = await app().session.login(view.value);
+    const { error, ...rest } = await app().session.login(view.value);
 
     if (error === "missing") view.event("error", "Email does not exist");
     else if (error === "password") view.event("error", "Password error");

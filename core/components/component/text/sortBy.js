@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { Wrapper, DatabaseSearchContext, Icon } from "nystem-components";
 import app from "nystem";
 

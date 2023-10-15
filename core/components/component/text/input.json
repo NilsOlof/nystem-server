@@ -21,6 +21,11 @@
       "id": "classNameInput"
     },
     {
+      "text": "Info",
+      "type": "text",
+      "id": "info"
+    },
+    {
       "text": "Remove chars",
       "type": "text",
       "id": "removeChars"

@@ -15,7 +15,7 @@
       "id": "render",
       "text": "Render as",
       "option": ["checkbox", "button", "dropdown"],
-      "limit": "1",
+      "limit": 1,
       "inline": true,
       "render": "checkbox"
     },
@@ -68,6 +68,40 @@
           "id": "focus"
         }
       ]
+    },
+    {
+      "type": "select",
+      "option": [
+        {
+          "text": "xs",
+          "_id": "xs"
+        },
+        {
+          "text": "sm",
+          "_id": "sm"
+        },
+        {
+          "text": "base",
+          "_id": "base"
+        },
+        {
+          "text": "lg",
+          "_id": "lg"
+        },
+        {
+          "text": "xl",
+          "_id": "xl"
+        },
+        {
+          "text": "2xl",
+          "_id": "2xl"
+        }
+      ],
+      "inline": true,
+      "render": "button",
+      "id": "size",
+      "text": "Size",
+      "limit": 1
     }
   ]
 }

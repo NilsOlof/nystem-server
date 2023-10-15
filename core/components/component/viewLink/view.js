@@ -1,4 +1,3 @@
-import React from "react";
 import app from "nystem";
 import { Link, Button } from "nystem-components";
 

@@ -46,14 +46,38 @@
       "inline": true
     },
     {
-      "type": "boolean",
-      "id": "confirm",
-      "text": "Confirm"
-    },
-    {
-      "type": "boolean",
-      "id": "saveCtrlS",
-      "text": "key s to save"
+      "type": "select",
+      "option": [
+        {
+          "text": "xs",
+          "_id": "xs"
+        },
+        {
+          "text": "sm",
+          "_id": "sm"
+        },
+        {
+          "text": "base",
+          "_id": "base"
+        },
+        {
+          "text": "lg",
+          "_id": "lg"
+        },
+        {
+          "text": "xl",
+          "_id": "xl"
+        },
+        {
+          "text": "2xl",
+          "_id": "2xl"
+        }
+      ],
+      "inline": true,
+      "render": "button",
+      "id": "size",
+      "text": "Size",
+      "limit": 1
     },
     {
       "type": "select",
@@ -87,7 +111,27 @@
       "render": "button",
       "id": "eventType",
       "text": "Event type",
-      "limit": "1"
+      "limit": 1
+    },
+    {
+      "type": "switchButtons",
+      "item": [
+        {
+          "type": "boolean",
+          "id": "confirm",
+          "text": "Confirm"
+        },
+        {
+          "type": "boolean",
+          "id": "saveCtrlS",
+          "text": "key s to save"
+        },
+        {
+          "type": "boolean",
+          "id": "onSubmit",
+          "text": "On submit"
+        }
+      ]
     },
     {
       "text": "Fields",

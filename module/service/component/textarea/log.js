@@ -60,6 +60,7 @@ const TextareaLog = ({ view, model, value = "" }) => {
         className={model.wrapperClass}
         onClick={(e) => {
           console.log(e.target.href);
+          if (!e.target.href) return;
           e.stopPropagation();
           e.preventDefault();
           const path = e.target.href.split("/").slice(3);

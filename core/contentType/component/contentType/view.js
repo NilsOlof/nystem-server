@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo } from "react";
 import app from "nystem";
 import {
   Loading,
@@ -10,6 +10,8 @@ import { getDiff, applyDiff } from "recursive-diff";
 
 import { ViewContextProvider } from "./context";
 import "./view.css";
+
+const delay = (delay) => new Promise((resolve) => setTimeout(resolve, delay));
 
 const setValueAtPath = ({ path, current, value }) => {
   if (!path) return value;
@@ -46,7 +48,7 @@ const useValue = ({ view, propvalue }) => {
     if (!propvalue || view.id) return;
     setTimeout(() => {
       view.event("change", { value: propvalue });
-    }, 10);
+    }, 5);
   }, [view, propvalue]);
 
   useEffect(() => {
@@ -67,10 +69,14 @@ const useValue = ({ view, propvalue }) => {
             return;
           }
 
-          const diff = getDiff(savedData, data);
-          value = applyDiff(value, diff);
+          try {
+            const diff = getDiff(savedData, data);
+            value = applyDiff(value, diff);
 
-          if (diff.length) view.event("change", { value });
+            if (diff.length) view.event("change", { value });
+          } catch (e) {
+            view.event("change", { value: data });
+          }
         });
     };
     if (id) {
@@ -93,7 +99,7 @@ const useValue = ({ view, propvalue }) => {
     const setData = async ({ value: newValue }) => {
       value = newValue;
       await setValue({ ...value });
-
+      await delay(0);
       if (!firstData) {
         // eslint-disable-next-line no-multi-assign
         firstData = savedData = value;
@@ -215,7 +221,7 @@ const ContentTypeView = ({
       <Wrapper
         renderAs={renderAs}
         className={className}
-        {...(!addForm
+        {...(!(addForm || view.addForm)
           ? {}
           : {
               onSubmit: (e) => {

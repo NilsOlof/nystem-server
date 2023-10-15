@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect, createElement } from "react";
 import app from "nystem";
 import * as components from "nystem-components";
 
@@ -18,7 +18,7 @@ const ViewButtonField2Event = ({ model, view }) => {
     view.event(model.event, { value });
   }, [model.event, value, view]);
 
-  return React.createElement(component, {
+  return createElement(component, {
     value,
     view,
     model: model.field[0],

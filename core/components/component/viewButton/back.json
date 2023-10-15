@@ -6,23 +6,18 @@
       "text": "Class"
     },
     {
+      "type": "boolean",
+      "id": "fwd",
+      "text": "Fwd"
+    },
+    {
       "type": "select",
       "id": "btnType",
       "text": "Type",
       "inline": true,
-      "limit": "1",
+      "limit": 1,
       "option": ["primary", "default", "info", "error", "danger"],
       "render": "checkbox"
-    },
-    {
-      "type": "text",
-      "id": "icon",
-      "text": "Icon"
-    },
-    {
-      "type": "boolean",
-      "id": "fwd",
-      "text": "Fwd"
     },
     {
       "type": "select",
@@ -60,7 +55,7 @@
       "render": "button",
       "id": "btnType",
       "text": "Type",
-      "limit": "1"
+      "limit": 1
     },
     {
       "type": "select",
@@ -98,7 +93,13 @@
       "render": "button",
       "id": "size",
       "text": "Size",
-      "limit": "1"
+      "limit": 1
+    },
+    {
+      "text": "Fields",
+      "id": "item",
+      "type": "viewCreator",
+      "expanded": true
     }
   ]
 }

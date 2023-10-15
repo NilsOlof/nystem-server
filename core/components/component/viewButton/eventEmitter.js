@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback, useMemo } from "react";
+import { useState, useEffect, useCallback, useMemo, useRef } from "react";
 import app from "nystem";
 import { Button, Wrapper, ContentTypeRender } from "nystem-components";
 
@@ -99,15 +99,33 @@ const EventButton = ({ model, view, sendEvent }) => {
   );
 };
 
-const pick = (fields, value) =>
-  fields
-    ? fields.reduce(
-        (prev, [id, to]) => (value[id] ? { ...prev, [to]: value[id] } : prev),
-        {}
-      )
-    : value;
+const goto = (path) => window.history.replaceState({}, "", path);
 
 const ViewButtonEventEmitter = ({ model, view, path }) => {
+  const sendRef = useRef();
+  const insertVal = (val) => {
+    if (!val) return val;
+
+    return val.replace(/\{([a-z_.0-9]+)\}/gim, (str, p1) => {
+      if (p1 === "id") return view.id;
+
+      if (p1.indexOf("params.") === 0)
+        return view.params[p1.replace("params.", "")];
+
+      if (p1.indexOf("baseView.") !== 0)
+        return view.getValue(p1.replace("..", path));
+
+      p1 = p1.replace("baseView.", "");
+      return view.baseView.getValue(p1.replace("..", path));
+    });
+  };
+
+  const pick = (fields, value) =>
+    fields?.reduce((prev, [id, to]) => {
+      const val = insertVal(id);
+      return val ? { ...prev, [to]: val } : prev;
+    }, {});
+
   const [active, setActive] = useState(false);
 
   const emitterByType = {
@@ -122,8 +140,32 @@ const ViewButtonEventEmitter = ({ model, view, path }) => {
   };
   const emitter = emitterByType[model.eventType || "connection"];
 
+  const sendEvent = async () => {
+    let sendData = { event: model.subEvent, contentType: view.contentType };
+
+    if (!active) {
+      sendData = {
+        ...sendData,
+        ...(pick(model.fields) || { value: view.value }),
+      };
+    }
+
+    const data = await emitter.event(model.event, sendData);
+
+    if (model.inactiveClass || model.activeClass) setActive(!active);
+    if (data.redirectURL) goto(data.redirectURL);
+
+    return data;
+  };
+  sendRef.current = sendEvent;
+
   useEffect(() => {
     if (!emitter.on) return;
+    const send = () => {
+      sendRef.current();
+    };
+
+    if (model.onSubmit) view.on("submit", send);
 
     const checkActive = () => {
       setActive(false);
@@ -132,20 +174,9 @@ const ViewButtonEventEmitter = ({ model, view, path }) => {
     emitter.on(model.event, checkActive);
     return () => {
       emitter.off(model.event, checkActive);
+      if (model.onSubmit) view.off("submit", send);
     };
-  }, [emitter, model.event, view.value._id]);
-
-  const sendEvent = async () => {
-    const data = await emitter.event(model.event, {
-      event: model.subEvent,
-      value: active ? false : pick(model.fields, view.value),
-      contentType: view.contentType,
-    });
-
-    if (model.inactiveClass || model.activeClass) setActive(!active);
-
-    return data;
-  };
+  }, [emitter, model, view]);
 
   if (model.item)
     return (

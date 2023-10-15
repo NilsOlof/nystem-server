@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Wrapper, ContentTypeRender } from "nystem-components";
 import app from "nystem";
 

@@ -1,4 +1,3 @@
-import React from "react";
 import { InputWrapper, ContentTypeRender } from "nystem-components";
 
 const ViewTextLabeled = ({ model, view, path }) => {

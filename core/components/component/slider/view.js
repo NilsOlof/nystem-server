@@ -1,4 +1,3 @@
-import React from "react";
 import { TextView } from "nystem-components";
 
 const SliderView = ({ value, ...props }) => {

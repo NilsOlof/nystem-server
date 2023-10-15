@@ -63,6 +63,7 @@ module.exports = (app) => {
           if (statusCode === 500) {
             app.file.event("response", {
               id,
+              type,
               headers,
               data: "File not found",
               statusMessage,
@@ -75,6 +76,7 @@ module.exports = (app) => {
 
           app.file.event("response", {
             id,
+            type,
             headers,
             statusMessage,
             statusCode,
@@ -102,6 +104,7 @@ module.exports = (app) => {
 
         app.file.event("response", {
           id,
+          type,
           data: devStartingIfno,
           statusMessage: "OK",
           statusCode: 404,

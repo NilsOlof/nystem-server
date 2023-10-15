@@ -72,7 +72,7 @@ class EmailVerifiedInput extends React.Component {
           value={this.state.value}
           maxLength={this.model.length}
           onChange={this.handleChange}
-          type="text"
+          type="email"
         />
       </InputWrapper>
     );

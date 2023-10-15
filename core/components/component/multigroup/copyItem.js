@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import { useRef, useState } from "react";
 import app from "nystem";
 import { Button, Icon } from "nystem-components";
 import "./copyItem.css";

@@ -31,6 +31,8 @@
       "text": "Event",
       "type": "select",
       "option": [
+        "referenceOption",
+        "exposedRreferenceOption",
         "referenceAdd",
         "referenceRemove",
         "exposedReferenceAdd",

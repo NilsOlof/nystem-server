@@ -12,16 +12,20 @@ module.exports = (app) => {
   process.stdin.resume();
   process.stdin.on("data", async (data) => {
     if (data.toString() !== "exit") return;
+    app.event("exit");
+  });
+
+  app.on("exit", -10000, async () => {
     updateData();
     console.log(`Process exit, ${prg}`);
-    await app.event("exit");
-    process.exit();
+    await app.delay(1000);
+    process.exitCode = 0;
   });
 
   process.on("unhandledRejection", ({ stack, message }) => {
     stack = stack || message || "Unknown error";
     console.log(`💥 Rejection ${stack.toString().replace(/\n/g, "")}`);
-  }); // eslint-disable-line no-console
+  });
 
   let prg = "";
   const updateData = () => {
@@ -36,7 +40,7 @@ module.exports = (app) => {
   function exitRouter(options, exitCode) {
     if (exitCode || exitCode === 0)
       console.log(`Process exit ${exitCode}, ${prg}`);
-    process.exit();
+    process.exitCode = 0;
   }
 
   const ev = [`SIGINT`, `SIGUSR1`, `SIGUSR2`, `SIGTERM`];
@@ -44,5 +48,18 @@ module.exports = (app) => {
 
   process.on(`uncaughtException`, (e) => {
     console.log(`💥 Exception ${e.stack.toString().replace(/\n/g, "")}`);
+  });
+
+  app.on("start", () => {
+    app.connection.on("exitserver", async (query) => {
+      app.session.add(query);
+      if (query.session.role !== "super") return;
+
+      const { exitservertoken } = app.settings;
+      if (exitservertoken && exitservertoken !== query.value.name) return;
+
+      console.log("Exitserver event");
+      app.event("exit");
+    });
   });
 };

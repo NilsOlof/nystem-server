@@ -3,7 +3,7 @@ module.exports = (app) => {
     collection.on("delete", 1000, (query) => {
       const id = query.id || query.data._id;
       const data = query.data || { _id: id };
-      return Object.assign(query, { id, oldData: db.dbIndex[id], data });
+      return { ...query, id, oldData: db.dbIndex[id], data };
     });
 
     collection.on("delete", -200, (query) => {

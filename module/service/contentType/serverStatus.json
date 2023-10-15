@@ -4,6 +4,8 @@
   "storage": "memory",
   "_features": ["access"],
   "item": [
+    { "type": "text", "text": "code", "id": "code" },
+    { "type": "text", "text": "basepath", "id": "basepath" },
     { "type": "boolean", "id": "running", "text": "Running" },
     { "type": "textarea", "id": "log", "text": "Log" },
     { "type": "boolean", "id": "vscode", "text": "Code editor" },

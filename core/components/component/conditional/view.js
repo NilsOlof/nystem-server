@@ -1,15 +1,33 @@
 /* eslint-disable no-continue */
-import React, { useCallback } from "react";
+import { useCallback } from "react";
 import { Wrapper, ContentTypeRender } from "nystem-components";
+import app from "nystem";
 
 const isset = (val) => !!val && !(val instanceof Array && val.length === 0);
 
 const ConditionalView = ({ view, model, path }) => {
   const testCondition = useCallback(() => {
+    const insertVal = (p1) => {
+      if (p1 === "id") return view.id;
+
+      if (p1.startsWith("params."))
+        return view.params[p1.replace("params.", "")];
+
+      if (p1.startsWith("app.settings."))
+        return app().settings[p1.replace("app.settings.", "")];
+
+      if (!p1.startsWith("baseView."))
+        return view.getValue(p1.replace("..", path));
+
+      p1 = p1.replace("baseView.", "");
+      return view.baseView.getValue(p1.replace("..", path));
+    };
+
     const { condition } = model;
+
     for (let i = 0; i < condition.length; i++) {
       const id = condition[i][0].replace(/^\./i, `${path}.`);
-      const val = view.getValue(id);
+      const val = insertVal(id);
 
       let test = condition[i][1];
 
@@ -39,13 +57,17 @@ const ConditionalView = ({ view, model, path }) => {
     return false;
   }, [model, path, view]);
 
-  if (testCondition())
-    return (
-      <Wrapper className={model.className}>
-        <ContentTypeRender path={path} items={model.item} />
-      </Wrapper>
-    );
-  return null;
+  const result = testCondition();
+  if (!result && !model.itemNot?.length) return null;
+
+  return (
+    <Wrapper className={model.className}>
+      <ContentTypeRender
+        path={path}
+        items={result ? model.item : model.itemNot}
+      />
+    </Wrapper>
+  );
 };
 
 export default ConditionalView;

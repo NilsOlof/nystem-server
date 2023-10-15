@@ -1,11 +1,15 @@
 // eslint-disable-next-line import/extensions
 import indexScripts from "../../../indexScripts";
 import contentType from "../../../contenttype.json";
-import addeventhandler from "./eventhandler";
+import eventhandler from "./eventhandler";
 import buildsettings from "../../../settings.json";
 
 const settings = (window && window.___settings___) || buildsettings;
-const app = { settings, contentType, addeventhandler };
+const app = {
+  settings,
+  contentType,
+  addeventhandler: eventhandler(settings.eventTimeOutError),
+};
 
 if (app.settings.fetchDomainFromUrl) {
   const { protocol, host } = (window && window.location) || {};
@@ -15,7 +19,7 @@ if (app.settings.fetchDomainFromUrl) {
   }
 }
 
-addeventhandler(app, "app");
+app.addeventhandler(app, "app");
 const S4 = () =>
   // eslint-disable-next-line no-bitwise
   (((1 + Math.random()) * 0x10000) | 0).toString(16).substring(1);

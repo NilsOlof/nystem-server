@@ -1,7 +1,7 @@
-import React, { useEffect, useRef, useCallback, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Icon, Wrapper } from "nystem-components";
-import app from "nystem";
 import moment from "my-moment";
+import "./inputDate.css";
 
 const ClearButton = ({ setValue }) => (
   <Icon
@@ -18,55 +18,29 @@ const DateInputDate = ({ model, focus, setValue, value }) => {
   const [inputVal, setInputVal] = useState(
     value ? moment(value).format(dateFormat) : ""
   );
-  const { disabled, length, text } = model;
+  const { disabled, length } = model;
 
   const inputEl = useRef(null);
-
-  const setFromPicker = useCallback(
-    function () {
-      const formVal = this.getDate();
-      setValue(moment(formVal).valueOf());
-    },
-    [setValue]
-  );
 
   useEffect(() => {
     setInputVal(value ? moment(value).format(dateFormat) : "");
   }, [value]);
 
-  useEffect(() => {
-    const start = async () => {
-      const { pikaday } = await import("../../client/pikaday");
-      pikaday({
-        field: inputEl.current,
-        format: dateFormat,
-        onSelect: setFromPicker,
-        firstDay: 1,
-      });
-      inputEl.current.value = inputVal;
-    };
-    start();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
   return (
-    <Wrapper className="relative w-full">
-      <input
-        ref={inputEl}
-        placeholder={app().t(text)}
-        className={
-          "bg-grey-lighter text-grey-darker border-grey-lighter block w-full appearance-none rounded border py-2 px-3"
-        }
-        value={inputVal}
-        maxLength={length}
-        onChange={(e) => setInputVal(e.target.value)}
-        disabled={disabled}
-        type="text"
-        focus={focus}
-        onBlur={() => setValue(moment(inputVal).valueOf())}
-      />
-      {value ? <ClearButton setValue={setValue} /> : null}
-    </Wrapper>
+    <input
+      ref={inputEl}
+      className={"inset-3d"}
+      value={inputVal}
+      maxLength={length}
+      onChange={(e) => {
+        setInputVal(e.target.value);
+        setValue(inputVal ? moment(inputVal).valueOf() : undefined);
+      }}
+      disabled={disabled}
+      data-date={inputVal}
+      type="date"
+      onBlur={() => setValue(inputVal ? moment(inputVal).valueOf() : undefined)}
+    />
   );
 };
 export default DateInputDate;

@@ -1,4 +1,3 @@
-import React from "react";
 import { Panel, Wrapper, ContentTypeRender } from "nystem-components";
 
 const ViewPanelView = ({ model, path }) => {

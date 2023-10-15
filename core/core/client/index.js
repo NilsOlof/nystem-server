@@ -8,6 +8,8 @@ module.exports = (app) => {
   logM(app);
   app.waitInLine = waitInLineM;
 
+  app.delay = (delay) => new Promise((resolve) => setTimeout(resolve, delay));
+
   function init() {
     if (!document.body) {
       window.onload = init;

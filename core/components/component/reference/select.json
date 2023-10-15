@@ -52,7 +52,7 @@
       "id": "render",
       "text": "Render as",
       "option": ["checkbox", "button", "dropdown"],
-      "limit": "1",
+      "limit": 1,
       "inline": true,
       "render": "checkbox"
     },

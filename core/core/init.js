@@ -30,10 +30,7 @@ const app = {
   pathFinder,
 };
 app.__dirname = app.__dirname.replace(/\\/g, "/");
-app.addeventhandler = require("./client/eventhandler");
 app.waitInLine = require("./client/waitInLine");
-
-app.addeventhandler(app);
 
 app.writeFileChanged = (fileName, data) =>
   new Promise((resolve, reject) => {
@@ -74,6 +71,11 @@ try {
   // eslint-disable-next-line no-multi-assign
   app.atHost = app.settings = {};
 }
+
+app.addeventhandler = require("./client/eventhandler")(
+  app.settings.eventTimeOutError
+);
+app.addeventhandler(app);
 app.settings.appName = app.settings.appName || "app";
 app.settings.client = app.settings.client || {};
 

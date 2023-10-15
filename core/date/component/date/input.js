@@ -1,10 +1,10 @@
-import React from "react";
 import {
   InputWrapper,
   DateInputDate,
   UseValidator,
   Wrapper,
   DateInputTime,
+  Icon,
 } from "nystem-components";
 import validate from "./validate";
 
@@ -32,6 +32,15 @@ const DateInput = ({ model, view, setValue, value }) => {
             value={value}
             setValue={validateAndSet}
           />
+        )}
+        {value ? (
+          <Icon
+            icon="xmark"
+            className="mt-1 h-8 w-8 rounded-md bg-red-600 text-white shadow-xl hover:bg-red-700 p-1 mx-1"
+            onClick={() => setValue(undefined)}
+          />
+        ) : (
+          <Wrapper className="mx-1 h-8 w-8 " />
         )}
       </Wrapper>
     </InputWrapper>

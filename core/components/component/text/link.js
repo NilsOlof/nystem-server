@@ -1,4 +1,3 @@
-import React from "react";
 import { Link, Wrapper } from "nystem-components";
 
 const TextLink = ({ model, view, value }) => {

@@ -1,4 +1,3 @@
-import React from "react";
 import app from "nystem";
 import { Button, Wrapper, ContentTypeRender } from "nystem-components";
 
@@ -11,7 +10,11 @@ const ViewButtonReference = ({ model, view, path }) => {
       <Wrapper
         className={className}
         onClick={() =>
-          callView.event("reference", { event, value: view.value })
+          callView.event("reference", {
+            event,
+            value: view.value,
+            viewId: view.id,
+          })
         }
       >
         <ContentTypeRender path={path} items={item} />
@@ -20,7 +23,13 @@ const ViewButtonReference = ({ model, view, path }) => {
 
   return (
     <Button
-      onClick={() => callView.event("reference", { event, value: view.value })}
+      onClick={() =>
+        callView.event("reference", {
+          event,
+          value: view.value,
+          viewId: view.id,
+        })
+      }
       className={className}
       type={model.btnType}
       size={model.btnSize}

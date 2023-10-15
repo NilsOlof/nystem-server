@@ -1,4 +1,3 @@
-import React from "react";
 import { ContentTypeView } from "nystem-components";
 
 const ViewInViewSetValue = ({ model, view, path, value }) => {

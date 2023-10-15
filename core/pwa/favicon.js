@@ -52,9 +52,10 @@ module.exports = (app) => {
     const { width, height } = await sharp(buffer).metadata();
     original = { file, buffer, width, height };
 
-    const bufs = await Promise.all(
-      sizes.map((width) => app.event("generateIconSize", { width }))
-    );
+    const bufs = [];
+    for await (const width of sizes)
+      bufs.push(await app.event("generateIconSize", { width }));
+
     icoBuffer = icongen(bufs.map(({ buffer }) => buffer));
     original.icoBuffer = icoBuffer;
 
@@ -62,7 +63,9 @@ module.exports = (app) => {
   });
 
   if (app.settings.favicon)
-    app.event("favicon", { file: app.settings.favicon });
+    app.on("start", -100, () => {
+      app.event("favicon", { file: app.settings.favicon });
+    });
 
   app.file.on("get", ({ id, url, type }) => {
     if (url !== "/favicon.ico") return;

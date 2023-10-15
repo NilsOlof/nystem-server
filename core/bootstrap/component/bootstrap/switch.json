@@ -1,0 +1,50 @@
+{
+  "text": "Bootstrap",
+  "item": [
+    {
+      "id": "className",
+      "text": "Class",
+      "type": "gridselect"
+    },
+    {
+      "id": "expandedClass",
+      "text": "Expanded class",
+      "type": "gridselect"
+    },
+    {
+      "type": "select",
+      "id": "stateStore",
+      "text": "Store state",
+      "inline": true,
+      "option": [
+        {
+          "text": "By URL",
+          "_id": "byUrl"
+        },
+        {
+          "text": "Independent of URL",
+          "_id": "independent"
+        },
+        {
+          "text": "Disabled",
+          "_id": "disabled"
+        }
+      ],
+      "limit": 1,
+      "render": "button",
+      "default": "byUrl"
+    },
+    {
+      "text": "Start content",
+      "id": "header",
+      "type": "viewCreator",
+      "expanded": true
+    },
+    {
+      "text": "Expanded content",
+      "id": "item",
+      "type": "viewCreator",
+      "expanded": true
+    }
+  ]
+}

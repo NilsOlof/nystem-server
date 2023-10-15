@@ -1,4 +1,3 @@
-import React from "react";
 import { ContentTypeRender } from "nystem-components";
 
 const fallback = {
@@ -151,22 +150,17 @@ const MultigroupInput = ({ model, path }) => {
           : { ...item, id: `${model.idField || "_id"}` }
         : { ...item, id: item.id.replace("testmultigroup", model.id) };
 
-    if (item.item === "item")
+    if (item.item === "item") {
+      // console.log(model);
       return {
         ...item,
-        item: model.item.map((field) => ({
-          ...field,
-          id:
-            field.id && field.id.includes(".")
-              ? field.id
-              : `${model.id}.${field.id}`,
-        })),
+        item: model.item,
       };
-
+    }
     if (item.text === "{name}") return { ...item, text: model.text };
     return { ...item };
   });
 
-  return <ContentTypeRender path={path} items={[item]} />;
+  return <ContentTypeRender items={[item]} path={path} />;
 };
 export default MultigroupInput;

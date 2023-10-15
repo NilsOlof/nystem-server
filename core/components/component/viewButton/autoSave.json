@@ -1,9 +1,24 @@
 {
-	"item": [
-		{
-			"type": "boolean",
-			"id": "redirectOnCreate",
-			"text": "Redirect on create"
-		}
-	]
+  "item": [
+    {
+      "type": "switchButtons",
+      "item": [
+        {
+          "type": "boolean",
+          "id": "redirectOnCreate",
+          "text": "Redirect on create"
+        },
+        {
+          "type": "boolean",
+          "id": "backOnSave",
+          "text": "Back on save"
+        }
+      ]
+    },
+    {
+      "type": "int",
+      "id": "delay",
+      "text": "Delay"
+    }
+  ]
 }

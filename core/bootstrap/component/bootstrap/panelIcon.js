@@ -1,8 +1,8 @@
-import React, { useContext } from "react";
+import { useContext } from "react";
 import { Icon, PanelContext } from "nystem-components";
 
 const BootstrapPanelIcon = ({ model }) => {
-  const { className, iconOpen, iconClosed } = model;
+  const { className, classNameOpen, iconOpen, iconClosed } = model;
   const { expanded } = useContext(PanelContext);
 
   return (
@@ -10,7 +10,10 @@ const BootstrapPanelIcon = ({ model }) => {
       icon={
         expanded ? iconOpen || "chevron-down" : iconClosed || "chevron-right"
       }
-      className={className || "pointer h-6 w-6 pl-0"}
+      className={[
+        className || "pointer h-6 w-6 pl-0",
+        expanded && classNameOpen,
+      ]}
     />
   );
 };

@@ -14,6 +14,11 @@
       "type": "multilinetext",
       "id": "arrValue",
       "text": "Set value in array"
+    },
+    {
+      "type": "boolean",
+      "id": "setBaseView",
+      "text": "Set baseView"
     }
   ]
 }

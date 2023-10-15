@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import { useContext } from "react";
 import { Wrapper, DatabaseSearchContext } from "nystem-components";
 import app from "nystem";
 
@@ -12,7 +12,7 @@ const ViewListListStat = ({ model }) => {
       return null;
     return (
       <Wrapper renderAs="span">
-        {`, ${search.total}${app().t(" in total")}`}
+        {`, ${search.total} ${app().t(" in total")}`}
       </Wrapper>
     );
   }

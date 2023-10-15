@@ -39,7 +39,7 @@
       "render": "button",
       "id": "eventType",
       "text": "Event type",
-      "limit": "1"
+      "limit": 1
     }
   ]
 }

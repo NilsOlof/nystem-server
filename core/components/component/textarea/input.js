@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { forwardRef, useState } from "react";
 import { InputWrapper, Input, UseValidator } from "nystem-components";
 import app from "nystem";
 import validate from "./validate";
@@ -42,4 +42,4 @@ const TextInput = ({ model, view, focus, setValue, value }, ref) => {
     </InputWrapper>
   );
 };
-export default React.forwardRef(TextInput);
+export default forwardRef(TextInput);

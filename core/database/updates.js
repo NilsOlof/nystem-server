@@ -64,7 +64,7 @@ module.exports = (app) => {
     collection.on("updates", (query) => {
       if (collection.contentType.staticContent) return { ...query, ids: [] };
 
-      const ids = [];
+      let ids = [];
       const { dbArray } = db;
       let i = dbArray.length - 1;
 
@@ -74,6 +74,7 @@ module.exports = (app) => {
         ids.push(dbArray[i]._id);
         i--;
       }
+      if (ids.length > 100) ids = undefined;
 
       return { ...query, ids };
     });

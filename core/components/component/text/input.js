@@ -1,18 +1,8 @@
-import React, { useState } from "react";
-import { InputWrapper, Input, Icon, UseValidator } from "nystem-components";
+import { forwardRef, useState } from "react";
+import { InputWrapper, Input, UseValidator } from "nystem-components";
 import app from "nystem";
 import validate from "./validate";
 import "./input.css";
-
-const ClearButton = ({ value, setValue }) =>
-  !value ? null : (
-    <Icon
-      onClick={() => setValue("")}
-      className="w-8 h-8 p-2 relative right-8 cursor-pointer"
-      icon="xmark"
-      aria-hidden="true"
-    />
-  );
 
 const TextInput = ({ model, view, focus, setValue, value }, ref) => {
   const [error, setValidated] = UseValidator({ view, validate, value, model });
@@ -50,13 +40,12 @@ const TextInput = ({ model, view, focus, setValue, value }, ref) => {
           );
         }}
         disabled={disabled}
-        type="text"
+        type={clearButton ? "search" : "text"}
         focus={model.focus || focus}
         onBlur={() => setValidated(true)}
         selectAllOnFocus={model.selectAllOnFocus}
       />
-      {clearButton ? <ClearButton value={value} setValue={setValue} /> : null}
     </InputWrapper>
   );
 };
-export default React.forwardRef(TextInput);
+export default forwardRef(TextInput);

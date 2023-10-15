@@ -8,7 +8,7 @@ module.exports = (app) => {
     if (exist) cached = await load(cachePath);
   });
 
-  app.file.on("get", async ({ id, url = "" }) => {
+  app.file.on("get", async ({ id, url = "", type }) => {
     if (!url.startsWith("/geticon/")) return;
 
     const name = url.split(/[/.]/)[2];
@@ -28,7 +28,7 @@ module.exports = (app) => {
     }
     if (!data) data = "missing";
 
-    app.file.event("response", { id, data, closed: true });
+    app.file.event("response", { id, data, closed: true, type });
     return {};
   });
 };

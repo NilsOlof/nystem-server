@@ -1,9 +1,14 @@
 import { useEffect, useContext } from "react";
 import { PanelContext, UseLocation } from "nystem-components";
 
+const useSearch = ({ useSearch }) => {
+  const { pathname, search } = UseLocation();
+  return useSearch ? search : pathname;
+};
+
 const BootstrapPanelOpenByPath = ({ model, path, view }) => {
   const { toggleExpand, expanded } = useContext(PanelContext);
-  const { pathname } = UseLocation();
+  const pathname = useSearch(model);
 
   useEffect(() => {
     const insertVal = (val) =>
@@ -17,7 +22,9 @@ const BootstrapPanelOpenByPath = ({ model, path, view }) => {
     let setExpanded = pathname.match(new RegExp(insertVal(model.match)));
     if (model.invert) setExpanded = !setExpanded;
 
-    if (setExpanded && !expanded) toggleExpand(setExpanded);
+    if (setExpanded && !expanded) toggleExpand();
+    if (model.closeOnChange && !setExpanded && expanded) toggleExpand();
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pathname]);
 

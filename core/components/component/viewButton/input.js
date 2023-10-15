@@ -1,4 +1,5 @@
-import React, { useState, useEffect, useMemo, useCallback } from "react";
+import { useState, useEffect, useMemo } from "react";
+import { getDiff } from "recursive-diff";
 import app from "nystem";
 import { Button, Wrapper } from "nystem-components";
 
@@ -22,7 +23,7 @@ const baseButtonStates = {
 };
 
 const ViewButtonInput = ({ view, model, value, location }) => {
-  const { text, btnType } = model;
+  const { text, textBusy, btnType, btnTypeBusy } = model;
 
   const buttonStates = useMemo(
     () => ({
@@ -31,9 +32,14 @@ const ViewButtonInput = ({ view, model, value, location }) => {
         text: text || baseButtonStates.default.text,
         type: `${btnType || "secondary"}`,
       },
+      saving: {
+        text: textBusy || baseButtonStates.saving.text,
+        type: `${btnTypeBusy || "warning"}`,
+      },
     }),
-    [btnType, text]
+    [btnType, btnTypeBusy, text, textBusy]
   );
+
   const [button, setButton] = useState("default");
   const [error, setError] = useState(false);
   const [savedTimer, setSavedTimer] = useState(false);
@@ -56,79 +62,84 @@ const ViewButtonInput = ({ view, model, value, location }) => {
         .then(() => setButton("deleted"));
   };
 
-  const handleSubmit = useCallback(async () => {
-    if (button !== "default") return;
-
-    const { errors = [] } = await view.event("validate");
-    if (errors.length) {
-      setError("Correct validation errors", errors);
-      setSavedTimer(
-        setTimeout(() => {
-          setSavedTimer(false);
-        }, 1000)
-      );
-      return;
-    }
-    setError(false);
-    setButton("saving");
-
-    const { data, error } = await app().database[view.contentType].save({
-      data: { ...value },
-      view: view.format,
-    });
-
-    console.log("zzave", { data, error }, value._id);
-
-    if (error) {
-      view.event("error", error);
-      setButton("default");
-      return;
-    }
-
-    const saved = await view.event("save", data);
-    const { pathname } = window.location;
-
-    if (data && view.value._id && view.value._id !== data._id) {
-      window.window.history.replaceState(
-        {},
-        "",
-        pathname.replace(`/${view.value._id}`, `/${data._id || ""}`)
-      );
-      return;
-    }
-
-    if (!view.value._id) {
-      view.setValue({ path: "_id", value: data._id });
-
-      if (!model.noRedirect) {
-        window.window.history.replaceState(
-          {},
-          "",
-          `${model.redirectURL || pathname}/${data._id || ""}`
-        );
-        return;
-      }
-    }
-
-    if (!saved) return;
-
-    if (model.clearOnSave) view.setValue({ value: {} });
-
-    setButton("success");
-
-    if (model.backOnSave) setTimeout(() => window.history.go(-1), 50);
-    else
-      setSavedTimer(
-        setTimeout(() => {
-          setButton("default");
-          setSavedTimer(false);
-        }, 1000)
-      );
-  }, [button, model, value, view]);
-
   useEffect(() => () => savedTimer && clearTimeout(savedTimer), [savedTimer]);
 
   useEffect(() => {
+    const handleSubmit = async ({ errors = [] } = {}) => {
+      if (button !== "default") return;
+
+      if (!errors.length) ({ errors = [] } = await view.event("validate"));
+
+      if (errors.length) {
+        setError("Correct validation errors", errors);
+        setSavedTimer(
+          setTimeout(() => {
+            setSavedTimer(false);
+          }, 1000)
+        );
+        return;
+      }
+      setError(false);
+      setButton("saving");
+
+      const { data, error } = await app().database[view.contentType].save({
+        data: { ...value },
+        view: view.format,
+      });
+
+      if (app().settings.debug)
+        console.log("zzave", { data, error }, value._id);
+
+      if (error) {
+        view.event("error", error);
+        setButton("default");
+        return;
+      }
+
+      const saved = await view.event("save", data);
+      const diff = getDiff(saved, value);
+      if (diff.length) await view.event("change", { value: saved });
+
+      const { pathname } = window.location;
+
+      if (data && view.value._id && view.value._id !== data._id) {
+        window.window.history.replaceState(
+          {},
+          "",
+          pathname.replace(`/${view.value._id}`, `/${data._id || ""}`)
+        );
+        return;
+      }
+
+      if (!view.value._id) {
+        view.setValue({ path: "_id", value: data._id });
+
+        if (!model.noRedirect) {
+          window.window.history.replaceState(
+            {},
+            "",
+            `${model.redirectURL || pathname}/${data._id || ""}`
+          );
+          return;
+        }
+      }
+
+      if (!saved) return;
+
+      if (model.clearOnSave) view.setValue({ value: {} });
+
+      setButton("success");
+
+      if (model.backOnSave) setTimeout(() => window.history.go(-1), 50);
+      else
+        setSavedTimer(
+          setTimeout(() => {
+            setButton("default");
+            setSavedTimer(false);
+          }, 1000)
+        );
+    };
+
     const handleKeySave = () => {
       if (activeKeySaveView) handleSubmit();
     };
@@ -144,14 +155,14 @@ const ViewButtonInput = ({ view, model, value, location }) => {
       app().off("keypressSaveEvent", handleKeySave);
       app().off("inactivateKeySaveView", inactivateKeySaveView);
     };
-  }, [activeKeySaveView, handleSubmit, view]);
+  }, [activeKeySaveView, button, model, value, view]);
 
   if (model.sendOnly && !error)
     return (
       <Button
         className={model.className}
         size={model.size}
-        onClick={handleSubmit}
+        onClick={() => view.event("submit")}
         type={buttonStates[button].type}
       >
         {app().t(buttonStates[button].text)}
@@ -163,7 +174,7 @@ const ViewButtonInput = ({ view, model, value, location }) => {
       <Wrapper className={model.className}>
         <Button
           size={model.size}
-          onClick={handleSubmit}
+          onClick={() => view.event("submit")}
           type={buttonStates[button].type}
         >
           {app().t(buttonStates[button].text)}

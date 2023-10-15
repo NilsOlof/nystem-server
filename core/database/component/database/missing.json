@@ -1,6 +1,16 @@
 {
   "item": [
     {
+      "type": "switchButtons",
+      "item": [
+        {
+          "id": "inverse",
+          "text": "Inverse",
+          "type": "boolean"
+        }
+      ]
+    },
+    {
       "text": "Fields",
       "id": "item",
       "type": "viewCreator",

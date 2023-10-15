@@ -10,8 +10,8 @@ const replaceExports = (content) => {
 
 module.exports = (app) => {
   if (!app.fs.existsSync(`${app.__dirname}/web`)) return;
-  require("./debug/debug.js")(app);
-  require("./debug/debugEvLog.js")(app);
+  require("./debug/debug")(app);
+  require("./debug/debugEvLog")(app);
 
   const { fs } = app;
 

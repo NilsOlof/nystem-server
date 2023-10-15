@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { Input, Wrapper, InputWrapper } from "nystem-components";
 import app from "nystem";
 

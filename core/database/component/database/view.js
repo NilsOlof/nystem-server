@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import { useContext } from "react";
 import { ContentTypeRender, DatabaseSearchContext } from "nystem-components";
 
 const DatabaseView = ({ model, path }) => {

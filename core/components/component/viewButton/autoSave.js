@@ -1,7 +1,9 @@
 import { useEffect } from "react";
 import app from "nystem";
 
-const ViewButtonAutoSave = ({ view }) => {
+const ViewButtonAutoSave = ({ view, model }) => {
+  const { delay = 200 } = model;
+
   useEffect(() => {
     let saveIds = [];
     let saveDelay = false;
@@ -41,17 +43,17 @@ const ViewButtonAutoSave = ({ view }) => {
         saveIds.push(id);
       }
 
-      saveDelay = setTimeout(saveToDb, 200);
+      saveDelay = setTimeout(saveToDb, delay);
     };
     if (!view.value._id && Object.keys(view.value).length)
-      saveDelay = setTimeout(saveToDb, 200);
+      saveDelay = setTimeout(saveToDb, delay);
 
     view.on("change", -2100, handleChange);
     return () => {
       view.off("change", handleChange);
       if (saveDelay) clearTimeout(saveDelay);
     };
-  }, [view]);
+  }, [delay, view]);
 
   return null;
 };

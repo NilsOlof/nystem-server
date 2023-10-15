@@ -61,7 +61,7 @@
       "type": "select",
       "id": "render",
       "text": "Render as",
-      "limit": "1",
+      "limit": 1,
       "render": "checkbox",
       "inline": true,
       "option": ["button", "checkbox", "dropdown"]

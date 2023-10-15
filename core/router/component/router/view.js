@@ -1,4 +1,3 @@
-import React from "react";
 import { Wrapper, ContentTypeRender, UseLocation } from "nystem-components";
 
 const RouterView = ({ model, view, path }) => {

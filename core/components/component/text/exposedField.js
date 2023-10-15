@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { TextInput, UseSearch, RouterUseQueryStore } from "nystem-components";
 
 const TextExposedField = ({ model, view }) => {

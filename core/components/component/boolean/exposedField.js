@@ -1,4 +1,3 @@
-import React from "react";
 import { SelectInput, UseSearch, RouterUseQueryStore } from "nystem-components";
 
 const BooleanExposedField = ({ model, view }) => {

@@ -1,4 +1,3 @@
-import React from "react";
 import { Icon } from "nystem-components";
 
 const BooleanView = ({ model, value }) =>

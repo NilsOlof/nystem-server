@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import { createElement, useContext } from "react";
 import app from "nystem";
 import * as components from "nystem-components";
 
@@ -36,7 +36,7 @@ const createItem = ({ item, value, path, view, ...context }) => {
     console.log(component, item);
     component = "div";
   }
-  return React.createElement(component, {
+  return createElement(component, {
     ...context,
     value: getValue(valuePath),
     path,
@@ -55,7 +55,7 @@ const ContentTypeRender = (props) => {
 
   return items.map((item, key) => {
     const out = createItem({ key, item, path, ...context });
-    return (renderAs && React.createElement(renderAs, { key }, out)) || out;
+    return (renderAs && createElement(renderAs, { key }, out)) || out;
   });
 };
 export default ContentTypeRender;

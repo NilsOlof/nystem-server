@@ -1,8 +1,7 @@
-import React from "react";
 import { ContentTypeView } from "nystem-components";
 import app from "nystem";
 
-const ViewInViewView = ({ model, view, value, path, onSave }) => {
+const ViewInViewView = ({ model, view = {}, value, path, onSave }) => {
   const { addid, contentType, className, viewId } = model;
 
   const insertVal = (val) => {

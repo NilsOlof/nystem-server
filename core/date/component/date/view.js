@@ -1,4 +1,4 @@
-import React, { useRef, useState, useEffect, useCallback } from "react";
+import { useRef, useState, useEffect, useCallback } from "react";
 import moment from "my-moment";
 import app from "nystem";
 import { Wrapper } from "nystem-components";
@@ -6,7 +6,8 @@ import { Wrapper } from "nystem-components";
 const dateTimeFormats = {
   year: "YYYY",
   dateLong: "YYYY-MM-DD",
-  timeLong: "H:mm",
+  time: "H:mm",
+  timeLong: "H:mm:ss",
   dateTimeLong: "YYYY-MM-DD HH:mm",
   dateTimeNoYear: "D/M H:mm",
   dateTimeNoYearDay: "ddd D/M H:mm",

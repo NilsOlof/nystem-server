@@ -1,8 +1,8 @@
 /* eslint-disable jsx-a11y/mouse-events-have-key-events */
-import React, { useState } from "react";
+import { useState, createContext } from "react";
 import { Wrapper, ContentTypeRender } from "nystem-components";
 
-export const HideOnNotOverContext = React.createContext();
+export const HideOnNotOverContext = createContext();
 
 const StyleOnOverHandle = ({ model, path }) => {
   const [over, setOver] = useState(false);

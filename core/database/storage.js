@@ -1,8 +1,7 @@
 const os = require("os").platform();
 
 module.exports = (app) => {
-  const { dbPath, fs } = app;
-  const { dbPathWin, dbPathMac } = app.settings;
+  const { dbPathWin, dbPathMac, dbPath } = app.settings;
 
   const dbFileBase =
     (os === "win32" && dbPathWin) ||
@@ -10,79 +9,26 @@ module.exports = (app) => {
     dbPath ||
     `${app.__dirname}/data`;
 
-  fs.ensureDir(`${dbFileBase}/db`);
-
   app.database.on("init", async ({ collection, db, contentType }) => {
-    let dbFile = `${dbFileBase}/db/${contentType.machinename}`;
+    if (["memory"].includes(contentType.storage)) return;
 
-    if (["module", "moduleThreaded"].includes(contentType.storage)) {
-      dbFile = `${app.__dirname}/module/${contentType.module}/db/${contentType.machinename}`;
-      if (!fs.existsSync(dbFile)) fs.mkdirSync(dbFile);
-    }
+    const dbFile = ["module"].includes(contentType.storage)
+      ? `${app.__dirname}/module/${contentType.module}/db/${contentType.machinename}`
+      : `${dbFileBase}/db/${contentType.machinename}db`;
 
-    function loadData() {
-      let dbArray = [];
-      if (fs.existsSync(`${dbFile}db.json`)) {
-        try {
-          console.time(`load ${contentType.machinename}`);
-          dbArray = JSON.parse(fs.readFileSync(`${dbFile}db.json`, "utf8"));
-          console.timeEnd(`load ${contentType.machinename}`);
-        } catch (e) {
-          dbArray = [];
-        }
-      } else if (fs.existsSync(`${dbFile}Old.json`)) {
-        console.log(`Load old data ${dbFile}`);
-        try {
-          dbArray = JSON.parse(fs.readFileSync(`${dbFile}Old.json`, "utf8"));
-        } catch (e) {}
-      }
-      return dbArray;
-    }
+    const storage = app[contentType.storage]
+      ? app[contentType.storage](dbFile, [])
+      : app.debounceStorageFile(dbFile, []);
 
-    let delayTimer3 = false;
-    let delayTimer30 = false;
-    function saveDB() {
-      function _saveDB() {
-        console.log("save", contentType.machinename);
-
-        clearTimeout(delayTimer30);
-        delayTimer3 = false;
-        delayTimer30 = false;
-        const data =
-          app.debug && !app.settings.spacelessDb
-            ? JSON.stringify(db.dbArray, null, "\t")
-            : JSON.stringify(db.dbArray);
-
-        fs.writeFile(`${dbFile}temp.json`, data, (err) => {
-          if (!err) {
-            if (fs.existsSync(`${dbFile}Old.json`))
-              fs.unlinkSync(`${dbFile}Old.json`);
-            if (fs.existsSync(`${dbFile}db.json`))
-              fs.rename(`${dbFile}db.json`, `${dbFile}Old.json`, (err) => {
-                if (!err)
-                  fs.rename(`${dbFile}temp.json`, `${dbFile}db.json`, (err) => {
-                    if (!err) fs.unlink(`${dbFile}Old.json`);
-                  });
-              });
-            else fs.rename(`${dbFile}temp.json`, `${dbFile}db.json`);
-          }
-        });
-      }
-      if (delayTimer30) clearTimeout(delayTimer3);
-      else {
-        delayTimer3 = setTimeout(_saveDB, 3000);
-        delayTimer30 = setTimeout(_saveDB, 30000);
-      }
-    }
-
-    if (!["memory", "memoryThreaded"].includes(contentType.storage))
-      collection.on(["save", "delete"], -900, (query) =>
-        query.data ? saveDB() : undefined
-      );
+    collection.on("save", -900, (query) =>
+      query.data ? storage.save(db.dbArray, query.data) : undefined
+    );
+    collection.on("delete", -900, (query) =>
+      query.data ? storage.delete(db.dbArray, query.id) : undefined
+    );
 
     collection.on("init", 1000, (query) => {
-      // console.log(collection.contentType.machinename, data.value);
-      db.dbArray = loadData();
+      db.dbArray = storage.get();
     });
   });
 };

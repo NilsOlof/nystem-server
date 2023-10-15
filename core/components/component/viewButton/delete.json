@@ -57,7 +57,7 @@
       "render": "button",
       "id": "btnType",
       "text": "Type",
-      "limit": "1"
+      "limit": 1
     },
     {
       "type": "select",
@@ -91,7 +91,7 @@
       "render": "button",
       "id": "size",
       "text": "Size",
-      "limit": "1"
+      "limit": 1
     }
   ]
 }

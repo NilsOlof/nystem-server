@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { InputWrapper, Input } from "nystem-components";
 import app from "nystem";
 
@@ -11,7 +11,7 @@ const PasswordInput = ({ model, value, setValue }) => {
       <Input
         id={id}
         placeholder={app().t(text)}
-        className={classNameInput || "sm:w-1/2 w-full"}
+        className={classNameInput || "w-full sm:w-1/2"}
         value={value || ""}
         onChange={setValue}
         type="password"

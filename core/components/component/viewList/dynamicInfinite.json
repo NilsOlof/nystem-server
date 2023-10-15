@@ -21,6 +21,11 @@
       "type": "int"
     },
     {
+      "id": "slotMinHeight",
+      "text": "Slot min height",
+      "type": "int"
+    },
+    {
       "id": "clearHeightOnUpdate",
       "text": "Clear height on update",
       "type": "boolean"

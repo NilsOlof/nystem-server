@@ -1,4 +1,3 @@
-import React from "react";
 import { Wrapper, ContentTypeRender } from "nystem-components";
 
 const StyleView = ({ model, path }) => {

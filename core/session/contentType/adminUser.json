@@ -42,6 +42,23 @@
   "storage": "data",
   "views": [
     {
+      "name": "exitserver",
+      "item": [
+        { "type": "viewText", "text": "Exit", "renderAs": "h1" },
+        { "type": "text", "id": "name", "text": "Token", "mandatory": false },
+        {
+          "type": "viewButton",
+          "format": "eventEmitter",
+          "event": "exitserver",
+          "eventType": "connection",
+          "btnType": "danger",
+          "confirm": true,
+          "text": "Exit server"
+        }
+      ],
+      "format": "input"
+    },
+    {
       "name": "input",
       "format": "input",
       "item": [
@@ -163,6 +180,24 @@
       ],
       "focus": true,
       "addForm": true
+    },
+    {
+      "name": "logndebug",
+      "item": [
+        {
+          "type": "session",
+          "format": "role",
+          "item": [
+            {
+              "type": "style",
+              "format": "multiClick",
+              "nrofclick": 3,
+              "item": [{ "type": "viewButton", "format": "consolelog" }]
+            }
+          ],
+          "role": ["super", ""]
+        }
+      ]
     },
     {
       "name": "view",

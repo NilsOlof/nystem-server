@@ -6,6 +6,11 @@
       "type": "gridselect"
     },
     {
+      "id": "classNameOpen",
+      "text": "Class open",
+      "type": "gridselect"
+    },
+    {
       "id": "iconOpen",
       "text": "Icon open",
       "type": "text"

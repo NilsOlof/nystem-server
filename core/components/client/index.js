@@ -4,8 +4,7 @@ const React = require("react");
 const ReactDOM = require("react-dom/client");
 
 const base = document.createElement("div");
-base.className = "react-root";
-base.id = "react-root";
+base.id = "root";
 document.body.appendChild(base);
 
 export default (app) => {
@@ -28,7 +27,6 @@ export default (app) => {
   };
 
   app.on("loaded", loadDom);
-  app.on("reload", loadDom);
 
   app.on("unmount", () => {
     root.unmount();
