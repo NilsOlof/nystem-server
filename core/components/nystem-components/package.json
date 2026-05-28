@@ -2,7 +2,9 @@
   "name": "nystem-components",
   "version": "0.0.6",
   "description": "oo",
-  "main": "../../src/components",
+  "files": [
+    "index.js"
+  ],
   "author": "Nisse",
   "license": "ISC"
 }

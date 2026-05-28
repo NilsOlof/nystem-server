@@ -28,7 +28,7 @@ const setValueAtPath = ({ path, current, value }) => {
     }
   });
 
-  if (app().settings.debug) console.log(out);
+  if (app.settings.debug) console.log(out);
   return out;
 };
 
@@ -55,7 +55,7 @@ const useValue = ({ view, propvalue }) => {
     if (!view.on) return;
 
     const { id, contentType, noAutoUpdate } = view;
-    const db = app().database[contentType];
+    const db = app.database[contentType];
     let firstData = id ? false : {};
     let value = false;
     let savedData = false;
@@ -99,7 +99,7 @@ const useValue = ({ view, propvalue }) => {
     const setData = async ({ value: newValue }) => {
       value = newValue;
       await setValue({ ...value });
-      await delay(0);
+      await delay(1);
       if (!firstData) {
         // eslint-disable-next-line no-multi-assign
         firstData = savedData = value;
@@ -155,7 +155,7 @@ const ContentTypeView = ({
   ...events
 }) => {
   const view = useMemo(() => {
-    const model = app().populatedViews[contentType];
+    const model = app.populatedViews[contentType];
 
     if (!viewModel && !(model && model.views)) {
       console.error("View creation error", {
@@ -167,7 +167,7 @@ const ContentTypeView = ({
     }
 
     const base = viewModel || model.views[format] || {};
-    return app().addeventhandler(
+    return app.addeventhandler(
       {
         ...base,
         baseView,
@@ -178,7 +178,7 @@ const ContentTypeView = ({
         getValuePath,
         id,
       },
-      `view ${contentType} ${format}`
+      `view ${contentType} ${format}`,
     );
   }, [contentType, viewModel, format, baseView, id]);
 
@@ -214,7 +214,10 @@ const ContentTypeView = ({
 
   if (!renderAs) renderAs = !(addForm || view.addForm) ? undefined : "form";
 
-  if (!view.on) return <div>💥💥 view creation failure 💥💥</div>;
+  if (!view.on)
+    return (
+      <div>{`💥💥 view creation failure: ${contentType} ${format} 💥💥`}</div>
+    );
 
   return (
     <ViewContextProvider value={context}>

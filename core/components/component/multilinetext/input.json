@@ -1,14 +1,14 @@
 {
-	"item": [
-		{
-			"type": "gridselect",
-			"id": "className",
-			"text": "Class"
-		},
-		{
-			"type": "text",
-			"id": "text",
-			"text": "Label"
-		}
-	]
+  "item": [
+    {
+      "type": "gridselect",
+      "id": "className",
+      "text": "Class"
+    },
+    {
+      "type": "text",
+      "id": "text",
+      "text": "Label"
+    }
+  ]
 }

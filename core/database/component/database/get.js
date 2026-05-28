@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import app from "nystem";
 
 const DatabaseGet = ({ id, contentType, noAutoUpdate }) => {
-  const db = app().database[contentType];
+  const db = app.database[contentType];
   const [result, setResult] = useState(false);
 
   useEffect(() => {

@@ -34,7 +34,7 @@ const fallback = {
                   type: "bootstrap",
                   format: "panelToggle",
                   icon: true,
-                  className: ["flex-grow", "flex", "items-center"],
+                  className: ["grow", "flex", "items-center"],
                   item: [
                     {
                       type: "text",
@@ -97,7 +97,7 @@ const fallback = {
               format: "view",
             },
           ],
-          className: ["flex-grow", "flex", "items-center"],
+          className: ["grow", "flex", "items-center"],
         },
         {
           type: "multigroup",

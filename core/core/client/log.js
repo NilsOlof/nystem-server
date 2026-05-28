@@ -1,4 +1,8 @@
-module.exports = (app) => {
+export default (app) => {
+  return;
+  if (window.nystemLoaded) return;
+  window.nystemLoaded = true;
+
   const getStackTrace = (row) => {
     const obj = {};
     if (!Error.captureStackTrace) return "";
@@ -6,7 +10,7 @@ module.exports = (app) => {
 
     const [, source, line, column] =
       /https?:\/\/[^/]+\/([^:]+):([^:]+):([0-9]+)/im.exec(
-        obj.stack.split("\n")[row]
+        obj.stack.split("\n")[row],
       ) || [];
 
     return !source
@@ -18,73 +22,28 @@ module.exports = (app) => {
     typeof window !== "undefined" &&
     window?.location?.host?.includes(".localhost")
   ) {
-    const translater = (() => {
-      let consumer = false;
-      let base = "";
-      let pre = "";
+    const base = window?.location?.host?.replace(".localhost", "");
 
-      const load = () =>
-        new Promise((resolve) => {
-          callbacks.push(resolve);
-          if (callbacks.length > 1) return;
+    const replace = (all, source, line, column) => {
+      const replaceSource = (txt) =>
+        txt
+          .replace(base, `${app.settings.domain.replace(".localhost", "")}`)
+          .replace("/core/", "/c/")
+          .replace("/module/", "/m/")
+          .replace("/component/", "/c/");
 
-          const scriptEl = document.createElement("script");
+      return line
+        ? `nystem://${base}${replaceSource(source)}.${line.replace(" ", "")}`
+        : all;
+    };
 
-          scriptEl.setAttribute("src", "/source-map.js");
-          scriptEl.onload = async () => {
-            window.sourceMap.SourceMapConsumer.initialize({
-              "lib/mappings.wasm":
-                "https://unpkg.com/source-map@0.7.3/lib/mappings.wasm",
-            });
-            const mapData = await fetch("/static/js/bundle.js.map").then(
-              (res) => res.json()
-            );
-            base = mapData.sources
-              .find((src) => src.includes("/components.js"))
-              .replace(/\/components.js/, "");
-
-            app.on("devtoolsnystvscode", (q) => ({ ...q, base }));
-
-            consumer = await new window.sourceMap.SourceMapConsumer(mapData);
-            callbacks.forEach((callback) => callback());
-          };
-          document.head.appendChild(scriptEl);
-        });
-
-      const callbacks = [];
-      const replace = (all, source, line, column) => {
-        if (!column) return all;
-
-        ({ source, line, column } = consumer.originalPositionFor({
-          line: parseInt(line, 10),
-          column: parseInt(column, 10),
-        }));
-
-        const replaceSource = (txt) =>
-          txt
-            .replace(base, `${app.settings.domain.replace(".localhost", "")}`)
-            .replace("/core/", "/c/")
-            .replace("/module/", "/m/")
-            .replace("/component/", "/c/");
-
-        return line ? `${pre}nystem://${replaceSource(source)}.${line}` : all;
-      };
-
-      return {
-        load: () => !consumer && load(),
-        translate: (str, topre) => {
-          pre = topre || "";
-          return str
-            .replace(/https?:\/\/[^/]+\/([^:]+):([0-9]+):([0-9]+)/gim, replace)
-            .replace(/(static\/js\/bundle.js) ([0-9]+):([0-9]+)/gim, replace);
-        },
-      };
-    })();
+    const translate = (str) =>
+      str.replace(/src([^:]+)\?t=[0-9]+ ([0-9]+):([0-9]+)/gim, replace);
 
     const replaceLinks =
       (callback) =>
       async (...args) => {
-        await translater.load();
+        // await translater.load();
 
         window.console.error = replaceLinksSync(errorLog);
         window.console.log = (...args) =>
@@ -97,8 +56,7 @@ module.exports = (app) => {
       (callback, pre) =>
       (...args) => {
         for (let i = 0; i < args.length; i++)
-          if (typeof args[i] === "string")
-            args[i] = translater.translate(args[i], pre);
+          if (typeof args[i] === "string") args[i] = translate(args[i], pre);
 
         callback(...args);
       };

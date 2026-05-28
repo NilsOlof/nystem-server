@@ -10,12 +10,12 @@ const ViewButtonDelete = ({ view, model }) => {
     if (model.stopPropagation) event.stopPropagation();
 
     if (view.event("delete"))
-      app()
-        .database[view.contentType].delete({ id: view.value._id })
+      app.database[view.contentType]
+        .delete({ id: view.value._id })
         .then(() =>
           model.redirectURL
             ? window.history.replaceState({}, "", model.redirectURL)
-            : setText(deletedText)
+            : setText(deletedText),
         );
   };
 
@@ -29,7 +29,7 @@ const ViewButtonDelete = ({ view, model }) => {
       onClick={handleDelete}
       type={btnType}
     >
-      {app().t(text || "Delete")}
+      {app.t(text || "Delete")}
     </Button>
   );
 };

@@ -8,11 +8,11 @@ const ConnectionView = ({ model = {}, offline, className, path, children }) => {
   useEffect(() => {
     const update = ({ connected }) => setConnectedState(connected);
 
-    app().connection.on("connection", update);
-    setConnectedState(app().connection.connected);
+    app.connection.on("connection", update);
+    setConnectedState(app.connection.connected);
 
     return () => {
-      app().connection.off("connection", update);
+      app.connection.off("connection", update);
     };
   }, []);
 

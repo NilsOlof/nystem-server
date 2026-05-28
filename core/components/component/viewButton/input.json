@@ -46,6 +46,11 @@
       "text": "Redirect to URL"
     },
     {
+      "type": "text",
+      "id": "deleteMessage",
+      "text": "Delete confirm message"
+    },
+    {
       "type": "select",
       "option": [
         {

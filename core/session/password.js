@@ -1,6 +1,7 @@
-const crypto = require("crypto");
+import crypto from "node:crypto";
 
 const md5 = (text) => crypto.createHash("md5").update(text).digest("hex");
+
 let encryptPassword = (password, salt) => {
   try {
     const encrypt = crypto.createCipheriv("BF-ECB", salt, "");
@@ -9,15 +10,16 @@ let encryptPassword = (password, salt) => {
     hex += encrypt.final("hex");
     return hex;
   } catch (e) {
-    return false;
+    console.log("crypto BF-ECB missing", md5(password));
+    return md5(password);
   }
 };
 let checkPassword = (inPassword, bdPassword, salt) =>
   bdPassword === encryptPassword(inPassword, salt);
 
-module.exports = (app) => {
-  if (app.settings.bcryptjs) {
-    const bcrypt = require("bcryptjs");
+export default async (app) => {
+  try {
+    const bcrypt = (await import(app.nodePath("bcryptjs"))).default;
 
     const encryptPasswordOld = encryptPassword;
     encryptPassword = (password) => bcrypt.hashSync(password, 12);
@@ -25,6 +27,8 @@ module.exports = (app) => {
     checkPassword = (inPassword, bdPassword, salt) =>
       bcrypt.compareSync(inPassword, bdPassword) ||
       (bdPassword === encryptPasswordOld(inPassword, salt) && "old");
+  } catch (e) {
+    console.log("no bcrypt module installed", e);
   }
 
   app.on("init", () => {
@@ -97,7 +101,7 @@ module.exports = (app) => {
         const valid = checkPassword(
           data.password,
           db.dbIndex[user._id].password,
-          user._id
+          user._id,
         );
 
         if (valid === "old")

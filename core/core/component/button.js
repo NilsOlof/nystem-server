@@ -1,4 +1,5 @@
 import { Wrapper } from "nystem-components";
+import { createElement } from "react";
 
 const types = {
   primary: "bg-blue-500 hover:bg-blue-500 text-white",
@@ -36,6 +37,7 @@ const Button = ({
   type,
   size,
   disabled,
+  renderAs,
   ...props
 }) => {
   className = className instanceof Array ? [...className] : [className];
@@ -47,21 +49,17 @@ const Button = ({
   }
 
   if (props.Component)
-    return React.createElement(props.Component, {
+    return createElement(props.Component, {
       className,
       ...props,
     });
-
+  if (onClick)
+    props.onClick = (e) => {
+      e.preventDefault();
+      onClick(e);
+    };
   return (
-    <Wrapper
-      renderAs="button"
-      className={className}
-      {...props}
-      onClick={(e) => {
-        e.preventDefault();
-        onClick(e);
-      }}
-    />
+    <Wrapper renderAs={renderAs || "button"} className={className} {...props} />
   );
 };
 export default Button;

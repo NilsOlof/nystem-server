@@ -1,9 +1,9 @@
-import { InputWrapper, Input, UseValidator } from "nystem-components";
+import { InputWrapper, Input, useValidator } from "nystem-components";
 import app from "nystem";
 import validate from "./validate";
 
 const FloatInput = ({ model, view, focus, setValue, value, className }) => {
-  const [error, setValidated] = UseValidator({ view, validate, value, model });
+  const [error, setValidated] = useValidator({ view, validate, value, model });
   const { disabled, length, text, clearButton } = model;
 
   const componentClassName = [
@@ -23,7 +23,7 @@ const FloatInput = ({ model, view, focus, setValue, value, className }) => {
       className={componentClassName}
     >
       <Input
-        placeholder={app().t(text)}
+        placeholder={app.t(text)}
         className={model.classNameInput}
         value={!value && value !== 0 ? "" : value}
         maxLength={length}

@@ -2,8 +2,8 @@ import { useState } from "react";
 import {
   InputWrapper,
   SelectInput,
-  UseSearch,
-  RouterUseQueryStore,
+  useSearch,
+  useRouterQueryStore,
 } from "nystem-components";
 
 const modelYear = {
@@ -17,7 +17,7 @@ const modelYear = {
 const months = Array.from({ length: 12 }, (e, i) =>
   new Date(null, i + 1, null).toLocaleDateString("en", {
     month: "short",
-  })
+  }),
 );
 const modelMonth = {
   id: "month",
@@ -53,17 +53,17 @@ const getByType = (utc, val, func) =>
 
 const DateExposedYearMonth = ({ model, view }) => {
   const [years] = useState(
-    getArray(model.from, model.to || new Date().getFullYear() + 1)
+    getArray(model.from, model.to || new Date().getFullYear() + 1),
   );
-  const [from, setFrom] = RouterUseQueryStore(model.saveIdFrom, "int");
-  const [to, setTo] = RouterUseQueryStore(model.saveIdTo, "int");
-  UseSearch({
+  const [from, setFrom] = useRouterQueryStore(model.saveIdFrom, "int");
+  const [to, setTo] = useRouterQueryStore(model.saveIdTo, "int");
+  useSearch({
     view,
     id: model.id,
     value: from && `>${from - 1}`,
     noListen: true,
   });
-  UseSearch({ view, id: model.id, value: to && `<${to + 1}`, noListen: true });
+  useSearch({ view, id: model.id, value: to && `<${to + 1}`, noListen: true });
 
   const { utc } = model;
 
@@ -118,7 +118,7 @@ const DateExposedYearMonth = ({ model, view }) => {
         <SelectInput
           model={{
             ...modelDay,
-            option: getArray(1, daysInMonth(year, fromMonth) + 1),
+            option: getArray(1, daysInMonth(year, fromMonth + 1) + 1),
             classNameInput: "dayExposedField",
           }}
           value={day}

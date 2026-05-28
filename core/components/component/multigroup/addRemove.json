@@ -30,9 +30,15 @@
       "id": "action",
       "text": "Action",
       "type": "select",
-      "option": ["Add", "Remove"],
+      "option": ["Add", "Remove", "Up"],
       "limit": 1,
       "inline": true
+    },
+    {
+      "id": "value",
+      "text": "Set value",
+      "type": "matrix",
+      "rowLabel": ["Field", "Value"]
     }
   ]
 }

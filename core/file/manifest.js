@@ -1,8 +1,9 @@
-module.exports = (app) => {
-  const { fs } = app;
-
+export default (app) => {
   function generate(filename, destination) {
-    if (!fs.existsSync(destination)) return;
+    if (
+      !app.fs.existsSync(destination.substring(0, destination.lastIndexOf("/")))
+    )
+      return;
 
     const packages = app.filePaths
       .filter((path) => {
@@ -27,10 +28,9 @@ module.exports = (app) => {
 
       app.writeFileChanged(
         destination,
-        JSON.stringify(packagejson, null, "  ")
+        JSON.stringify(packagejson, null, "  "),
       );
     });
   }
-
   generate("manifest.json", `${app.__dirname}/web/public/manifest.json`);
 };

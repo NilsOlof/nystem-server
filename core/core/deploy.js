@@ -1,6 +1,23 @@
-const { exec, spawn } = require("child_process");
-const fs = require("fs-extra");
-const os = require("os");
+import * as url from "url";
+import { exec, spawn } from "child_process";
+import os from "os";
+
+let fs = await import("fs");
+
+const nodePath = (name) => {
+  const nodePath = process.env.NODE_PATH;
+  if (!nodePath) return name;
+
+  const { main } = JSON.parse(
+    fs.readFileSync(`${nodePath}/${name}/package.json`),
+  );
+
+  return `file://${process.env.NODE_PATH}/${name}/${main.replace("./", "")}`;
+};
+
+fs = (await import(nodePath("fs-extra"))).default;
+const __filename = url.fileURLToPath(import.meta.url);
+const __dirname = url.fileURLToPath(new URL(".", import.meta.url));
 
 const addPreload = (html) => {
   let out = "";
@@ -22,8 +39,8 @@ const runCommandExec = (command, env = {}) =>
       command,
       { env: { ...process.env, ...env } },
       (error, stdout, stderr) =>
-        error ? reject(error) : resolve(stdout + stderr)
-    )
+        error ? reject(error) : resolve(stdout + stderr),
+    ),
   );
 
 const runCommand = (commandLine, cwd) =>
@@ -35,6 +52,7 @@ const runCommand = (commandLine, cwd) =>
       cwd: cwd ? folder + cwd : null,
       stdio: [process.stdin, process.stdout, process.stderr],
       detached: false,
+      shell: true,
     };
 
     const proc = spawn(command, args, opts);
@@ -44,13 +62,18 @@ const runCommand = (commandLine, cwd) =>
 const runGitCommand = (command, env) =>
   runCommandExec(
     `git --git-dir="${gitFolder}.git" --work-tree="${gitFolder}" ${command}`,
-    env
+    env,
   );
 
 const dirname = process.env.NODE__DIRNAME || __dirname;
 const folder = dirname.replace(/\\/g, "/");
 const folderAsUnix =
   process.platform === "win32" ? folder.replace(/\//g, "\\") : folder;
+
+const settings = JSON.parse(
+  fs.readFileSync(`${dirname}/data/host.json`, "utf8"),
+);
+const { buildBranch = "master", devBranch = "develop" } = settings;
 
 let gitFolder = __dirname.replace(/\\/g, "/");
 gitFolder = `${gitFolder.substring(0, gitFolder.lastIndexOf("/core/core"))}/`;
@@ -70,7 +93,7 @@ const saveContentTypes = () => {
     ) {
       try {
         out[filename.replace(".json", "")] = JSON.parse(
-          fs.readFileSync(file, "utf8")
+          fs.readFileSync(file, "utf8"),
         );
       } catch (e) {
         console.log("Parse error", file);
@@ -99,8 +122,8 @@ const deploy = async () => {
       return;
     }
 
-    await runGitCommand("checkout master");
-    await runGitCommand("merge develop");
+    await runGitCommand(`checkout ${buildBranch}`);
+    await runGitCommand(`merge ${devBranch}`);
     console.log("Merge done, building");
 
     // await runCommand("npm run build:css:prod", "/web");
@@ -108,25 +131,25 @@ const deploy = async () => {
     await delay(500);
     console.log("Build done, copying");
 
-    const items = await fs.readdir(`${folderAsUnix}/web/build`);
+    const items = await fs.readdir(`${folderAsUnix}/web/dist`);
     await Promise.all(
       items.map((item) =>
         fs.copy(
-          `${folderAsUnix}/web/build/${item}`,
-          `${folderAsUnix}/build/${item}`
-        )
-      )
+          `${folderAsUnix}/web/dist/${item}`,
+          `${folderAsUnix}/build/${item}`,
+        ),
+      ),
     );
     await fs.copy(
       `${folderAsUnix}/web/src/contenttype.json`,
-      `${folderAsUnix}/build/contenttype.json`
+      `${folderAsUnix}/build/contenttype.json`,
     );
 
     await fs.writeFile(
       `${folderAsUnix}/build/index.html`,
       addPreload(
-        await fs.readFile(`${folderAsUnix}/web/build/index.html`, "utf8")
-      )
+        await fs.readFile(`${folderAsUnix}/web/dist/index.html`, "utf8"),
+      ),
     );
 
     console.log("Copy done, adding to git");
@@ -142,7 +165,7 @@ const deploy = async () => {
 
     await runGitCommand("status");
     await delay(5000);
-    await runGitCommand("checkout develop");
+    await runGitCommand(`checkout ${devBranch}`);
     // await runCommand("npm run build:css", "/web");
     console.log("Deploy done");
   } catch (e) {

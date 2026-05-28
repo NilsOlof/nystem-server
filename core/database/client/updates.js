@@ -1,4 +1,4 @@
-module.exports = (app) => {
+export default (app) => {
   app.database.on("init", ({ collection, db }) => {
     let ids = [];
     const updateSearch = {};
@@ -75,7 +75,7 @@ module.exports = (app) => {
 
     collection.on("update", -1000, ({ ids }) => {
       Object.values(updateSearch).forEach((query) =>
-        collection.search({ ...query, data: false, onData: false })
+        collection.search({ ...query, data: false, onData: false }),
       );
 
       const updateGetIds = ids
@@ -86,7 +86,7 @@ module.exports = (app) => {
         Object.values(updateGet[id]).forEach((callbackId) =>
           collection
             .get({ id })
-            .then((query) => updateGet[id][callbackId](query))
+            .then((query) => updateGet[id][callbackId](query)),
         );
       });
 

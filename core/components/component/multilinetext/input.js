@@ -1,8 +1,8 @@
-import { Input, InputWrapper, UseValidator } from "nystem-components";
+import { Input, InputWrapper, useValidator } from "nystem-components";
 import validate from "./validate";
 
 const MultilinetextInput = ({ model, value, setValue, view }) => {
-  const [error, setValidated] = UseValidator({ view, validate, value, model });
+  const [error, setValidated] = useValidator({ view, validate, value, model });
   value = value instanceof Array ? value : value ? [value] : [];
 
   value = value.filter((value) => value !== "");

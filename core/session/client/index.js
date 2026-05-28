@@ -1,11 +1,11 @@
-const sessionM = require("./session");
+import session from "./session";
 
-module.exports = app => {
-  sessionM(app);
+export default (app) => {
+  session(app);
 
-  const addContents = token => ({
+  const addContents = (token) => ({
     method: "POST",
-    body: JSON.stringify({ token })
+    body: JSON.stringify({ token }),
   });
 
   app.on("login", -100, ({ token }) => {

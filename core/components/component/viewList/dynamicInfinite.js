@@ -38,7 +38,7 @@ const SlotContent = ({ slot, model, view }) => {
     if (slot === 0) return;
     let mounted = true;
     setSlotSearch(false);
-    const db = app().database[view.contentType];
+    const db = app.database[view.contentType];
 
     const timer = setTimeout(() => {
       db.search({
@@ -131,7 +131,7 @@ const ViewListDynamicInfinite = ({ view, model }) => {
 
   const slotsTotal = parseInt(
     Math.trunc((searchTotal || 0) / (search.count || 1)) + 1,
-    10
+    10,
   );
   let slotLimit = parseInt(slotCount || model.slotLimit || 3, 10);
   if (slotLimit > slotsTotal) slotLimit = slotsTotal;
@@ -254,7 +254,7 @@ const ViewListDynamicInfinite = ({ view, model }) => {
         slot={count}
         model={model}
         view={view}
-      />
+      />,
     );
 
   return (

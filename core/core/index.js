@@ -1,13 +1,13 @@
 /* eslint-disable import/extensions */
 
-const crypto = require("crypto");
-const app = require("./init");
+import { randomUUID } from "node:crypto";
+import app from "./init.js";
 
 const stTime = performance.now();
-require("./package.js")(app);
-require("./exit.js")(app);
+await app.require("./package");
+await app.require("./exit");
 
-app.uuid = () => crypto.randomUUID().replace(/-/g, "");
+app.uuid = () => randomUUID().replace(/-/g, "");
 app.delay = (delay) => new Promise((resolve) => setTimeout(resolve, delay));
 app.capFirst = (text) =>
   text && text.substring(0, 1).toUpperCase() + text.substring(1);
@@ -15,21 +15,22 @@ app.capFirst = (text) =>
 app.on("settings", () => app.settings);
 const { debug } = app.settings;
 
-app.filePaths.forEach((path) => {
+for await (let path of app.filePaths) {
   const pathpart = path.split("/");
   if (
     pathpart.length !== 3 ||
     (pathpart[2] === "index.js" && pathpart[1] === "core")
   )
-    return;
+    continue;
 
   path = `${app.__dirname}/${path}`;
-  if (pathpart[2] === "index.js") require(path)(app);
 
-  if (debug && pathpart[2] === "dev.js") require(path)(app);
+  if (pathpart[2] === "index.js") await app.require(path);
 
-  if (!debug && pathpart[2] === "prod.js") require(path)(app);
-});
+  if (debug && pathpart[2] === "dev.js") await app.require(path);
+
+  if (!debug && pathpart[2] === "prod.js") await app.require(path);
+}
 
 (async () => {
   await app.event("init", app);
@@ -42,4 +43,4 @@ app.filePaths.forEach((path) => {
   console.log("Started");
 })();
 
-module.exports = () => app;
+export default () => app;

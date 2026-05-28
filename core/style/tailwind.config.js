@@ -1,6 +1,7 @@
-const plugin = require("tailwindcss/plugin");
+import plugin from "@tailwindcss/plugin";
+import forms from "@tailwindcss/forms";
 
-module.exports = {
+export default {
   content: ["../core/**/*.{js,json}", "../module/**/*.{js,json}"],
   theme: {
     extend: {},
@@ -10,7 +11,7 @@ module.exports = {
     plugin(function ({ addVariant }) {
       addVariant("active", "&.active");
     }),
-    require("@tailwindcss/forms"),
-    require("@tailwindcss/typography"),
+    plugin,
+    forms,
   ],
 };

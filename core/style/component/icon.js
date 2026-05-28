@@ -1,4 +1,4 @@
-import { forwardRef, useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { Wrapper } from "nystem-components";
 import icons from "../../../icons.json";
 
@@ -8,7 +8,7 @@ icons.question =
 const rotate = (deg) =>
   (deg && { style: { transform: `rotate(${deg}deg)` } }) || undefined;
 
-const Icon = ({ icon, className, renderAs, deg, ...props }, ref) => {
+const Icon = ({ icon, className, renderAs, deg, ref, ...props }) => {
   const [data, setData] = useState(icons);
 
   useEffect(() => {
@@ -23,9 +23,9 @@ const Icon = ({ icon, className, renderAs, deg, ...props }, ref) => {
 
   if (data[icon] === "missing") {
     console.log(
-      `💥 Icon missing ${icon} at https://fontawesome.com/search?m=free&q=${
+      `💥 Icon missing ${icon} at https://fontawesome.com/search?q=${
         icon || ""
-      }`
+      }&ic=free-collection`,
     );
     data[icon] = icons.question;
   }
@@ -61,7 +61,4 @@ const Icon = ({ icon, className, renderAs, deg, ...props }, ref) => {
     </Wrapper>
   );
 };
-export default forwardRef(Icon);
-
-// https://www.zondicons.com/icons.html
-// https://fontawesome.com/icons
+export default Icon;

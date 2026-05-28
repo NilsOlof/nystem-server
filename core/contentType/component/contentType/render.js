@@ -1,18 +1,18 @@
-import { createElement, useContext } from "react";
+import { createElement, useContext, Suspense } from "react";
 import app from "nystem";
 import * as components from "nystem-components";
 
 const createItem = ({ item, value, path, view, ...context }) => {
-  const { capFirst } = app();
+  const { capFirst } = app;
   const { id, type, format } = item;
 
   const componentName = `${capFirst(type)}${capFirst(
-    format || view.viewFormat || "view"
+    format || view.viewFormat || "view",
   )}`;
 
   let component =
     components[componentName] || components[`${capFirst(type)}View`];
-
+  if (!view) return false;
   const { getValue, getValuePath } = view;
   const valuePath = getValuePath(path, id);
   const setValue = (value) => view.setValue({ path: valuePath, value });
@@ -32,8 +32,12 @@ const createItem = ({ item, value, path, view, ...context }) => {
     !view.focused;
 
   if (focus) view.focused = true;
-  if (typeof component === "object" && !component.render) {
-    console.log(component, item);
+  if (
+    !component.render &&
+    !component._init &&
+    typeof component !== "function"
+  ) {
+    console.log(component, typeof component, item);
     component = "div";
   }
   return createElement(component, {
@@ -52,10 +56,14 @@ const ContentTypeRender = (props) => {
   const context = useContext(components.ContentTypeContext);
 
   if (!items) return <div className="red">Missing items</div>;
-
-  return items.map((item, key) => {
-    const out = createItem({ key, item, path, ...context });
-    return (renderAs && createElement(renderAs, { key }, out)) || out;
-  });
+  return (
+    <Suspense fallback={createElement(renderAs || "div", {}, "Loading...")}>
+      {items.map((item, key) => {
+        const out = createItem({ key, item, path, ...context });
+        if (!out) return null;
+        return (renderAs && createElement(renderAs, { key }, out)) || out;
+      })}
+    </Suspense>
+  );
 };
 export default ContentTypeRender;

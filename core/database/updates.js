@@ -1,4 +1,4 @@
-module.exports = (app) => {
+export default (app) => {
   const timeoutTimes = (app.settings.client.database &&
     app.settings.client.database.updateFrequency) || [300, 2000];
 
@@ -49,14 +49,14 @@ module.exports = (app) => {
 
     collection.on("update", ({ ids }) => {
       Object.values(updateSearch).forEach((search) =>
-        collection.search(search)
+        collection.search(search),
       );
       ids.forEach((id) => {
         if (updateGet[id])
           Object.values(updateGet[id]).forEach((callbackId) =>
             collection
               .get({ id })
-              .then((query) => updateGet[id][callbackId](query))
+              .then((query) => updateGet[id][callbackId](query)),
           );
       });
     });

@@ -1,20 +1,51 @@
-import { forwardRef, useState } from "react";
-import { InputWrapper, Input, UseValidator } from "nystem-components";
+import { useState, useEffect } from "react";
+import { InputWrapper, Input } from "nystem-components";
 import app from "nystem";
 import validate from "./validate";
 import "./input.css";
 
-const TextInput = ({ model, view, focus, setValue, value }, ref) => {
-  const [error, setValidated] = UseValidator({ view, validate, value, model });
+const useValidator = ({ validate, view, model, value }) => {
+  const [isValidated, setValidated] = useState(false); // view && view.isValidated
+  const error = isValidated && validate({ value, model });
+
+  useEffect(() => {
+    const validator = async ({ errors, silent }) => {
+      if (!silent) setValidated(true);
+
+      const error = await Promise.resolve(validate({ value, model }) || false);
+      if (error) errors = [...(errors || []), error];
+      return errors ? { errors, silent } : undefined;
+    };
+
+    const clearErrorValidation = () => {
+      setValidated(false);
+    };
+    if (!view) return;
+    view.on("validate", validator);
+    view.on("clearErrorValidation", clearErrorValidation);
+
+    return () => {
+      if (!view) return;
+      view.off("validate", validator);
+      view.off("clearErrorValidation", clearErrorValidation);
+    };
+  }, [view, validate, value, model]);
+
+  return [error, setValidated];
+};
+
+const TextInput = ({ model, view, focus, setValue, value, ref }) => {
+  const [id] = useState(app.uuid);
+  const [error, setValidated] = useValidator({ view, validate, value, model });
+
   const {
     disabled,
     length,
     text,
     clearButton,
-    classNameInput = [],
+    classNameInput = ["grow"],
     removeChars = "",
   } = model;
-  const [id] = useState(app().uuid);
 
   return (
     <InputWrapper
@@ -28,7 +59,7 @@ const TextInput = ({ model, view, focus, setValue, value }, ref) => {
       <Input
         id={id}
         ref={ref}
-        placeholder={model.placeholder || app().t(text)}
+        placeholder={model.placeholder || app.t(text)}
         className={classNameInput}
         value={value || ""}
         maxLength={length}
@@ -36,7 +67,7 @@ const TextInput = ({ model, view, focus, setValue, value }, ref) => {
           setValue(
             removeChars
               ? value.replace(new RegExp(`[${removeChars}]`, "g"), "")
-              : value
+              : value,
           );
         }}
         disabled={disabled}
@@ -48,4 +79,4 @@ const TextInput = ({ model, view, focus, setValue, value }, ref) => {
     </InputWrapper>
   );
 };
-export default forwardRef(TextInput);
+export default TextInput;

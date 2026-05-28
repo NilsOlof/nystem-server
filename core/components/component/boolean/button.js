@@ -29,7 +29,7 @@ const BooleanButton = ({ setValue, model, value }) => {
       ].includes(text) ? (
         <Icon className="h-4 w-4" icon={text} alt={text} />
       ) : (
-        app().t(text)
+        app.t(text)
       )}
     </Button>
   );

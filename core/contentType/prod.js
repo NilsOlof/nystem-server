@@ -1,4 +1,4 @@
-module.exports = (app) => {
+export default (app) => {
   const { fs } = app;
   const srcPath = `${app.__dirname}/web/src/contenttype.json`;
   const distPath = `${app.__dirname}/build/contenttype.json`;
@@ -19,6 +19,6 @@ module.exports = (app) => {
             resolve();
           });
       }),
-    400
+    400,
   );
 };

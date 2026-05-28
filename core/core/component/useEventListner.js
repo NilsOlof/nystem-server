@@ -1,9 +1,9 @@
 import { useState, useEffect } from "react";
 import app from "nystem";
 
-const UseEventListner = (handler, event) => {
+const useEventListner = (handler, event) => {
   const [result, setResult] = useState({});
-  handler = handler || app();
+  handler = handler || app;
 
   useEffect(() => {
     handler.on(event, setResult);
@@ -15,4 +15,4 @@ const UseEventListner = (handler, event) => {
   return result;
 };
 
-export default UseEventListner;
+export default useEventListner;

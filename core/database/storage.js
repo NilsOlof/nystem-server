@@ -1,11 +1,11 @@
-const os = require("os").platform();
+import { platform } from "os";
 
-module.exports = (app) => {
+export default async (app) => {
   const { dbPathWin, dbPathMac, dbPath } = app.settings;
 
   const dbFileBase =
-    (os === "win32" && dbPathWin) ||
-    (os === "darwin" && dbPathMac) ||
+    (platform() === "win32" && dbPathWin) ||
+    (platform() === "darwin" && dbPathMac) ||
     dbPath ||
     `${app.__dirname}/data`;
 
@@ -21,10 +21,10 @@ module.exports = (app) => {
       : app.debounceStorageFile(dbFile, []);
 
     collection.on("save", -900, (query) =>
-      query.data ? storage.save(db.dbArray, query.data) : undefined
+      query.data ? storage.save(db.dbArray, query.data) : undefined,
     );
     collection.on("delete", -900, (query) =>
-      query.data ? storage.delete(db.dbArray, query.id) : undefined
+      query.data ? storage.delete(db.dbArray, query.id) : undefined,
     );
 
     collection.on("init", 1000, (query) => {

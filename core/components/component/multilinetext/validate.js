@@ -1,6 +1,6 @@
 const text_mandatory = "Field is mandatory";
 
-module.exports = ({ value, model }) =>
+export default ({ value, model }) =>
   model.mandatory &&
   !value &&
   !value.length &&

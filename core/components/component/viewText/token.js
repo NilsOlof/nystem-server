@@ -1,54 +1,52 @@
-import React from "react";
+import { useState, useEffect, useCallback } from "react";
 import app from "nystem";
 import { Wrapper } from "nystem-components";
 
-class ViewTextToken extends React.Component {
-  constructor(props) {
-    super(props);
-    this.model = props.model;
-    this.view = props.view;
-    const state = {
-      value: app().clone(this.view.value),
-      text: this.insertVal(this.model.text),
-    };
-    this.view.on("change", this.setValueView);
-    this.state = state;
-  }
-  setValueView() {
-    const self = this;
-    if (JSON.stringify(this.view.value) !== JSON.stringify(this.state.value))
-      setTimeout(() => {
-        if (self.isMounted())
-          self.setState({
-            value: app().clone(self.view.value),
-            text: self.insertVal(self.model.text),
+const ViewTextToken = ({ model = {}, view, path }) => {
+  const insertVal = useCallback(
+    (val) => {
+      if (!val) return val;
+
+      return val.replace(/\{([a-z_.]+)\}/gim, (str, p1) => {
+        const resolvedPath = p1.replace("..", path);
+        const v = view.getValue(resolvedPath);
+        return typeof v === "undefined" ? "" : v;
+      });
+    },
+    [view, path],
+  );
+
+  const [state, setState] = useState(() => ({
+    value: app.clone(view.value),
+    text: insertVal(model.text),
+  }));
+
+  useEffect(() => {
+    const handler = () => {
+      if (JSON.stringify(view.value) !== JSON.stringify(state.value)) {
+        setTimeout(() => {
+          setState({
+            value: app.clone(view.value),
+            text: insertVal(model.text),
           });
-      }, 0);
-  }
-  insertVal(val) {
-    if (!val) return val;
-    const self = this;
-    this.val = false;
-    return val.replace(/\{([a-z_.]+)\}/gim, (str, p1) => {
-      const val = self.view.getValue(p1.replace("..", self.props.path));
-      return typeof val === "undefined" ? "" : val;
-    });
-  }
-  componentWillUnmount() {
-    this.view.off("change", this.setValueView);
-  }
-  render() {
-    const className = this.model.className
-      ? this.model.className.join(" ")
-      : "";
-    const renderAs = this.props.model.renderAs
-      ? this.props.model.renderAs
-      : this.props.model.format;
-    return (
-      <Wrapper renderAs={renderAs} className={className}>
-        {app().t(this.state.text)}
-      </Wrapper>
-    );
-  }
-}
+        }, 0);
+      }
+    };
+
+    view.on("change", handler);
+    return () => {
+      view.off("change", handler);
+    };
+  }, [view, state.value, model.text, insertVal]);
+
+  const className = model.className ? model.className.join(" ") : "";
+  const renderAs = model.renderAs ? model.renderAs : model.format;
+
+  return (
+    <Wrapper renderAs={renderAs} className={className}>
+      {app.t(state.text)}
+    </Wrapper>
+  );
+};
+
 export default ViewTextToken;

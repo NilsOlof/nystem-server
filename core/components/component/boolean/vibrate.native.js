@@ -1,18 +1,17 @@
 import { Vibration } from "react-native";
-class BooleanVibrate extends React.Component {
-  UNSAFE_componentWillReceiveProps(nextProps) {
-    if (this.props.value !== nextProps.value) this.vibrate(nextProps);
-  }
-  componentDidMount() {
-    this.vibrate(this.props);
-  }
-  vibrate(props) {
-    let { atState, pattern } = props.model;
-    if (props.value === atState)
+import { useCallback, useEffect } from "react";
+
+const BooleanVibrate = (props) => {
+  const vibrate = useCallback((currentProps) => {
+    const { atState, pattern } = currentProps.model;
+    if (currentProps.value === atState)
       Vibration.vibrate(pattern ? JSON.parse(pattern) : 300, false);
-  }
-  render() {
-    return null;
-  }
-}
+  }, []);
+
+  useEffect(() => {
+    vibrate(props);
+  }, [props.model, props.value, vibrate]);
+
+  return null;
+};
 export default BooleanVibrate;

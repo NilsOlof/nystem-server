@@ -50,4 +50,4 @@ const waitInLine = (name, callback) =>
 
 const waitInLineCount = (name) => queues[name].length;
 
-module.exports = { init, waitInLine, waitInLineCount };
+export default { init, waitInLine, waitInLineCount };

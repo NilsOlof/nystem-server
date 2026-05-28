@@ -1,4 +1,4 @@
-module.exports = function(app) {
+export default function (app) {
   app.on("init", () => {
     app.database.on("init", ({ collection, contentType }) => {
       const roles = contentType._roles || {};
@@ -6,12 +6,12 @@ module.exports = function(app) {
 
       const calls = ["save", "find", "delete", "search", "get"];
 
-      calls.forEach(type => {
+      calls.forEach((type) => {
         roles[type] = roles[type] || [];
 
         if (roles[type].includes("all")) return;
 
-        collection.on(type, 990, query => {
+        collection.on(type, 990, (query) => {
           const role = query.session ? query.session.role : query.role || "";
           query.role = role;
 
@@ -23,4 +23,4 @@ module.exports = function(app) {
       });
     });
   });
-};
+}

@@ -1,4 +1,4 @@
-import { forwardRef, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 const byType = {
   text: "appearance-none block bg-grey-lighter text-grey-darker border border-grey-lighter rounded py-1 px-3 shadow-sm",
@@ -7,7 +7,7 @@ const byType = {
   checkbox: "m-4",
 };
 
-const Input = ({ type, value, ...props }, parentRef) => {
+const Input = ({ type, value, ref: parentRef, ...props }) => {
   const localRef = useRef(null);
   const [val, setVal] = useState(value);
   const ref = parentRef || localRef;
@@ -20,8 +20,11 @@ const Input = ({ type, value, ...props }, parentRef) => {
   }, [value]);
 
   useEffect(() => {
-    if (props.focus) ref.current.focus();
-  }, [props.focus, ref]);
+    if (props.focus) {
+      ref.current.focus();
+      ref.current.selectionStart = ref.current.value.length;
+    }
+  }, [props.focus, props.focusMoveEnd, ref]);
 
   let { className } = props;
   className =
@@ -72,4 +75,4 @@ const Input = ({ type, value, ...props }, parentRef) => {
   );
 };
 
-export default forwardRef(Input);
+export default Input;

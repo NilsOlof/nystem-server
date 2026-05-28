@@ -21,7 +21,7 @@ const ViewButtonBack = ({ children, model, ...rest }) => {
       onClick={() => history.go(fwd ? 1 : -1)}
     >
       <Icon icon={fwd ? "arrow-right" : "arrow-left"} className="w-6" />
-      <Wrapper>{children || app().t(text)}</Wrapper>
+      <Wrapper>{children || app.t(text)}</Wrapper>
     </Button>
   );
 };

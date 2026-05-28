@@ -7,8 +7,8 @@ const isInstalled =
 const ServiceWorkerView = ({ model }) =>
   isInstalled ? null : (
     <div className={model.className}>
-      <Button type={model.btnType} onClick={() => app().event("runAppInstall")}>
-        {app().t(model.text || "...")}
+      <Button type={model.btnType} onClick={() => app.event("runAppInstall")}>
+        {app.t(model.text || "...")}
       </Button>
     </div>
   );

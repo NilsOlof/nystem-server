@@ -7,25 +7,23 @@ let isInstalled =
 
 const ServiceWorkerSelectBox = ({ model, view }) => {
   const [install, setInstall] = useState(false);
-  const [id] = useState(app().uuid);
+  const [id] = useState(app.uuid);
 
   useEffect(() => {
     if (!install) return;
-    app()
-      .event("canRunAppInstall")
-      .then(({ installable }) => {
-        isInstalled = isInstalled || !installable;
-      });
+    app.event("canRunAppInstall").then(({ installable }) => {
+      isInstalled = isInstalled || !installable;
+    });
 
-    const runInstall = () => app().event("runAppInstall");
+    const runInstall = () => app.event("runAppInstall");
 
     view.on(["save"], runInstall);
-    app().on(["login"], runInstall);
+    app.on(["login"], runInstall);
     return () => {
       view.off(["save"], runInstall);
 
       setTimeout(() => {
-        app().off(["login"], runInstall);
+        app.off(["login"], runInstall);
       }, 200);
     };
   }, [install, view]);

@@ -10,11 +10,11 @@ import { Droppable, Draggable } from "./myDnd";
 import { DragAndDropListContext } from "./list";
 
 const DragAndDropViewList = ({ model, view }) => {
-  const [droppableId] = useState(app().uuid());
+  const [droppableId] = useState(app.uuid());
   const { search } = useContext(DatabaseSearchContext);
   const ids = useRef([]);
   const getId = (pos) => {
-    if (!ids.current[pos]) ids.current[pos] = app().uuid();
+    if (!ids.current[pos]) ids.current[pos] = app.uuid();
     return ids.current[pos];
   };
 
@@ -38,15 +38,15 @@ const DragAndDropViewList = ({ model, view }) => {
       result.source.type = valueType;
       result.source.contentType = view.contentType;
       result.source.uuid = result.ctrlKey
-        ? app().uuid()
+        ? app.uuid()
         : ids.current[result.source.index];
     };
 
-    app().on("dragAndDropOnDragEnd", 100, onDragEndAddValue);
-    app().on("dragAndDropOnDragEnd", 90, onDragEnd);
+    app.on("dragAndDropOnDragEnd", 100, onDragEndAddValue);
+    app.on("dragAndDropOnDragEnd", 90, onDragEnd);
     return () => {
-      app().off("dragAndDropOnDragEnd", onDragEndAddValue);
-      app().off("dragAndDropOnDragEnd", onDragEnd);
+      app.off("dragAndDropOnDragEnd", onDragEndAddValue);
+      app.off("dragAndDropOnDragEnd", onDragEnd);
     };
   }, [droppableId, value, valueType, view]);
 

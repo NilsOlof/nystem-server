@@ -11,6 +11,16 @@
       "type": "text"
     },
     {
+      "text": "Label class",
+      "type": "gridselect",
+      "id": "classNameLabel"
+    },
+    {
+      "text": "Input class",
+      "type": "gridselect",
+      "id": "classNameInput"
+    },
+    {
       "text": "Fields",
       "id": "item",
       "type": "viewCreator",

@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from "react";
-import { UseLocation } from "nystem-components";
+import { useLocation } from "nystem-components";
 
 const toType = {
   int: (val) => (val !== "" ? parseInt(val || 0, 10) : undefined),
@@ -8,25 +8,26 @@ const toType = {
   text: (val) => val && decodeURIComponent(val),
 };
 
-const RouterUseQueryStore = (saveId, type, push, reload) => {
-  const location = UseLocation();
+const getQueryValue = (query, type, saveId) => {
+  if (!saveId) return "";
+  const reg = `\\&${saveId}=([^\\s&]+)`;
+  const [, value = ""] = query.match(new RegExp(reg, "im")) || [];
+  return type ? toType[type](value) : toType.text(value);
+};
+
+const useRouterQueryStore = (saveId, type, push, reload) => {
+  const location = useLocation();
 
   const ref = useRef();
   const { search } = location;
-  const [value, setValue] = useState();
+
+  const [value, setValue] = useState(getQueryValue(search, type, saveId));
   ref.current = value;
 
   useEffect(() => {
     if (!saveId) return;
 
-    const getQueryValue = (query) => {
-      if (!saveId) return "";
-      const reg = `\\&${saveId}=([^\\s&]+)`;
-      const [, value = ""] = query.match(new RegExp(reg, "im")) || [];
-      return type ? toType[type](value) : toType.text(value);
-    };
-
-    const newVal = getQueryValue(search);
+    const newVal = getQueryValue(search, type, saveId);
     if (newVal !== ref.current) setValue(newVal);
   }, [saveId, search, type]);
 
@@ -46,11 +47,11 @@ const RouterUseQueryStore = (saveId, type, push, reload) => {
     window.history[push ? "pushState" : "replaceState"](
       {},
       "",
-      `${pathname}?${rest}${add}`
+      `${pathname}?${rest}${add}`,
     );
   };
 
   return [value === "" ? undefined : value, setRouterValue];
 };
 
-export default RouterUseQueryStore;
+export default useRouterQueryStore;

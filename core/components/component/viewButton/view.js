@@ -8,7 +8,7 @@ const ViewButtonView = ({ model, view }) => (
     size={model.size}
     onClick={() => view.event(model.event || "submit", view.value)}
   >
-    {app().t(model.text || "...")}
+    {app.t(model.text || "...")}
   </Button>
 );
 

@@ -1,4 +1,4 @@
-module.exports = (app) => {
+export default (app) => {
   const readAndCopy = async (path, unlink) => {
     const destPath = path.split("/").slice(3).join("/");
     const dest = `${app.__dirname}/web/public/${destPath}`;
@@ -39,19 +39,24 @@ module.exports = (app) => {
           const [, , folder, file] = path.split("/");
           return folder === "html" && file === "head.html";
         })
-        .map((path) => app.readFile(path))
+        .map((path) => app.readFile(path)),
     );
 
     await app.writeFileChanged(
-      `${app.__dirname}/web/public/index.html`,
+      `${app.__dirname}/web/index.html`,
       content
         .replace("</head>", `${headFiles.join("\n")}\n</head>`)
+        .replace(
+          "<body>",
+          `<body><script type="module" src="/src/index.js"></script>`,
+        )
         .replace(/\{name\}/gi, app.settings.client.name || "")
         .replace(
           /\{description\}/gi,
-          app.settings.client.description || app.settings.client.name
-        )
+          app.settings.client.description || app.settings.client.name,
+        ),
     );
   };
+
   updateIndexHTML();
 };

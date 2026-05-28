@@ -1,29 +1,19 @@
-import React from "react";
 import app from "nystem";
 
-class ErrorMsg extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = { error: this.props.error };
-  }
-  UNSAFE_componentWillReceiveProps(nextProps) {
-    this.setState({ error: nextProps.error });
-  }
-  render() {
-    const error =
-      this.state.error === true ? "Required field" : this.state.error;
-    const defaultType = "danger";
-    const className = ["alert"];
-    className.push(`alert-${this.props.type ? this.props.type : defaultType}`);
-    if (this.props.className) className.push(this.props.className);
-    if (error)
-      return (
-        <p
-          className={className.join(" ")}
-          dangerouslySetInnerHTML={{ __html: app().t(error) }}
-        />
-      );
-    return null;
-  }
-}
+const ErrorMsg = ({ error, type = "danger", className: customClass }) => {
+  if (!error) return null;
+
+  const displayError = error === true ? "Required field" : error;
+  const classNames = ["alert", `alert-${type}`, customClass]
+    .filter(Boolean)
+    .join(" ");
+
+  return (
+    <p
+      className={classNames}
+      dangerouslySetInnerHTML={{ __html: app.t(displayError) }}
+    />
+  );
+};
+
 export default ErrorMsg;

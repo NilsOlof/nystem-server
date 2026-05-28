@@ -12,7 +12,7 @@ const ViewListListStat = ({ model }) => {
       return null;
     return (
       <Wrapper renderAs="span">
-        {`, ${search.total} ${app().t(" in total")}`}
+        {`, ${search.total} ${app.t(" in total")}`}
       </Wrapper>
     );
   }

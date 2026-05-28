@@ -1,63 +1,60 @@
-import React from "react";
+import React, { useState, useEffect, useRef } from "react";
 
-class MatrixInputlist extends React.Component {
-  constructor(props) {
-    super(props);
-    let val = props.value || [];
-    if (!(val instanceof Array)) val = [val];
-    if (val.length > props.limit) this.state = { value: val.concat([]) };
-    else this.state = { value: val.concat([""]) };
-  }
-  handleChange() {
-    const val = [];
-    for (let i = 0; i < this.state.value.length; i++) {
-      // eslint-disable-next-line react/no-string-refs
-      const oneVal = this.refs[`input${i}`].value;
-      if (oneVal) val.push(oneVal);
-    }
-    if (this.props.setValue) this.props.setValue(val);
+const MatrixInputlist = ({ value: propValue = [], limit, setValue }) => {
+  // Normalize initial value
+  const normalizeValue = (val) => {
+    if (!Array.isArray(val)) val = [val];
+    return val.length > limit ? [...val] : [...val, ""];
+  };
 
-    this.setState({
-      value: val.length > this.props.limit ? val.concat([""]) : val.concat([]),
-    });
-  }
-  UNSAFE_componentWillReceiveProps(nextProps) {
-    if (this.props.value !== nextProps.value) {
-      let val = nextProps.value;
-      if (typeof nextProps.value === "string") val = [nextProps.value];
-      this.setState({ value: val.concat([""]) });
-    }
-  }
-  render() {
-    const self = this;
-    const inputKeyField = (item, index) => {
-      return (
-        <input
-          ref={`inputKey${index}`}
-          className="form-control"
-          value={item}
-          onChange={self.handleKeyChange}
-          type="text"
-        />
-      );
-    };
-    const inputValueField = (item, index) => {
-      return (
-        <input
-          ref={`inputValue${index}`}
-          className="form-control"
-          value={item}
-          onChange={self.handleChange}
-          type="text"
-        />
-      );
-    };
-    return (
-      <div>
-        <div className="col-sm-3">{this.state.value.map(inputKeyField)}</div>
-        <div className="col-sm-3">{this.state.value.map(inputValueField)}</div>
-      </div>
-    );
-  }
-}
+  const [value, setLocalValue] = useState(normalizeValue(propValue));
+
+  const inputValueRefs = useRef([]);
+
+  // Sync with props (replacement for UNSAFE_componentWillReceiveProps)
+  useEffect(() => {
+    let val = propValue;
+    if (typeof propValue === "string") val = [propValue];
+    setLocalValue([...val, ""]);
+  }, [propValue]);
+
+  const handleChange = () => {
+    const val = inputValueRefs.current
+      .map((input) => input?.value)
+      .filter((v) => v);
+
+    if (setValue) setValue(val);
+
+    setLocalValue(val.length > limit ? [...val, ""] : [...val]);
+  };
+
+  const inputKeyField = (item, index) => (
+    <input
+      key={`key-${index}`}
+      className="form-control"
+      value={item}
+      onChange={() => {}}
+      type="text"
+    />
+  );
+
+  const inputValueField = (item, index) => (
+    <input
+      key={`value-${index}`}
+      ref={(el) => (inputValueRefs.current[index] = el)}
+      className="form-control"
+      value={item}
+      onChange={handleChange}
+      type="text"
+    />
+  );
+
+  return (
+    <div>
+      <div className="col-sm-3">{value.map(inputKeyField)}</div>
+      <div className="col-sm-3">{value.map(inputValueField)}</div>
+    </div>
+  );
+};
+
 export default MatrixInputlist;

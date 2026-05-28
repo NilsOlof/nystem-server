@@ -1,4 +1,4 @@
-module.exports = (app) => {
+export default (app) => {
   const onEmit = async (body) => {
     const response = await fetch("/httpsfallback", {
       method: "post",

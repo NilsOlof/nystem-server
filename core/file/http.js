@@ -1,6 +1,6 @@
-const mime = require("mime");
+export default async (app) => {
+  const mime = (await import(app.nodePath("mime"))).default;
 
-module.exports = (app) => {
   app.file.on(["get", "post"], 1000, (query) => {
     const { res, req, socket } = query;
     if (!res && !socket) return;
@@ -112,7 +112,7 @@ module.exports = (app) => {
     return { ...rest, headers };
   });
 
-  const zlib = require("zlib");
+  const zlib = await import("node:zlib");
   const compressData = (data) =>
     new Promise((resolve) => {
       const buffer = data instanceof Buffer ? data : Buffer.from(data);
@@ -164,12 +164,12 @@ module.exports = (app) => {
       if (!responses[id] || !headers || responses[id].res.headersSent) return;
 
       Object.keys(headers).forEach((key) =>
-        responses[id].res.setHeader(String(key).trim(), headers[key])
+        responses[id].res.setHeader(String(key).trim(), headers[key]),
       );
 
       if (statusMessage) responses[id].res.writeHead(statusCode, statusMessage);
       else responses[id].res.writeHead(statusCode || 200);
-    }
+    },
   );
 
   app.file.on("response", -1000, ({ id, data, closed, abort }) => {

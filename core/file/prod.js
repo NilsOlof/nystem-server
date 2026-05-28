@@ -1,4 +1,4 @@
-module.exports = (app) => {
+export default (app) => {
   const { fs } = app;
 
   const cache = {};
@@ -14,23 +14,23 @@ module.exports = (app) => {
           data = await fs.readFile(`${app.__dirname}/build/${url}`);
 
           cache[url] =
-            url.indexOf("static/js/main") !== -1 && url.indexOf(".map") === -1
+            url.startsWith("/assets/index-") && url.endsWith(".js")
               ? `window.___settings___ = ${JSON.stringify(
-                  app.settings.client
+                  app.settings.client,
                 )};${data.toString()}`
               : data;
         }
 
         app.file.event("response", {
           id,
-          headers: { "Content-Type": type },
+          type,
           data: cache[url],
           closed: true,
         });
       } catch (e) {
         app.file.event("response", {
           id,
-          headers: { "Content-Type": type },
+          type,
           data: "file not found",
           statusCode: 404,
           closed: true,
@@ -38,17 +38,17 @@ module.exports = (app) => {
       }
     });
 
-    if (fs.existsSync(`${app.__dirname}/web/build`))
-      fs.readdir(`${app.__dirname}/web/build`, (err, items) => {
+    if (fs.existsSync(`${app.__dirname}/web/dist`))
+      fs.readdir(`${app.__dirname}/web/dist`, (err, items) => {
         items.forEach((item) => {
           fs.copy(
-            `${app.__dirname}/web/build/${item}`,
+            `${app.__dirname}/web/dist/${item}`,
             `${app.__dirname}/build/${item}`,
             (err) => {
               if (err) return console.error(err);
 
               console.log("success!");
-            }
+            },
           );
         }, this);
       });

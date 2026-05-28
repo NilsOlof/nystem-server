@@ -1,4 +1,4 @@
-module.exports = (app) => {
+export default (app) => {
   const { fs } = app;
 
   function generate(filename, destination, packages) {
@@ -12,7 +12,7 @@ module.exports = (app) => {
         return pathpart.length === 3 && pathpart[2] === filename;
       })
       .forEach((path) =>
-        packages.push(app.readFile(`${app.__dirname}/${path}`))
+        packages.push(app.readFile(`${app.__dirname}/${path}`)),
       );
 
     return Promise.all(packages).then((packages) => {
@@ -31,7 +31,7 @@ module.exports = (app) => {
 
       app.writeFileChanged(
         `${destination}/package.json`,
-        JSON.stringify(packagejson, null, "  ")
+        JSON.stringify(packagejson, null, "  "),
       );
     });
   }

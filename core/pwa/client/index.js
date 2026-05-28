@@ -1,4 +1,4 @@
-module.exports = (app) => {
+export default (app) => {
   const install = () => {
     navigator.serviceWorker.register("/nystem-service-worker.js").then(
       (registration) => {
@@ -6,7 +6,7 @@ module.exports = (app) => {
       },
       (err) => {
         console.log("ServiceWorker registration failed: ", err);
-      }
+      },
     );
   };
 
@@ -41,12 +41,12 @@ module.exports = (app) => {
     });
   });
 
-  const regExpVersion = /main\.([0-9a-f]+)\.js/im;
+  const regExpVersion = /assets\/index-([0-9a-z-_]+)\.js/im;
   app.on("getAppVersion", () => ({
     appVersion: (regExpVersion.exec(
       [...document.head.children, ...document.body.children]
         .map((child) => child.src)
-        .find((src) => regExpVersion.test(src))
+        .find((src) => regExpVersion.test(src)),
     ) || [])[1],
   }));
 
@@ -61,9 +61,8 @@ module.exports = (app) => {
     app.connection
       .emit({ type: "getAppVersion" })
       .then(async ({ appVersion }) => {
-        const { appVersion: clientAppVersion, noReload } = await app.event(
-          "getAppVersion"
-        );
+        const { appVersion: clientAppVersion, noReload } =
+          await app.event("getAppVersion");
         app.settings.version = `${clientAppVersion}/${appVersion}`;
 
         if (

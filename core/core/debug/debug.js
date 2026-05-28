@@ -1,4 +1,4 @@
-module.exports = (app) => {
+export default async (app) => {
   function getStackTrace(row) {
     const obj = {};
     Error.captureStackTrace(obj, getStackTrace);
@@ -12,7 +12,7 @@ module.exports = (app) => {
 
   let chokidar;
   try {
-    chokidar = require("chokidar");
+    chokidar = await import(app.nodePath("chokidar"));
   } catch (e) {
     return;
   }
@@ -61,6 +61,10 @@ module.exports = (app) => {
       .on("error", (error) => {
         console.error("Error happened", error);
       });
+
+    app.on("exit", () => {
+      watcher.close();
+    });
   }
 
   fileWatchService("/core", app.__dirname);

@@ -1,4 +1,4 @@
-module.exports = ({ value, model }) => {
+export default ({ value, model }) => {
   if (value === "aa") value = undefined;
   if (!(value instanceof Array)) value = [value, value];
 

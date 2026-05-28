@@ -12,7 +12,7 @@ const ViewInViewSetValue = ({ model, view, path, value }) => {
   const insertVal = (val) =>
     val &&
     val.replace(/\{([a-z_.]+)\}/gim, (str, p1) =>
-      view.getValue(p1.replace("..", path))
+      view.getValue(p1.replace("..", path)),
     );
 
   return (

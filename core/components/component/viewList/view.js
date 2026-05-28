@@ -8,7 +8,7 @@ import {
 
 import "./table.css";
 
-const ViewListRender = ({ model, view, value }) => {
+const ViewListRender = ({ model, view, value, renderAs }) => {
   const { rowClassName = [] } = model;
   value = model.value || value;
 
@@ -19,16 +19,15 @@ const ViewListRender = ({ model, view, value }) => {
       view: model,
       contentType: view.contentType,
       id,
-      key: id,
       noForm: true,
       baseView: view,
       params: view.params,
       className: rowClassName,
-      renderAs: item.renderAs,
+      renderAs: renderAs || item.renderAs,
       itemRenderAs: item.renderAs === "tr" && "td",
     };
 
-    return <ContentTypeView {...settings} />;
+    return <ContentTypeView key={id} {...settings} />;
   }
 
   return value.map(createItem);
@@ -67,8 +66,8 @@ const ViewListView = ({ model, view }) => {
 
   if (renderFormat === "list")
     return (
-      <Wrapper className={className}>
-        <ViewListRender value={value} model={model} view={view} />
+      <Wrapper className={className} renderAs="ul">
+        <ViewListRender value={value} model={model} view={view} renderAs="li" />
       </Wrapper>
     );
 

@@ -1,104 +1,87 @@
-import React from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { DateInput } from "nystem-components";
 
-class DateExposedField extends React.Component {
-  constructor(props) {
-    super(props);
-    this.model = props.model;
-    this.props.view.searchProp.onUpdate(this.update);
-    this.classNameBase = this.model.className ? this.model.className : [];
-    this.updateCounter = 0;
-  }
-  update() {
-    if (this.id) {
-      const state = {};
-      const modelId = this.model.id;
+const DateExposedField = ({ model, view, wrapper }) => {
+  const [from, setFrom] = useState("");
+  const [to, setTo] = useState("");
+  const [className, setClassName] = useState("");
 
-      state.from = this.props.view.searchProp.filter.get(`${this.id}_from`);
-      if (typeof state.from !== "undefined" && state.from[modelId])
-        state.from = state.from[modelId].substring(1);
-      else delete state.from;
+  const updateCounter = useRef(0);
+  const delayTimer = useRef(null);
 
-      state.to = this.props.view.searchProp.filter.get(`${this.id}_to`);
-      if (typeof state.to !== "undefined" && state.to[modelId])
-        state.to = state.to[modelId].substring(1);
-      else delete state.to;
-      if (typeof state.from !== "undefined" || typeof state.to !== "undefined")
-        this.setState(state);
+  // Sync state with the search engine
+  const update = () => {
+    const modelId = model.id;
+    const filter = view.searchProp.filter;
+
+    const fromRaw = filter.get(`${modelId}_from`);
+    const toRaw = filter.get(`${modelId}_to`);
+
+    const fromVal =
+      fromRaw && fromRaw[modelId] ? fromRaw[modelId].substring(1) : "";
+    const toVal = toRaw && toRaw[modelId] ? toRaw[modelId].substring(1) : "";
+
+    setFrom(fromVal);
+    setTo(toVal);
+
+    if (updateCounter.current === 0) {
+      setClassName("has-success");
+      setTimeout(() => setClassName(""), 1000);
+    } else {
+      updateCounter.current--;
     }
-    const self = this;
-    if (this.updateCounter > 0) this.updateCounter--;
-    if (this.state.className === "" || this.updateCounter > 0) return;
-    this.setState({
-      className: "has-success",
-    });
-    this.delayTimer = setTimeout(() => {
-      if (self.isMounted())
-        self.setState({
-          className: "",
-        });
-    }, 1000);
-  }
-  search(id, value) {
-    const self = this;
-    clearTimeout(this.delayTimer);
-    const state = {
-      className: "has-warning",
+  };
+
+  useEffect(() => {
+    view.searchProp.onUpdate(update);
+    return () => {
+      view.searchProp.offUpdate(update);
+      clearTimeout(delayTimer.current);
     };
-    state[id] = value;
-    this.setState(state);
-    this.delayTimer = setTimeout(() => {
-      self.updateCounter++;
-      if (value)
-        if (id === "to") value = `<${value}`;
-        else value = `>${value}`;
-      self.props.view.searchProp.filter.add(
-        self.model.id,
-        value,
-        `${self.id}_${id}`
-      );
+  }, [view.searchProp]);
+
+  const handleSearch = (id, value) => {
+    clearTimeout(delayTimer.current);
+
+    // UI Feedback
+    setClassName("has-warning");
+    if (id === "from") setFrom(value);
+    else setTo(value);
+
+    delayTimer.current = setTimeout(() => {
+      updateCounter.current++;
+      const formattedValue = value
+        ? id === "to"
+          ? `<${value}`
+          : `>${value}`
+        : "";
+
+      view.searchProp.filter.add(model.id, formattedValue, `${model.id}_${id}`);
     }, 200);
-  }
-  componentDidMount() {}
-  componentWillUnmount() {
-    this.props.view.searchProp.offUpdate(this.update);
-    clearTimeout(this.delayTimer);
-  }
-  render() {
-    const { model } = this.props;
-    const className =
-      model.className && !this.props.wrapper ? model.className.join(" ") : "";
-    const modelFrom = {
-      id: "from",
-      placeholder: "From",
-      clearButton: true,
-    };
-    const modelTo = {
-      id: "to",
-      placeholder: "To",
-      clearButton: true,
-    };
-    const style = {
-      width: "150px",
-    };
-    return (
-      <div className={`${className} form-inline`}>
-        {this.model.text}
-        <DateInput
-          style={style}
-          model={modelFrom}
-          value={this.state.from}
-          setValue={this.search}
-        />
-        {" - "}
-        <DateInput
-          style={style}
-          model={modelTo}
-          value={this.state.to}
-          setValue={this.search}
-        />
-      </div>
-    );
-  }
-}
+  };
+
+  const containerClass =
+    model.className && !wrapper ? model.className.join(" ") : "";
+  const style = { width: "150px" };
+
+  return (
+    <div className={`${containerClass} ${className} form-inline`}>
+      {model.text}
+      <DateInput
+        style={style}
+        model={{ id: "from", placeholder: "From", clearButton: true }}
+        value={from}
+        setValue={(val) => handleSearch("from", val)}
+      />
+      {" - "}
+      <DateInput
+        style={style}
+        model={{ id: "to", placeholder: "To", clearButton: true }}
+        value={to}
+        setValue={(val) => handleSearch("to", val)}
+      />
+    </div>
+  );
+};
+
 export default DateExposedField;

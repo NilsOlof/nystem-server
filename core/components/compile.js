@@ -1,4 +1,4 @@
-module.exports = (app) => {
+export default (app) => {
   const { fs } = app;
 
   if (!app.fs.existsSync(`${app.__dirname}/web`)) return;
@@ -21,11 +21,11 @@ module.exports = (app) => {
       ) {
         src = src.replace(
           `export default ${match[1]};`,
-          `export default ${key};`
+          `export default ${key};`,
         );
         src = src.replace(
           `class ${match[1]} extends `,
-          `class ${key} extends `
+          `class ${key} extends `,
         );
         src = src.replace(`const ${match[1]} = `, `const ${key} = `);
         app.fs.writeFileSync(`${app.__dirname}/${path}`, src);
@@ -42,25 +42,36 @@ module.exports = (app) => {
       const type = path.shift();
       if (path[1] !== "component" || !/.js$/.test(path[path.length - 1]))
         return;
+
       component.name = capFirst(path[path.length - 1].replace(".js", ""));
       component.path = fullpath;
-      if (path.length === 4)
+
+      if (
+        component.name.startsWith("Use") &&
+        !component.name.startsWith("User")
+      ) {
+        component.name = component.name.substring(3);
+        if (path.length === 4)
+          component.name = `${capFirst(path[2])}${component.name}`;
+        component.name = `use${component.name}`;
+      } else if (path.length === 4)
         component.name = capFirst(path[2]) + component.name;
+
       components[type][component.name] = component.path;
     });
     return components;
   });
 
-  function compile() {
+  const compile = () => {
     app.event("getComponents").then((components) => {
       components = { ...components.core, ...components.module };
       let setStrings = Object.keys(components);
       setStrings = setStrings.filter(
-        (key) => components[key].indexOf(".native.js") === -1
+        (key) => components[key].indexOf(".native.js") === -1,
       );
       changeComponentNames(components, setStrings);
     });
-  }
+  };
 
   compile();
 
@@ -82,8 +93,7 @@ module.exports = (app) => {
     components = { ...components.core, ...components.module };
     let setStrings = Object.keys(components);
     setStrings = setStrings.filter((key) => {
-      const pos = key.indexOf(".");
-      if (pos !== -1) {
+      if (key.includes(".")) {
         delete components[key];
         return false;
       }
@@ -91,19 +101,25 @@ module.exports = (app) => {
     });
 
     let importsString = setStrings
-      .map((key) => `import ${key} from "./${components[key]}";`)
+      .map((key) =>
+        key.startsWith("use") ||
+        key.includes("Context") ||
+        app.settings.bundleAllComponents
+          ? `import ${key} from "./${components[key]}";`
+          : `const ${key} = lazy(() => import("./${components[key]}"));`,
+      )
       .join("\n");
     const importsString2 = setStrings.join(", ");
 
-    importsString = `/* eslint-disable */\n${importsString}\nexport { ${importsString2} }`;
+    importsString = `/* eslint-disable */\nimport { lazy } from "react";\n${importsString}\nexport { ${importsString2} }`;
 
     app.writeFileChanged(
       `${app.__dirname}/web/src/components.js`,
-      importsString
+      importsString,
     );
     app.writeFileChanged(
       `${app.__dirname}/web/src/components.jsconfig.js`,
-      importsString.replace(/"\.\//g, '"../../')
+      importsString.replace(/"\.\//g, '"../../'),
     );
   });
 };

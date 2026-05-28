@@ -1,4 +1,4 @@
-module.exports = (app) => {
+export default (app) => {
   const listners = {};
 
   app.on("init", async () => {
@@ -21,7 +21,7 @@ module.exports = (app) => {
 
           window.postMessage(
             { ...data, listnerId, query, nystem: "from" },
-            "*"
+            "*",
           );
         };
 

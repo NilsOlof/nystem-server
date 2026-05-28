@@ -1,12 +1,12 @@
-const waitInLineM = require("./waitInLine");
-const logM = require("./log");
+import waitInLine from "./waitInLine";
+import log from "./log";
 
 /* eslint-disable guard-for-in */
-module.exports = (app) => {
+export default (app) => {
   if (!app.t) app.t = (text) => text;
 
-  logM(app);
-  app.waitInLine = waitInLineM;
+  log(app);
+  app.waitInLine = waitInLine;
 
   app.delay = (delay) => new Promise((resolve) => setTimeout(resolve, delay));
 
@@ -17,6 +17,36 @@ module.exports = (app) => {
     }
 
     if (app.settings.debug) console.log(app);
+
+    const baseURL = () => {
+      const { domain, secure } = app.settings;
+
+      return `http${secure ? "s" : ""}://${domain}/`;
+    };
+
+    app.insertVal = (val, view, path = "") =>
+      val?.replace(/\{([a-z_.0-9]+)\}/gim, (str, p1) => {
+        let val = "";
+        if (p1 === "_language") val = app.settings.lang;
+        else if (p1 === "_userid") val = app.session.user?._id;
+        else if (p1 === "baseURL") val = baseURL();
+        else if (p1 === "id") val = view.id;
+        else if (p1 === "now") val = Date.now();
+        else if (p1.indexOf("params.") === 0)
+          val = view.params[p1.replace("params.", "")];
+        else {
+          let atView = view;
+          while (p1.indexOf("baseView.") === 0) {
+            p1 = p1.replace("baseView.", "");
+            atView = atView.baseView;
+          }
+          if (p1 === "_id") val = atView.value._id;
+          else val = atView.getValue(p1.replace("..", path));
+        }
+
+        if (val instanceof Array) val = val.join("|");
+        return val || "";
+      });
 
     app.parseFilter = (filter, getValue, path) => {
       if (!filter) return {};
@@ -32,7 +62,7 @@ module.exports = (app) => {
         const oneFilterIn = filter[item].and;
         for (const i in oneFilterIn)
           oneFilter[insertVal(oneFilterIn[i][0])] = insertVal(
-            oneFilterIn[i][1]
+            oneFilterIn[i][1],
           );
         parsedfilter.$and.push(oneFilter);
       }
@@ -93,7 +123,7 @@ module.exports = (app) => {
           app.event("keypressSaveEvent");
         }
       },
-      false
+      false,
     );
 
     app.event("loaded");

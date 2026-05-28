@@ -1,48 +1,42 @@
 {
-	"item": [
-		{
-			"id": "className",
-			"text": "Class",
-			"type": "gridselect"
-		},
-		{
-			"type": "text",
-			"text": "Text",
-			"id": "text"
-		},
-		{
-			"id": "href",
-			"text": "Href",
-			"type": "text"
-		},
-		{
-			"id": "renderType",
-			"text": "Render type",
-			"type": "select",
-			"option": [
-				"default",
-				"info",
-				"error",
-				"success",
-				"icon"
-			],
-			"limit": 1,
-			"inline": true
-		},
-		{
-			"id": "match",
-			"text": "Active on match",
-			"type": "text"
-		},
-		{
-			"type": "text",
-			"id": "add",
-			"text": "Add"
-		},
-		{
-			"type": "boolean",
-			"id": "blank",
-			"text": "Target blank"
-		}
-	]
+  "item": [
+    {
+      "id": "className",
+      "text": "Class",
+      "type": "gridselect"
+    },
+    {
+      "type": "text",
+      "text": "Text",
+      "id": "text"
+    },
+    {
+      "id": "href",
+      "text": "Href",
+      "type": "text"
+    },
+    {
+      "id": "renderType",
+      "text": "Render type",
+      "type": "select",
+      "option": ["default", "info", "error", "success", "icon"],
+      "limit": 1,
+      "inline": true
+    },
+    {
+      "id": "match",
+      "text": "Active on match",
+      "type": "text"
+    },
+    {
+      "type": "text",
+      "id": "add",
+      "text": "Add"
+    },
+    {
+      "type": "boolean",
+      "id": "blank",
+      "text": "Target blank"
+    }
+  ]
 }

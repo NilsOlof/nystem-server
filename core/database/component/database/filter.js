@@ -1,11 +1,11 @@
 import { useEffect, useRef } from "react";
-import { UseSearch, RouterUseQueryStore } from "nystem-components";
+import { useSearch, useRouterQueryStore } from "nystem-components";
 
 const DatabaseFilter = ({ model, view }) => {
-  const [value, setValue] = RouterUseQueryStore(model.saveId);
+  const [value, setValue] = useRouterQueryStore(model.saveId);
   const firstVal = useRef();
   firstVal.current = firstVal.current || value;
-  UseSearch({ view, id: model.field, value, exact: model.exact || undefined });
+  useSearch({ view, id: model.field, value, exact: model.exact || undefined });
 
   const emitterByType = {
     view,

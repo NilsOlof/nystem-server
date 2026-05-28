@@ -14,13 +14,15 @@ const ConditionalView = ({ view, model, path }) => {
         return view.params[p1.replace("params.", "")];
 
       if (p1.startsWith("app.settings."))
-        return app().settings[p1.replace("app.settings.", "")];
+        return app.settings[p1.replace("app.settings.", "")];
 
-      if (!p1.startsWith("baseView."))
-        return view.getValue(p1.replace("..", path));
-
-      p1 = p1.replace("baseView.", "");
-      return view.baseView.getValue(p1.replace("..", path));
+      let atView = view;
+      while (p1.indexOf("baseView.") === 0) {
+        p1 = p1.replace("baseView.", "");
+        atView = atView.baseView;
+      }
+      if (p1 === "_id") return atView.value._id;
+      return atView.getValue(p1.replace("..", path));
     };
 
     const { condition } = model;
@@ -57,17 +59,13 @@ const ConditionalView = ({ view, model, path }) => {
     return false;
   }, [model, path, view]);
 
-  const result = testCondition();
-  if (!result && !model.itemNot?.length) return null;
-
-  return (
-    <Wrapper className={model.className}>
-      <ContentTypeRender
-        path={path}
-        items={result ? model.item : model.itemNot}
-      />
-    </Wrapper>
-  );
+  if (testCondition())
+    return (
+      <Wrapper className={model.className}>
+        <ContentTypeRender path={path} items={model.item} />
+      </Wrapper>
+    );
+  return null;
 };
 
 export default ConditionalView;

@@ -1,10 +1,10 @@
-module.exports = (app) => {
+export default (app) => {
   const addListner = ({ source, collection, fieldId }) => {
     if (!app.database[source] || !app.database[source].on) {
       console.error(
         "Missing reference",
         collection.contentType.machinename,
-        source
+        source,
       );
       return;
     }
@@ -12,9 +12,9 @@ module.exports = (app) => {
     app.database[source].on("delete", (query) => {
       const { _id } = query.data;
       collection.search({ role: "super", count: 1000 }).then(({ data }) => {
-        data = data || false;
+        data = data || [];
         const removeFrom = data.filter((item) =>
-          (item[fieldId] || []).includes(_id)
+          (item[fieldId] || []).includes(_id),
         );
 
         removeFrom.forEach((item) =>
@@ -26,10 +26,10 @@ module.exports = (app) => {
                 item[fieldId] instanceof Array
                   ? item[fieldId]?.filter((id) => id !== _id)
                   : item[fieldId] === _id
-                  ? undefined
-                  : item[fieldId],
+                    ? undefined
+                    : item[fieldId],
             },
-          })
+          }),
         );
       });
     });
@@ -42,7 +42,7 @@ module.exports = (app) => {
         const fieldId = item.id;
 
         app.on("start", () =>
-          addListner({ source: item.source, collection, fieldId })
+          addListner({ source: item.source, collection, fieldId }),
         );
       });
     });

@@ -16,9 +16,31 @@
       "text": "Set value in array"
     },
     {
+      "type": "select",
+      "option": [
+        {
+          "text": "view",
+          "_id": "view"
+        },
+        {
+          "text": "baseView",
+          "_id": "baseView"
+        },
+        {
+          "text": "baseViewBaseView",
+          "_id": "baseViewBaseView"
+        }
+      ],
+      "inline": true,
+      "render": "button",
+      "id": "toView",
+      "text": "To view",
+      "limit": 1
+    },
+    {
       "type": "boolean",
-      "id": "setBaseView",
-      "text": "Set baseView"
+      "id": "setIfUndefined",
+      "text": "Set if undefined only"
     }
   ]
 }

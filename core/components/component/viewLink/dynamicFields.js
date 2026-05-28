@@ -1,4 +1,4 @@
-import { Link, ContentTypeRender } from "nystem-components";
+import { Link, ContentTypeRender, Wrapper } from "nystem-components";
 
 const ViewLinkDynamicFields = ({ view, path, model }) => {
   const insertVal = (val) => {
@@ -22,13 +22,25 @@ const ViewLinkDynamicFields = ({ view, path, model }) => {
   const url = insertVal(href);
   if (url && url.startsWith("http"))
     return (
-      <a href={url} rel="noopener noreferrer" target="_blank">
+      <Wrapper
+        renderAs="a"
+        href={url}
+        rel="noopener noreferrer"
+        target="_blank"
+        className={className}
+      >
         <ContentTypeRender path={path} items={item} />
-      </a>
+      </Wrapper>
     );
 
   return (
-    <Link className={className} to={url} match={insertVal(match)} exact={exact}>
+    <Link
+      className={className}
+      to={url}
+      match={insertVal(match)}
+      exact={exact}
+      addSearch={model.addSearch}
+    >
       <ContentTypeRender path={path} items={item} />
     </Link>
   );

@@ -8,7 +8,7 @@ const ViewInViewView = ({ model, view = {}, value, path, onSave }) => {
     if (!val) return val;
     return val.replace(/\{([a-z_.0-9]+)\}/gim, (str, p1) => {
       if (p1 === "id") return view.id;
-      if (p1 === "_language") return app().settings.lang;
+      if (p1 === "_language") return app.settings.lang;
 
       if (p1.indexOf("params.") === 0)
         return view.params[p1.replace("params.", "")];

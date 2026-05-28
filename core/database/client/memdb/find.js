@@ -1,6 +1,6 @@
-module.exports = app => {
+export default (app) => {
   app.database.on("init", ({ collection, db }) => {
-    collection.on("find", 1000, query => {
+    collection.on("find", 1000, (query) => {
       const { field, value, data, testIfSet } = query;
       if (data) return;
       const { dbArray } = db;

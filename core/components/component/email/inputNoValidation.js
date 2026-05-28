@@ -11,7 +11,7 @@ const EmailInputNoValidation = ({
   view,
 }) => {
   const { disabled, length, text, clearButton, classNameInput } = model;
-  const [id] = useState(app().uuid);
+  const [id] = useState(app.uuid);
 
   useEffect(() => {
     if (!model.mandatory) return;
@@ -39,7 +39,7 @@ const EmailInputNoValidation = ({
     <InputWrapper id={id} model={model} className={componentClassName}>
       <Input
         id={id}
-        placeholder={app().t(text)}
+        placeholder={app.t(text)}
         className={classNameInput}
         value={value || ""}
         maxLength={length}

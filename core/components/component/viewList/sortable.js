@@ -26,7 +26,7 @@ const ViewListSortable = ({ model, view }) => {
   }
   const setValue = (value) => {
     value.forEach((id, index) => {
-      app().database[view.contentType].save({
+      app.database[view.contentType].save({
         fields: true,
         data: { _id: id, [model.sortField]: index },
       });
@@ -52,6 +52,7 @@ const ViewListSortable = ({ model, view }) => {
         Component={ContentTypeView}
         items={value.map(createItem)}
         setValue={setValue}
+        handle={model.handle}
       />
     </Wrapper>
   );

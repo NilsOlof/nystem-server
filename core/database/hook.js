@@ -1,8 +1,7 @@
-module.exports = app => {
+export default (app) => {
   app.database.on("init", ({ collection }) => {
-    collection.on(
-      "save",
-      query => (query.hook ? query.hook(query) || undefined : undefined)
+    collection.on("save", (query) =>
+      query.hook ? query.hook(query) || undefined : undefined,
     );
   });
 };

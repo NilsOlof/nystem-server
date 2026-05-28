@@ -2,17 +2,17 @@ import { useEffect, useRef, useContext } from "react";
 import {
   Button,
   Wrapper,
-  RouterUseQueryStore,
+  useRouterQueryStore,
   DatabaseSearchContext,
-  UseLocation,
+  useLocation,
 } from "nystem-components";
 
 import app from "nystem";
 
 const ViewListPager = ({ view, model }) => {
   const { search } = useContext(DatabaseSearchContext);
-  const [value, setValue, ref] = RouterUseQueryStore(model.saveId, "int", true);
-  const location = UseLocation();
+  const [value, setValue, ref] = useRouterQueryStore(model.saveId, "int", true);
+  const location = useLocation();
 
   const last = useRef(false);
 
@@ -70,7 +70,7 @@ const ViewListPager = ({ view, model }) => {
         onClick={hasPrev ? () => update(-1) : undefined}
         href={hasPrev ? relUrl(prev(search)) : undefined}
       >
-        ← {app().t("Previous")}
+        ← {app.t("Previous")}
       </Button>
       <Button
         renderAs="a"
@@ -78,7 +78,7 @@ const ViewListPager = ({ view, model }) => {
         onClick={hasNext ? () => update(1) : undefined}
         href={hasNext ? relUrl(next(search)) : undefined}
       >
-        {app().t("Next")} →
+        {app.t("Next")} →
       </Button>
     </Wrapper>
   );

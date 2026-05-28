@@ -1,5 +1,0 @@
-{
-  "dependencies": {
-    "nystem-components": "file:../core/components/nystem-components"
-  }
-}

@@ -31,7 +31,8 @@
         "dateTimeNoYearDay",
         "dateNoYearDay",
         "day",
-        "timeDay"
+        "timeDay",
+        "dayOfMonth"
       ]
     },
     {

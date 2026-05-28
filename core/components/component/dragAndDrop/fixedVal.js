@@ -4,7 +4,7 @@ import app from "nystem";
 import { Droppable, Draggable } from "./myDnd";
 
 const DragAndDropFixedVal = ({ value, model, path }) => {
-  const [droppableId] = useState(app().uuid());
+  const [droppableId] = useState(app.uuid());
 
   useEffect(() => {
     if (!value) return;
@@ -15,9 +15,9 @@ const DragAndDropFixedVal = ({ value, model, path }) => {
       result.source.uuid = droppableId;
     };
 
-    app().on("dragAndDropOnDragEnd", 100, onDragEndAddValue);
+    app.on("dragAndDropOnDragEnd", 100, onDragEndAddValue);
     return () => {
-      app().off("dragAndDropOnDragEnd", onDragEndAddValue);
+      app.off("dragAndDropOnDragEnd", onDragEndAddValue);
     };
   }, [value, droppableId, model.setValue]);
 

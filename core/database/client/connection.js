@@ -1,4 +1,4 @@
-module.exports = (app) => {
+export default (app) => {
   let connected = false;
   app.on("init", () => {
     ({ connected } = app.connection);
@@ -23,25 +23,25 @@ module.exports = (app) => {
         query.data
           ? undefined
           : !connected
-          ? { ...query, offline: true }
-          : send(event, query)
+            ? { ...query, offline: true }
+            : send(event, query),
       );
     });
 
     collection.on("delete", 2700, (query) =>
-      !connected ? { ...query, offline: true } : send("delete", query)
+      !connected ? { ...query, offline: true } : send("delete", query),
     );
 
     collection.on("save", 2700, (query) =>
-      !connected ? { ...query, offline: true } : send("save", query)
+      !connected ? { ...query, offline: true } : send("save", query),
     );
 
     collection.on("search", 1700, (query) =>
       query.inCache
         ? undefined
         : !connected
-        ? { ...query, offline: true }
-        : send("search", query)
+          ? { ...query, offline: true }
+          : send("search", query),
     );
 
     collection.on("updates", (query) => query.date && send("updates", query));
@@ -60,7 +60,8 @@ module.exports = (app) => {
       collection[event.action](event.query);
     });
 
-    app.connection.on("connection", ({ connected }) => {
+    app.connection.on("connection", async ({ connected }) => {
+      if (app.settings.clearDbOnConnect) await app.database.clearCache();
       if (connected) collection.updates();
     });
     collection.on("init", -100, () => {

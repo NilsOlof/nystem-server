@@ -1,6 +1,6 @@
 import { useState } from "react";
 import app from "nystem";
-import { InputWrapper, Input, UseValidator } from "nystem-components";
+import { InputWrapper, Input, useValidator } from "nystem-components";
 import validate from "./validate";
 import "./confirmInput.css";
 
@@ -8,7 +8,7 @@ const PasswordConfirmInput = ({ model, value, view, setValue }) => {
   const [value1, setValue1] = useState("");
   const [value2, setValue2] = useState("");
 
-  const [error, setValidated] = UseValidator({
+  const [error, setValidated] = useValidator({
     view,
     validate,
     value: [value1, value2],
@@ -19,7 +19,7 @@ const PasswordConfirmInput = ({ model, value, view, setValue }) => {
     <InputWrapper model={model} error={error}>
       <div>
         <Input
-          placeholder={app().t(model.text)}
+          placeholder={app.t(model.text)}
           className={[model.classNameInput, "confirm-input"]}
           value={value1}
           onChange={(svalue) => {
@@ -34,7 +34,7 @@ const PasswordConfirmInput = ({ model, value, view, setValue }) => {
       </div>
       <div>
         <Input
-          placeholder={app().t("Repeat")}
+          placeholder={app.t("Repeat")}
           className={[model.classNameInput, "confirm-input"]}
           value={value2}
           onChange={(svalue) => {

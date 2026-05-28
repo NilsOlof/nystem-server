@@ -1,4 +1,4 @@
-import { ContentTypeRender, UseLocation, Wrapper } from "nystem-components";
+import { ContentTypeRender, useLocation, Wrapper } from "nystem-components";
 
 const checkMatch = {
   start: (path, match) => path.startsWith(match.substring(0, match.length - 1)),
@@ -27,7 +27,7 @@ const matchType = (path, match) => {
 };
 
 const useSearch = ({ useSearch }) => {
-  const { pathname, search } = UseLocation();
+  const { pathname, search } = useLocation();
   return useSearch ? search : pathname;
 };
 

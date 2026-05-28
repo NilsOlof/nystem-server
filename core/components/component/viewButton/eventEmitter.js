@@ -22,7 +22,7 @@ const EventButton = ({ model, view, sendEvent }) => {
         type: "success",
       },
     }),
-    [model.btnType, model.text]
+    [model.btnType, model.text],
   );
 
   const [button, setButton] = useState(buttonStates.default);
@@ -33,10 +33,12 @@ const EventButton = ({ model, view, sendEvent }) => {
   const handleSubmit = useCallback(
     async (event) => {
       if (event) event.preventDefault();
-      const { errors = [] } = await view.event("validate");
-      if (errors.length) {
-        setError("Correct validation errors");
-        return;
+      if (!model.noValidation) {
+        const { errors = [] } = await view.event("validate");
+        if (errors.length) {
+          setError("Correct validation errors");
+          return;
+        }
       }
 
       if (model.confirm && button !== buttonStates.confirm) {
@@ -49,10 +51,10 @@ const EventButton = ({ model, view, sendEvent }) => {
         setButton(buttonStates.success);
         setSavedTimer(setTimeout(() => setButton(buttonStates.default), 1000));
 
-        if (data.redirectToPath) app().router.click(data.redirectToPath);
+        if (data.redirectToPath) app.router.click(data.redirectToPath);
       }
     },
-    [button, buttonStates, model.confirm, sendEvent, view]
+    [button, buttonStates, model, sendEvent, view],
   );
 
   useEffect(() => {
@@ -61,14 +63,14 @@ const EventButton = ({ model, view, sendEvent }) => {
     };
     const inactivateKeySaveView = () => setActiveKeySaveView(false);
     const activateKeySaveView = () => {
-      app().event("inactivateKeySaveView");
+      app.event("inactivateKeySaveView");
       setActiveKeySaveView(true);
     };
 
     if (model.saveOnKey) {
       view.on("submit", handleSubmit);
-      app().on("keypressSaveEvent", handleKeySave);
-      app().on("inactivateKeySaveView", inactivateKeySaveView);
+      app.on("keypressSaveEvent", handleKeySave);
+      app.on("inactivateKeySaveView", inactivateKeySaveView);
       setActiveKeySaveView(false);
       view.on("change", activateKeySaveView);
     }
@@ -78,8 +80,8 @@ const EventButton = ({ model, view, sendEvent }) => {
       if (model.saveOnKey) {
         view.off("submit", handleSubmit);
         view.off("change", activateKeySaveView);
-        app().off("keypressSaveEvent", handleKeySave);
-        app().off("inactivateKeySaveView", inactivateKeySaveView);
+        app.off("keypressSaveEvent", handleKeySave);
+        app.off("inactivateKeySaveView", inactivateKeySaveView);
       }
     };
   }, [activeKeySaveView, handleSubmit, model.saveOnKey, savedTimer, view]);
@@ -92,7 +94,7 @@ const EventButton = ({ model, view, sendEvent }) => {
         type={model.btnType}
         size={model.size}
       >
-        {app().t(button.text)}
+        {app.t(button.text)}
       </Button>
       {error}
     </>
@@ -130,13 +132,13 @@ const ViewButtonEventEmitter = ({ model, view, path }) => {
 
   const emitterByType = {
     connection: {
-      event: (type, data) => app().connection.emit({ type, ...data }),
+      event: (type, data) => app.connection.emit({ type, ...data }),
     },
     view: view,
     baseView: view.baseView,
     baseViewBaseView: view.baseView?.baseView,
     baseViewBaseViewBaseView: view.baseView?.baseView?.baseView,
-    app: app(),
+    app: app,
   };
   const emitter = emitterByType[model.eventType || "connection"];
 
@@ -151,20 +153,24 @@ const ViewButtonEventEmitter = ({ model, view, path }) => {
     }
 
     const data = await emitter.event(model.event, sendData);
-
+    console.log(data);
     if (model.inactiveClass || model.activeClass) setActive(!active);
     if (data.redirectURL) goto(data.redirectURL);
+    if (data.redirectURLHref) window.location.href = data.redirectURLHref;
 
     return data;
   };
   sendRef.current = sendEvent;
 
   useEffect(() => {
-    if (!emitter.on) return;
+    if (!emitter.on && !model.onLoad) return;
+
     const send = () => {
       sendRef.current();
     };
 
+    let timer = false;
+    if (model.onLoad) timer = setTimeout(send, 100);
     if (model.onSubmit) view.on("submit", send);
 
     const checkActive = () => {
@@ -173,6 +179,7 @@ const ViewButtonEventEmitter = ({ model, view, path }) => {
 
     emitter.on(model.event, checkActive);
     return () => {
+      if (timer) clearTimeout(timer);
       emitter.off(model.event, checkActive);
       if (model.onSubmit) view.off("submit", send);
     };

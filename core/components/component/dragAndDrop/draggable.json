@@ -1,0 +1,30 @@
+{
+  "item": [
+    {
+      "text": "Class",
+      "type": "gridselect",
+      "id": "className"
+    },
+    {
+      "text": "Transform",
+      "type": "text",
+      "id": "transform"
+    },
+    {
+      "type": "switchButtons",
+      "item": [
+        {
+          "text": "Handle",
+          "type": "boolean",
+          "id": "handle"
+        }
+      ]
+    },
+    {
+      "text": "Fields",
+      "id": "item",
+      "type": "viewCreator",
+      "expanded": true
+    }
+  ]
+}

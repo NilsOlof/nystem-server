@@ -3,7 +3,7 @@ import {
   Wrapper,
   DatabaseSearchContext,
   Icon,
-  RouterUseQueryStore,
+  useRouterQueryStore,
 } from "nystem-components";
 import app from "nystem";
 
@@ -11,7 +11,7 @@ const TextSaveSortBy = ({ model, view }) => {
   const { search } = useContext(DatabaseSearchContext);
   const { id, text, className } = model;
   const { sortby, reverse } = search;
-  const [ev, setEv] = RouterUseQueryStore(model.saveId);
+  const [ev, setEv] = useRouterQueryStore(model.saveId);
   const state = useRef();
 
   const sortbyId = sortby instanceof Array ? sortby[0] : sortby;
@@ -23,7 +23,7 @@ const TextSaveSortBy = ({ model, view }) => {
 
     const rev = sortbyId === id ? !reverse : true;
     await view.event("clearSort", { id });
-    await app().delay(200);
+    await app.delay(200);
     state.current = rev ? "rev" : "fwd";
     setEv(state.current);
     setTimeout(() => view.event("setSearch"), 100);
@@ -63,7 +63,7 @@ const TextSaveSortBy = ({ model, view }) => {
       href={id}
       onClick={handleSort}
     >
-      <Wrapper renderAs="span">{`${app().t(text)} `}</Wrapper>
+      <Wrapper renderAs="span">{`${app.t(text)} `}</Wrapper>
       {sortbyId === id ? (
         <Icon
           icon={`arrow-${reverse1 ? "down" : "up"}`}

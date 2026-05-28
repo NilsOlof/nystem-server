@@ -1,7 +1,9 @@
 {
   "devDependencies": {
-    "tailwindcss": "*",
     "@tailwindcss/typography": "*",
-    "@tailwindcss/forms": "*"
-  }
+    "@tailwindcss/forms": "*",
+    "@tailwindcss/vite": "*",
+    "tailwindcss": "*"
+  },
+  "type": "module"
 }

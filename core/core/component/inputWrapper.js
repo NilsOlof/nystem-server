@@ -15,12 +15,12 @@ const InputWrapper = ({
     const classNameLabel = [...(model.classNameLabel || [])];
     if (!model.floatlabel)
       classNameLabel.push(
-        "mr-3 font-semibold sm:w-40 w-1/4 text-right align-top mt-1 flex-shrink-0"
+        "mr-3 font-semibold sm:w-40 w-1/4 text-right align-top mt-1 flex-shrink-0",
       );
 
     if (!model.text) return null;
     const text =
-      typeof model.text === "string" ? app().t(model.text) : model.text;
+      typeof model.text === "string" ? app.t(model.text) : model.text;
 
     return (
       <Wrapper renderAs="label" htmlFor={id} className={classNameLabel}>
@@ -43,7 +43,7 @@ const InputWrapper = ({
     if (error)
       return (
         <Wrapper renderAs="p" className={className}>
-          {app().t(error)}
+          {app.t(error)}
         </Wrapper>
       );
     return null;
@@ -52,7 +52,7 @@ const InputWrapper = ({
   const info = () =>
     model.info ? (
       <span className="mt-2 block align-top text-gray-500 sm:ml-48">
-        {app().t(model.info)}
+        {app.t(model.info)}
       </span>
     ) : null;
 
@@ -62,7 +62,7 @@ const InputWrapper = ({
     return (
       <Wrapper className={className}>
         <label htmlFor={id} className="label-hidden">
-          {app().t(model.text)}
+          {app.t(model.text)}
         </label>
         <Wrapper className={model.classNameInput}>{children}</Wrapper>
       </Wrapper>
@@ -93,7 +93,7 @@ const InputWrapper = ({
     <Wrapper className={[className, "my-4"]}>
       <Wrapper className={"sm:flex"}>
         {label()}
-        <Wrapper renderAs="div" className={inputWidth || "flex-grow"}>
+        <Wrapper renderAs="div" className={inputWidth || "grow"}>
           {children}
         </Wrapper>
       </Wrapper>

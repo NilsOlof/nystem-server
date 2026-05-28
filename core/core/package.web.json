@@ -1,6 +1,5 @@
 {
   "dependencies": {
-    "nystem": "file:../core/core/nystem",
     "react": "*",
     "react-dom": "*"
   }

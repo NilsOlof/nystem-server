@@ -1,8 +1,8 @@
 import { useEffect, useContext } from "react";
-import { PanelContext, UseLocation } from "nystem-components";
+import { PanelContext, useLocation } from "nystem-components";
 
 const useSearch = ({ useSearch }) => {
-  const { pathname, search } = UseLocation();
+  const { pathname, search } = useLocation();
   return useSearch ? search : pathname;
 };
 
@@ -16,7 +16,7 @@ const BootstrapPanelOpenByPath = ({ model, path, view }) => {
       val.replace(/\{([a-z_.0-9]+)\}/gim, (str, p1) =>
         /pathItem[0-9]/.test(p1) && view.params
           ? view.params[p1[8]]
-          : view.getValue(p1.replace("..", path))
+          : view.getValue(p1.replace("..", path)),
       );
 
     let setExpanded = pathname.match(new RegExp(insertVal(model.match)));

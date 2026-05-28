@@ -1,60 +1,66 @@
-import React from "react";
+import { useState, useEffect, useRef } from "react";
 
-class MultilinetextInputlist extends React.Component {
-  constructor(props) {
-    super(props);
-    let val = props.value || [];
-    if (!(val instanceof Array)) val = [val];
-    if (props.limit && val.length > props.limit)
-      return { value: val.concat([]) };
-    return { value: val.concat([""]) };
-  }
-  handleChange() {
-    const val = [];
-    for (let i = 0; i < this.state.value.length; i++) {
-      // eslint-disable-next-line react/no-string-refs
-      const oneVal = this.refs[`input${i}`].value;
-      if (oneVal) val.push(oneVal);
+const MultilinetextInputlist = ({
+  value: propValue = [],
+  limit,
+  setValue,
+  focus,
+}) => {
+  const normalizeValue = (val) => {
+    if (!Array.isArray(val)) val = [val];
+    if (limit && val.length > limit) return [...val];
+    return [...val, ""];
+  };
+
+  const [value, setLocalValue] = useState(normalizeValue(propValue));
+  const inputRefs = useRef([]);
+
+  // Sync with props (replaces UNSAFE_componentWillReceiveProps)
+  useEffect(() => {
+    let val = propValue;
+    if (typeof propValue === "string") val = [propValue];
+
+    if (limit && val.length > limit) {
+      setLocalValue([...val]);
+    } else {
+      setLocalValue([...val, ""]);
     }
-    if (this.props.setValue) this.props.setValue(val);
-    if (val.length > this.props.limit)
-      this.setState({
-        value: val.concat([]),
-      });
-    else
-      this.setState({
-        value: val.concat([""]),
-      });
-  }
-  UNSAFE_componentWillReceiveProps(nextProps) {
-    if (this.props.value !== nextProps.value) {
-      let val = nextProps.value;
-      if (typeof nextProps.value === "string") val = [nextProps.value];
-      if (this.props.limit && val.length > this.props.limit)
-        this.setState({ value: val.concat([]) });
-      else this.setState({ value: val.concat([""]) });
+  }, [propValue, limit]);
+
+  const handleChange = () => {
+    const val = inputRefs.current.map((input) => input?.value).filter((v) => v);
+
+    if (setValue) setValue(val);
+
+    if (limit && val.length > limit) {
+      setLocalValue([...val]);
+    } else {
+      setLocalValue([...val, ""]);
     }
-  }
-  componentDidMount() {
-    if (this.props.focus)
-      // eslint-disable-next-line react/no-string-refs
-      this.refs[`input${this.state.value.length - 1}`].focus();
-  }
-  render() {
-    const self = this;
-    function inputField(item, index) {
-      return (
+  };
+
+  // componentDidMount equivalent (focus last input)
+  useEffect(() => {
+    if (focus && inputRefs.current.length > 0) {
+      const lastIndex = value.length - 1;
+      inputRefs.current[lastIndex]?.focus();
+    }
+  }, [focus, value.length]);
+
+  return (
+    <div>
+      {value.map((item, index) => (
         <input
           key={`input${index}`}
-          ref={`input${index}`}
+          ref={(el) => (inputRefs.current[index] = el)}
           className="form-control"
           value={item}
-          onChange={self.handleChange}
+          onChange={handleChange}
           type="text"
         />
-      );
-    }
-    return <div>{this.state.value.map(inputField)}</div>;
-  }
-}
+      ))}
+    </div>
+  );
+};
+
 export default MultilinetextInputlist;

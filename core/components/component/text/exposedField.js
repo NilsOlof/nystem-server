@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
-import { TextInput, UseSearch, RouterUseQueryStore } from "nystem-components";
+import { TextInput, useSearch, useRouterQueryStore } from "nystem-components";
 
 const TextExposedField = ({ model, view }) => {
   const [className, setClassName] = useState("");
-  const [value, setValue, ref] = RouterUseQueryStore(model.saveId);
-  UseSearch({ view, id: model.id, value, exact: model.exact || undefined });
+  const [value, setValue, ref] = useRouterQueryStore(model.saveId);
+  useSearch({ view, id: model.id, value, exact: model.exact || undefined });
 
   useEffect(() => {
     if (!value) {

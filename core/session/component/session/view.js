@@ -4,7 +4,7 @@ import app from "nystem";
 const SessionView = ({ view }) => {
   useEffect(() => {
     const sessionChange = () => {
-      let session = app().session.user;
+      let session = app.session.user;
       const { fields } = this.props.model;
 
       if (!session) session = {};
@@ -15,13 +15,13 @@ const SessionView = ({ view }) => {
           view.setValue(fields[i], session[fields[i]]);
     };
 
-    app().on("login", sessionChange);
-    app().on("logout", sessionChange);
+    app.on("login", sessionChange);
+    app.on("logout", sessionChange);
 
     sessionChange();
     return () => {
-      app().off("login", sessionChange);
-      app().off("logout", sessionChange);
+      app.off("login", sessionChange);
+      app.off("logout", sessionChange);
     };
   }, [view]);
 

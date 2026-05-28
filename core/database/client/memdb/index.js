@@ -1,11 +1,11 @@
-const deleteM = require("./delete");
-const findM = require("./find");
-const getM = require("./get");
-const initM = require("./init");
-const saveM = require("./save");
-const searchM = require("./search");
+import deleteM from "./delete.js";
+import findM from "./find.js";
+import getM from "./get.js";
+import initM from "./init.js";
+import saveM from "./save.js";
+import searchM from "./search.js";
 
-module.exports = (app) => {
+export default (app) => {
   deleteM(app);
   findM(app);
   getM(app);
@@ -31,7 +31,7 @@ module.exports = (app) => {
           "update",
           "updates",
         ],
-        `database ${contentType.machinename}`
+        `database ${contentType.machinename}`,
       );
 
       collection.on("init", () => {
@@ -46,6 +46,6 @@ module.exports = (app) => {
       collection.on("size", () => db.dbArray.length);
       return { collection, db, contentType };
     },
-    1000
+    1000,
   );
 };

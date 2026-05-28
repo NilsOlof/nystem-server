@@ -6,7 +6,7 @@ import app from "nystem";
 const MyDragAndDropContext = React.createContext();
 
 export const DragDropContext = ({ children, onDragEnd }) => {
-  const event = app().addeventhandler();
+  const event = app.addeventhandler();
 
   useEffect(() => {
     event.on("onDragEnd", onDragEnd);
@@ -41,6 +41,7 @@ export const Droppable = ({ droppableId, type, children, isDropDisabled }) => {
   styleRef.current = style;
 
   const context = useContext(MyDragAndDropContext);
+
   const { event } = context;
 
   const provided = {
@@ -53,7 +54,7 @@ export const Droppable = ({ droppableId, type, children, isDropDisabled }) => {
       ...context.parents,
       ...(context.droppableId ? [context.droppableId] : []),
     ],
-    [context.droppableId, context.parents]
+    [context.droppableId, context.parents],
   );
 
   useEffect(() => {
@@ -61,7 +62,7 @@ export const Droppable = ({ droppableId, type, children, isDropDisabled }) => {
 
     const paddingBottom = parseInt(
       window.getComputedStyle(innerRef.current).paddingBottom,
-      10
+      10,
     );
 
     let size;
@@ -124,9 +125,17 @@ export const Droppable = ({ droppableId, type, children, isDropDisabled }) => {
   );
 };
 
-export const Draggable = ({ draggableId, index, children, minHeight = 0 }) => {
+export const Draggable = ({
+  draggableId,
+  index,
+  children,
+  minHeight = 0,
+  limit = {},
+  onMove,
+  onEnd,
+  transform = "scale(1.01,1.15)",
+}) => {
   const [style, setStyle] = useState(null);
-
   const innerRef = useRef();
   const { event, droppableId, isDropDisabled, type } =
     useContext(MyDragAndDropContext);
@@ -189,6 +198,7 @@ export const Draggable = ({ draggableId, index, children, minHeight = 0 }) => {
       setStyle(null);
       const { destination } = result;
 
+      if (!innerRef.current) return;
       const size = innerRef.current.getBoundingClientRect();
       const breakpoint = size.top + size.height / 2;
 
@@ -215,7 +225,7 @@ export const Draggable = ({ draggableId, index, children, minHeight = 0 }) => {
 
   const onMouseDown = (e) => {
     const baseProps = JSON.parse(
-      JSON.stringify(innerRef.current.getBoundingClientRect())
+      JSON.stringify(innerRef.current.getBoundingClientRect()),
     );
 
     const style = {
@@ -239,6 +249,7 @@ export const Draggable = ({ draggableId, index, children, minHeight = 0 }) => {
 
     const mouseMove = (e) => {
       if (!pos) {
+        document.body.style.userSelect = "none";
         document.body.appendChild(clonedElement);
         setStyles(clonedElement, style);
         clonedElement.style.width = `${baseProps.width}px`;
@@ -252,12 +263,32 @@ export const Draggable = ({ draggableId, index, children, minHeight = 0 }) => {
         parents: [],
       };
 
+      if (!movingState.refx) {
+        movingState.refx = pos.x;
+        movingState.refy = pos.y;
+      }
+      const { left, right, top, bottom } = limit;
+      const x = pos.x - movingState.refx + left;
+
+      if (left !== undefined && x < 0) pos.x = movingState.refx - left;
+      if (right !== undefined && x > right + left)
+        pos.x = movingState.refx + right;
+
+      if (top !== undefined && movingState.refy - pos.y > -top)
+        pos.y = movingState.refy + top;
+      if (bottom !== undefined && movingState.refy - pos.y < -bottom)
+        pos.y = movingState.refy + bottom;
+
       setStyles(clonedElement, {
         top: `${pos.y}px`,
         left: `${pos.x}px`,
-        transform: "scale(1.01,1.15)",
+        transform,
       });
       setStyle({ display: "none" });
+
+      if (onMove)
+        onMove({ x: pos.x - movingState.refx, y: pos.y - movingState.refy });
+
       event
         .event(`${type}Move`, pos)
         .then((query) => event.event(`${type}Over`, query));
@@ -270,6 +301,10 @@ export const Draggable = ({ draggableId, index, children, minHeight = 0 }) => {
       if (!pos) return;
 
       document.body.removeChild(clonedElement);
+      document.body.style.userSelect = "auto";
+
+      if (onEnd)
+        onEnd({ x: pos.x - movingState.refx, y: pos.y - movingState.refy });
 
       event
         .event(`${type}Stop`, {
@@ -286,7 +321,7 @@ export const Draggable = ({ draggableId, index, children, minHeight = 0 }) => {
           event.event("onDragEnd", {
             ...data,
             pos: undefined,
-          })
+          }),
         );
 
       setStyle(null);

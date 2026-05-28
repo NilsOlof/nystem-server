@@ -1,12 +1,12 @@
-module.exports = (app) => {
-  const validators = app.filePaths.reduce((res, item) => {
+export default async (app) => {
+  const validators = {};
+  for await (const item of app.filePaths) {
     const [, , isComponent, type, name] = item.split(/[/.]/);
-    if (isComponent !== "component") return res;
-    if (name !== "validate") return res;
+    if (isComponent !== "component") continue;
+    if (name !== "validate") continue;
 
-    res[type] = require(`${app.__dirname}/${item}`);
-    return res;
-  }, {});
+    validators[type] = await app.require(`${app.__dirname}/${item}`, true);
+  }
 
   const check = (item, value) => {
     const fields = item.map((item) => item.id);
@@ -45,7 +45,7 @@ module.exports = (app) => {
         console.log(
           `Validation errors ${contentType.machinename} ${
             data._id
-          }: ${errors.join(", ")}`
+          }: ${errors.join(", ")}`,
         );
     });
   });

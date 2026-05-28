@@ -1,8 +1,8 @@
-import { SelectInput, UseSearch, RouterUseQueryStore } from "nystem-components";
+import { SelectInput, useSearch, useRouterQueryStore } from "nystem-components";
 
 const GroupGroupExposedField = ({ model, view }) => {
-  const [value, setValue] = RouterUseQueryStore(model.saveId);
-  UseSearch({ view, id: model.id, value: Boolean(value) });
+  const [value, setValue] = useRouterQueryStore(model.saveId);
+  useSearch({ view, id: model.id, value: Boolean(value) });
   const { hideTrue, trueText, hideFalse, falseText } = model;
 
   const option = [];

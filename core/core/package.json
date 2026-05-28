@@ -3,11 +3,12 @@
     "start": "node server.js",
     "deploy": "node app.js core/core/deploy.js"
   },
-  "license": "ISC",
+  "license": "MIT",
   "dependencies": {
     "fs-extra": "*"
   },
   "devDependencies": {
     "chokidar": "*"
-  }
+  },
+  "type": "module"
 }

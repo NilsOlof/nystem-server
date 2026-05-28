@@ -1,43 +1,39 @@
-import React from "react";
+import { useState, useEffect } from "react";
 import app from "nystem";
 import { Wrapper } from "nystem-components";
 
-class Role extends React.Component {
-  constructor(props) {
-    super(props);
+const Role = ({ role, className, children }) => {
+  const getVisibility = () => {
+    const { user } = app.session;
+    const userRoles = user?.role
+      ? ["logged-in", ...(Array.isArray(user.role) ? user.role : [user.role])]
+      : ["logged-out"];
 
-    app().on("login", this.sessionChange.bind(this));
-    app().on("logout", this.sessionChange.bind(this));
-    this.state = { visible: this.isVisible(props) };
-  }
-  contains(array1, array2) {
-    if (typeof array1 === "string") array1 = [array1];
-    if (typeof array2 === "string") array2 = [array2];
+    const requiredRoles = role.split(" ");
+    return requiredRoles.some((r) => userRoles.includes(r));
+  };
 
-    for (let i = 0; i < array1.length; i++)
-      if (array2.indexOf(array1[i]) !== -1) return true;
+  const [visible, setVisible] = useState(getVisibility);
 
-    return false;
-  }
-  isVisible(props) {
-    const { user } = app().session;
-    const role =
-      user && user.role ? ["logged-in"].concat(user.role) : ["logged-out"];
-    return this.contains(props.role.split(" "), role);
-  }
-  sessionChange() {
-    const visible = this.isVisible(this.props);
-    if (visible !== this.state.visible) this.setState({ visible });
-  }
+  useEffect(() => {
+    const handleSessionChange = () => {
+      const isNowVisible = getVisibility();
+      setVisible(isNowVisible);
+    };
 
-  render() {
-    if (this.state.visible)
-      return (
-        <Wrapper className={this.props.className}>
-          {this.props.children}
-        </Wrapper>
-      );
-    return null;
-  }
-}
+    // Subscribe to events
+    app.on("login", handleSessionChange);
+    app.on("logout", handleSessionChange);
+
+    return () => {
+      app.off("login", handleSessionChange);
+      app.off("logout", handleSessionChange);
+    };
+  }, [role]);
+
+  if (!visible) return null;
+
+  return <Wrapper className={className}>{children}</Wrapper>;
+};
+
 export default Role;

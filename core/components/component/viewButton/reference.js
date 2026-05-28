@@ -34,7 +34,7 @@ const ViewButtonReference = ({ model, view, path }) => {
       type={model.btnType}
       size={model.btnSize}
     >
-      {app().t(model.text)}
+      {app.t(model.text)}
     </Button>
   );
 };

@@ -1,10 +1,10 @@
-module.exports = (app) => {
+export default (app) => {
   if (!app.fs.existsSync(`${app.__dirname}/web`)) return;
 
   if (app.fs.existsSync(`${app.__dirname}/files/icons.json`))
     app.fs.copyFileSync(
       `${app.__dirname}/files/icons.json`,
-      `${app.__dirname}/web/src/icons.json`
+      `${app.__dirname}/web/src/icons.json`,
     );
   else app.fs.writeFileSync(`${app.__dirname}/web/src/icons.json`, "{}");
 

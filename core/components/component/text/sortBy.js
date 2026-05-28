@@ -42,7 +42,7 @@ const TextSortBy = ({ model, view }) => {
       href={id}
       onClick={handleSort}
     >
-      <Wrapper renderAs="span">{`${app().t(text)} `}</Wrapper>
+      <Wrapper renderAs="span">{`${app.t(text)} `}</Wrapper>
       {sortbyId === id ? (
         <Icon
           icon={`arrow-${reverse1 ? "up" : "down"}`}

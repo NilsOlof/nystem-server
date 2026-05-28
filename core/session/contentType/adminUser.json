@@ -182,24 +182,6 @@
       "addForm": true
     },
     {
-      "name": "logndebug",
-      "item": [
-        {
-          "type": "session",
-          "format": "role",
-          "item": [
-            {
-              "type": "style",
-              "format": "multiClick",
-              "nrofclick": 3,
-              "item": [{ "type": "viewButton", "format": "consolelog" }]
-            }
-          ],
-          "role": ["super", ""]
-        }
-      ]
-    },
-    {
       "name": "view",
       "item": [
         {

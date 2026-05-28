@@ -8,13 +8,13 @@ const SelectView = ({ model, value }) => {
   const val =
     option
       .map((item) =>
-        typeof item === "string" ? { _id: item, text: item } : item
+        typeof item === "string" ? { _id: item, text: item } : item,
       )
       .filter(({ _id }) => value.includes(_id)) || [];
 
   const optionItem = (item, index) => (
     <Wrapper key={index} className={itemClassName}>
-      {app().t(item.text)}
+      {app.t(item.text)}
     </Wrapper>
   );
 

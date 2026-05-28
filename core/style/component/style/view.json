@@ -30,7 +30,9 @@
         "span",
         "div",
         "section",
-        "nav"
+        "nav",
+        "a",
+        "ul"
       ],
       "limit": 1
     },

@@ -1,0 +1,70 @@
+{
+  "item": [
+    {
+      "id": "className",
+      "text": "Class",
+      "type": "gridselect"
+    },
+    {
+      "type": "text",
+      "id": "event",
+      "mandatory": true,
+      "text": "Event"
+    },
+    {
+      "type": "int",
+      "id": "delay",
+      "text": "Delay"
+    },
+    {
+      "type": "select",
+      "option": [
+        {
+          "text": "connection",
+          "_id": "connection"
+        },
+        {
+          "text": "view",
+          "_id": "view"
+        },
+        {
+          "text": "baseView",
+          "_id": "baseView"
+        },
+        {
+          "text": "baseViewBaseView",
+          "_id": "baseViewBaseView"
+        },
+        {
+          "text": "baseViewBaseViewBaseView",
+          "_id": "baseViewBaseViewBaseView"
+        },
+        {
+          "text": "app",
+          "_id": "app"
+        }
+      ],
+      "inline": true,
+      "render": "button",
+      "id": "eventType",
+      "text": "Event type",
+      "limit": 1
+    },
+    {
+      "type": "switchButtons",
+      "item": [
+        {
+          "type": "boolean",
+          "id": "invert",
+          "text": "invert"
+        }
+      ]
+    },
+    {
+      "text": "Fields",
+      "id": "item",
+      "type": "viewCreator",
+      "expanded": true
+    }
+  ]
+}

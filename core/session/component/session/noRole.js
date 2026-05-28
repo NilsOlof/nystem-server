@@ -5,19 +5,19 @@ import { Wrapper, ContentTypeRender } from "nystem-components";
 const hasNoRole = (user) => user && !user.role;
 
 const SessionNoRole = ({ model = {}, children, path, className }) => {
-  const [visible, setVisible] = useState(hasNoRole(app().session.user));
+  const [visible, setVisible] = useState(hasNoRole(app.session.user));
 
   useEffect(() => {
     const check = () => {
-      setVisible(hasNoRole(app().session.user));
+      setVisible(hasNoRole(app.session.user));
     };
 
-    app().on("logout", check);
-    app().on("login", check);
+    app.on("logout", check);
+    app.on("login", check);
 
     return () => {
-      app().off("login", check);
-      app().off("logout", check);
+      app.off("login", check);
+      app.off("logout", check);
     };
   }, []);
 

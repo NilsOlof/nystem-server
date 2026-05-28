@@ -23,8 +23,9 @@ const isMatch = (path, match) => {
   });
 };
 
-const UseLocation = (match) => {
+const useLocation = (match) => {
   const [location, setLocation] = useState(window.location);
+
   useEffect(() => {
     const locationchange = () => {
       setLocation({ ...window.location });
@@ -39,7 +40,7 @@ const UseLocation = (match) => {
     ? { ...location, isMatch: isMatch(location.pathname, match) }
     : location;
 };
-export default UseLocation;
+export default useLocation;
 
 window.history.pushState = ((f) =>
   function pushState() {

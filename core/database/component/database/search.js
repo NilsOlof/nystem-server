@@ -20,21 +20,23 @@ const DatabaseSearch = ({ view, model, path, children }) => {
       const insertVal = (val) =>
         val.replace(/\{([a-z_.0-9]+)\}/gim, (str, p1) => {
           let val = "";
-          if (p1 === "_language") val = app().settings.lang;
-          else if (p1 === "_userid") val = app().session.user?._id;
+          if (p1 === "_language") val = app.settings.lang;
+          else if (p1 === "_userid") val = app.session.user?._id;
           else if (p1 === "id") val = view.id;
           else if (p1 === "now") val = Date.now();
           else if (p1.indexOf("params.") === 0)
             val = view.params[p1.replace("params.", "")];
-          else if (p1.indexOf("baseView.") !== 0)
-            val = view.getValue(p1.replace("..", path));
           else {
-            p1 = p1.replace("baseView.", "");
-            if (p1.startsWith("baseView.")) {
+            let atView = view;
+            while (p1.indexOf("baseView.") === 0) {
               p1 = p1.replace("baseView.", "");
-              val = view.baseView.baseView.getValue(p1.replace("..", path));
-            } else val = view.baseView.getValue(p1.replace("..", path));
+              atView = atView.baseView;
+            }
+            if (p1 === "_id") val = atView.value._id;
+            else val = atView.getValue(p1.replace("..", path));
+            if (!val) console.log(atView);
           }
+
           if (val instanceof Array) val = val.join("|");
           return val || "";
         });

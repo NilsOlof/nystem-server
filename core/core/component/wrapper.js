@@ -1,22 +1,20 @@
-import { forwardRef, createElement } from "react";
+import { createElement } from "react";
 
-const Wrapper = (
-  {
-    renderAs,
-    className,
-    model,
-    accessibilityLabel,
-    accessible,
-    translate,
-    accessibilityTraits,
-    children,
-    onClick,
-    style,
-    title,
-    ...props
-  },
-  ref
-) => {
+const Wrapper = ({
+  renderAs,
+  className,
+  model,
+  accessibilityLabel,
+  accessible,
+  translate,
+  accessibilityTraits,
+  children,
+  onClick,
+  style,
+  title,
+  ref,
+  ...props
+}) => {
   className =
     className instanceof Array
       ? className
@@ -40,7 +38,7 @@ const Wrapper = (
   return createElement(
     renderAs,
     { ...props, title, ref, className, onClick, style },
-    children
+    children,
   );
 };
-export default forwardRef(Wrapper);
+export default Wrapper;

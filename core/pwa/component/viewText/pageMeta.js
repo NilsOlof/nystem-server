@@ -23,7 +23,7 @@ const setValue = (field, value) => {
     head.appendChild(obj);
   }
 
-  obj.setAttribute("content", value);
+  obj.setAttribute("content", value.replace(/<\/?[a-z][a-z0-9]*[^<>]*>/gim));
 };
 
 const ViewTextPageMeta = ({ model, view, path }) => {
@@ -32,7 +32,7 @@ const ViewTextPageMeta = ({ model, view, path }) => {
       if (!val) return val;
 
       return val.replace(/\{([a-z0-9_.]+)\}/gim, (str, p1) => {
-        if (p1 === "_language") return app().settings.lang;
+        if (p1 === "_language") return app.settings.lang;
         if (p1 === "location.href") return window.location.href;
         if (p1 === "location.origin") return window.location.origin;
         if (p1 === "id") return view.id;
@@ -63,5 +63,3 @@ const ViewTextPageMeta = ({ model, view, path }) => {
   return null;
 };
 export default ViewTextPageMeta;
-
-// {location.origin}/image/{content.0.image.0.id}.{content.0.image.0.ext}

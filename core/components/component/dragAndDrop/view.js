@@ -2,9 +2,11 @@ import { useState, useEffect } from "react";
 import { ContentTypeRender } from "nystem-components";
 import app from "nystem";
 import { Droppable, Draggable } from "./myDnd";
+import { DragAndDropListContext } from "./list";
 
-const DragAndDropView = ({ value, model, path }) => {
-  const [droppableId] = useState(app().uuid());
+const DragAndDropView = ({ value, path, ...model }) => {
+  if (model.model) model = { ...model, ...model.model };
+  const [droppableId] = useState(model.droppableId || app.uuid());
 
   useEffect(() => {
     if (!value) return;
@@ -15,14 +17,13 @@ const DragAndDropView = ({ value, model, path }) => {
       result.source.uuid = droppableId;
     };
 
-    app().on("dragAndDropOnDragEnd", 100, onDragEndAddValue);
+    app.on("dragAndDropOnDragEnd", 100, onDragEndAddValue);
     return () => {
-      app().off("dragAndDropOnDragEnd", onDragEndAddValue);
+      app.off("dragAndDropOnDragEnd", onDragEndAddValue);
     };
   }, [value, droppableId]);
 
-  if (!model) return null;
-  const { item } = model;
+  const { item, handle } = model;
   return (
     <Droppable
       droppableId={droppableId}
@@ -30,7 +31,6 @@ const DragAndDropView = ({ value, model, path }) => {
       isDropDisabled={true}
     >
       {(provided) => {
-        // console.log(provided);
         return (
           <div {...provided.droppableProps} ref={provided.innerRef}>
             <Draggable
@@ -38,9 +38,27 @@ const DragAndDropView = ({ value, model, path }) => {
               draggableId={droppableId}
               index={0}
               minHeight={model.minHeight}
+              limit={model.limit}
+              onMove={model.onMove}
+              onEnd={model.onEnd}
+              transform={model.transform}
             >
               {(provided) => {
-                // console.log(provided.draggableProps.style);
+                if (handle)
+                  return (
+                    <div
+                      ref={provided.innerRef}
+                      {...provided.draggableProps}
+                      style={provided.draggableProps.style}
+                    >
+                      <DragAndDropListContext.Provider
+                        value={provided.dragHandleProps}
+                      >
+                        <ContentTypeRender path={path} items={item} />
+                      </DragAndDropListContext.Provider>
+                    </div>
+                  );
+
                 return (
                   <div
                     ref={provided.innerRef}

@@ -1,19 +1,19 @@
-import { forwardRef, useState } from "react";
-import { InputWrapper, Input, UseValidator } from "nystem-components";
+import { useState } from "react";
+import { InputWrapper, Input, useValidator } from "nystem-components";
 import app from "nystem";
 import validate from "./validate";
 
-const TextInput = ({ model, view, focus, setValue, value }, ref) => {
-  const [error, setValidated] = UseValidator({ view, validate, value, model });
+const TextareaInput = ({ model, view, focus, setValue, value, ref }) => {
+  const [error, setValidated] = useValidator({ view, validate, value, model });
   const { disabled, length, text, classNameInput = [] } = model;
-  const [id] = useState(app().uuid);
+  const [id] = useState(app.uuid);
 
   const style = model.height && { height: `${model.height}px` };
   const contents = (
     <Input
       id={id}
       ref={ref}
-      placeholder={model.placeholder || app().t(text)}
+      placeholder={model.placeholder || app.t(text)}
       className={classNameInput}
       value={value || ""}
       maxLength={length}
@@ -34,7 +34,7 @@ const TextInput = ({ model, view, focus, setValue, value }, ref) => {
       id={id}
       model={{
         ...model,
-        classNameInput: "relative flex-grow flex",
+        classNameInput: "relative grow flex",
       }}
       error={error}
     >
@@ -42,4 +42,4 @@ const TextInput = ({ model, view, focus, setValue, value }, ref) => {
     </InputWrapper>
   );
 };
-export default forwardRef(TextInput);
+export default TextareaInput;

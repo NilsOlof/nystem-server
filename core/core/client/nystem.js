@@ -4,13 +4,16 @@ import contentType from "../../../contenttype.json";
 import eventhandler from "./eventhandler";
 import buildsettings from "../../../settings.json";
 
-const settings = (window && window.___settings___) || buildsettings;
-const app = {
-  settings,
-  contentType,
-  addeventhandler: eventhandler(settings.eventTimeOutError),
-};
+const app = window.nystemApp || {};
+if (import.meta.hot) import.meta.hot.accept();
 
+const settings = (window && window.___settings___) || buildsettings;
+
+app.settings = settings;
+app.contentType = contentType;
+app.addeventhandler = eventhandler(settings.eventTimeOutError);
+
+if (import.meta.hot) window.nystemApp = app;
 if (app.settings.fetchDomainFromUrl) {
   const { protocol, host } = (window && window.location) || {};
   if (protocol === "https:" && !app.settings.secure) {
@@ -20,6 +23,7 @@ if (app.settings.fetchDomainFromUrl) {
 }
 
 app.addeventhandler(app, "app");
+
 const S4 = () =>
   // eslint-disable-next-line no-bitwise
   (((1 + Math.random()) * 0x10000) | 0).toString(16).substring(1);
@@ -28,11 +32,11 @@ app.capFirst = (text) =>
   text && text.substring(0, 1).toUpperCase() + text.substring(1);
 app.clone = (data) => data && JSON.parse(JSON.stringify(data));
 
-indexScripts(app);
-
 app.on("init", () => {
   app.inited = true;
 });
 
-export default () => app;
+indexScripts(app);
+
+export default app;
 app.event("init").then(() => app.event("start"));

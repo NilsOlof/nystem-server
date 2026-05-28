@@ -1,11 +1,11 @@
-const http = require("http");
+import * as http from "node:http";
 
-module.exports = (app) => {
+export default async (app) => {
   app.file = app.addeventhandler();
 
-  require("./logToFile")(app);
-  require("./http")(app);
-  require("./head")(app);
+  await app.require("./logToFile");
+  await app.require("./http");
+  await app.require("./head");
 
   // Clear all caches
   app.file.on("/clearcache", (req, res) => {
@@ -35,7 +35,9 @@ module.exports = (app) => {
 
       server.listen(
         app.settings.port,
-        app.settings.host === "*" ? undefined : app.settings.host || "127.0.0.1"
+        app.settings.host === "*"
+          ? undefined
+          : app.settings.host || "127.0.0.1",
       );
       app.on("exit", 100, () => {
         server.close();

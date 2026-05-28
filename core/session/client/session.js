@@ -1,4 +1,4 @@
-module.exports = (app) => {
+export default (app) => {
   app.session = app.addeventhandler({}, ["login", "logout"], "session");
   const { session } = app;
 
@@ -26,7 +26,7 @@ module.exports = (app) => {
         type: "login",
         sessionid,
         data,
-      })
+      }),
     );
 
     app.connection.on(
@@ -44,12 +44,11 @@ module.exports = (app) => {
           session.logout();
 
         return { type, user, error };
-      }
+      },
     );
 
     const reload = ({ key, id }) => {
       if ((key || id) !== `session`) return;
-
       setTimeout(() => window.location.reload(), 0);
     };
     window.addEventListener("storage", reload);

@@ -18,7 +18,7 @@ const DragAndDropContext = ({ children }) => {
   return (
     <DragDropContext
       onDragEnd={(e) => {
-        app().event("dragAndDropOnDragEnd", { ...modifiers.current, ...e });
+        app.event("dragAndDropOnDragEnd", { ...modifiers.current, ...e });
       }}
     >
       {children}

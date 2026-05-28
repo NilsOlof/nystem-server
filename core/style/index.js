@@ -1,4 +1,4 @@
-module.exports = (app) => {
+export default (app) => {
   const load = async (fileName) =>
     JSON.parse(await app.fs.readFile(fileName, "utf8"));
 
@@ -16,7 +16,7 @@ module.exports = (app) => {
     let data = cached[name];
 
     if (!data) {
-      data = (await load(`${__dirname}/allicons.json`))[name];
+      data = (await load(`${app.__dirname}/core/style/allicons.json`))[name];
 
       if (data) {
         cached[name] = data;

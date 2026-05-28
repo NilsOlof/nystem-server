@@ -1,9 +1,10 @@
 import { useState, useEffect } from "react";
 import app from "nystem";
 import { Droppable, Draggable } from "./myDnd";
+import { DragAndDropListContext } from "./list";
 
-const DragAndDropSortable = ({ Component, items = [], setValue }) => {
-  const [droppableId] = useState(app().uuid());
+const DragAndDropSortable = ({ Component, items = [], setValue, handle }) => {
+  const [droppableId] = useState(app.uuid());
   useEffect(() => {
     if (!items.length) return;
 
@@ -27,9 +28,9 @@ const DragAndDropSortable = ({ Component, items = [], setValue }) => {
       if (updated) setValue(value);
     };
 
-    app().on("dragAndDropOnDragEnd", onDragEnd);
+    app.on("dragAndDropOnDragEnd", onDragEnd);
     return () => {
-      app().off("dragAndDropOnDragEnd", onDragEnd);
+      app.off("dragAndDropOnDragEnd", onDragEnd);
     };
   }, [items, setValue, droppableId]);
 
@@ -41,16 +42,33 @@ const DragAndDropSortable = ({ Component, items = [], setValue }) => {
         <div {...provided.droppableProps} ref={provided.innerRef}>
           {items.map((item, index) => (
             <Draggable key={item.id} draggableId={item.id} index={index}>
-              {(provided) => (
-                <div
-                  ref={provided.innerRef}
-                  {...provided.draggableProps}
-                  {...provided.dragHandleProps}
-                  style={provided.draggableProps.style}
-                >
-                  {<Component {...item} />}
-                </div>
-              )}
+              {(provided) => {
+                if (handle)
+                  return (
+                    <div
+                      ref={provided.innerRef}
+                      {...provided.draggableProps}
+                      style={provided.draggableProps.style}
+                    >
+                      <DragAndDropListContext.Provider
+                        value={provided.dragHandleProps}
+                      >
+                        <Component {...item} key={item.key} />
+                      </DragAndDropListContext.Provider>
+                    </div>
+                  );
+
+                return (
+                  <div
+                    ref={provided.innerRef}
+                    {...provided.draggableProps}
+                    {...provided.dragHandleProps}
+                    style={provided.draggableProps.style}
+                  >
+                    <Component {...item} key={item.key} />
+                  </div>
+                );
+              }}
             </Draggable>
           ))}
           {provided.placeholder}

@@ -6,11 +6,11 @@ import { Droppable, Draggable } from "./myDnd";
 export const DragAndDropListContext = React.createContext();
 
 const DragAndDropList = ({ value = [], model, path, view }) => {
-  const [droppableId] = useState(app().uuid());
+  const [droppableId] = useState(app.uuid());
 
   const ids = useRef([]);
   const getId = (pos) => {
-    if (!ids.current[pos]) ids.current[pos] = app().uuid();
+    if (!ids.current[pos]) ids.current[pos] = app.uuid();
     return ids.current[pos];
   };
 
@@ -47,7 +47,7 @@ const DragAndDropList = ({ value = [], model, path, view }) => {
           0,
           result.source.droppableId === droppableId
             ? result.source.uuid
-            : app().uuid()
+            : app.uuid(),
         );
         updated = true;
       }
@@ -60,15 +60,15 @@ const DragAndDropList = ({ value = [], model, path, view }) => {
       const value = view.getValue(valuePath);
       result.source.value = value[result.source.index];
       result.source.uuid = result.ctrlKey
-        ? app().uuid()
+        ? app.uuid()
         : ids.current[result.source.index];
     };
 
-    app().on("dragAndDropOnDragEnd", 100, onDragEndAddValue);
-    app().on("dragAndDropOnDragEnd", onDragEnd);
+    app.on("dragAndDropOnDragEnd", 100, onDragEndAddValue);
+    app.on("dragAndDropOnDragEnd", onDragEnd);
     return () => {
-      app().off("dragAndDropOnDragEnd", onDragEndAddValue);
-      app().off("dragAndDropOnDragEnd", onDragEnd);
+      app.off("dragAndDropOnDragEnd", onDragEndAddValue);
+      app.off("dragAndDropOnDragEnd", onDragEnd);
     };
   }, [droppableId, valuePath, view]);
 

@@ -37,7 +37,7 @@ const ViewButtonInput = ({ view, model, value, location }) => {
         type: `${btnTypeBusy || "warning"}`,
       },
     }),
-    [btnType, btnTypeBusy, text, textBusy]
+    [btnType, btnTypeBusy, text, textBusy],
   );
 
   const [button, setButton] = useState("default");
@@ -49,23 +49,26 @@ const ViewButtonInput = ({ view, model, value, location }) => {
     setActiveKeySaveView(false);
   };
   const activateKeySaveView = () => {
-    app().event("inactivateKeySaveView");
+    app.event("inactivateKeySaveView");
     setActiveKeySaveView(true);
   };
   const handleCancel = () => {
     if (view.event("cancel")) view.event("reload");
   };
   const handleDelete = () => {
+    // eslint-disable-next-line no-alert
+    if (model.deleteMessage && !window.confirm(model.deleteMessage)) return;
+
     if (view.event("delete"))
-      app()
-        .database[view.contentType].delete({ id: view.value._id })
+      app.database[view.contentType]
+        .delete({ id: view.value._id })
         .then(() => setButton("deleted"));
   };
 
   useEffect(() => () => savedTimer && clearTimeout(savedTimer), [savedTimer]);
 
   useEffect(() => {
-    const handleSubmit = async ({ errors = [] } = {}) => {
+    const handleSubmit = async ({ errors = [], redirect } = {}) => {
       if (button !== "default") return;
 
       if (!errors.length) ({ errors = [] } = await view.event("validate"));
@@ -75,20 +78,22 @@ const ViewButtonInput = ({ view, model, value, location }) => {
         setSavedTimer(
           setTimeout(() => {
             setSavedTimer(false);
-          }, 1000)
+          }, 1000),
         );
         return;
       }
       setError(false);
       setButton("saving");
 
-      const { data, error } = await app().database[view.contentType].save({
+      const oldId = view.value._id;
+      const { data, error, redirectURL } = await app.database[
+        view.contentType
+      ].save({
         data: { ...value },
         view: view.format,
       });
 
-      if (app().settings.debug)
-        console.log("zzave", { data, error }, value._id);
+      if (app.settings.debug) console.log("zzave", { data, error }, value._id);
 
       if (error) {
         view.event("error", error);
@@ -97,36 +102,47 @@ const ViewButtonInput = ({ view, model, value, location }) => {
       }
 
       const saved = await view.event("save", data);
-      const diff = getDiff(saved, value);
-      if (diff.length) await view.event("change", { value: saved });
+
+      if (data !== false) {
+        const diff = getDiff(saved, value);
+        if (diff.length) await view.event("change", { value: saved });
+      }
+
+      if (redirectURL) window.window.history.replaceState({}, "", redirectURL);
 
       const { pathname } = window.location;
 
-      if (data && view.value._id && view.value._id !== data._id) {
+      if (data && oldId && oldId !== data._id) {
         window.window.history.replaceState(
           {},
           "",
-          pathname.replace(`/${view.value._id}`, `/${data._id || ""}`)
+          pathname.replace(`/${view.value._id}`, `/${data._id || ""}`),
         );
         return;
       }
 
-      if (!view.value._id) {
+      if (!oldId || redirect) {
         view.setValue({ path: "_id", value: data._id });
 
         if (!model.noRedirect) {
           window.window.history.replaceState(
             {},
             "",
-            `${model.redirectURL || pathname}/${data._id || ""}`
+            `${model.redirectURL || pathname}/${data._id || ""}`,
           );
           return;
         }
       }
 
+      if (model.redirectURL)
+        window.window.history.replaceState({}, "", model.redirectURL);
+
       if (!saved) return;
 
-      if (model.clearOnSave) view.setValue({ value: {} });
+      if (model.clearOnSave) {
+        await view.setValue({ value: {} });
+        await view.event("clearOnSave");
+      }
 
       setButton("success");
 
@@ -136,7 +152,7 @@ const ViewButtonInput = ({ view, model, value, location }) => {
           setTimeout(() => {
             setButton("default");
             setSavedTimer(false);
-          }, 1000)
+          }, 1000),
         );
     };
 
@@ -145,15 +161,15 @@ const ViewButtonInput = ({ view, model, value, location }) => {
     };
 
     view.on("submit", handleSubmit);
-    app().on("keypressSaveEvent", handleKeySave);
-    app().on("inactivateKeySaveView", inactivateKeySaveView);
+    app.on("keypressSaveEvent", handleKeySave);
+    app.on("inactivateKeySaveView", inactivateKeySaveView);
     view.on("change", activateKeySaveView);
 
     return () => {
       view.off("submit", handleSubmit);
       view.off("change", activateKeySaveView);
-      app().off("keypressSaveEvent", handleKeySave);
-      app().off("inactivateKeySaveView", inactivateKeySaveView);
+      app.off("keypressSaveEvent", handleKeySave);
+      app.off("inactivateKeySaveView", inactivateKeySaveView);
     };
   }, [activeKeySaveView, button, model, value, view]);
 
@@ -165,7 +181,7 @@ const ViewButtonInput = ({ view, model, value, location }) => {
         onClick={() => view.event("submit")}
         type={buttonStates[button].type}
       >
-        {app().t(buttonStates[button].text)}
+        {app.t(buttonStates[button].text)}
       </Button>
     );
 
@@ -177,7 +193,7 @@ const ViewButtonInput = ({ view, model, value, location }) => {
           onClick={() => view.event("submit")}
           type={buttonStates[button].type}
         >
-          {app().t(buttonStates[button].text)}
+          {app.t(buttonStates[button].text)}
         </Button>
         {button === "default" && !model.sendOnly && view.value._id && (
           <>
@@ -185,7 +201,7 @@ const ViewButtonInput = ({ view, model, value, location }) => {
               Cancel
             </Button>
             <Button size={model.size} onClick={handleDelete} type="danger">
-              {app().t("Delete")}
+              {app.t("Delete")}
             </Button>
           </>
         )}

@@ -68,7 +68,7 @@ const ViewListInfiniteSlot = ({ pos, hidden, slot, model, setSize, view }) => {
 
   useEffect(() => {
     if (slot === 0) return;
-    const db = app().database[view.contentType];
+    const db = app.database[view.contentType];
 
     const timer = setTimeout(() => {
       db.search({
@@ -211,7 +211,7 @@ const ViewListInfinite = ({ view, model }) => {
   if (loading) return null;
 
   const slots = Array(
-    slotsTotal - pos < slotLimit - 1 ? slotsTotal - pos + 1 : slotLimit
+    slotsTotal - pos < slotLimit - 1 ? slotsTotal - pos + 1 : slotLimit,
   ).fill();
 
   let at = pos * height;

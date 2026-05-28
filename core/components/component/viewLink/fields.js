@@ -7,7 +7,11 @@ const ViewLinkFields = ({ model, value, path }) => {
   if (addId && value) href += `/${value._id}`;
 
   return (
-    <Link to={(add || "") + href} className={className}>
+    <Link
+      to={(add || "") + href}
+      className={className}
+      addSearch={model.addSearch}
+    >
       <ContentTypeRender path={path} items={item} />
     </Link>
   );

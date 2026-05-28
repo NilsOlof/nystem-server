@@ -3,13 +3,13 @@ import app from "nystem";
 import * as components from "nystem-components";
 
 const ViewButtonField2Event = ({ model, view }) => {
-  const { capFirst } = app();
+  const { capFirst } = app;
 
   const { type, format } = model.field[0];
   const [value, setValue] = useState(model.default);
 
   const componentName = `${capFirst(type)}${capFirst(
-    format || view.viewFormat || "view"
+    format || view.viewFormat || "view",
   )}`;
   const component =
     components[componentName] || components[`${capFirst(type)}View`];

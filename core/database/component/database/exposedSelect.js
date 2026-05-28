@@ -1,4 +1,4 @@
-import { SelectInput, UseSearch, RouterUseQueryStore } from "nystem-components";
+import { SelectInput, useSearch, useRouterQueryStore } from "nystem-components";
 import app from "nystem";
 
 const getDate = (all) => {
@@ -12,8 +12,8 @@ const DatabaseExposedSelect = ({ model, view, path }) => {
   const insertVal = (val) =>
     val.replace(/\{([a-z_.0-9+-]+)\}/gim, (str, p1) => {
       let val = "";
-      if (p1 === "_language") val = app().settings.lang;
-      else if (p1 === "_userid") val = app().session.user?._id;
+      if (p1 === "_language") val = app.settings.lang;
+      else if (p1 === "_userid") val = app.session.user?._id;
       else if (p1 === "id") val = view.id;
       else if (p1 === "now") val = Date.now();
       else if (p1.startsWith("now")) val = getDate(p1);
@@ -32,10 +32,10 @@ const DatabaseExposedSelect = ({ model, view, path }) => {
       return val || "";
     });
 
-  const [at, setAt] = RouterUseQueryStore(model.saveId, "int");
+  const [at, setAt] = useRouterQueryStore(model.saveId, "int");
 
   const [, field, value = ""] = model.options[at] || [];
-  UseSearch({ view, id: field, value: insertVal(value), noListen: true });
+  useSearch({ view, id: field, value: insertVal(value), noListen: true });
 
   return (
     <SelectInput

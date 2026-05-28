@@ -10,7 +10,7 @@ const TextareaFormatted = ({ model, value }) => (
         .substring(0, model.cutPoint || 100000)
         .replace(
           /(https?:\/\/[^\s]+)/gim,
-          '<a target="_blank" class="text-gray-400" href="$1">$1</a>'
+          '<a target="_blank" class="text-gray-400" href="$1">$1</a>',
         )
         .replace(/[\n]/g, "<br>"),
     }}

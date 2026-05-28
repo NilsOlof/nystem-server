@@ -1,4 +1,4 @@
-module.exports = (app) => {
+export default (app) => {
   if (app.settings.noClientCache) return;
 
   app.database.on("init", ({ collection, db }) => {
@@ -11,7 +11,7 @@ module.exports = (app) => {
     collection.on("init", 1000, () =>
       app.storage.getItem({ id }).then(({ value }) => {
         db.dbArray = value || [];
-      })
+      }),
     );
 
     collection.on("clearCache", () => {

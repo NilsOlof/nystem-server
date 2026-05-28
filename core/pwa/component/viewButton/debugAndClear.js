@@ -1,18 +1,20 @@
 import app from "nystem";
-import { Button, Wrapper, UseEvent } from "nystem-components";
+import { ContentTypeRender, Wrapper, useEvent } from "nystem-components";
 
-const ViewButtonDebugAndClear = ({ model }) => {
-  const { appVersion } = UseEvent("getAppVersion");
+const ViewButtonDebugAndClear = ({ model, path }) => {
+  const { appVersion } = useEvent("getAppVersion");
+
+  if (model.viewActionType === "appVersion")
+    return <Wrapper className={model.className}>{appVersion}</Wrapper>;
+
+  const doByType = {
+    clearAndReload: () => app.event("clearCacheAndReload"),
+    reload: () => window.reload(),
+  };
+
   return (
-    <Wrapper className={model.className}>
-      <Wrapper className="mb-2">App version: {appVersion || ""}</Wrapper>
-      <Wrapper className="mb-2">{app().t(model.info)}</Wrapper>
-      <Button
-        type={model.btnType}
-        onClick={() => app().event("clearCacheAndReload")}
-      >
-        {app().t(model.text || "...")}
-      </Button>
+    <Wrapper onClick={doByType[model.viewActionType]}>
+      <ContentTypeRender path={path} items={model.item} />
     </Wrapper>
   );
 };

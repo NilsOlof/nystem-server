@@ -130,6 +130,16 @@
           "type": "boolean",
           "id": "onSubmit",
           "text": "On submit"
+        },
+        {
+          "type": "boolean",
+          "id": "onLoad",
+          "text": "On load"
+        },
+        {
+          "type": "boolean",
+          "id": "noValidation",
+          "text": "No validation"
         }
       ]
     },

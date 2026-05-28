@@ -1,22 +1,21 @@
-import React from "react";
 import {
   InputWrapper,
   IntInput,
   Wrapper,
-  UseSearch,
-  RouterUseQueryStore,
+  useSearch,
+  useRouterQueryStore,
 } from "nystem-components";
 
 const IntExposedField = ({ model, view }) => {
-  const [from, setFrom] = RouterUseQueryStore(model.saveIdFrom, "int");
-  const [to, setTo] = RouterUseQueryStore(model.saveIdTo, "int");
-  UseSearch({
+  const [from, setFrom] = useRouterQueryStore(model.saveIdFrom, "int");
+  const [to, setTo] = useRouterQueryStore(model.saveIdTo, "int");
+  useSearch({
     view,
     id: model.id,
     value: from && `>${from}`,
     noListen: true,
   });
-  UseSearch({ view, id: model.id, value: to && `<${to}`, noListen: true });
+  useSearch({ view, id: model.id, value: to && `<${to}`, noListen: true });
 
   const modelFrom = {
     id: "from",

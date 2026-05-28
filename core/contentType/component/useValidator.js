@@ -1,7 +1,8 @@
 import { useState, useEffect } from "react";
 
-const UseValidator = ({ validate, view, model, value }) => {
-  const [isValidated, setValidated] = useState(view && view.isValidated);
+const useValidator = ({ validate, view, model, value }) => {
+  const [isValidated, setValidated] = useState(false); // view && view.isValidated
+
   const error = isValidated && validate({ value, model });
 
   useEffect(() => {
@@ -29,4 +30,4 @@ const UseValidator = ({ validate, view, model, value }) => {
 
   return [error, setValidated];
 };
-export default UseValidator;
+export default useValidator;

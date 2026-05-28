@@ -1,4 +1,4 @@
-module.exports = (app) => {
+export default async (app) => {
   const { fs } = app;
   const stringify =
     app.debug && !app.settings.spacelessDb
@@ -16,7 +16,7 @@ module.exports = (app) => {
         const stTime = performance.now();
         const data = JSON.parse(fs.readFileSync(path, "utf8"));
         console.log(
-          `load ${path} ${(performance.now() - stTime).toFixed(2)}ms`
+          `load ${path} ${(performance.now() - stTime).toFixed(2)}ms`,
         );
         return data;
       } catch (e) {
@@ -47,7 +47,7 @@ module.exports = (app) => {
       console.log(
         `Save ${path} ${data.length} ${(stTimePost - stTime).toFixed(2)}ms ${(
           performance.now() - stTimePost
-        ).toFixed(2)}ms`
+        ).toFixed(2)}ms`,
       );
     };
     app.on("exit", -50, async () => {

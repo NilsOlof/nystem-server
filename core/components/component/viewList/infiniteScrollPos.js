@@ -1,8 +1,8 @@
-import { Wrapper, UseEventListner } from "nystem-components";
+import { Wrapper, useEventListner } from "nystem-components";
 
 const ViewListInfiniteScrollPos = ({ model, view }) => {
   const { text, className, classNameLabel, classNameInfo } = model;
-  const { pos, total } = UseEventListner(view, "infiniteScrollPos");
+  const { pos, total } = useEventListner(view, "infiniteScrollPos");
 
   if (!total) return null;
 

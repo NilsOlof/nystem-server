@@ -1,8 +1,8 @@
-module.exports = function(app) {
-  app.views = function(name) {
+export default function (app) {
+  app.views = function (name) {
     const contentType = app.contentType[name];
     return {
-      view: function(name) {
+      view: function (name) {
         const view = false;
         for (const item in contentType.views)
           if (
@@ -14,15 +14,14 @@ module.exports = function(app) {
           }
         if (!view) return false;
         const self = {
-          get: function() {
+          get: function () {
             return view;
           },
-          ids: function() {
+          ids: function () {
             const out = { $all: [] };
             function parse(model) {
               const id = model.id ? model.id : model.addid ? model.addid : "";
-              for (const item in model.item)
-                parse(model.item[item]);
+              for (const item in model.item) parse(model.item[item]);
               if (id && model.category) {
                 if (!out[model.category]) out[model.category] = [];
                 out[model.category].push(id);
@@ -32,14 +31,13 @@ module.exports = function(app) {
             parse(view);
             return out;
           },
-          insertValues: function(data, value, idType) {
+          insertValues: function (data, value, idType) {
             const ids = self.ids()[idType];
-            for (const id in ids)
-              data[ids[id]] = value[ids[id]];
-          }
+            for (const id in ids) data[ids[id]] = value[ids[id]];
+          },
         };
         return self;
-      }
+      },
     };
   };
-};
+}

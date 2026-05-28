@@ -5,7 +5,7 @@ import {
   ReferenceSortable,
   Button,
   ViewInViewView,
-  UseValidator,
+  useValidator,
   Input,
   ContentTypeView,
 } from "nystem-components";
@@ -78,7 +78,7 @@ const ReferenceInput = ({ model, view, value = [], setValue, path }) => {
   const { exposed } = model;
   const [inFocus, setInFocus] = useState(false);
   const [searchVal, setSearchVal] = useState("");
-  const [error] = UseValidator({ view, validate, value, model });
+  const [error] = useValidator({ view, validate, value, model });
 
   if (!value) value = [];
   value = value instanceof Array ? value : [value];
@@ -119,11 +119,13 @@ const ReferenceInput = ({ model, view, value = [], setValue, path }) => {
 
   let clicked = false;
 
-  const addable = !model.limit || value.length < model.limit || null;
+  let addable = null;
+  if (!model.disabled && (!model.limit || value.length < model.limit))
+    addable = true;
 
   return (
     <InputWrapper
-      model={{ ...model, classNameInput: "relative flex-grow" }}
+      model={{ ...model, classNameInput: "relative grow" }}
       error={error}
     >
       {(value.length || null) && (

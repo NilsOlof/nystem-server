@@ -15,7 +15,7 @@ const compare = (val1, val2) => {
 
 const getClasses = ({ classNameByValue, field, view }) =>
   classNameByValue.map(
-    ([key, value]) => compare(view.getValue(field), key) && value
+    ([key, value]) => compare(view.getValue(field), key) && value,
   );
 
 const StyleClassNameByValue = ({ model, path, view }) => {

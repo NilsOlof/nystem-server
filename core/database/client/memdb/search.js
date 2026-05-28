@@ -53,7 +53,7 @@ const sortByFunc = (array, sortBys) => {
   const sortFuncs = sortBys.map(({ type, key, reverse }) =>
     sortByType[type]
       ? sortByType[type](key, reverse)
-      : sortByType.default(key, reverse)
+      : sortByType.default(key, reverse),
   );
 
   return array.sort((a, b) => {
@@ -96,7 +96,7 @@ function getFilterArray(filter) {
   return [filter];
 }
 
-module.exports = (app) => {
+export default (app) => {
   app.database.on("init", ({ collection, db }) => {
     const { contentType } = collection;
     const fieldByType = field2IdType(contentType);
@@ -116,7 +116,7 @@ module.exports = (app) => {
             `${add2id + oneField.add2id}_`,
             searchFor,
             oneSearchField,
-            oneSearchValue
+            oneSearchValue,
           );
       });
 
@@ -135,7 +135,7 @@ module.exports = (app) => {
             "",
             createRegExp(filter.$all),
             oneSearchField,
-            oneSearchValue
+            oneSearchValue,
           );
 
         const exact = filter.__exact || query.exact;
@@ -192,6 +192,7 @@ module.exports = (app) => {
             add = false;
             for (let field = 0; field < searchField[i].length; field++) {
               let val = thisItem[searchField[i][field]];
+
               const matchVal = searchValue[i][field];
               if (val && val.toString() === "[object Object]")
                 val = JSON.stringify(val);
@@ -250,15 +251,17 @@ module.exports = (app) => {
             type: fieldByType[key],
             key,
             reverse: reverse[index],
-          }))
+          })),
         );
       else if (reverse[0]) {
         if (result === dbArray) result = [...result];
         result.reverse();
       }
+
       if (result.length <= query.position) result = [];
-      else if (result.length > query.count)
+      else if (result.length > query.position + query.count)
         result = result.slice(query.position, query.position + query.count);
+      else if (query.position) result = result.slice(query.position);
 
       query.data = result.length ? result : false;
     }

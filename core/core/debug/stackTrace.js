@@ -12,7 +12,7 @@
 
 // note we only include source-map-consumer, not the whole source-map library,
 // which includes gear for generating source maps that we don't need
-define(["source-map/lib/source-map-consumer"], function(source_map_consumer) {
+define(["source-map/lib/source-map-consumer"], function (source_map_consumer) {
   const global_mapForUri = {};
 
   /**
@@ -29,7 +29,7 @@ define(["source-map/lib/source-map-consumer"], function(source_map_consumer) {
    *                                   Lines which do not pass the filter won't be processesd.
    * @param {boolean} [opts.cacheGlobally] - Whether to cache sourcemaps globally across multiple calls.
    */
-  const mapStackTrace = function(stack, done, opts) {
+  const mapStackTrace = function (stack, done, opts) {
     const lines;
     const line;
     const mapForUri = {};
@@ -40,7 +40,7 @@ define(["source-map/lib/source-map-consumer"], function(source_map_consumer) {
     const regex;
     const skip_lines;
 
-    const fetcher = new Fetcher(function() {
+    const fetcher = new Fetcher(function () {
       const result = processSourceMaps(lines, rows, fetcher.mapForUri);
       done(result);
     }, opts);
@@ -81,29 +81,29 @@ define(["source-map/lib/source-map-consumer"], function(source_map_consumer) {
     }
   };
 
-  const isChromeOrEdge = function() {
+  const isChromeOrEdge = function () {
     return navigator.userAgent.toLowerCase().indexOf("chrome") > -1;
   };
 
-  const isFirefox = function() {
+  const isFirefox = function () {
     return navigator.userAgent.toLowerCase().indexOf("firefox") > -1;
   };
 
-  const isSafari = function() {
+  const isSafari = function () {
     return navigator.userAgent.toLowerCase().indexOf("safari") > -1;
   };
 
-  const isIE11Plus = function() {
+  const isIE11Plus = function () {
     return document.documentMode && document.documentMode >= 11;
   };
 
-  const Fetcher = function(done, opts) {
+  const Fetcher = function (done, opts) {
     this.sem = 0;
     this.mapForUri = opts && opts.cacheGlobally ? global_mapForUri : {};
     this.done = done;
   };
 
-  Fetcher.prototype.fetchScript = function(uri) {
+  Fetcher.prototype.fetchScript = function (uri) {
     if (!(uri in this.mapForUri)) {
       this.sem++;
       this.mapForUri[uri] = null;
@@ -113,7 +113,7 @@ define(["source-map/lib/source-map-consumer"], function(source_map_consumer) {
 
     const xhr = createXMLHTTPObject();
     const that = this;
-    xhr.onreadystatechange = function(e) {
+    xhr.onreadystatechange = function (e) {
       that.onScriptLoad.call(that, e, uri);
     };
     xhr.open("GET", uri, true);
@@ -122,7 +122,7 @@ define(["source-map/lib/source-map-consumer"], function(source_map_consumer) {
 
   const absUrlRegex = new RegExp("^(?:[a-z]+:)?//", "i");
 
-  Fetcher.prototype.onScriptLoad = function(e, uri) {
+  Fetcher.prototype.onScriptLoad = function (e, uri) {
     if (e.target.readyState !== 4) {
       return;
     }
@@ -137,19 +137,19 @@ define(["source-map/lib/source-map-consumer"], function(source_map_consumer) {
       // whitespace inserted by some packers.
       const match = e.target.responseText.match(
         "//# [s]ourceMappingURL=(.*)[\\s]*$",
-        "m"
+        "m",
       );
       if (match && match.length === 2) {
         // get the map
         const mapUri = match[1];
 
         const embeddedSourceMap = mapUri.match(
-          "data:application/json;(charset=[^;]+;)?base64,(.*)"
+          "data:application/json;(charset=[^;]+;)?base64,(.*)",
         );
 
         if (embeddedSourceMap && embeddedSourceMap[2]) {
           this.mapForUri[uri] = new source_map_consumer.SourceMapConsumer(
-            atob(embeddedSourceMap[2])
+            atob(embeddedSourceMap[2]),
           );
           this.done(this.mapForUri);
         } else {
@@ -168,7 +168,7 @@ define(["source-map/lib/source-map-consumer"], function(source_map_consumer) {
 
           const xhrMap = createXMLHTTPObject();
           const that = this;
-          xhrMap.onreadystatechange = function() {
+          xhrMap.onreadystatechange = function () {
             if (xhrMap.readyState === 4) {
               that.sem--;
               if (
@@ -176,7 +176,7 @@ define(["source-map/lib/source-map-consumer"], function(source_map_consumer) {
                 (mapUri.slice(0, 7) === "file://" && xhrMap.status === 0)
               ) {
                 that.mapForUri[uri] = new source_map_consumer.SourceMapConsumer(
-                  xhrMap.responseText
+                  xhrMap.responseText,
                 );
               }
               if (that.sem === 0) {
@@ -202,7 +202,7 @@ define(["source-map/lib/source-map-consumer"], function(source_map_consumer) {
     }
   };
 
-  const processSourceMaps = function(lines, rows, mapForUri) {
+  const processSourceMaps = function (lines, rows, mapForUri) {
     const result = [];
     const map;
     for (let i = 0; i < lines.length; i++) {
@@ -215,21 +215,24 @@ define(["source-map/lib/source-map-consumer"], function(source_map_consumer) {
 
         if (map) {
           // we think we have a map for that uri. call source-map library
-          const origPos = map.originalPositionFor({ line: line, column: column });
+          const origPos = map.originalPositionFor({
+            line: line,
+            column: column,
+          });
           result.push(
             formatOriginalPosition(
               origPos.source,
               origPos.line,
               origPos.column,
-              origPos.name || origName(lines[i])
-            )
+              origPos.name || origName(lines[i]),
+            ),
           );
         } else {
           // we can't find a map for that url, but we parsed the row.
           // reformat unchanged line for consistency with the sourcemapped
           // lines.
           result.push(
-            formatOriginalPosition(uri, line, column, origName(lines[i]))
+            formatOriginalPosition(uri, line, column, origName(lines[i])),
           );
         }
       } else {
@@ -243,12 +246,12 @@ define(["source-map/lib/source-map-consumer"], function(source_map_consumer) {
 
   function origName(origLine) {
     const match = String(origLine).match(
-      isChromeOrEdge() || isIE11Plus() ? / +at +([^ ]*).*/ : /([^@]*)@.*/
+      isChromeOrEdge() || isIE11Plus() ? / +at +([^ ]*).*/ : /([^@]*)@.*/,
     );
     return match && match[1];
   }
 
-  const formatOriginalPosition = function(source, line, column, name) {
+  const formatOriginalPosition = function (source, line, column, name) {
     // mimic chrome's format
     return (
       "    at " +
@@ -265,18 +268,18 @@ define(["source-map/lib/source-map-consumer"], function(source_map_consumer) {
 
   // xmlhttprequest boilerplate
   const XMLHttpFactories = [
-    function() {
+    function () {
       return new XMLHttpRequest();
     },
-    function() {
+    function () {
       return new ActiveXObject("Msxml2.XMLHTTP");
     },
-    function() {
+    function () {
       return new ActiveXObject("Msxml3.XMLHTTP");
     },
-    function() {
+    function () {
       return new ActiveXObject("Microsoft.XMLHTTP");
-    }
+    },
   ];
 
   function createXMLHTTPObject() {
@@ -293,6 +296,6 @@ define(["source-map/lib/source-map-consumer"], function(source_map_consumer) {
   }
 
   return {
-    mapStackTrace: mapStackTrace
+    mapStackTrace: mapStackTrace,
   };
 });

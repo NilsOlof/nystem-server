@@ -16,7 +16,7 @@ const ViewLinkButton = ({ model, view }) => {
       type="button"
       title={title || ""}
     >
-      {app().t(model.text)}
+      {app.t(model.text)}
     </Link>
   );
 };

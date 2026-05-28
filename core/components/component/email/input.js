@@ -1,12 +1,12 @@
 import { useState } from "react";
-import { InputWrapper, Input, UseValidator } from "nystem-components";
+import { InputWrapper, Input, useValidator } from "nystem-components";
 import app from "nystem";
 import validate from "./validate";
 
 const EmailInput = ({ model, view, focus, setValue, value, className }) => {
-  const [error, setValidated] = UseValidator({ view, validate, value, model });
+  const [error, setValidated] = useValidator({ view, validate, value, model });
   const { disabled, length, text, clearButton, classNameInput } = model;
-  const [id] = useState(app().uuid);
+  const [id] = useState(app.uuid);
 
   const componentClassName = [
     className,
@@ -24,7 +24,7 @@ const EmailInput = ({ model, view, focus, setValue, value, className }) => {
     >
       <Input
         id={id}
-        placeholder={app().t(text)}
+        placeholder={app.t(text)}
         className={classNameInput}
         value={value || ""}
         maxLength={length}

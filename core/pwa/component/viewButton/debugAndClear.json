@@ -6,22 +6,18 @@
       "type": "gridselect"
     },
     {
-      "id": "info",
-      "text": "Info",
-      "type": "text"
-    },
-    {
-      "id": "text",
-      "text": "Text",
-      "type": "text"
-    },
-    {
-      "id": "btnType",
-      "text": "Button type",
+      "id": "viewActionType",
+      "text": "View/action type",
       "type": "select",
-      "option": ["default", "primary", "info", "warning", "danger", "success"],
+      "option": ["appVersion", "clearAndReload", "reload"],
       "limit": 1,
       "inline": true
+    },
+    {
+      "text": "Fields",
+      "id": "item",
+      "type": "viewCreator",
+      "expanded": true
     }
   ]
 }

@@ -1,13 +1,13 @@
-const httpsfallbackM = require("./httpsfallback");
-const devtoolsM = require("./devtools");
+import httpsfallback from "./httpsfallback";
+import devtools from "./devtools";
 
-module.exports = (app) => {
+export default (app) => {
   if (!app.settings.domain) return;
   app.connection = app.addeventhandler({}, ["emit", "broadcast"], "connection");
   const { connection } = app;
 
   connection.on("broadcast", (data) =>
-    connection.emit({ ...data, broadcast: true })
+    connection.emit({ ...data, broadcast: true }),
   );
 
   const callbacks = {};
@@ -18,34 +18,28 @@ module.exports = (app) => {
         callbacks[data.callbackClient] = resolve;
       } else resolve();
 
-      let message = JSON.stringify(data);
-
-      while (message.length > 64000) {
-        callback(message.substring(0, 64000));
-        message = message.substring(64000);
-      }
-      callback(message);
+      callback(new Array(JSON.stringify(data)));
     });
 
   let res = "";
   const receiveSocket = (message) => {
-    if (message.length === 64000) {
-      res += message;
-      return;
-    }
     message = res + message;
     res = "";
 
-    const data = JSON.parse(message);
+    try {
+      const data = JSON.parse(message);
 
-    if (callbacks[data.callbackClient]) {
-      try {
-        callbacks[data.callbackClient](data);
-      } catch (e) {
-        console.log("err", callbacks[data.callbackClient], e);
-      }
-      delete callbacks[data.callbackClient];
-    } else connection.event(data.type, data);
+      if (callbacks[data.callbackClient]) {
+        try {
+          callbacks[data.callbackClient](data);
+        } catch (e) {
+          console.log("err", callbacks[data.callbackClient], e);
+        }
+        delete callbacks[data.callbackClient];
+      } else connection.event(data.type, data);
+    } catch (e) {
+      throw new Error(`Connection msg error ${message.length}`);
+    }
   };
 
   const openconnection = () => {
@@ -130,7 +124,7 @@ module.exports = (app) => {
 
   if (app.settings.waitOnConnect)
     app.on("loaded", 1000, () =>
-      connection.event("connection", { wait: true })
+      connection.event("connection", { wait: true }),
     );
 
   if (app.settings.debug) {
@@ -144,8 +138,8 @@ module.exports = (app) => {
     });
   }
 
-  httpsfallbackM(app);
-  devtoolsM(app);
+  httpsfallback(app);
+  devtools(app);
 
   const { classList } = document.body;
   classList.add("offline");

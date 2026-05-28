@@ -29,7 +29,7 @@ const ViewButtonUndoRedo = ({ model, view }) => {
   return (
     <Wrapper className={className}>
       <IconButton
-        icon="undo"
+        icon="rotate-left"
         onClick={() => {
           const atPos = at.current || history.current.length - 1;
 
@@ -39,7 +39,7 @@ const ViewButtonUndoRedo = ({ model, view }) => {
         }}
       />
       <IconButton
-        icon="redo"
+        icon="rotate-right"
         onClick={() => {
           if (!at.current || at.current === history.current.length - 1) return;
 

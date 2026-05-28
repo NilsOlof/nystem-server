@@ -1,4 +1,4 @@
-module.exports = (app) => {
+export default (app) => {
   const { fs } = app;
   // Load and and merge contenttypes into one JSON
   app.on("getContentTypes", () => {
@@ -19,7 +19,7 @@ module.exports = (app) => {
       ) {
         try {
           out[filename.replace(".json", "")] = JSON.parse(
-            fs.readFileSync(file, "utf8")
+            fs.readFileSync(file, "utf8"),
           );
         } catch (e) {
           console.log("Parse error", file);
@@ -42,7 +42,7 @@ module.exports = (app) => {
 
         const path = `${app.__dirname}/web/src/contenttype.json`;
         app.writeFileChanged(path, JSON.stringify(app.contentType));
-      })
+      }),
     );
 
   app.on("debugModeUpdateOnChange", (update) => {
@@ -64,7 +64,7 @@ module.exports = (app) => {
       .map((component) => {
         try {
           const content = JSON.parse(
-            fs.readFileSync(`${app.__dirname}/${component.path}`, "utf8")
+            fs.readFileSync(`${app.__dirname}/${component.path}`, "utf8"),
           );
           return { ...component, content };
         } catch (e) {
@@ -75,7 +75,7 @@ module.exports = (app) => {
         const [, , compName, format] = component.match;
         result[`${compName}${app.capFirst(format)}`] = component.content;
         return result;
-      }, {})
+      }, {}),
   );
 
   const objectMap = (object, mapFn) =>
@@ -92,7 +92,7 @@ module.exports = (app) => {
 
       const fields = format.item
         .filter((item) =>
-          ["viewCreator", "dynamicField", "dropReference"].includes(item.type)
+          ["viewCreator", "dynamicField", "dropReference"].includes(item.type),
         )
         .map((item) => item.id);
 

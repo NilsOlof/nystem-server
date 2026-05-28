@@ -2,10 +2,20 @@ import { Wrapper, ContentTypeRender } from "nystem-components";
 import app from "nystem";
 
 const MultilinetextView = ({ value, path, model, view }) => {
-  if (!value) return null;
+  if (!value)
+    return model.fallback ? (
+      <Wrapper
+        className={model.className}
+        renderAs={model.renderAs}
+        translate={model.translate}
+      >
+        {model.fallback}
+      </Wrapper>
+    ) : null;
 
   value = value instanceof Array ? value : [value];
   const { className, id } = model;
+
   return (
     <Wrapper className={className}>
       {value.map((nul, index) => (
@@ -13,7 +23,7 @@ const MultilinetextView = ({ value, path, model, view }) => {
           key={index}
           path={`${path ? `${path}.` : ""}${id}.${index}`}
           items={
-            app().replaceInModel({
+            app.replaceInModel({
               model,
               viewFormat: view.viewFormat,
               fn: ({ model: item }) =>

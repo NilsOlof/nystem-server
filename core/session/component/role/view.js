@@ -1,30 +1,36 @@
-import React from "react";
+import React, { useEffect } from "react";
 import app from "nystem";
 
-class RoleView extends React.Component {
-  constructor(props) {
-    super(props);
-    app().on("login", this.sessionChange);
-    app().on("logout", this.sessionChange);
+const RoleView = ({ model, setValue }) => {
+  useEffect(() => {
+    const sessionChange = () => {
+      const session = app.session.user || {};
+      const { fields } = model;
 
-    this.sessionChange();
+      if (!fields || !fields.length) {
+        setValue(false, session);
+      } else {
+        fields.forEach((field) => {
+          setValue(field, session[field]);
+        });
+      }
+    };
 
-    return {};
-  }
-  sessionChange() {
-    let session = app.session.user;
-    const { fields } = this.props.model;
+    // Run initial check on mount
+    sessionChange();
 
-    if (!session) session = {};
+    // Subscribe to login/logout events
+    app.on("login", sessionChange);
+    app.on("logout", sessionChange);
 
-    if (!fields || !fields.length) this.props.setValue(false, session);
-    else
-      for (let i = 0; i < fields.length; i++)
-        this.props.setValue(fields[i], session[fields[i]]);
-  }
+    // Cleanup listeners on unmount
+    return () => {
+      app.off("login", sessionChange);
+      app.off("logout", sessionChange);
+    };
+  }, [model, setValue]); // Re-run if model or setValue changes
 
-  render() {
-    return null;
-  }
-}
+  return null;
+};
+
 export default RoleView;

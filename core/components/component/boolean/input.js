@@ -1,11 +1,11 @@
 import { useState } from "react";
-import { InputWrapper, Input, Button, UseValidator } from "nystem-components";
+import { InputWrapper, Input, Button, useValidator } from "nystem-components";
 import app from "nystem";
 import validate from "./validate";
 
 const BooleanInput = ({ model, setValue, value, view, render }) => {
-  const [error, setValidated] = UseValidator({ view, validate, value, model });
-  const [id] = useState(app().uuid);
+  const [error, setValidated] = useValidator({ view, validate, value, model });
+  const [id] = useState(app.uuid);
 
   const handleChangeButton = () => {
     setValidated(true);

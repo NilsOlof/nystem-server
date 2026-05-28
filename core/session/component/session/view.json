@@ -1,9 +1,9 @@
 {
-	"item": [
-		{
-			"type": "multilinetext",
-			"id": "fields",
-			"text": "Fields"
-		}
-	]
+  "item": [
+    {
+      "type": "multilinetext",
+      "id": "fields",
+      "text": "Fields"
+    }
+  ]
 }

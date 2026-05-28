@@ -1,17 +1,7 @@
-const replaceRequire = (content) =>
-  content.replace(
-    /const ([a-z]+)M = require\(".\/\1"\);$/gim,
-    'import $1M from "./$1";'
-  );
-
-const replaceExports = (content) => {
-  return content.replace(/module.exports = /gim, "export default ");
-};
-
-module.exports = (app) => {
+export default async (app) => {
   if (!app.fs.existsSync(`${app.__dirname}/web`)) return;
-  require("./debug/debug")(app);
-  require("./debug/debugEvLog")(app);
+  await app.require("./debug/debug");
+  await app.require("./debug/debugEvLog");
 
   const { fs } = app;
 
@@ -35,7 +25,7 @@ module.exports = (app) => {
 
     const imports = scripts.reduce(
       (prev, out) => `${prev}import ${out.module} from '.${out.path}';\n`,
-      ""
+      "",
     );
     const calls = scripts.reduce((prev, out) => {
       return `${prev}  ${out.module}(app);\n`;
@@ -43,7 +33,7 @@ module.exports = (app) => {
 
     app.writeFileChanged(
       `${app.__dirname}/web/src/indexScripts.js`,
-      `${imports}\nexport default function(app) {\n${calls}}\n`
+      `${imports}\nexport default function(app) {\n${calls}}\n`,
     );
   }
 
@@ -53,23 +43,20 @@ module.exports = (app) => {
     function saveSettings() {
       app.writeFileChanged(
         `${app.__dirname}/web/src/settings.json`,
-        JSON.stringify(settings, null, "  ")
+        JSON.stringify(settings, null, "  "),
       );
     }
     saveSettings();
 
     app.writeFileChanged(
       `${app.__dirname}/web/src/index.js`,
-      fs.readFile(`${__dirname}/client/entry.js`)
+      fs.readFile(`${app.__dirname}/core/core/client/entry.js`),
     );
 
     const readAndCopy = (path) =>
       app.writeFileChanged(
         `${app.__dirname}/web/src/${path}`,
-        fs
-          .readFile(`${app.__dirname}/${path}`, "utf8")
-          .then(replaceExports)
-          .then(replaceRequire)
+        fs.readFile(`${app.__dirname}/${path}`, "utf8"),
       );
 
     app.on("debugModeFileChange", ({ path, type }) => {
@@ -80,7 +67,7 @@ module.exports = (app) => {
 
     const updateFiles = async () => {
       const htmlFiles = app.filePaths.filter(
-        (path) => path.split("/")[2] === "client"
+        (path) => path.split("/")[2] === "client",
       );
       for (const path of htmlFiles) await readAndCopy(path);
     };

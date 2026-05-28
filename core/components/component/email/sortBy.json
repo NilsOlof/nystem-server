@@ -1,9 +1,9 @@
 {
-	"item": [
-		{
-			"type": "text",
-			"id": "text",
-			"text": "Text"
-		}
-	]
+  "item": [
+    {
+      "type": "text",
+      "id": "text",
+      "text": "Text"
+    }
+  ]
 }

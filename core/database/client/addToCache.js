@@ -1,4 +1,4 @@
-module.exports = (app) => {
+export default (app) => {
   const addToCache = (item, value, addMedia) => {
     if (!value) return;
 
@@ -16,8 +16,8 @@ module.exports = (app) => {
       const val = value[item.id] || [];
       val.forEach((itemval, index) =>
         item.item.forEach((item) =>
-          addToCache(item, val[index][item.id], addMedia)
-        )
+          addToCache(item, val[index][item.id], addMedia),
+        ),
       );
     }
   };

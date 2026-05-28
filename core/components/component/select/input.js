@@ -2,7 +2,7 @@ import { useRef, useMemo, useEffect, useState } from "react";
 import app from "nystem";
 import {
   InputWrapper,
-  UseValidator,
+  useValidator,
   Button,
   Wrapper,
   Select,
@@ -18,7 +18,7 @@ const normalizeOption = ({ option, optionObj }) =>
               _id: item,
               text: item,
             }
-          : item
+          : item,
       );
 
 const RenderButton = ({ option, handleChange, value, model }) => (
@@ -31,7 +31,7 @@ const RenderButton = ({ option, handleChange, value, model }) => (
         type={value.indexOf(_id) !== -1 ? "primary" : "secondary"}
         size={model.size || "xs"}
       >
-        {app().t(text)}
+        {app.t(text)}
       </Button>
     ))}
   </Wrapper>
@@ -62,8 +62,9 @@ const RenderCheckbox = ({
               type={limit === 1 ? "radio" : "checkbox"}
               checked={value.indexOf(_id) !== -1 ? "checked" : false}
               className="mr-2 p-1"
+              disabled={model.disabled}
             />
-            {app().t(text)}
+            {app.t(text)}
           </label>
         </Wrapper>
       ))}
@@ -89,7 +90,7 @@ const RenderDropdown = ({
     </option>
     {option.map(({ text, _id }) => (
       <option key={_id || "___"} value={_id || "___"}>
-        {app().t(text)}
+        {app.t(text)}
       </option>
     ))}
   </Select>
@@ -102,8 +103,8 @@ const renderTypes = {
 };
 
 const SelectInput = ({ model, value, view, setValue }) => {
-  const [id] = useState(app().uuid);
-  const [error, setValidated] = UseValidator({ view, validate, value, model });
+  const [id] = useState(app.uuid);
+  const [error, setValidated] = useValidator({ view, validate, value, model });
 
   useEffect(() => {
     if (!view || view.value._id || value.length || !model.default) return;

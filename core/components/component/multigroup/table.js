@@ -29,7 +29,7 @@ const MultigroupTable = ({ value, view, model, path }) => {
   );
 
   const onItem = (model, renderAs, renderItemAs) => (item, index) => {
-    const items = app().replaceInModel({
+    const items = app.replaceInModel({
       model,
       viewFormat: view.viewFormat,
       fn: ({ model: item }) =>

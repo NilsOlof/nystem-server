@@ -5,7 +5,7 @@ function getStackTrace(row) {
   return obj.stack;
 }
 
-module.exports = function addEventHandler(context, mapevents) {
+export default function addEventHandler(context, mapevents) {
   setTimeout(() => {
     console.log(callers);
   }, 2000);
@@ -18,7 +18,7 @@ module.exports = function addEventHandler(context, mapevents) {
 
   context.on = (event, callback, prio) => {
     event = event instanceof Array ? event : [event];
-    event.forEach(event => addEvent(event, callback, prio));
+    event.forEach((event) => addEvent(event, callback, prio));
   };
 
   function addEvent(event, callback, prio) {
@@ -40,14 +40,14 @@ module.exports = function addEventHandler(context, mapevents) {
       0,
       getStackTrace(5).replace(
         __dirname.replace(/core[\\\/]server[\\\/]debug/, ""),
-        ""
-      )
+        "",
+      ),
     );
   }
 
   context.off = (event, callback) => {
     event = event instanceof Array ? event : [event];
-    event.forEach(event => removeEvent(event, callback, prio));
+    event.forEach((event) => removeEvent(event, callback, prio));
   };
 
   function removeEvent(event, callback) {
@@ -63,15 +63,15 @@ module.exports = function addEventHandler(context, mapevents) {
     }
   }
 
-  context.event = function(event, data, fromFunction) {
+  context.event = function (event, data, fromFunction) {
     console.log(
       "Do event ",
       event,
       data,
       getStackTrace(fromFunction ? 3 : 2).replace(
         __dirname.replace("lib", ""),
-        ""
-      )
+        "",
+      ),
     );
 
     data = data || {};
@@ -115,9 +115,9 @@ module.exports = function addEventHandler(context, mapevents) {
   };
 
   if (mapevents)
-    mapevents.forEach(event => {
-      context[event] = data => context.event(event, data, true);
+    mapevents.forEach((event) => {
+      context[event] = (data) => context.event(event, data, true);
     });
 
   return context;
-};
+}

@@ -1,8 +1,8 @@
-import { UseLocation } from "nystem-components";
+import { useLocation } from "nystem-components";
 
 let last = false;
 const RouterToTopOnNav = () => {
-  const location = UseLocation();
+  const location = useLocation();
 
   if (location.pathname !== last) {
     last = location.pathname;

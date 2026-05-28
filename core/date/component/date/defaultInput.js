@@ -1,4 +1,4 @@
-import { InputWrapper, UseValidator, Icon, Wrapper } from "nystem-components";
+import { InputWrapper, useValidator, Icon, Wrapper } from "nystem-components";
 import moment from "my-moment";
 import validate from "./validate";
 
@@ -6,7 +6,7 @@ const dateFormat = "YYYY-MM-DD HH:mm:ss";
 
 const DateDefaultInput = ({ model, setValue, value, view }) => {
   const { dateType = ["date", "time"] } = model;
-  const [error, setValidated] = UseValidator({ view, validate, value, model });
+  const [error, setValidated] = useValidator({ view, validate, value, model });
 
   return (
     <InputWrapper model={model} error={error}>
@@ -17,7 +17,7 @@ const DateDefaultInput = ({ model, setValue, value, view }) => {
           maxLength={length}
           onChange={(e) => {
             setValue(
-              e.target.value ? moment(e.target.value).valueOf() : undefined
+              e.target.value ? moment(e.target.value).valueOf() : undefined,
             );
             setValidated();
           }}

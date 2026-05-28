@@ -1,5 +1,5 @@
-module.exports = function (app) {
-  require("./session")(app);
-  require("./password")(app);
-  require("./access")(app);
+export default async (app) => {
+  await app.require("./session");
+  await app.require("./password");
+  await app.require("./access");
 };

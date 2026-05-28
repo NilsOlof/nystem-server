@@ -4,13 +4,13 @@ import app from "nystem";
 
 const PasswordInput = ({ model, value, setValue }) => {
   const { disabled, text, classNameInput = [] } = model;
-  const [id] = useState(app().uuid);
+  const [id] = useState(app.uuid);
 
   return (
     <InputWrapper model={model} id={id}>
       <Input
         id={id}
-        placeholder={app().t(text)}
+        placeholder={app.t(text)}
         className={classNameInput || "w-full sm:w-1/2"}
         value={value || ""}
         onChange={setValue}

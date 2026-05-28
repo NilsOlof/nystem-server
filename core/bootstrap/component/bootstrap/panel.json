@@ -12,9 +12,9 @@
       "type": "gridselect"
     },
     {
-      "id": "expanded",
-      "text": "Expanded",
-      "type": "boolean"
+      "id": "closedClass",
+      "text": "Closed class",
+      "type": "gridselect"
     },
     {
       "type": "select",
@@ -66,9 +66,44 @@
       "render": "button"
     },
     {
-      "text": "Visibility hidden",
-      "id": "visibilityHidden",
-      "type": "boolean"
+      "type": "switchButtons",
+      "item": [
+        {
+          "text": "Visibility hidden",
+          "id": "visibilityHidden",
+          "type": "boolean"
+        },
+        {
+          "id": "expanded",
+          "text": "Expanded",
+          "type": "boolean"
+        },
+        {
+          "id": "posthead",
+          "text": "Head after",
+          "type": "boolean"
+        }
+      ]
+    },
+    {
+      "id": "renderAs",
+      "text": "Render as",
+      "type": "select",
+      "render": "button",
+      "option": [
+        "h1",
+        "h2",
+        "h3",
+        "h4",
+        "h5",
+        "h6",
+        "p",
+        "span",
+        "div",
+        "section",
+        "nav"
+      ],
+      "limit": 1
     },
     {
       "text": "Header",

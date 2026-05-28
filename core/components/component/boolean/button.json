@@ -14,10 +14,6 @@
       "type": "select",
       "option": [
         {
-          "text": "default",
-          "_id": "default"
-        },
-        {
           "text": "light",
           "_id": "light"
         },
@@ -56,10 +52,6 @@
     {
       "type": "select",
       "option": [
-        {
-          "text": "default",
-          "_id": "default"
-        },
         {
           "text": "light",
           "_id": "light"

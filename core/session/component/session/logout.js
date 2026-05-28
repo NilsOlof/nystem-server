@@ -1,21 +1,20 @@
 import app from "nystem";
-import { Button, ContentTypeRender } from "nystem-components";
+import { Wrapper, ContentTypeRender } from "nystem-components";
 
 const SessionLogout = ({ children, model, path, ...props }) => {
   const { item, to, btnType, ...rest } = model || props;
   return (
-    <Button
+    <Wrapper
       {...rest}
-      type={btnType}
       onClick={(e) => {
-        app().session.logout();
+        app.session.logout();
         if (!to) return;
 
         window.history.replaceState({}, "", to);
       }}
     >
       {children || <ContentTypeRender path={path} items={item} />}
-    </Button>
+    </Wrapper>
   );
 };
 

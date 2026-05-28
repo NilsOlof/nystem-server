@@ -1,7 +1,7 @@
-import { UseLocation, Wrapper } from "nystem-components";
+import { useLocation, Wrapper } from "nystem-components";
 
-const Link = ({ to, className, match, children }) => {
-  const { isMatch, pathname, search } = UseLocation(match || to);
+const Link = ({ to, className, match, children, addSearch }) => {
+  const { isMatch, pathname, search } = useLocation(match || to);
 
   if ((to === pathname || !to) && !search)
     return (
@@ -15,7 +15,7 @@ const Link = ({ to, className, match, children }) => {
       className={[className, isMatch && !search && "active"]}
       onClick={(event) => {
         event.preventDefault();
-        window.history.pushState({}, "", to);
+        window.history.pushState({}, "", to + (addSearch ? search : ""));
       }}
     >
       {children}

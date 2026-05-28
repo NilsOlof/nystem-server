@@ -88,6 +88,11 @@
           "type": "boolean",
           "text": "Exact",
           "id": "exact"
+        },
+        {
+          "type": "boolean",
+          "text": "Exclude not active",
+          "id": "excludeNotActive"
         }
       ]
     },

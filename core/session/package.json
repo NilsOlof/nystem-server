@@ -1,5 +1,6 @@
 {
   "dependencies": {
     "bcryptjs": "*"
-  }
+  },
+  "type": "module"
 }

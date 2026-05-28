@@ -6,8 +6,8 @@ const ConnectionConnectedCount = ({ model }) => {
   const [count, setCount] = useState(false);
 
   useEffect(() => {
-    app()
-      .connection.event("emit", { type: "count" })
+    app.connection
+      .event("emit", { type: "count" })
       .then(({ connectedCount }) => {
         setCount(connectedCount);
       });

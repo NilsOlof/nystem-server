@@ -1,16 +1,16 @@
-module.exports = (app) => {
+export default async (app) => {
   const database = app.addeventhandler({}, ["init", "add"], "databaseglobal");
   app.database = database;
 
-  require("./eventStorageFile")(app);
-  require("./circulatingStorageFile")(app);
-  require("./debounceStorageFile")(app);
-  require("./connection")(app);
-  require("./storage")(app);
-  require("./updates")(app);
-  require("./client/memdb")(app);
-  require("./hook")(app);
-  require("./validate")(app);
+  await app.require("./eventStorageFile");
+  await app.require("./circulatingStorageFile");
+  await app.require("./debounceStorageFile");
+  await app.require("./connection");
+  await app.require("./storage");
+  await app.require("./updates");
+  await app.require("./client/memdb/index");
+  await app.require("./hook");
+  await app.require("./validate");
 
   const initDatabase = (contentTypeName) =>
     app.database
@@ -47,7 +47,7 @@ module.exports = (app) => {
 
   app.on("init", -100, async () => {
     await Promise.all(Object.keys(app.contentType).map(initDatabase)).then(
-      () => undefined
+      () => undefined,
     );
   });
 };

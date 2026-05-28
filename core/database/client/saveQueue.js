@@ -1,4 +1,4 @@
-module.exports = (app) => {
+export default (app) => {
   if (app.settings.noClientCache) return;
 
   app.database.on("init", ({ collection, db }) => {
@@ -21,7 +21,7 @@ module.exports = (app) => {
     };
     collection.on("save", -1000, (query) => add(query));
     collection.on("delete", -1000, (query) =>
-      add({ ...query, data: "deleted" })
+      add({ ...query, data: "deleted" }),
     );
 
     collection.on("updates", 500, (query) => {

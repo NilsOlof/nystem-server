@@ -23,7 +23,7 @@ const RouterScrollpos = () => {
   useEffect(() => {
     window.addEventListener(
       "popstate",
-      () => positions[window.location.pathname] && setTimeout(setPos, 120)
+      () => positions[window.location.pathname] && setTimeout(setPos, 120),
     );
     window.addEventListener("pushstate", () => {
       document.documentElement.scrollTop = 0;

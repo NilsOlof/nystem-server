@@ -1,4 +1,4 @@
-module.exports = function(app) {
+export default (app) => {
   app.on("init", () => {
     app.database.on("init", ({ collection, contentType }) => {
       if (
@@ -9,14 +9,14 @@ module.exports = function(app) {
 
       collection.on(
         "save",
-        query => {
+        (query) => {
           query.data._chdate = new Date().getTime();
           if (query.data._crdate) return;
           if (query.oldData && query.oldData._crdate)
             query.data._crdate = query.oldData._crdate;
           else query.data._crdate = query.data._chdate;
         },
-        990
+        990,
       );
     });
   });

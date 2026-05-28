@@ -55,9 +55,19 @@
       "text": "Add"
     },
     {
-      "type": "boolean",
-      "id": "addId",
-      "text": "Add id"
+      "type": "switchButtons",
+      "item": [
+        {
+          "type": "boolean",
+          "id": "addId",
+          "text": "Add id"
+        },
+        {
+          "type": "boolean",
+          "id": "addSearch",
+          "text": "Add search"
+        }
+      ]
     },
     {
       "type": "select",

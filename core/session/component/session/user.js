@@ -1,8 +1,8 @@
-import { ContentTypeView, UseUser } from "nystem-components";
+import { ContentTypeView, useUser } from "nystem-components";
 
 const SessionUser = ({ view, model, ...rest }) => {
   const { contentType, toFormat } = model || rest;
-  const user = UseUser();
+  const user = useUser();
 
   if (user)
     return (

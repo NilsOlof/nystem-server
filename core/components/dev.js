@@ -1,5 +1,6 @@
-module.exports = function(app) {
+export default async (app) => {
   if (!app.fs.existsSync(`${app.__dirname}/web`)) return;
-  require("./files")(app);
-  require("./compile")(app);
+
+  await app.require("./files");
+  await app.require("./compile");
 };

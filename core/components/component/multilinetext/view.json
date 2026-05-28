@@ -35,9 +35,15 @@
         "span",
         "div",
         "section",
-        "nav"
+        "nav",
+        "li"
       ],
       "limit": 1
+    },
+    {
+      "id": "fallback",
+      "text": "Fallback",
+      "type": "text"
     },
     {
       "text": "Fields",

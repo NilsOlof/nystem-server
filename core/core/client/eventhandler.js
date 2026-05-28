@@ -5,7 +5,7 @@ const getStackTrace = (row) => {
 
   const [, source, line, column] =
     /https?:\/\/[^/]+\/([^:]+):([^:]+):([0-9]+)/im.exec(
-      obj.stack.split("\n")[row]
+      obj.stack.split("\n")[row],
     ) || [];
 
   return !source
@@ -13,7 +13,7 @@ const getStackTrace = (row) => {
     : `${source} ${line}:${column} \n`;
 };
 
-module.exports = (eventTimeOutError = 5000) =>
+export default (eventTimeOutError = 5000) =>
   function addEventHandler(context, mapevents, name) {
     const callbacks = {};
     const callbacksprio = {};
@@ -64,7 +64,7 @@ module.exports = (eventTimeOutError = 5000) =>
 
     const removeEvent = (event, callback) => {
       if (!callbacks[event]) {
-        console.log("Missing event", event, callbacks, getStackTrace(5));
+        console.log("Missing event", event, callbacks);
         return;
       }
       const pos = callbacks[event].indexOf(callback);
@@ -103,7 +103,7 @@ module.exports = (eventTimeOutError = 5000) =>
               event
             ]
               .map((item, index) => `${index}.${printStack(item)} `)
-              .join("  ")}`
+              .join("  ")}`,
           );
         }, eventTimeOutError);
         let pos = 0;
@@ -124,9 +124,7 @@ module.exports = (eventTimeOutError = 5000) =>
           }
 
           oldData = data;
-          Promise.resolve(callback[pos++](data))
-            .then(next)
-            .catch(reject);
+          Promise.resolve(callback[pos++](data)).then(next).catch(reject);
         };
         next(data);
       });

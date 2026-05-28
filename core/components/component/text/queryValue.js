@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
-import { UseLocation } from "nystem-components";
+import { useLocation } from "nystem-components";
 
 const toType = {
   reference: (val) => val,
@@ -14,7 +14,7 @@ const TextQueryValue = ({ model, setValue, value }) => {
   const { saveId, type, push } = model;
   const [enabled, setEnabled] = useState(false);
 
-  const { search } = UseLocation();
+  const { search } = useLocation();
 
   const getQueryValue = useCallback(
     (query) => {
@@ -23,7 +23,7 @@ const TextQueryValue = ({ model, setValue, value }) => {
       const [, value = ""] = query.match(new RegExp(reg, "im")) || [];
       return type ? toType[type](value) : value;
     },
-    [saveId, type]
+    [saveId, type],
   );
 
   const setRouterValue = (value) => {

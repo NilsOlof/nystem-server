@@ -1,21 +1,17 @@
-import React from "react";
+import { useCallback, useEffect } from "react";
 
-class BooleanVibrate extends React.Component {
-  // eslint-disable-next-line camelcase
-  UNSAFE_componentWillReceiveProps(nextProps) {
-    if (this.props.value !== nextProps.value) this.vibrate(nextProps);
-  }
-  componentDidMount() {
-    this.vibrate(this.props);
-  }
-  vibrate(props) {
+const BooleanVibrate = (props) => {
+  const vibrate = useCallback((currentProps) => {
     if (!navigator.vibrate) return;
-    const { atState, pattern } = props.model;
-    if (props.value === atState)
+    const { atState, pattern } = currentProps.model;
+    if (currentProps.value === atState)
       navigator.vibrate(pattern ? JSON.parse(pattern) : 300);
-  }
-  render() {
-    return null;
-  }
-}
+  }, []);
+
+  useEffect(() => {
+    vibrate(props);
+  }, [props.model, props.value, vibrate]);
+
+  return null;
+};
 export default BooleanVibrate;

@@ -1,6 +1,5 @@
 import { useRef, useState, useEffect, useCallback } from "react";
 import moment from "my-moment";
-import app from "nystem";
 import { Wrapper } from "nystem-components";
 
 const dateTimeFormats = {
@@ -15,6 +14,7 @@ const dateTimeFormats = {
   timeDay: "ddd D/M H:mm",
   dateNoYear: "D/M",
   day: "dddd",
+  dayOfMonth: "D",
 };
 
 const hourInMs = 1000 * 60 * 60;
@@ -33,7 +33,7 @@ const DateView = ({ model, value }) => {
 
   const formatDate = useCallback(
     () => (rel ? moment(value).format("H:mm") : moment(value).format(format)),
-    [format, rel, value]
+    [format, rel, value],
   );
   const [result, setResult] = useState(formatDate());
   const ref = useRef();
@@ -52,7 +52,7 @@ const DateView = ({ model, value }) => {
 
   return (
     <Wrapper renderAs={renderAs} className={className}>
-      {app().t(value ? result : "")}
+      {value ? result : ""}
     </Wrapper>
   );
 };

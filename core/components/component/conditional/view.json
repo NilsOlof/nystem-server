@@ -28,12 +28,8 @@
     {
       "text": "Fields",
       "id": "item",
-      "type": "viewCreator"
-    },
-    {
-      "text": "Fields if not",
-      "id": "itemNot",
-      "type": "viewCreator"
+      "type": "viewCreator",
+      "expanded": true
     },
     {
       "type": "boolean",

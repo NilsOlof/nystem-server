@@ -16,9 +16,19 @@
       "type": "text"
     },
     {
-      "type": "boolean",
-      "id": "exact",
-      "text": "Exact"
+      "type": "switchButtons",
+      "item": [
+        {
+          "type": "boolean",
+          "id": "exact",
+          "text": "Exact"
+        },
+        {
+          "type": "boolean",
+          "id": "addSearch",
+          "text": "Add search"
+        }
+      ]
     },
     {
       "text": "Fields",

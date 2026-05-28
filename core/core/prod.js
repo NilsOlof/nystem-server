@@ -1,3 +1,3 @@
-module.exports = (app) => {
-  if (app.settings.debugEvLog) require("./debug/debugEvLog.js")(app);
+export default async (app) => {
+  if (app.settings.debugEvLog) await app.require("./debug/debugEvLog.js");
 };

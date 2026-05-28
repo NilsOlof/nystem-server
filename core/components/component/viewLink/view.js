@@ -26,7 +26,7 @@ const ViewLinkView = ({ model, value }) => {
         className={className}
         Component={Link}
       >
-        {app().t(text)}
+        {app.t(text)}
       </Button>
     );
 
@@ -35,8 +35,9 @@ const ViewLinkView = ({ model, value }) => {
       type={renderType || "list"}
       to={(add || "") + href}
       className={className}
+      addSearch={model.addSearch}
     >
-      {app().t(text)}
+      {app.t(text)}
     </Link>
   );
 };

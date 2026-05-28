@@ -8,7 +8,7 @@ const formatBytes = (a, b = 2) => {
   }`;
 };
 
-module.exports = (app) => {
+export default (app) => {
   process.stdin.resume();
   process.stdin.on("data", async (data) => {
     if (data.toString() !== "exit") return;
@@ -20,11 +20,13 @@ module.exports = (app) => {
     console.log(`Process exit, ${prg}`);
     await app.delay(1000);
     process.exitCode = 0;
+    process.kill(process.pid, "SIGINT");
   });
 
   process.on("unhandledRejection", ({ stack, message }) => {
     stack = stack || message || "Unknown error";
     console.log(`💥 Rejection ${stack.toString().replace(/\n/g, "")}`);
+    app.event("unhandledRejection", { stack, message });
   });
 
   let prg = "";
@@ -38,9 +40,7 @@ module.exports = (app) => {
   updateData();
 
   function exitRouter(options, exitCode) {
-    if (exitCode || exitCode === 0)
-      console.log(`Process exit ${exitCode}, ${prg}`);
-    process.exitCode = 0;
+    process.exit(0);
   }
 
   const ev = [`SIGINT`, `SIGUSR1`, `SIGUSR2`, `SIGTERM`];
@@ -48,6 +48,7 @@ module.exports = (app) => {
 
   process.on(`uncaughtException`, (e) => {
     console.log(`💥 Exception ${e.stack.toString().replace(/\n/g, "")}`);
+    app.event("uncaughtException", e);
   });
 
   app.on("start", () => {

@@ -6,6 +6,11 @@
       "type": "gridselect"
     },
     {
+      "id": "fallback",
+      "text": "Fallback",
+      "type": "text"
+    },
+    {
       "id": "renderAs",
       "text": "Render as",
       "type": "select",

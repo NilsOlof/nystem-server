@@ -3,6 +3,9 @@
     "mime": "*"
   },
   "scripts": {
-    "initweb": "node app.js core/file/initweb.js"
-  }
+    "start": "node app.js",
+    "initweb": "node app.js core/file/initweb.js",
+    "client": "node app.js"
+  },
+  "type": "module"
 }

@@ -10,7 +10,7 @@ const sortFuncInt = (key) => (a, b) => {
 };
 
 const historyPos = (test) => {
-  const { history, at } = app().routerHistory;
+  const { history, at } = app.routerHistory;
 
   const slice = history.slice(0, at);
   slice.reverse();
@@ -49,7 +49,7 @@ const RouterViewByHistory = ({ model, path }) => {
         path={path}
         items={itemsByPosition.reduce(
           (res, item) => [...res, ...item.item],
-          []
+          [],
         )}
       />
     </Wrapper>

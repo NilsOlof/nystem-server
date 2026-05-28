@@ -3,13 +3,13 @@ import app from "nystem";
 import { Wrapper, ContentTypeRender } from "nystem-components";
 
 const ConnectionCssclass = ({ children, path, model }) => {
-  const [connected, setConnected] = useState(app().connection.connected);
+  const [connected, setConnected] = useState(app.connection.connected);
 
   useEffect(() => {
-    const update = () => setConnected(app().connection.connected);
-    app().connection.on("connection", update);
+    const update = () => setConnected(app.connection.connected);
+    app.connection.on("connection", update);
     return () => {
-      app().connection.off("connection", update);
+      app.connection.off("connection", update);
     };
   });
 

@@ -1,6 +1,6 @@
 import { useRef, useEffect } from "react";
 
-const UseSearch = ({ view, id, value, exact = false }) => {
+const useSearch = ({ view, id, value, exact = false }) => {
   const last = useRef(undefined);
 
   useEffect(() => {
@@ -11,6 +11,7 @@ const UseSearch = ({ view, id, value, exact = false }) => {
       query.filter.$and = query.filter.$and || [];
       const search = exact ? { __exact: true } : {};
 
+      if (id === undefined) return;
       const fields = id instanceof Array ? id : [id];
       const val = value === "true" ? true : value === "false" ? false : value;
       fields.forEach((id) => {
@@ -29,4 +30,4 @@ const UseSearch = ({ view, id, value, exact = false }) => {
     };
   }, [exact, id, value, view]);
 };
-export default UseSearch;
+export default useSearch;

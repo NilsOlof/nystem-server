@@ -16,6 +16,11 @@
       "text": "Sort field"
     },
     {
+      "text": "Handle",
+      "id": "handle",
+      "type": "boolean"
+    },
+    {
       "text": "Empty result fields",
       "id": "emptyFields",
       "type": "viewCreator",

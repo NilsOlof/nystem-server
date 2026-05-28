@@ -19,8 +19,8 @@ const DatabaseSearchContextProvider = ({ children, view }) => {
         setLoading(true);
         view.on("search", 200, doSearch);
         if (!newSearch.noAutoUpdate)
-          app().database[contentType].on("update", -1000, setSearch);
-        app().on(["login", "logout"], -1000, setSearch);
+          app.database[contentType].on("update", -1000, setSearch);
+        app.on(["login", "logout"], -1000, setSearch);
         active = true;
       }
       if (newSearch) search = { ...newSearch, isDirty: true };
@@ -48,7 +48,7 @@ const DatabaseSearchContextProvider = ({ children, view }) => {
     view.on("setSearch", -500, setSearchDebounce);
 
     const doSearch = (search) =>
-      app().database[contentType].search({
+      app.database[contentType].search({
         ...search,
         data: undefined,
       });
@@ -59,8 +59,8 @@ const DatabaseSearchContextProvider = ({ children, view }) => {
 
       if (active) {
         view.off("search", doSearch);
-        app().database[contentType].off("update", setSearch);
-        app().off(["login", "logout"], setSearch);
+        app.database[contentType].off("update", setSearch);
+        app.off(["login", "logout"], setSearch);
       }
       view.off("getSearch", getSearch);
     };

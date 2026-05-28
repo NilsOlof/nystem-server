@@ -8,7 +8,7 @@ const hookWritestream = (stream, callback) => {
   })(stream.write);
 };
 
-module.exports = (app) => {
+export default (app) => {
   if (!app.settings.logToFile) return;
 
   const writeStream = app.fs.createWriteStream(app.settings.logToFile);

@@ -1,4 +1,4 @@
-module.exports = (app) => {
+export default (app) => {
   app.storage = app.addeventhandler(
     {},
     [
@@ -11,7 +11,7 @@ module.exports = (app) => {
       "removeItemMem",
       "setItemDebounce",
     ],
-    "storage"
+    "storage",
   );
 
   app.storage.on("getItem", async (data) => {
@@ -59,7 +59,7 @@ module.exports = (app) => {
             date: new Date(),
             etag: "dbdata",
           }),
-        })
+        }),
       );
       window.localStorage.setItem(id, `nystemCache${id}`);
     }
@@ -84,7 +84,7 @@ module.exports = (app) => {
   const memstore = {};
 
   app.storage.on("getItemMem", (data) =>
-    Object.assign(data, { value: memstore[data.id] })
+    Object.assign(data, { value: memstore[data.id] }),
   );
 
   app.storage.on("setItemMem", ({ id, value }) => {

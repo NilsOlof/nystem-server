@@ -1,8 +1,8 @@
-import { Wrapper, ContentTypeRender, UseLocation } from "nystem-components";
+import { Wrapper, ContentTypeRender, useLocation } from "nystem-components";
 
 const RouterView = ({ model, view, path }) => {
   const { className, renderAs, item } = model;
-  const { pathname } = UseLocation();
+  const { pathname } = useLocation();
 
   const insertVal = (val) =>
     val &&

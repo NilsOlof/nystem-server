@@ -1,16 +1,16 @@
 import {
   InputWrapper,
   FloatInput,
-  UseSearch,
-  RouterUseQueryStore,
+  useSearch,
+  useRouterQueryStore,
 } from "nystem-components";
 
 const FloatExposedField = ({ model, view }) => {
-  const [from, setFrom] = RouterUseQueryStore(model.saveIdFrom, "float");
-  const [to, setTo] = RouterUseQueryStore(model.saveIdTo, "float");
+  const [from, setFrom] = useRouterQueryStore(model.saveIdFrom, "float");
+  const [to, setTo] = useRouterQueryStore(model.saveIdTo, "float");
 
-  UseSearch({ view, id: model.id, value: from && `>${from}` });
-  UseSearch({ view, id: model.id, value: to && `<${to}` });
+  useSearch({ view, id: model.id, value: from && `>${from}` });
+  useSearch({ view, id: model.id, value: to && `<${to}` });
 
   const base = {
     clearButton: true,

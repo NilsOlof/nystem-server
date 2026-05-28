@@ -1,4 +1,4 @@
-module.exports = (app) => {
+export default (app) => {
   app.on("start", (app) => {
     const clients = {};
     const reqs = {};

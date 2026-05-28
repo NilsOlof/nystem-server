@@ -19,11 +19,11 @@ const StyleSizeMirror = ({ model, path, ...rest }) => {
         setStyle(style);
       };
 
-      app().on(`StyleSizeMirror${mirrorId}`, setStyleEvent);
-      app().event(`StyleSizeMirror${mirrorId}`);
+      app.on(`StyleSizeMirror${mirrorId}`, setStyleEvent);
+      app.event(`StyleSizeMirror${mirrorId}`);
 
       return () => {
-        app().off(`StyleSizeMirror${mirrorId}`, setStyleEvent);
+        app.off(`StyleSizeMirror${mirrorId}`, setStyleEvent);
       };
     }
 
@@ -32,19 +32,19 @@ const StyleSizeMirror = ({ model, path, ...rest }) => {
       for (const entry of entries)
         if (entry.contentBoxSize) {
           ({ width, height } = entry.contentRect);
-          app().event(`StyleSizeMirror${mirrorId}`);
+          app.event(`StyleSizeMirror${mirrorId}`);
         }
     });
 
     const setStyleEvent = () => ({ width, height });
 
     resizeObserver.observe(element);
-    app().on(`StyleSizeMirror${mirrorId}`, 10, setStyleEvent);
-    app().event(`StyleSizeMirror${mirrorId}`);
+    app.on(`StyleSizeMirror${mirrorId}`, 10, setStyleEvent);
+    app.event(`StyleSizeMirror${mirrorId}`);
 
     return () => {
       resizeObserver.unobserve(element);
-      app().off(`StyleSizeMirror${mirrorId}`, 10, setStyleEvent);
+      app.off(`StyleSizeMirror${mirrorId}`, 10, setStyleEvent);
     };
   }, [host, mirrorId, setHeight, setWidth]);
 

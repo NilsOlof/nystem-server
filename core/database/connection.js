@@ -1,4 +1,4 @@
-module.exports = (app) => {
+export default (app) => {
   app.database.on("init", ({ collection, db }) => {
     const { connection } = app;
     const { machinename } = collection.contentType;
@@ -16,8 +16,8 @@ module.exports = (app) => {
           id,
           query,
           contentType: machinename,
-        })
-      )
+        }),
+      ),
     );
 
     const actions = [

@@ -17,7 +17,7 @@ const MultigroupView = ({ value, view, model, path }) => {
           <ContentTypeRender
             path={`${view.getValuePath(path, model.id)}.${index}`}
             items={
-              app().replaceInModel({
+              app.replaceInModel({
                 model,
                 viewFormat: view.viewFormat,
                 fn: ({ model: item }) =>

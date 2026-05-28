@@ -1,4 +1,4 @@
-module.exports = ({ value, model }) => {
+export default ({ value, model }) => {
   value = value || [];
   if (!(value instanceof Array)) value = [value];
 

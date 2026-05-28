@@ -1,0 +1,16 @@
+{
+  "item": [
+    {
+      "type": "gridselect",
+      "id": "className",
+      "text": "Class"
+    },
+    {
+      "id": "renderFormat",
+      "text": "View",
+      "type": "viewSelect",
+      "limit": 1,
+      "inline": true
+    }
+  ]
+}

@@ -1,12 +1,12 @@
 import {
   ReferenceInput,
-  RouterUseQueryStore,
-  UseSearch,
+  useRouterQueryStore,
+  useSearch,
 } from "nystem-components";
 
 const ReferenceExposedFieldViews = ({ model, view, path }) => {
-  const [value, setValue] = RouterUseQueryStore(model.saveId, "array");
-  UseSearch({ view, id: model.id, value, exact: true });
+  const [value, setValue] = useRouterQueryStore(model.saveId, "array");
+  useSearch({ view, id: model.id, value, exact: true });
 
   return (
     <ReferenceInput

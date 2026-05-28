@@ -3,7 +3,7 @@ import app from "nystem";
 import { Button } from "nystem-components";
 
 const ViewButtonLogin = ({ view, model }) => {
-  const [saveButton, setSaveButton] = useState(app().t("Log in"));
+  const [saveButton, setSaveButton] = useState(app.t("Log in"));
 
   const handleSubmit = async () => {
     const { errors = [] } = await view.event("validate");
@@ -14,7 +14,7 @@ const ViewButtonLogin = ({ view, model }) => {
     }
     setSaveButton("Logging in");
     view.value.contentType = view.contentType;
-    const { error, ...rest } = await app().session.login(view.value);
+    const { error } = await app.session.login(view.value);
 
     if (error === "missing") view.event("error", "Email does not exist");
     else if (error === "password") view.event("error", "Password error");

@@ -1,4 +1,4 @@
-module.exports = (app) => {
+export default (app) => {
   /* const pathRegexp = function(path, keys, sensitive, strict) {
     if (Object.prototype.toString.call(path) === "[object RegExp]") return path;
     if (Array.isArray(path)) path = "(" + path.join("|") + ")";

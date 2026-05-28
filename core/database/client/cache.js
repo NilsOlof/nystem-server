@@ -1,6 +1,6 @@
 const getKey = (data) => JSON.stringify(data);
 
-module.exports = (app) => {
+export default (app) => {
   if (app.settings.noClientCache) return;
 
   app.database.on("init", ({ collection, db }) => {

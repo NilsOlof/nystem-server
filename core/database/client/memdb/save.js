@@ -1,4 +1,4 @@
-module.exports = (app) => {
+export default (app) => {
   app.database.on("init", ({ collection, db }) => {
     collection.on("save", 2000, (query) => {
       const id = query.id || (query.data && query.data._id);

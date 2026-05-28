@@ -9,11 +9,11 @@ const BootstrapSwitch = ({ model, path }) => {
 
   const toggleExpand = () => {
     setSexpanded(!expanded);
-    app().stateStore.set(panelElement, !expanded, model.stateStore);
+    app.stateStore.set(panelElement, !expanded, model.stateStore);
   };
 
   useEffect(() => {
-    const storedState = app().stateStore.get(panelElement, model.stateStore);
+    const storedState = app.stateStore.get(panelElement, model.stateStore);
     if (storedState === null || storedState === expanded) return;
     setSexpanded(storedState);
   }, [expanded, model.stateStore]);

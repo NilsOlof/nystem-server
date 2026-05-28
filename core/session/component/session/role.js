@@ -1,4 +1,4 @@
-import { Wrapper, ContentTypeRender, UseUser } from "nystem-components";
+import { Wrapper, ContentTypeRender, useUser } from "nystem-components";
 
 const contains = (array1, array2) => {
   if (!(array1 instanceof Array)) array1 = [array1];
@@ -10,7 +10,7 @@ const contains = (array1, array2) => {
 };
 
 const SessionRole = ({ userrole, model = {}, children, path, className }) => {
-  const user = UseUser();
+  const user = useUser();
 
   let reqRole = model.role || userrole;
   reqRole = typeof reqRole === "string" ? reqRole.split(" ") : reqRole;

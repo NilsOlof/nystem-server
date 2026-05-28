@@ -1,4 +1,4 @@
-const viewCreatorFields = require("../../../viewCreatorFields.json");
+import viewCreatorFields from "../../../viewCreatorFields.json";
 
 const arr2Obj = (arr, byField) =>
   arr.reduce((prev, curr) => {
@@ -60,7 +60,7 @@ const replaceInModel = ({
           viewFormat,
           fn,
           path: fullId || path,
-        })
+        }),
       )
       .filter((model) => !!model);
   });
@@ -87,7 +87,7 @@ const flattenFields = ({ item, viewCreatorFields, path = "" }) =>
               path: fullPath,
             })
           : prev,
-      {}
+      {},
     );
 
     return { [fullPath]: field, ...subFields, ...prev };
@@ -121,7 +121,7 @@ const populateViews = ({ app }) => {
           return { format, ...view };
         },
         viewFormat: view.format || "view",
-      })
+      }),
     );
 
     contentType.views = arr2Obj(populatedViews, "name");
@@ -131,7 +131,7 @@ const populateViews = ({ app }) => {
   return populatedViews;
 };
 
-module.exports = (app) => {
+export default (app) => {
   app.on("init", 1000, () => {
     app.populatedViews = populateViews({ app });
     app.replaceInModel = replaceInModel;

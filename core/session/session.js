@@ -1,22 +1,22 @@
 /*
  *  Handles logins and sessions for users
  */
-module.exports = (app) => {
+export default async (app) => {
   const requestSessions = {};
 
   app.session = app.addeventhandler({}, ["add", "login", "logout"], "session");
 
-  // Load old sessions from disc
-  const filePath = `${app.__dirname}/data/db/sessionStore`;
-  const storage = app.debounceStorageFile(filePath, {});
-  const sessions = storage.get();
-
-  const getKeys = (expr, store) =>
-    Object.entries(store)
-      .filter(([, value]) => expr(value))
-      .map(([key]) => key);
-
   app.on("init", -100, () => {
+    // Load old sessions from disc
+    const filePath = `${app.__dirname}/data/db/sessionStore`;
+    const storage = app.debounceStorageFile(filePath, {});
+    const sessions = storage.get();
+
+    const getKeys = (expr, store) =>
+      Object.entries(store)
+        .filter(([, value]) => expr(value))
+        .map(([key]) => key);
+
     app.connection.on("login", async (query) => {
       if (query.sessionid) {
         if (sessions[query.sessionid]) {
@@ -33,7 +33,7 @@ module.exports = (app) => {
       const login = async (lastError) => {
         const { error, user } = await app.database[contentType].event(
           "checkPassword",
-          query.data
+          query.data,
         );
         query.user = user;
 
@@ -52,10 +52,17 @@ module.exports = (app) => {
     });
 
     const logout = (data) => {
-      delete sessions[requestSessions[data.id]?.sessionid];
+      const { sessionid } = requestSessions[data.id] || {};
+      delete sessions[sessionid];
       storage.save(sessions);
       delete requestSessions[data.id];
-      app.connection.emit(data);
+
+      getKeys((val) => val.sessionid === sessionid, requestSessions).forEach(
+        (key) => {
+          app.connection.emit({ id: key, type: "logout" });
+          delete requestSessions[key];
+        },
+      );
     };
 
     app.connection.on("logout", logout);
@@ -66,9 +73,11 @@ module.exports = (app) => {
           delete sessions[key];
           storage.save(sessions);
         });
-        getKeys((val) => val._id === id, requestSessions).forEach((key) =>
-          logout({ id: key, type: "logout" })
-        );
+
+        getKeys((val) => val._id === id, requestSessions).forEach((key) => {
+          app.connection.emit({ id: key, type: "logout" });
+          delete requestSessions[key];
+        });
       } else logout(data);
     });
 
@@ -77,23 +86,25 @@ module.exports = (app) => {
     });
 
     app.session.on("add", (data) => {
-      if (requestSessions[data.id]) {
-        data.session = requestSessions[data.id];
-        return;
-      }
-
-      if (sessions[data.sessionid]) {
+      if (requestSessions[data.id]) data.session = requestSessions[data.id];
+      else if (sessions[data.sessionid]) {
         data.session = sessions[data.sessionid];
         if (!requestSessions[data.id]) requestSessions[data.id] = data.session;
       }
+
+      if (data.session) data.role = data.session.role;
     });
 
     app.session.on("login", async (query) => {
-      const { user, type, id } = query;
+      const { user, type, id, clearOld = false } = query;
+      if (!user) return;
+
       user.sessionid = user.sessionid || app.uuid();
       query.sessionid = user.sessionid;
-
       query.type = type;
+
+      if (clearOld) await app.session.logout(user);
+
       if (type !== "autologin") {
         query.user = await app.session.event("createSession", {
           role: user.role,
@@ -126,20 +137,23 @@ module.exports = (app) => {
             role: "super",
           })
           .then(({ data }) =>
-            app.session.login({ id: data.id, user: data, type: "autologin" })
+            app.session.login({ id: data.id, user: data, type: "autologin" }),
           );
       });
+
+    const sessionTimeout =
+      1000 * 60 * 60 * 24 * (app.settings.sessionTimeout || 60);
+    if (app.settings.sessionTimeout !== -1)
+      setInterval(
+        () => {
+          const limit = Date.now() - sessionTimeout;
+
+          getKeys((val) => val._crdate < limit, sessions).forEach((key) => {
+            delete sessions[key];
+            storage.save(sessions);
+          });
+        },
+        1000 * 60 * 5,
+      );
   });
-
-  const sessionTimeout =
-    1000 * 60 * 60 * 24 * (app.settings.sessionTimeout || 60);
-  if (app.settings.sessionTimeout !== -1)
-    setInterval(() => {
-      const limit = Date.now() - sessionTimeout;
-
-      getKeys((val) => val._crdate < limit, sessions).forEach((key) => {
-        delete sessions[key];
-        storage.save(sessions);
-      });
-    }, 1000 * 60 * 5);
 };

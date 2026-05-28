@@ -6,7 +6,7 @@ const ViewLinkDynamicLink = ({ model, view, path }) => {
     val &&
     val.replace(/\{([a-z_.0-9]+)\}/gim, (str, p1) => {
       let val = "";
-      if (p1 === "_language") val = app().settings.lang;
+      if (p1 === "_language") val = app.settings.lang;
       else if (p1 === "id") val = view.id;
       else if (p1.indexOf("params.") === 0)
         val = view.params[p1.replace("params.", "")];
@@ -28,7 +28,7 @@ const ViewLinkDynamicLink = ({ model, view, path }) => {
       to={insertVal(href)}
       match={insertVal(match)}
     >
-      {app().t(model.text)}
+      {app.t(model.text)}
     </Link>
   );
 };

@@ -10,24 +10,24 @@ const ReferenceSelect = ({ model, setValue, value, view, path }) => {
       if (!connected) return;
 
       const namefield = model.namefield ? model.namefield : "name";
-      app()
-        .database[model.source].search({
-          filter: app().parseFilter(model.filter, view.getValue, path),
+      app.database[model.source]
+        .search({
+          filter: app.parseFilter(model.filter, view.getValue, path),
           count: 100,
         })
         .then(({ data }) => {
-          app().connection.on("connection", loadOption);
+          app.connection.on("connection", loadOption);
 
           setOption(
             data
               ? data.map((item) => ({ _id: item._id, text: item[namefield] }))
-              : []
+              : [],
           );
         });
     };
     loadOption({ connected: true });
     return () => {
-      app().connection.off("connection", loadOption);
+      app.connection.off("connection", loadOption);
     };
   }, [model, path, view]);
 

@@ -26,8 +26,8 @@ const DateInputTime = ({ model, focus, setValue, value }) => {
   return (
     <Wrapper className="flex">
       <Input
-        placeholder={app().t("Time")}
-        className={["w-40", inputClassName]}
+        placeholder={app.t("Time")}
+        className={["w-20", inputClassName]}
         value={inputVal}
         maxLength={length}
         onChange={(value) => setInputVal(value)}

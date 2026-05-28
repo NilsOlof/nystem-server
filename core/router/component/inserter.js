@@ -1,4 +1,4 @@
-import { ContentTypeView, Wrapper, UseLocation } from "nystem-components";
+import { ContentTypeView, Wrapper, useLocation } from "nystem-components";
 import app from "nystem";
 
 const checkMatch = {
@@ -32,7 +32,7 @@ const matchType = (path, match) => {
 };
 
 const Inserter = (props) => {
-  const { pathname } = UseLocation();
+  const { pathname, pathnameOld } = useLocation();
   const { className, children, source, exclude } = props;
   let { match } = props;
 
@@ -41,9 +41,12 @@ const Inserter = (props) => {
 
   if (exclude === path) return null;
 
-  const [checkType, pos] = matchType(path, props.match);
+  let [checkType, pos] = matchType(path, props.match);
 
-  if (!checkType) return null;
+  if (!checkType) {
+    if (pathnameOld) [checkType, pos] = matchType(pathnameOld, props.match);
+    if (!checkType) return null;
+  }
   if (match instanceof Array) match = match[pos];
 
   if (children)
@@ -64,13 +67,13 @@ const Inserter = (props) => {
       const [start, end] = match.split("*");
       path = source.replace(
         "*",
-        path.substring(start.length, path.indexOf(end))
+        path.substring(start.length, path.indexOf(end)),
       );
     }
   }
 
   path = path.split("/");
-  if (path[3] === "{_userid}") path[3] = app().session.user?._id;
+  if (path[3] === "{_userid}") path[3] = app.session.user?._id;
 
   return (
     <ContentTypeView
