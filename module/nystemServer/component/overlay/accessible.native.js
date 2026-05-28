@@ -1,46 +1,42 @@
-import React from "react";
+import React, { useEffect, useRef, useState } from "react";
 import app from "nystem";
 import { Wrapper } from "nystem-components";
 import { AccessibilityInfo } from "react-native";
 
-class OverlayAccessible extends React.Component {
-  state = { accessible: true, screenReaderEnabled: false };
-  overlayEvent = options => {
-    const accessible = !Object.keys(options.open).length;
-    if (this.state.accessible !== accessible) this.setState({ accessible });
-  };
-  _handleScreenReaderToggled = isEnabled => {
-    this.setState({
-      screenReaderEnabled: isEnabled
+const OverlayAccessible = ({ children }) => {
+  const [accessible, setAccessible] = useState(true);
+  const [screenReaderEnabled, setScreenReaderEnabled] = useState(false);
+  const accessibleRef = useRef(accessible);
+
+  useEffect(() => {
+    accessibleRef.current = accessible;
+  }, [accessible]);
+
+  useEffect(() => {
+    const overlayEvent = (options) => {
+      const accessible = !Object.keys(options.open).length;
+      if (accessibleRef.current !== accessible) setAccessible(accessible);
+    };
+    const handleScreenReaderToggled = (isEnabled) => {
+      setScreenReaderEnabled(isEnabled);
+    };
+
+    app().on("overlay", overlayEvent);
+    AccessibilityInfo.addEventListener("change", handleScreenReaderToggled);
+    AccessibilityInfo.fetch().done((isEnabled) => {
+      setScreenReaderEnabled(isEnabled);
     });
-  };
-  componentDidMount(event) {
-    app().on("overlay", this.overlayEvent);
-    AccessibilityInfo.addEventListener(
-      "change",
-      this._handleScreenReaderToggled
-    );
-    AccessibilityInfo.fetch().done(isEnabled => {
-      this.setState({
-        screenReaderEnabled: isEnabled
-      });
-    });
-  }
-  componentWillUnmount(event) {
-    app().off("overlay", this.overlayEvent);
-    AccessibilityInfo.removeEventListener(
-      "change",
-      this._handleScreenReaderToggled
-    );
-  }
-  render() {
-    const { accessible, screenReaderEnabled } = this.state;
-    if (!accessible && screenReaderEnabled) return null;
-    return (
-      <Wrapper accessible={this.state.accessible ? undefined : false}>
-        {this.props.children}
-      </Wrapper>
-    );
-  }
-}
+
+    return () => {
+      app().off("overlay", overlayEvent);
+      AccessibilityInfo.removeEventListener("change", handleScreenReaderToggled);
+    };
+  }, []);
+
+  if (!accessible && screenReaderEnabled) return null;
+  return (
+    <Wrapper accessible={accessible ? undefined : false}>{children}</Wrapper>
+  );
+};
+
 export default OverlayAccessible;

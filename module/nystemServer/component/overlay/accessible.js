@@ -1,51 +1,37 @@
-import React from "react";
+import React, { useEffect, useRef, useState } from "react";
 import app from "nystem";
 import { Wrapper } from "nystem-components";
-import PropTypes from "prop-types";
 
-class OverlayAccessible extends React.Component {
-  state = { accessible: true };
-  overlayEvent = options => {
-    const accessible = !Object.keys(options.open).length;
-    if (this.state.accessible !== accessible) {
-      this.setState({ accessible });
-      app().event("accessible", {
-        accessible,
-        accessibleId: this.accessibleId
-      });
-    }
-  };
-  getChildContext() {
-    return {
-      accessibleId: this.accessibleId
+const OverlayAccessible = ({ children }) => {
+  const [accessible, setAccessible] = useState(true);
+  const accessibleRef = useRef(accessible);
+  const accessibleId = useRef();
+
+  useEffect(() => {
+    accessibleRef.current = accessible;
+  }, [accessible]);
+
+  useEffect(() => {
+    accessibleId.current = app().uuid();
+
+    const overlayEvent = (options) => {
+      const accessible = !Object.keys(options.open).length;
+      if (accessibleRef.current !== accessible) {
+        setAccessible(accessible);
+        app().event("accessible", {
+          accessible,
+          accessibleId: accessibleId.current,
+        });
+      }
     };
-  }
 
-  _handleScreenReaderToggled = isEnabled => {
-    this.setState({
-      screenReaderEnabled: isEnabled
-    });
-  };
-  componentDidMount(event) {
-    this.accessibleId = app().uuid();
-    app().on("overlay", this.overlayEvent);
-  }
-  componentWillUnmount(event) {
-    app().off("overlay", this.overlayEvent);
-  }
-  render() {
-    const { accessible } = this.state;
-    return (
-      <Wrapper accessible={accessible ? undefined : false}>
-        {this.props.children}
-      </Wrapper>
-    );
-  }
-}
-OverlayAccessible.contextTypes = {
-  overlayId: PropTypes.string
+    app().on("overlay", overlayEvent);
+    return () => app().off("overlay", overlayEvent);
+  }, []);
+
+  return (
+    <Wrapper accessible={accessible ? undefined : false}>{children}</Wrapper>
+  );
 };
-OverlayAccessible.childContextTypes = {
-  accessibleId: PropTypes.string
-};
+
 export default OverlayAccessible;

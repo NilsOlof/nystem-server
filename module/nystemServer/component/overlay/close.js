@@ -1,28 +1,25 @@
-import React from "react";
+import React, { useContext } from "react";
 import app from "nystem";
 import { Wrapper } from "nystem-components";
-import PropTypes from "prop-types";
+import { OverlayContextObject } from "./context";
 
-class OverlayClose extends React.Component {
-  handleEvent(event) {
+const OverlayClose = ({ className, renderAs, accessible, children }) => {
+  const overlayId = useContext(OverlayContextObject);
+  const handleEvent = (event) => {
     if (event && event.preventDefault) event.preventDefault();
-    app().event("overlay", { overlayId: this.context.overlayId, do: "close" });
-  }
-  render() {
-    const { className, renderAs, accessible } = this.props;
-    return (
-      <Wrapper
-        renderAs={renderAs || "a"}
-        className={className}
-        onClick={this.handleEvent.bind(this)}
-        accessible={accessible}
-      >
-        {this.props.children}
-      </Wrapper>
-    );
-  }
-}
-OverlayClose.contextTypes = {
-  overlayId: PropTypes.string
+    app().event("overlay", { overlayId, do: "close" });
+  };
+
+  return (
+    <Wrapper
+      renderAs={renderAs || "a"}
+      className={className}
+      onClick={handleEvent}
+      accessible={accessible}
+    >
+      {children}
+    </Wrapper>
+  );
 };
+
 export default OverlayClose;

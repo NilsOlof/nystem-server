@@ -30,19 +30,28 @@ export default (app) => {
   });
 
   app.on("start", async () => {
+    console.log("[router] request worker start", { path: `${__dirname}/proxy.js` });
     await app.event("requireSu.start", { path: `${__dirname}/proxy.js` });
 
     app.database.server.on(["delete", "save"], async (query) => {
-      if (query.oldData) await app.event("router.remove", query.oldData);
+      if (query.oldData) {
+        console.log("[router] database remove route", query.oldData);
+        await app.event("router.remove", query.oldData);
+      }
     });
     app.database.server.on("save", async (query) => {
+      console.log("[router] database add route", query.data);
       await app.event("router.add", query.data);
     });
 
     app.database.server
       .search({ role: "super" })
-      .then(({ data = [] }) =>
-        data.forEach((server) => app.event("router.add", server))
-      );
+      .then(({ data = [] }) => {
+        console.log("[router] load initial routes", { count: data.length });
+        data.forEach((server) => {
+          console.log("[router] initial route", server);
+          app.event("router.add", server);
+        });
+      });
   });
 };

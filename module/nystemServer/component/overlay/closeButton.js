@@ -2,28 +2,27 @@ import React from "react";
 import app from "nystem";
 import { Wrapper } from "nystem-components";
 
-class OverlayCloseButton extends React.Component {
-  handleEvent(event) {
+const OverlayCloseButton = ({ model, view, path, className: propClassName }) => {
+  const handleEvent = (event) => {
     event.preventDefault();
-    const { view, path } = this.props;
     const toPath = path || view.contentType + "/" + view.format + "/" + view.id;
     app()
       .event("closeOverlay", toPath)
-      .then(data => {});
-  }
-  render() {
-    const { model, view } = this.props;
-    let { className } = this.props;
-    className = className || model.className ? model.className.join(" ") : "";
-    return (
-      <Wrapper
-        renderAs={model.renderAs || "a"}
-        className={className}
-        onClick={this.handleEvent.bind(this)}
-      >
-        {model.item.map(view.createItem, this)}
-      </Wrapper>
-    );
-  }
-}
+      .then((data) => {});
+  };
+
+  const className =
+    propClassName || (model.className ? model.className.join(" ") : "");
+
+  return (
+    <Wrapper
+      renderAs={model.renderAs || "a"}
+      className={className}
+      onClick={handleEvent}
+    >
+      {model.item.map(view.createItem)}
+    </Wrapper>
+  );
+};
+
 export default OverlayCloseButton;
