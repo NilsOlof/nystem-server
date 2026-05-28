@@ -23,7 +23,7 @@ const TextareaLog = ({ view, model, value = "" }) => {
       const parsedLog = (log || "")
         .replace(
           new RegExp(`(module\\.exports )?[( ](${replace})([^) ]+)[) ]`, "gim"),
-          makeLinks
+          makeLinks,
         )
         // eslint-disable-next-line no-control-regex
         .replace(/\x1b\[((?:\d{1,3};?)+|)m/gim, (match, p1) => {
@@ -40,7 +40,7 @@ const TextareaLog = ({ view, model, value = "" }) => {
       setLog(fullLog);
     };
 
-    app().connection.on(`serverLog${view.id}`, updateLog);
+    app.connection.on(`serverLog${view.id}`, updateLog);
     const clearLog = () => {
       setLog("");
       fullLog = "";
@@ -48,7 +48,7 @@ const TextareaLog = ({ view, model, value = "" }) => {
     view.on("clearlog", clearLog);
     return () => {
       view.off("clearlog", clearLog);
-      app().connection.off(`serverLog${view.id}`, updateLog);
+      app.connection.off(`serverLog${view.id}`, updateLog);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [hasVal]);
@@ -65,7 +65,7 @@ const TextareaLog = ({ view, model, value = "" }) => {
           e.preventDefault();
           const path = e.target.href.split("/").slice(3);
 
-          app().connection.emit({
+          app.connection.emit({
             type: "devtoolsnystvscode",
             server: view.id,
             path: path.join("/"),

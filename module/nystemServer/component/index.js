@@ -5,7 +5,6 @@ import {
   SessionRole,
 } from "nystem-components";
 import React from "react";
-import "../../../index.css";
 import "./index.css";
 
 const Index = () => (

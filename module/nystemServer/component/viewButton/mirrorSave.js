@@ -46,7 +46,7 @@ class ViewButtonMirrorSave extends React.Component {
     if (this.saveVals && this.view.valid()) {
       if (this.view.value._id) this.saveVals._id = this.view.value._id;
 
-      app().database[this.view.contentType].save(
+      app.database[this.view.contentType].save(
         {
           data: this.saveVals,
           fields: true,
@@ -55,7 +55,7 @@ class ViewButtonMirrorSave extends React.Component {
           if (!self.view.value._id) self.view.setValue("_id", data);
 
           self.view.event("save", self.view.value);
-        }
+        },
       );
 
       delete this.saveVals;

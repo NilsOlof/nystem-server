@@ -1,3 +1,4 @@
+@import "tailwindcss";
 body {
   font-family: "Fira Code", monospace;
   font-size: 13px;
@@ -104,6 +105,3 @@ body::-webkit-scrollbar-track {
 .select-none {
   -webkit-user-drag: none;
 }
-@tailwind base;
-@tailwind components;
-@tailwind utilities;

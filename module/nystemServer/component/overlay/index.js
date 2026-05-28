@@ -20,13 +20,13 @@ const OverlayIndex = ({ children, match }) => {
   };
 
   useEffect(() => {
-    app().on("overlay", overlayEvent);
+    app.on("overlay", overlayEvent);
     return () => {
-      app().off("overlay", overlayEvent);
+      app.off("overlay", overlayEvent);
     };
   });
 
-  if (path !== atPath) app().event("overlay", { event: "close" });
+  if (path !== atPath) app.event("overlay", { event: "close" });
   atPath = path;
 
   const items =

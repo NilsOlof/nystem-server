@@ -12,21 +12,21 @@ const OverlayAccessible = ({ children }) => {
   }, [accessible]);
 
   useEffect(() => {
-    accessibleId.current = app().uuid();
+    accessibleId.current = app.uuid();
 
     const overlayEvent = (options) => {
       const accessible = !Object.keys(options.open).length;
       if (accessibleRef.current !== accessible) {
         setAccessible(accessible);
-        app().event("accessible", {
+        app.event("accessible", {
           accessible,
           accessibleId: accessibleId.current,
         });
       }
     };
 
-    app().on("overlay", overlayEvent);
-    return () => app().off("overlay", overlayEvent);
+    app.on("overlay", overlayEvent);
+    return () => app.off("overlay", overlayEvent);
   }, []);
 
   return (

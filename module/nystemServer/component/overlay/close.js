@@ -7,7 +7,7 @@ const OverlayClose = ({ className, renderAs, accessible, children }) => {
   const overlayId = useContext(OverlayContextObject);
   const handleEvent = (event) => {
     if (event && event.preventDefault) event.preventDefault();
-    app().event("overlay", { overlayId, do: "close" });
+    app.event("overlay", { overlayId, do: "close" });
   };
 
   return (

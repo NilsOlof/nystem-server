@@ -18,7 +18,7 @@ const DevtoolsSelectContenttype = ({ model, view }) => {
       const filter = { ...(paramRef.current?.filter || {}) };
       filter.$and = [...(filter.$and || []), ...(query.filter?.$and || [])];
 
-      const result = await app().event("devtools", {
+      const result = await app.event("devtools", {
         ...query,
         filter,
         path: `database.${valRef.current}`,
@@ -34,12 +34,12 @@ const DevtoolsSelectContenttype = ({ model, view }) => {
         searchTotal: result.searchTotal,
       };
     };
-    app().database[view.contentType].on("search", onSearch);
+    app.database[view.contentType].on("search", onSearch);
 
     const onGet = async (query) => {
       if (!valRef.current) return;
 
-      const result = await app().event("devtools", {
+      const result = await app.event("devtools", {
         ...query,
         path: `database.${valRef.current}`,
         event: "get",
@@ -49,12 +49,12 @@ const DevtoolsSelectContenttype = ({ model, view }) => {
 
       return { ...query, data: result.data };
     };
-    app().database[view.contentType].on("get", onGet);
+    app.database[view.contentType].on("get", onGet);
 
     const onSave = async (query) => {
       if (!valRef.current) return;
 
-      await app().event("devtools", {
+      await app.event("devtools", {
         ...query,
         path: `database.${valRef.current}`,
         event: "save",
@@ -62,12 +62,12 @@ const DevtoolsSelectContenttype = ({ model, view }) => {
 
       return { ...query, data: false };
     };
-    app().database[view.contentType].on("save", onSave);
+    app.database[view.contentType].on("save", onSave);
 
     const onDelete = async (query) => {
       if (!valRef.current) return;
 
-      await app().event("devtools", {
+      await app.event("devtools", {
         ...query,
         path: `database.${valRef.current}`,
         event: "delete",
@@ -75,10 +75,10 @@ const DevtoolsSelectContenttype = ({ model, view }) => {
 
       return { ...query, data: false };
     };
-    app().database[view.contentType].on("delete", onDelete);
+    app.database[view.contentType].on("delete", onDelete);
 
     const getOptions = async () => {
-      const { data } = await app().event("devtools", { path: "contentType" });
+      const { data } = await app.event("devtools", { path: "contentType" });
       if (!data) return;
 
       setOption(Object.keys(data));
@@ -88,14 +88,14 @@ const DevtoolsSelectContenttype = ({ model, view }) => {
     const init = ({ init }) => {
       if (init) getOptions();
     };
-    app().on("devtools", init);
+    app.on("devtools", init);
 
     return () => {
-      app().database[view.contentType].off("get", onGet);
-      app().database[view.contentType].off("search", onSearch);
-      app().database[view.contentType].off("save", onSave);
-      app().database[view.contentType].off("delete", onDelete);
-      app().off("devtools", init);
+      app.database[view.contentType].off("get", onGet);
+      app.database[view.contentType].off("search", onSearch);
+      app.database[view.contentType].off("save", onSave);
+      app.database[view.contentType].off("delete", onDelete);
+      app.off("devtools", init);
     };
   }, [view]);
 
@@ -122,7 +122,7 @@ const DevtoolsSelectContenttype = ({ model, view }) => {
         searches.find(
           (search) =>
             JSON.stringify(search) ===
-            JSON.stringify({ sortby, filter, reverse })
+            JSON.stringify({ sortby, filter, reverse }),
         )
       )
         return;
@@ -131,10 +131,10 @@ const DevtoolsSelectContenttype = ({ model, view }) => {
 
       setSetsearches(searches);
     };
-    app().on("devtools", onSearch);
+    app.on("devtools", onSearch);
 
     return () => {
-      app().off("devtools", onSearch);
+      app.off("devtools", onSearch);
     };
   }, [value.id, view]);
 

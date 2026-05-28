@@ -4,7 +4,7 @@ import app from "nystem";
 const add = (path) => {
   if (/^https?:/im.test(path)) return path;
 
-  const { domain, secure } = app().settings;
+  const { domain, secure } = app.settings;
   return `http${secure ? "s" : ""}://${domain}${path}`;
 };
 

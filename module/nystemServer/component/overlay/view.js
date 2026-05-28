@@ -7,13 +7,13 @@ const OverlayView = (props) => {
 
   const onClick = (event) => {
     event.preventDefault();
-    app().event("addOverlay", model);
+    app.event("addOverlay", model);
   };
 
   const className = model.className ? model.className.join(" ") : "";
   return (
     <a className={className} href={model.link} onClick={onClick}>
-      {app().t(model.text)}
+      {app.t(model.text)}
     </a>
   );
 };
