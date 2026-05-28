@@ -1,6 +1,0 @@
-{
-  "dependencies": {
-    "my-moment": "file:./core/date/my-moment"
-  },
-  "type": "module"
-}

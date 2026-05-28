@@ -1,11 +1,12 @@
 {
   "scripts": {
     "worker": "sudo node app.js module/requireSu/worker.js",
-    "initweb": "node app.js core/file/initweb.js",
     "start": "node server.js",
+    "initweb": "node app.js core/file/initweb.js",
+    "client": "node app.js",
     "deploy": "node app.js core/core/deploy.js"
   },
-  "license": "ISC",
+  "license": "MIT",
   "dependencies": {
     "http-proxy": "*",
     "sudo-prompt": "*",
@@ -13,13 +14,14 @@
     "pngjs": "*",
     "sharp": "*",
     "mime": "*",
-    "my-moment": "file:./core/date/my-moment",
     "fs-extra": "*"
   },
   "devDependencies": {
-    "tailwindcss": "*",
     "@tailwindcss/typography": "*",
     "@tailwindcss/forms": "*",
+    "@tailwindcss/vite": "*",
+    "tailwindcss": "*",
     "chokidar": "*"
-  }
+  },
+  "type": "module"
 }

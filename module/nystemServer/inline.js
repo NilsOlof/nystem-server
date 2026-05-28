@@ -31,7 +31,7 @@ const start = async (app, db) => {
   db.on("search", -10000, itemWaiter.done);
 };
 
-module.exports = (app, name) =>
+export default (app, name) =>
   app.on("start", () => {
     start(app, app.database[name]);
   });

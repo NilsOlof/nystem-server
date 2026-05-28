@@ -1,4 +1,4 @@
-module.exports = (app) => {
+export default (app) => {
   if (!window.chrome.storage) return;
   console.log("chrome extension storage");
 

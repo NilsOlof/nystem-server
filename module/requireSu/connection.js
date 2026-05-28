@@ -1,4 +1,4 @@
-const net = require("net");
+import net from "node:net";
 
 const port = 64656;
 const commandSeparator = "%%%%";
@@ -31,106 +31,126 @@ const commandParser = (socket, callback) => {
   return (data) => socket.write(JSON.stringify(data) + commandSeparator);
 };
 
-module.exports = {
-  server: (app) => {
-    const callbacks = {};
+export const server = (app) => {
+  const callbacks = {};
+  const sockets = new Set();
 
-    const start = (socket) => {
-      const send = commandParser(
-        socket,
-        async ({ id, prio, off, on, event, data, callback }) => {
-          if (callback) {
-            callbacks[callback](data);
-            delete callbacks[callback];
-            return;
-          }
-
-          if (id) {
-            send({ id, event, data: await app.event(event, data) });
-            return;
-          }
-
-          if (on) {
-            const callback = (data) =>
-              new Promise((resolve) => {
-                const callback = uuid();
-                send({ on, event, data, callback });
-                callbacks[callback] = resolve;
-              });
-
-            app.on(event, callback, prio);
-            callbacks[on] = callback;
-          }
-
-          if (off) {
-            app.off(event, callbacks[off]);
-            delete callbacks[off];
-          }
-        }
-      );
-    };
-
-    net.createServer(start).listen(port);
-  },
-
-  client: (ev = {}) => {
-    const callbacks = {};
-
-    const client = net.connect({ port }, () => {});
+  const start = (socket) => {
+    sockets.add(socket);
+    socket.on("close", () => sockets.delete(socket));
 
     const send = commandParser(
-      client,
-      async ({ id, on, event, data, callback }) => {
+      socket,
+      async ({ id, prio, off, on, event, data, callback }) => {
         if (callback) {
-          send({ callback, data: await callbacks[on](data) });
+          callbacks[callback](data);
+          delete callbacks[callback];
           return;
         }
 
         if (id) {
-          callbacks[id](data);
-          delete callbacks[id];
+          send({ id, event, data: await app.event(event, data) });
+          return;
         }
 
-        if (on) send({ on, event, data: await callbacks[on](data) });
-      }
+        if (on) {
+          const callback = (data) =>
+            new Promise((resolve) => {
+              const callback = uuid();
+              send({ on, event, data, callback });
+              callbacks[callback] = resolve;
+            });
+
+          app.on(event, callback, prio);
+          callbacks[on] = callback;
+        }
+
+        if (off) {
+          app.off(event, callbacks[off]);
+          delete callbacks[off];
+        }
+      },
     );
-    client.on("end", () => {
-      process.exit();
-    });
+  };
 
-    client.on("error", (err) => {
-      process.exit();
-    });
+  const socketServer = net.createServer(start).listen(port);
 
-    return {
-      ...ev,
+  const close = () => {
+    sockets.forEach((socket) => socket.destroy());
+    sockets.clear();
+    socketServer.close();
+  };
 
-      on: (event, callback, prio) => {
-        if (typeof callback === "number") {
-          const tmp = callback;
-          callback = prio;
-          prio = tmp;
-        }
+  socketServer.on("error", ({ code }) => {
+    if (code === "EADDRINUSE") close();
+  });
 
-        const on = uuid();
-        callbacks[on] = callback;
-        send({ on, prio, event });
-      },
+  return { close };
+};
 
-      event: (event, data) =>
-        new Promise((resolve) => {
-          const id = uuid();
-          callbacks[id] = resolve;
-          send({ id, event, data });
-        }),
+export const client = (ev = {}) => {
+  const callbacks = {};
 
-      off: (event, callback) => {
-        const [id] = Object.entries(callbacks).filter(
-          ([, val]) => val === callback
-        );
+  const client = net.connect({ port }, () => {});
+
+  const send = commandParser(
+    client,
+    async ({ id, on, event, data, callback }) => {
+      if (callback) {
+        send({ callback, data: await callbacks[on](data) });
+        return;
+      }
+
+      if (id) {
+        callbacks[id](data);
         delete callbacks[id];
-        send({ off: id });
-      },
-    };
-  },
+      }
+
+      if (on) send({ on, event, data: await callbacks[on](data) });
+    },
+  );
+  client.on("end", () => {
+    process.exit();
+  });
+
+  client.on("error", (err) => {
+    process.exit();
+  });
+
+  return {
+    ...ev,
+    close: () => client.end(),
+
+    on: (event, callback, prio) => {
+      if (typeof callback === "number") {
+        const tmp = callback;
+        callback = prio;
+        prio = tmp;
+      }
+
+      const on = uuid();
+      callbacks[on] = callback;
+      send({ on, prio, event });
+    },
+
+    event: (event, data) =>
+      new Promise((resolve) => {
+        const id = uuid();
+        callbacks[id] = resolve;
+        send({ id, event, data });
+      }),
+
+    off: (event, callback) => {
+      const [id] = Object.entries(callbacks).filter(
+        ([, val]) => val === callback,
+      );
+      delete callbacks[id];
+      send({ off: id });
+    },
+  };
+};
+
+export default {
+  server,
+  client,
 };

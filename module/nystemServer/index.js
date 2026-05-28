@@ -1,4 +1,8 @@
-const { spawn } = require("child_process");
+import { exec, spawn } from "node:child_process";
+import { dirname } from "node:path";
+import { fileURLToPath } from "node:url";
+
+const __dirname = dirname(fileURLToPath(import.meta.url));
 
 const role = "super";
 
@@ -83,7 +87,7 @@ const start = (app) => {
     field: "vscode",
     call: ({ runbasepath }) => {
       console.log("Open code path", runbasepath);
-      require("child_process").exec(`code ${runbasepath}`);
+      exec(`code ${runbasepath}`);
     },
     callWin: ({ runbasepath }) => {
       console.log("Open code path", runbasepath);
@@ -100,7 +104,7 @@ const start = (app) => {
     field: "term",
     call: ({ runbasepath }) => {
       console.log("Open terminal path", runbasepath);
-      require("child_process").exec(`open -a Terminal "${runbasepath}"`);
+      exec(`open -a Terminal "${runbasepath}"`);
     },
     callWin: ({ runbasepath }) => {
       console.log("Open terminal path", runbasepath);
@@ -186,8 +190,7 @@ const start = (app) => {
     }
     console.log("Open code path", path);
 
-    if (process.platform !== "win32")
-      require("child_process").exec(`code -g ${path}`);
+    if (process.platform !== "win32") exec(`code -g ${path}`);
     else
       runProgram("C:/Program Files/Microsoft VS Code/Code.exe", [
         "-g",
@@ -196,4 +199,4 @@ const start = (app) => {
   });
 };
 
-module.exports = (app) => app.on("start", start);
+export default (app) => app.on("start", start);

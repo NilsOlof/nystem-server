@@ -1,6 +1,10 @@
-const fs = require("fs-extra");
+import { dirname } from "node:path";
+import { fileURLToPath } from "node:url";
+
+const __dirname = dirname(fileURLToPath(import.meta.url));
 
 const start = async (app) => {
+  const fs = (await import(app.nodePath("fs-extra"))).default;
   const { atHost } = app.settings;
 
   if (!atHost.runbasepath) return;
@@ -42,4 +46,4 @@ const start = async (app) => {
   });
 };
 
-module.exports = (app) => app.on("start", start);
+export default (app) => app.on("start", start);

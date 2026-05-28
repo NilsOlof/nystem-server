@@ -1,7 +1,11 @@
-module.exports = function (app) {
-  if (!app.settings.chromextension) return;
+import http from "node:http";
+import { dirname } from "node:path";
+import { fileURLToPath } from "node:url";
 
-  const http = require("http");
+const __dirname = dirname(fileURLToPath(import.meta.url));
+
+export default function (app) {
+  if (!app.settings.chromextension) return;
 
   const fetch = (url) =>
     new Promise((resolve, reject) => {
@@ -43,10 +47,6 @@ module.exports = function (app) {
     return result;
   };
 
-  const entrypoints = require("./features.json").filter((item) =>
-    ["popup", "background", "content", "devtools"].includes(item)
-  );
-
   const update = async () => {
     console.log("Update extension");
     clearTimeout(timer);
@@ -72,6 +72,13 @@ module.exports = function (app) {
       ""
     );
 
+    const features = JSON.parse(
+      await fs.readFile(`${__dirname}/features.json`, "utf-8")
+    );
+    const entrypoints = features.filter((item) =>
+      ["popup", "background", "content", "devtools"].includes(item)
+    );
+
     entrypoints.forEach(async (filename) => {
       if (["content"].includes(filename)) {
         const { content } = await app.event("extensionContent");
@@ -94,9 +101,10 @@ module.exports = function (app) {
     });
   };
 
-  const compileAndCopy = () => {
+  const compileAndCopy = async () => {
     update();
-    require("./manifest.js")(app);
+    const manifest = await app.require("./manifest", true);
+    manifest(app);
     [16, 24, 32, 48, 128, 512].forEach((size) => {
       fetch(`${host}/icon/${size}.png`).then((buffer) => {
         fs.outputFile(`${extPath}/icon/${size}.png`, buffer);

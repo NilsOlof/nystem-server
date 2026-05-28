@@ -1,3 +1,5 @@
+import { spawn } from "node:child_process";
+
 const role = "super";
 
 const insertValues = (text, data) =>
@@ -7,8 +9,6 @@ const insertValues = (text, data) =>
 
 const start = function (app) {
   const runProgram = function (path, program) {
-    const { spawn } = require("child_process");
-
     const execService = spawn("node", [`${path}/${program}`], {
       cwd: path,
       detached: false,
@@ -117,7 +117,7 @@ const start = function (app) {
   });
 };
 
-module.exports = (app) => {
+export default (app) => {
   app.on("serverPath", (server) => {
     const { atHost } = app.settings;
 

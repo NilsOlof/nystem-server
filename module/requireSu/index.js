@@ -1,5 +1,10 @@
-const os = require("os").platform();
-const { server } = require("./connection");
+import { spawn } from "node:child_process";
+import { platform } from "node:os";
+import { dirname } from "node:path";
+import { fileURLToPath } from "node:url";
+
+const __dirname = dirname(fileURLToPath(import.meta.url));
+const os = platform();
 
 const log = (error, stdout, stderr) => {
   if (error) console.error(error);
@@ -7,10 +12,12 @@ const log = (error, stdout, stderr) => {
   if (stderr) console.error(stderr);
 };
 
-const start = (app) => {
+const start = async (app) => {
   if (app.settings.noRequireSu) return;
 
-  server(app);
+  const { server } = await app.require("./connection", true);
+  const suServer = server(app);
+  app.on("exit", () => suServer.close());
 
   let startCallback = false;
   app.on("requireSu.worker.started", () => {
@@ -26,7 +33,7 @@ const start = (app) => {
   const command = `node "${app.__dirname}/app.js" "${__dirname}/worker.js"`;
 
   if (os === "win32") {
-    const sudo = require("sudo-prompt");
+    const sudo = (await import(app.nodePath("sudo-prompt"))).default;
     sudo.exec(command, { name: "Router start" }, (error, stdout, stderr) => {
       if (error) throw error;
       console.log(`stdout: ${stdout}`);
@@ -44,7 +51,7 @@ const start = (app) => {
       `tell app "Terminal" to activate\ntell app "Terminal" to do script "cd \\"${app.__dirname}\\" && npm run worker && exit"`,
     ];
 
-    require("child_process").spawn("osascript", args, opt);
+    spawn("osascript", args, opt);
   }
 
   if (!startCallback)
@@ -53,4 +60,4 @@ const start = (app) => {
     });
 };
 
-module.exports = (app) => app.on("init", start);
+export default (app) => app.on("init", start);

@@ -1,5 +1,11 @@
-module.exports = (app) => {
-  const hostname = require("os").platform();
+import { platform } from "node:os";
+import { dirname } from "node:path";
+import { fileURLToPath } from "node:url";
+
+const __dirname = dirname(fileURLToPath(import.meta.url));
+
+export default (app) => {
+  const hostname = platform();
   console.log(`At host ${hostname}`);
 
   app.on("start", 10, async () => {

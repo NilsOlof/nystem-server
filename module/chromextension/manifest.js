@@ -1,13 +1,20 @@
-module.exports = async (app) => {
+import { dirname } from "node:path";
+import { fileURLToPath } from "node:url";
+
+const __dirname = dirname(fileURLToPath(import.meta.url));
+
+export default async (app) => {
   const { fs } = app;
 
   const getPart = (path) =>
     fs.readFile(`${__dirname}/manifest/${path}.json`, "utf-8");
 
+  const features = JSON.parse(
+    await fs.readFile(`${__dirname}/features.json`, "utf-8"),
+  );
+
   const parts = await Promise.all(
-    ["base", ...require("./features.json")].map(async (path) =>
-      JSON.parse(await getPart(path))
-    )
+    ["base", ...features].map(async (path) => JSON.parse(await getPart(path))),
   );
 
   const mergeKey = (d1, d2) => {

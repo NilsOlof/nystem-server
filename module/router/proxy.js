@@ -1,9 +1,12 @@
-module.exports = async (ev) => {
+import { createServer } from "node:http";
+
+export default async (ev) => {
   const { routerPort } = await ev.event("settings");
   console.log("Proxy start");
 
   let routes = {};
-  const httpProxy = require("http-proxy");
+  const httpProxy = (await import(`file://${process.env.NODE_PATH}/http-proxy/index.js`))
+    .default;
   let proxy = {};
 
   function loadConfig() {
@@ -35,7 +38,7 @@ module.exports = async (ev) => {
       : host;
   };
 
-  const proxyServer = require("http").createServer((req, res) => {
+  const proxyServer = createServer((req, res) => {
     const host = getHost(req);
 
     if (proxy[host]) proxy[host].web(req, res, (err) => {});
