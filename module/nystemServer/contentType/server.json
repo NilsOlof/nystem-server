@@ -358,6 +358,51 @@
       ]
     },
     {
+      "name": "codex",
+      "format": "view",
+      "item": [
+        {
+          "category": "view",
+          "type": "style",
+          "item": [
+            {
+              "category": "view",
+              "type": "style",
+              "item": [
+                {
+                  "category": "contentTypeField",
+                  "type": "text",
+                  "id": "name",
+                  "renderAs": "div",
+                  "className": ["flex-grow"],
+                  "format": "view"
+                },
+                {
+                  "category": "view",
+                  "type": "viewInView",
+                  "contentType": "serverStatus",
+                  "view": "controlnohide",
+                  "className": [""],
+                  "format": "empty",
+                  "viewId": "{_id}"
+                }
+              ],
+              "className": ["flex", "items-center"]
+            },
+            {
+              "category": "view",
+              "type": "viewInView",
+              "contentType": "serverStatus",
+              "view": "status",
+              "viewId": "{_id}",
+              "format": "empty"
+            }
+          ],
+          "className": ["p-3", "max-w-4xl"]
+        }
+      ]
+    },
+    {
       "name": "link",
       "format": "view",
       "item": [
@@ -489,146 +534,6 @@
           "filter": [],
           "className": ["table-striped"],
           "rowClassName": [""]
-        }
-      ]
-    },
-    {
-      "name": "menu",
-      "format": "view",
-      "item": [
-        {
-          "type": "router",
-          "match": "index.html",
-          "item": [{ "type": "router", "format": "redirect", "to": "/" }]
-        },
-        {
-          "type": "style",
-          "item": [
-            {
-              "type": "electron",
-              "className": [
-                "flex",
-                "items-center",
-                "max-w-4xl",
-                "w-full",
-                "px-4"
-              ],
-              "item": [
-                {
-                  "category": "view",
-                  "type": "viewLink",
-                  "format": "fields",
-                  "contentType": "settings",
-                  "view": "menu",
-                  "item": [
-                    {
-                      "category": "view",
-                      "type": "icon",
-                      "className": ["w-8", "h-8", "p-2", "select-none"],
-                      "icon": "bars"
-                    }
-                  ]
-                },
-                {
-                  "category": "view",
-                  "type": "viewLink",
-                  "format": "link",
-                  "text": "Nystem server",
-                  "href": "/",
-                  "className": ["pl-1", "flex-grow", "select-none"]
-                },
-                {
-                  "type": "connection",
-                  "item": [
-                    {
-                      "category": "view",
-                      "type": "viewImage",
-                      "className": [
-                        "w-10",
-                        "h-10",
-                        "grayscale",
-                        "mb-1",
-                        "select-none",
-                        "opacity-30"
-                      ],
-                      "filename": "logo3.svg"
-                    }
-                  ],
-                  "offline": true
-                },
-                {
-                  "type": "connection",
-                  "item": [
-                    {
-                      "category": "view",
-                      "type": "viewImage",
-                      "className": ["w-10", "h-10", "mb-1", "select-none"],
-                      "filename": "logo3.svg"
-                    }
-                  ]
-                }
-              ],
-              "format": "moveWindow"
-            },
-            { "type": "viewText", "className": ["flex-grow", "select-none"] },
-            {
-              "type": "electron",
-              "item": [
-                {
-                  "type": "electron",
-                  "format": "appButton",
-                  "buttonActive": "",
-                  "className": [
-                    "p-2",
-                    "w-8",
-                    "h-8",
-                    "cursor-pointer",
-                    "hover:bg-gray-200",
-                    "rounded"
-                  ],
-                  "button": "window-minimize"
-                },
-                {
-                  "type": "electron",
-                  "format": "appButton",
-                  "buttonActive": "rectangle",
-                  "className": [
-                    "p-2",
-                    "w-8",
-                    "h-8",
-                    "cursor-pointer",
-                    "hover:bg-gray-200",
-                    "rounded"
-                  ],
-                  "button": "regular-square-full"
-                },
-                {
-                  "type": "electron",
-                  "format": "appButton",
-                  "buttonActive": "",
-                  "className": [
-                    "p-2",
-                    "w-8",
-                    "h-8",
-                    "cursor-pointer",
-                    "hover:bg-gray-200",
-                    "rounded",
-                    "mr-1"
-                  ],
-                  "button": "xmark"
-                }
-              ]
-            }
-          ],
-          "className": [
-            "flex",
-            "text-left",
-            "font-bold",
-            "py-2",
-            "pb-0",
-            "items-center",
-            "w-full"
-          ]
         }
       ]
     },
@@ -926,6 +831,146 @@
           ],
           "expanded": true,
           "className": ["mx-3", "mt-3"]
+        }
+      ]
+    },
+    {
+      "name": "menu",
+      "format": "view",
+      "item": [
+        {
+          "type": "router",
+          "match": "index.html",
+          "item": [{ "type": "router", "format": "redirect", "to": "/" }]
+        },
+        {
+          "type": "style",
+          "item": [
+            {
+              "type": "style",
+              "className": [
+                "flex",
+                "items-center",
+                "max-w-4xl",
+                "w-full",
+                "px-4"
+              ],
+              "item": [
+                {
+                  "category": "view",
+                  "type": "viewLink",
+                  "format": "fields",
+                  "contentType": "settings",
+                  "view": "menu",
+                  "item": [
+                    {
+                      "category": "view",
+                      "type": "icon",
+                      "className": ["w-8", "h-8", "p-2", "select-none"],
+                      "icon": "bars"
+                    }
+                  ]
+                },
+                {
+                  "category": "view",
+                  "type": "viewLink",
+                  "format": "link",
+                  "text": "Nystem server",
+                  "href": "/",
+                  "className": ["pl-1", "flex-grow", "select-none"]
+                },
+                {
+                  "type": "connection",
+                  "item": [
+                    {
+                      "category": "view",
+                      "type": "viewImage",
+                      "className": [
+                        "w-10",
+                        "h-10",
+                        "grayscale",
+                        "mb-1",
+                        "select-none",
+                        "opacity-30"
+                      ],
+                      "filename": "logo3.svg"
+                    }
+                  ],
+                  "offline": true
+                },
+                {
+                  "type": "connection",
+                  "item": [
+                    {
+                      "category": "view",
+                      "type": "viewImage",
+                      "className": ["w-10", "h-10", "mb-1", "select-none"],
+                      "filename": "logo3.svg"
+                    }
+                  ]
+                }
+              ],
+              "format": "moveWindow"
+            },
+            { "type": "viewText", "className": ["flex-grow", "select-none"] },
+            {
+              "type": "style",
+              "item": [
+                {
+                  "type": "style",
+                  "format": "appButton",
+                  "buttonActive": "",
+                  "className": [
+                    "p-2",
+                    "w-8",
+                    "h-8",
+                    "cursor-pointer",
+                    "hover:bg-gray-200",
+                    "rounded"
+                  ],
+                  "button": "window-minimize"
+                },
+                {
+                  "type": "style",
+                  "format": "appButton",
+                  "buttonActive": "rectangle",
+                  "className": [
+                    "p-2",
+                    "w-8",
+                    "h-8",
+                    "cursor-pointer",
+                    "hover:bg-gray-200",
+                    "rounded"
+                  ],
+                  "button": "regular-square-full"
+                },
+                {
+                  "type": "style",
+                  "format": "appButton",
+                  "buttonActive": "",
+                  "className": [
+                    "p-2",
+                    "w-8",
+                    "h-8",
+                    "cursor-pointer",
+                    "hover:bg-gray-200",
+                    "rounded",
+                    "mr-1"
+                  ],
+                  "button": "xmark"
+                }
+              ]
+            }
+          ],
+          "className": [
+            "flex",
+            "text-left",
+            "font-bold",
+            "py-2",
+            "pb-0",
+            "items-center",
+            "w-full"
+          ]
         }
       ]
     }
