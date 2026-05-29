@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import app from "nystem";
-import { UseLocation } from "nystem-components";
+import { useLocation } from "nystem-components";
 import { OverlayContextProvider } from "./context";
 
 let atPath = "";
@@ -8,7 +8,7 @@ let atPath = "";
 const OverlayIndex = ({ children, match }) => {
   // eslint-disable-next-line prefer-const
   let [open, setOpenState] = useState({});
-  const { pathname: path } = UseLocation();
+  const { pathname: path } = useLocation();
 
   const overlayEvent = ({ event, overlayId }) => {
     if (event === "open") open[overlayId] = true;

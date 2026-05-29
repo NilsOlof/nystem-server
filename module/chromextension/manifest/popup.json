@@ -1,5 +1,5 @@
 {
-  "browser_action": {
+  "action": {
     "default_icon": "icon/512.png",
     "default_title": "{name}",
     "default_popup": "popup.html"

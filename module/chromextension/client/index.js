@@ -1,5 +1,6 @@
 export default (app) => {
-  if (!window.chrome.storage) return;
+  const storage = () => window.chrome?.runtime?.id && window.chrome?.storage?.local;
+  if (!storage()) return;
   console.log("chrome extension storage");
 
   app.on("init", 500, () => {
@@ -18,24 +19,57 @@ export default (app) => {
       "storage"
     );
 
+    const finish = (resolve, value) => {
+      const error = window.chrome?.runtime?.lastError;
+      if (error) console.warn("chrome storage", error.message);
+      resolve(value);
+    };
     const setItem = (key, value) =>
       new Promise((resolve) => {
-        window.chrome.storage.local.set({ [key]: value }, resolve);
+        const local = storage();
+        if (!local) return resolve();
+        try {
+          local.set({ [key]: value }, () => finish(resolve));
+        } catch (error) {
+          console.warn("chrome storage set", error.message);
+          resolve();
+        }
       });
     const getItem = (key) =>
       new Promise((resolve) => {
-        window.chrome.storage.local.get([key], (result) => {
-          console.log("get", key, result);
-          resolve(result[key]);
-        });
+        const local = storage();
+        if (!local) return resolve();
+        try {
+          local.get([key], (result = {}) => {
+            console.log("get", key, result);
+            finish(resolve, result[key]);
+          });
+        } catch (error) {
+          console.warn("chrome storage get", error.message);
+          resolve();
+        }
       });
     const removeItem = (key) =>
       new Promise((resolve) => {
-        window.chrome.storage.local.remove([key], resolve);
+        const local = storage();
+        if (!local) return resolve();
+        try {
+          local.remove([key], () => finish(resolve));
+        } catch (error) {
+          console.warn("chrome storage remove", error.message);
+          resolve();
+        }
       });
     const clear = () =>
       new Promise((resolve) => {
-        window.chrome.storage.local.clear(resolve);
+        const local = storage();
+        if (!local) return resolve();
+        try {
+          local.clear(() => finish(resolve));
+        } catch (error) {
+          console.warn("chrome storage clear", error.message);
+          resolve();
+        }
       });
 
     app.storage.on("getItem", async (data) => {

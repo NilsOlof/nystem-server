@@ -7,9 +7,20 @@ const insertValues = (text, data) =>
     return data[p1] ? data[p1] : `{${p1}}`;
   });
 
+const resolveExistingPath = (app, path) => {
+  if (app.fs.existsSync(path)) return path;
+
+  const home = process.env.HOME;
+  const homeMatch = path.match(/^\/Users\/[^/]+(\/.*)$/);
+  if (!home || !homeMatch) return path;
+
+  const homePath = `${home}${homeMatch[1]}`;
+  return app.fs.existsSync(homePath) ? homePath : path;
+};
+
 const start = function (app) {
   const runProgram = function (path, program) {
-    const execService = spawn("node", [`${path}/${program}`], {
+    const execService = spawn(process.execPath, [`${path}/${program}`], {
       cwd: path,
       detached: false,
     });
@@ -26,6 +37,13 @@ const start = function (app) {
     execService.stderr.on("data", (data) => {
       data = data.toString();
       evHandler.event("data", { type: "error", data });
+    });
+
+    execService.on("error", (error) => {
+      evHandler.event("data", { type: "error", data: `${error}\n` });
+      evHandler.event("exit", { code: error.code });
+      app.off("exit", killApp);
+      console.log(`Start failed ${path}/${program}`, error);
     });
 
     execService.on("exit", (code) => {
@@ -124,6 +142,8 @@ export default (app) => {
     let path = insertValues(server.path, atHost.folders).replace(/\\/g, "/");
 
     if (path[0] !== "/" && path[1] !== ":") path = `${atHost.basepath}/${path}`;
+
+    path = resolveExistingPath(app, path);
 
     if (app.fs.existsSync(path) && !app.fs.lstatSync(path).isDirectory()) {
       const pathSplit = path.split("/");

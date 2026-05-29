@@ -1,12 +1,13 @@
 const ExtensionIcon = (props) => {
-  const { browserAction } = window.chrome;
+  const { action } = window.chrome;
   const { color, text, icon, canvas } = props.model || props;
-  if (icon) browserAction.setIcon({ path: icon });
-  if (color) browserAction.setBadgeBackgroundColor({ color }); // [190, 190, 190, 230]
-  if (text) browserAction.setBadgeText({ text });
+  if (!action) return null;
+  if (icon) action.setIcon({ path: icon });
+  if (color) action.setBadgeBackgroundColor({ color }); // [190, 190, 190, 230]
+  if (text) action.setBadgeText({ text });
   if (canvas) {
     const canvasContext = canvas.getContext("2d");
-    browserAction.setIcon({
+    action.setIcon({
       imageData: canvasContext.getImageData(0, 0, canvas.width, canvas.height),
     });
   }
