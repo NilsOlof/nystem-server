@@ -25,7 +25,7 @@ const start = async (app) => {
     else startCallback = true;
   });
 
-  app.on("log", ({ log }) => {
+  app.on("log2", ({ log }) => {
     console.log("Worker", log);
   });
   app.on("requireSu.start", (query) => ({ ...query, settings: app.settings }));

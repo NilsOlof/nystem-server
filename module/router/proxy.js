@@ -17,7 +17,10 @@ export default async (ev) => {
       if (proxyOld[item]) proxy[item] = proxyOld[item];
       else {
         const [host, port] = routes[item].split(":");
-        console.log("[router] create proxy", { host: item, target: routes[item] });
+        console.log("[router] create proxy", {
+          host: item,
+          target: routes[item],
+        });
         proxy[item] = httpProxy.createProxyServer({
           target: {
             host,
@@ -40,7 +43,7 @@ export default async (ev) => {
         });
       }
     });
-    console.log("[router] routes loaded", routes);
+    console.log("[router] routes loaded", routes.length);
   }
 
   const getHost = ({ headers }) => {
@@ -53,12 +56,6 @@ export default async (ev) => {
   const proxyServer = createServer((req, res) => {
     const host = getHost(req);
 
-    console.log("[router] http request", {
-      host,
-      url: req.url,
-      hasRoute: Boolean(proxy[host]),
-    });
-
     if (proxy[host])
       proxy[host].web(req, res, (err) => {
         if (err)
@@ -69,25 +66,19 @@ export default async (ev) => {
             code: err.code,
           });
       });
-    else {
-      console.log("[router] missing host", { host, routes });
-      res.end(`Missing host ${host}`);
-    }
+    else res.end(`Missing host ${host}`);
   });
 
   proxyServer.on("upgrade", (req, socket, head) => {
     const host = getHost(req);
-    console.log("[router] websocket upgrade", {
-      host,
-      url: req.url,
-      hasRoute: Boolean(proxy[host]),
-    });
 
     socket.on("error", (err, req, res) => {
-      console.log("[router] socket error", { message: err.message, code: err.code });
+      console.log("[router] socket error", {
+        message: err.message,
+        code: err.code,
+      });
     });
     if (proxy[host]) proxy[host].ws(req, socket, head);
-    else console.log("[router] missing websocket host", { host, routes });
   });
 
   proxyServer.listen(routerPort || 80, () => {
@@ -106,10 +97,8 @@ export default async (ev) => {
     console.log("[router] add", { host, port, ip });
 
     host.forEach((host) => {
-      if (!host) {
-        console.log("[router] skip empty host", { port, ip });
-        return;
-      }
+      if (!host) return;
+
       routes[host] = `${ip}:${port}`;
     });
 
@@ -118,7 +107,6 @@ export default async (ev) => {
 
   ev.on("router.remove", ({ host }) => {
     host = host instanceof Array ? host : [host];
-    console.log("[router] remove", { host });
     host.forEach((host) => {
       delete routes[host];
     });
@@ -126,7 +114,6 @@ export default async (ev) => {
   });
 
   ev.on("router.clear", () => {
-    console.log("[router] clear");
     routes = {};
     loadConfig();
   });
