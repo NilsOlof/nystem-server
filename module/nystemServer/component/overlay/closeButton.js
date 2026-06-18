@@ -2,13 +2,16 @@ import React from "react";
 import app from "nystem";
 import { Wrapper } from "nystem-components";
 
-const OverlayCloseButton = ({ model, view, path, className: propClassName }) => {
+const OverlayCloseButton = ({
+  model,
+  view,
+  path,
+  className: propClassName,
+}) => {
   const handleEvent = (event) => {
     event.preventDefault();
     const toPath = path || view.contentType + "/" + view.format + "/" + view.id;
-    app()
-      .event("closeOverlay", toPath)
-      .then((data) => {});
+    app.event("closeOverlay", toPath).then((data) => {});
   };
 
   const className =

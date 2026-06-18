@@ -108,7 +108,7 @@ const DevtoolsSelectContenttype = ({ model, view }) => {
 
     view.event("setSearch");
 
-    app()
+    app
       .event("devtools", { on: "search", path: `database.${value.id}` })
       .then(({ listenId }) => {
         id = listenId;

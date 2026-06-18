@@ -108,12 +108,12 @@ const ViewButtonInput = ({ view, model, value, location }) => {
         if (diff.length) await view.event("change", { value: saved });
       }
 
-      if (redirectURL) window.window.history.replaceState({}, "", redirectURL);
+      if (redirectURL) window.history.replaceState({}, "", redirectURL);
 
       const { pathname } = window.location;
 
       if (data && oldId && oldId !== data._id) {
-        window.window.history.replaceState(
+        window.history.replaceState(
           {},
           "",
           pathname.replace(`/${view.value._id}`, `/${data._id || ""}`),
@@ -125,7 +125,7 @@ const ViewButtonInput = ({ view, model, value, location }) => {
         view.setValue({ path: "_id", value: data._id });
 
         if (!model.noRedirect) {
-          window.window.history.replaceState(
+          window.history.replaceState(
             {},
             "",
             `${model.redirectURL || pathname}/${data._id || ""}`,
@@ -135,7 +135,7 @@ const ViewButtonInput = ({ view, model, value, location }) => {
       }
 
       if (model.redirectURL)
-        window.window.history.replaceState({}, "", model.redirectURL);
+        window.history.replaceState({}, "", model.redirectURL);
 
       if (!saved) return;
 

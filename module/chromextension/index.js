@@ -48,8 +48,7 @@ export default function (app) {
   };
 
   const pathWithSlash = (path) => (path.startsWith("/") ? path : `/${path}`);
-  const jsModulePath = (path) =>
-    path.replace(/\.(?:jsx|ts|tsx)$/i, ".js");
+  const jsModulePath = (path) => path.replace(/\.(?:jsx|ts|tsx)$/i, ".js");
   const localPath = (path) => jsModulePath(pathWithSlash(path).split("?")[0]);
 
   const getImports = (contents) => {
@@ -66,7 +65,8 @@ export default function (app) {
   };
 
   const getCssImports = (contents) => {
-    const importexp = /^\s*import\s+["']([^"']+\.css(?:\?[^"']*)?)["'];?\s*$/gim;
+    const importexp =
+      /^\s*import\s+["']([^"']+\.css(?:\?[^"']*)?)["'];?\s*$/gim;
     let match = importexp.exec(contents);
     const result = [];
     while (match != null) {
@@ -94,16 +94,16 @@ export default function (app) {
   const copyCssFiles = async (paths) => {
     await Promise.all(
       [...new Set(paths)].map(async (path) => {
-        const served = (await fetch(`${host}${pathWithSlash(path)}`)).toString();
+        const served = (
+          await fetch(`${host}${pathWithSlash(path)}`)
+        ).toString();
         const match = served.match(
-          /const __vite__css = ((?:"(?:\\.|[^"\\])*")|(?:'(?:\\.|[^'\\])*'))/
+          /const __vite__css = ((?:"(?:\\.|[^"\\])*")|(?:'(?:\\.|[^'\\])*'))/,
         );
-        const contents = match
-          ? JSON.parse(match[1])
-          : served;
+        const contents = match ? JSON.parse(match[1]) : served;
         await fs.ensureFile(`${extPath}${path}`);
         await fs.writeFile(`${extPath}${path}`, contents);
-      })
+      }),
     );
   };
 
@@ -111,22 +111,28 @@ export default function (app) {
     contents
       .replace(
         /import\s+\{[^}]*createHotContext[^}]*\}\s+from\s+["']\/@vite\/client["'];\s*import\.meta\.hot\s*=\s*[^;]+;\s*/gim,
-        ""
+        "",
       )
       .replace(/^.*\/@vite\/client.*\n?/gm, "")
       .replace(
         /(["'])(\/[^"']+\.(?:js|jsx|ts|tsx|css))(?:\?[^"']*)?\1/gim,
-        (_, quote, path) => `${quote}${localPath(path)}${quote}`
+        (_, quote, path) => `${quote}${localPath(path)}${quote}`,
       )
       .replace(/^\s*import\s+["'][^"']+\.css(?:\?[^"']*)?["'];?\s*$/gm, "")
-      .replace(/\nimport \* as RefreshRuntime from "\/@react-refresh";[\s\S]*?(?=\n\/\/# sourceMappingURL=|\n$)/gim, "")
-      .replace(/\n\s*const currentExports = __vite_react_currentExports;[\s\S]*?(?=\n\/\/# sourceMappingURL=|\n$)/gim, "")
+      .replace(
+        /\nimport \* as RefreshRuntime from "\/@react-refresh";[\s\S]*?(?=\n\/\/# sourceMappingURL=|\n$)/gim,
+        "",
+      )
+      .replace(
+        /\n\s*const currentExports = __vite_react_currentExports;[\s\S]*?(?=\n\/\/# sourceMappingURL=|\n$)/gim,
+        "",
+      )
       .replace(/\$RefreshSig\$\(\)/g, "(() => {})")
       .replace(/^\s*\$RefreshReg\$\([^;]+;\s*$/gm, "")
       .replace(
         /^\s*import\s+([\w$]+)\s+from\s+["']([^"']+\.json)(?:\?[^"']*)?["'];?\s*$/gm,
         (_, name, path) =>
-          `const ${name} = await fetch("${localPath(path)}").then((response) => response.json());`
+          `const ${name} = await fetch("${localPath(path)}").then((response) => response.json());`,
       );
 
   const copyFiles = async (paths) => {
@@ -153,7 +159,10 @@ export default function (app) {
         });
         getImports(contents.toString()).forEach((importPath) => {
           const targetImportPath = localPath(importPath);
-          if (!targetImportPath.endsWith(".css") && !files.has(targetImportPath))
+          if (
+            !targetImportPath.endsWith(".css") &&
+            !files.has(targetImportPath)
+          )
             pending.push(importPath);
         });
       }
@@ -163,7 +172,7 @@ export default function (app) {
       [...files.entries()].map(async ([path, contents]) => {
         await fs.ensureFile(`${extPath}${path}`);
         await fs.writeFile(`${extPath}${path}`, contents);
-      })
+      }),
     );
     await copyCssFiles(cssFiles);
 
@@ -176,12 +185,12 @@ export default function (app) {
 
     const withoutDevScripts = html.replace(
       /<script\b[^>]*>(?:(?!<\/script>)[\s\S])*@react-refresh(?:(?!<\/script>)[\s\S])*<\/script>\s*|<script\b[^>]*\bsrc="\/@vite\/client"[^>]*><\/script>\s*/gim,
-      ""
+      "",
     );
 
     const withoutQueryStrings = withoutDevScripts.replace(
       /\s(href|src)="([^"]+\.(?:js|json|css))\?[^"]*"/gim,
-      (_, key, path) => ` ${key}="${path}"`
+      (_, key, path) => ` ${key}="${path}"`,
     );
 
     const withoutInlineScripts = withoutQueryStrings.replace(
@@ -193,7 +202,7 @@ export default function (app) {
         const path = `${filename}-inline-${inlineScript}.js`;
         writes.push(fs.writeFile(`${extPath}/${path}`, contents));
         return `<script${attributes} src="${path}"></script>`;
-      }
+      },
     );
 
     await Promise.all(writes);
@@ -278,58 +287,64 @@ globalThis.chrome?.runtime?.onInstalled?.addListener?.(() => {});
     clearTimeout(timer);
 
     const indexHtml = (await fetch(host)).toString();
+    if (!indexHtml.includes("Dev environment starting...")) return;
 
     const includePaths = getIncludes(indexHtml).filter(
-      (path) => !path.includes("manifest.json") && !path.startsWith("/@")
+      (path) => !path.includes("manifest.json") && !path.startsWith("/@"),
     );
     const { files, cssFiles } = await copyFiles(includePaths);
     const bundle = [...files.values()].reduce(
       (result, contents) => `${result}\n${contents}`,
-      ""
+      "",
     );
 
     const features = JSON.parse(
-      await fs.readFile(`${__dirname}/features.json`, "utf-8")
+      await fs.readFile(`${__dirname}/features.json`, "utf-8"),
     );
     const entrypoints = features.filter((item) =>
-      ["popup", "background", "content", "devtools"].includes(item)
+      ["popup", "background", "content", "devtools"].includes(item),
     );
 
-    await Promise.all(entrypoints.map(async (filename) => {
-      if (["content"].includes(filename)) {
-        const { content } = await app.event("extensionContent");
-        await fs.writeFile(`${extPath}/${filename}.js`, content || bundle);
-        return;
-      }
+    await Promise.all(
+      entrypoints.map(async (filename) => {
+        if (["content"].includes(filename)) {
+          const { content } = await app.event("extensionContent");
+          await fs.writeFile(`${extPath}/${filename}.js`, content || bundle);
+          return;
+        }
 
-      if (["background"].includes(filename)) {
-        await fs.writeFile(
-          `${extPath}/${filename}.js`,
-          serviceWorkerScript()
-        );
-        return;
-      }
+        if (["background"].includes(filename)) {
+          await fs.writeFile(
+            `${extPath}/${filename}.js`,
+            serviceWorkerScript(),
+          );
+          return;
+        }
 
-      if (["devtools"].includes(filename)) {
-        await fs.writeFile(
-          `${extPath}/devtoolsinit.js`,
-          `chrome.devtools.panels.create("${name}","icon/32.png","devtools.html", (panel)=>{});`
-        );
-        await fs.writeFile(
-          `${extPath}/devtoolsinit.html`,
-          `<script src="devtoolsinit.js"></script>`
-        );
-      }
+        if (["devtools"].includes(filename)) {
+          await fs.writeFile(
+            `${extPath}/devtoolsinit.js`,
+            `chrome.devtools.panels.create("${name}","icon/32.png","devtools.html", (panel)=>{});`,
+          );
+          await fs.writeFile(
+            `${extPath}/devtoolsinit.html`,
+            `<script src="devtoolsinit.js"></script>`,
+          );
+        }
 
-      await fs.writeFile(
-        `${extPath}/${filename}.html`,
-        await extensionPageHtml(indexHtml, filename, cssFiles)
-      );
-    }));
+        await fs.writeFile(
+          `${extPath}/${filename}.html`,
+          await extensionPageHtml(indexHtml, filename, cssFiles),
+        );
+      }),
+    );
   };
 
   const compileAndCopy = async () => {
-    await update();
+    if (!(await update())) {
+      setTimeout(compileAndCopy, 5000);
+      return;
+    }
     const manifest = await app.require("./manifest", true);
     await manifest(app);
     [16, 24, 32, 48, 128, 512].forEach((size) => {
@@ -350,4 +365,4 @@ globalThis.chrome?.runtime?.onInstalled?.addListener?.(() => {});
 
       timer = setTimeout(update, 1000);
     });
-};
+}

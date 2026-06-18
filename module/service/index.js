@@ -138,20 +138,45 @@ const start = function (app) {
 export default (app) => {
   app.on("serverPath", (server) => {
     const { atHost } = app.settings;
+    const hostBasepath = resolveExistingPath(app, atHost.basepath || "");
+    const hostRunbasepath = atHost.runbasepath
+      ? resolveExistingPath(app, atHost.runbasepath)
+      : "";
 
-    let path = insertValues(server.path, atHost.folders).replace(/\\/g, "/");
+    let basepath = insertValues(server.path, atHost.folders).replace(/\\/g, "/");
+    let runbasepath = basepath;
 
-    if (path[0] !== "/" && path[1] !== ":") path = `${atHost.basepath}/${path}`;
-
-    path = resolveExistingPath(app, path);
-
-    if (app.fs.existsSync(path) && !app.fs.lstatSync(path).isDirectory()) {
-      const pathSplit = path.split("/");
-      const len = pathSplit.length;
-      path = pathSplit.slice(0, len - 1).join("/");
+    if (basepath[0] !== "/" && basepath[1] !== ":") {
+      basepath = `${hostBasepath}/${basepath}`;
+      runbasepath = hostRunbasepath
+        ? `${hostRunbasepath}/${runbasepath}`
+        : basepath;
     }
 
-    return { ...server, basepath: path, runbasepath: path };
+    basepath = resolveExistingPath(app, basepath);
+
+    if (hostRunbasepath && basepath.startsWith(hostBasepath)) {
+      runbasepath = basepath.replace(hostBasepath, hostRunbasepath);
+    }
+
+    runbasepath = resolveExistingPath(app, runbasepath);
+
+    if (app.fs.existsSync(basepath) && !app.fs.lstatSync(basepath).isDirectory()) {
+      const pathSplit = basepath.split("/");
+      const len = pathSplit.length;
+      basepath = pathSplit.slice(0, len - 1).join("/");
+    }
+
+    if (
+      app.fs.existsSync(runbasepath) &&
+      !app.fs.lstatSync(runbasepath).isDirectory()
+    ) {
+      const pathSplit = runbasepath.split("/");
+      const len = pathSplit.length;
+      runbasepath = pathSplit.slice(0, len - 1).join("/");
+    }
+
+    return { ...server, basepath, runbasepath };
   });
 
   app.on("start", start);

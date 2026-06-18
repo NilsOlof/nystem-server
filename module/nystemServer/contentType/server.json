@@ -912,55 +912,7 @@
               ],
               "format": "moveWindow"
             },
-            { "type": "viewText", "className": ["flex-grow", "select-none"] },
-            {
-              "type": "style",
-              "item": [
-                {
-                  "type": "style",
-                  "format": "appButton",
-                  "buttonActive": "",
-                  "className": [
-                    "p-2",
-                    "w-8",
-                    "h-8",
-                    "cursor-pointer",
-                    "hover:bg-gray-200",
-                    "rounded"
-                  ],
-                  "button": "window-minimize"
-                },
-                {
-                  "type": "style",
-                  "format": "appButton",
-                  "buttonActive": "rectangle",
-                  "className": [
-                    "p-2",
-                    "w-8",
-                    "h-8",
-                    "cursor-pointer",
-                    "hover:bg-gray-200",
-                    "rounded"
-                  ],
-                  "button": "regular-square-full"
-                },
-                {
-                  "type": "style",
-                  "format": "appButton",
-                  "buttonActive": "",
-                  "className": [
-                    "p-2",
-                    "w-8",
-                    "h-8",
-                    "cursor-pointer",
-                    "hover:bg-gray-200",
-                    "rounded",
-                    "mr-1"
-                  ],
-                  "button": "xmark"
-                }
-              ]
-            }
+            { "type": "viewText", "className": ["flex-grow", "select-none"] }
           ],
           "className": [
             "flex",
