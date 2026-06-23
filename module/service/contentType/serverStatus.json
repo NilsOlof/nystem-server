@@ -12,6 +12,7 @@
     { "type": "boolean", "id": "term", "text": "Term" },
     { "type": "boolean", "id": "sourcetree", "text": "Sourcetree" },
     { "type": "boolean", "id": "filexplorer", "text": "File explorer" },
+    { "type": "boolean", "id": "codex", "text": "Codex" },
     { "type": "boolean", "id": "manager", "text": "Manager" }
   ],
   "views": [
@@ -118,6 +119,24 @@
                       ],
                       "text": "folder",
                       "falseText": "folder:hide-on-false"
+                    },
+                    {
+                      "category": "contentTypeField",
+                      "type": "boolean",
+                      "id": "codex",
+                      "format": "button",
+                      "btnType": "primary",
+                      "falseBtnType": "primary",
+                      "size": "xs",
+                      "className": [
+                        "mr-1",
+                        "transition",
+                        "transition-opacity",
+                        "duration-500",
+                        "ease-in-out"
+                      ],
+                      "text": "robot",
+                      "falseText": "robot:hide-on-false"
                     },
                     {
                       "category": "view",
@@ -272,6 +291,18 @@
               "className": ["mr-1"],
               "text": "folder",
               "falseText": "folder"
+            },
+            {
+              "category": "contentTypeField",
+              "type": "boolean",
+              "id": "codex",
+              "format": "button",
+              "btnType": "primary",
+              "falseBtnType": "primary",
+              "size": "xs",
+              "className": ["mr-1"],
+              "text": "robot",
+              "falseText": "robot"
             },
             {
               "category": "view",

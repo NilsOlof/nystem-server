@@ -287,7 +287,7 @@ globalThis.chrome?.runtime?.onInstalled?.addListener?.(() => {});
     clearTimeout(timer);
 
     const indexHtml = (await fetch(host)).toString();
-    if (!indexHtml.includes("Dev environment starting...")) return;
+    if (indexHtml.includes("Dev environment starting...")) return "starting";
 
     const includePaths = getIncludes(indexHtml).filter(
       (path) => !path.includes("manifest.json") && !path.startsWith("/@"),
@@ -338,11 +338,14 @@ globalThis.chrome?.runtime?.onInstalled?.addListener?.(() => {});
         );
       }),
     );
+
+    return "updated";
   };
 
   const compileAndCopy = async () => {
-    if (!(await update())) {
-      setTimeout(compileAndCopy, 5000);
+    const status = await update();
+    if (status !== "updated") {
+      setTimeout(compileAndCopy, status === "starting" ? 10000 : 5000);
       return;
     }
     const manifest = await app.require("./manifest", true);

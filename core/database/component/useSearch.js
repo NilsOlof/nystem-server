@@ -4,7 +4,9 @@ const useSearch = ({ view, id, value, exact = false }) => {
   const last = useRef(undefined);
 
   useEffect(() => {
-    if (value === undefined && last.current === undefined) return;
+    const searchValue = value === "" ? undefined : value;
+
+    if (searchValue === undefined && last.current === undefined) return;
 
     const setSearch = (query) => {
       query.filter = query.filter || {};
@@ -13,20 +15,25 @@ const useSearch = ({ view, id, value, exact = false }) => {
 
       if (id === undefined) return;
       const fields = id instanceof Array ? id : [id];
-      const val = value === "true" ? true : value === "false" ? false : value;
+      const val =
+        searchValue === "true"
+          ? true
+          : searchValue === "false"
+            ? false
+            : searchValue;
       fields.forEach((id) => {
         search[id] = val;
       });
 
       query.filter.$and.push(search);
     };
-    if (value !== undefined) view.on("setSearch", setSearch);
+    if (searchValue !== undefined) view.on("setSearch", setSearch);
 
     view.event("setSearch");
 
-    last.current = value;
+    last.current = searchValue;
     return () => {
-      if (value !== undefined) view.off("setSearch", setSearch);
+      if (searchValue !== undefined) view.off("setSearch", setSearch);
     };
   }, [exact, id, value, view]);
 };

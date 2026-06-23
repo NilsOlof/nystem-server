@@ -1,14 +1,11 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { ContentTypeRender } from "nystem-components";
 import app from "nystem";
 
-const ExtensionView = ({ invert, model = {}, path, view, setValue, children }) => {
+const ExtensionSearch = ({ model, path, view, setValue }) => {
   const [missing, setMissing] = useState(false);
-  const inExtension = window.location.protocol === "chrome-extension:";
-  invert = invert || model.invert;
 
   useEffect(() => {
-    if (model.format !== "search") return;
     let mounted = true;
 
     new Promise((resolve) => {
@@ -46,11 +43,9 @@ const ExtensionView = ({ invert, model = {}, path, view, setValue, children }) =
     return () => {
       mounted = false;
     };
-  }, [model.extract, model.field, model.format, setValue, view]);
+  }, [model.extract, model.field, setValue, view]);
 
-  if ((inExtension && invert) || (!inExtension && !invert)) return null;
-  if (model.format === "search" && !missing) return null;
-
-  return children || <ContentTypeRender path={path} items={model.item} />;
+  return missing ? <ContentTypeRender path={path} items={model.item} /> : null;
 };
-export default ExtensionView;
+
+export default ExtensionSearch;

@@ -125,6 +125,24 @@ const start = (app) => {
   });
 
   programRunner({
+    field: "codex",
+    call: ({ runbasepath }) => {
+      console.log("Open codex path", runbasepath);
+      return runProgram("open", ["-a", "Codex", runbasepath]);
+    },
+    callWin: ({ runbasepath }) => {
+      console.log("Open codex path", runbasepath);
+      return runProgram("cmd.exe", [
+        "/c",
+        "start",
+        "cmd.exe",
+        "/k",
+        `cd /d "${runbasepath.replace(/\//g, "\\")}" && codex`,
+      ]);
+    },
+  });
+
+  programRunner({
     field: "sourcetree",
     call: ({ basepath }) => {
       console.log("Open sourcetree", basepath.replace(/\//g, "\\"));

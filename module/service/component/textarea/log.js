@@ -4,30 +4,33 @@ import app from "nystem";
 
 const TextareaLog = ({ view, model, value = "" }) => {
   const [log, setLog] = useState("");
-  const hasVal = !!value;
 
   useEffect(() => {
-    if (!hasVal) return;
-
     const makeLinks = (match, p1, p2, p3) => {
-      console.log("match", match, p1, p2, p3);
       let path = p3.split(/[/\\]/).join("/").split(":");
       path = `${path[0]}:${path[1]}`;
 
-      return `(<a href="nystem://${view.baseView.value.host[0]}${path}">${path}</a>)`;
+      return `(<a href="nystem://${view.baseView.value.host?.[0] || ""}${path}">${path}</a>)`;
     };
 
-    const replace = view.value.basepath.replace(/[/\\]/g, "[/\\\\]");
+    const basepath = view.value.basepath || "";
+    const replace = basepath.replace(/[/\\]/g, "[/\\\\]");
 
     const parseLog = (log) => {
-      const parsedLog = (log || "")
-        .replace(
+      let parsedLog = log || "";
+
+      if (replace) {
+        parsedLog = parsedLog.replace(
           new RegExp(`(module\\.exports )?[( ](${replace})([^) ]+)[) ]`, "gim"),
           makeLinks,
-        )
+        );
+      }
+
+      parsedLog = parsedLog
         // eslint-disable-next-line no-control-regex
         .replace(/\x1b\[((?:\d{1,3};?)+|)m/gim, (match, p1) => {
-          return `</span><span style='color:${colors[parseInt(p1, 10)]};'>`;
+          const color = colors[parseInt(p1, 10)];
+          return `</span><span${color ? ` style='color:${color};'` : ""}>`;
         });
       return `<pre>${parsedLog.replace(/\n/g, "</span><br/><span>")}</pre>`;
     };
@@ -51,7 +54,7 @@ const TextareaLog = ({ view, model, value = "" }) => {
       app.connection.off(`serverLog${view.id}`, updateLog);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [hasVal]);
+  }, [value, view.id, view.value.basepath]);
 
   const className = model.className && model.className.join(" ");
   return (
@@ -59,7 +62,6 @@ const TextareaLog = ({ view, model, value = "" }) => {
       <Wrapper
         className={model.wrapperClass}
         onClick={(e) => {
-          console.log(e.target.href);
           if (!e.target.href) return;
           e.stopPropagation();
           e.preventDefault();
@@ -81,7 +83,7 @@ const TextareaLog = ({ view, model, value = "" }) => {
 export default TextareaLog;
 
 const colors = {
-  0: "#000",
+  0: "",
   1: "white", // ch
   2: "#0A0",
   3: "#A50",

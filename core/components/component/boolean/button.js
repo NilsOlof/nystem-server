@@ -26,6 +26,7 @@ const BooleanButton = ({ setValue, model, value }) => {
         "location-dot",
         "terminal-solid",
         "brands-github",
+        "robot",
       ].includes(text) ? (
         <Icon className="h-4 w-4" icon={text} alt={text} />
       ) : (
