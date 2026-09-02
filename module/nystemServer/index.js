@@ -6,7 +6,9 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 
 const role = "super";
 
-const start = (app) => {
+const start = async (app) => {
+  const programs = {};
+
   const runProgram = function (program, args, path = "") {
     const extra = path ? { cwd: path } : {};
     const execService = spawn(program, args, {
@@ -19,6 +21,14 @@ const start = (app) => {
 
     const evHandler = app.addeventhandler();
 
+    let exited = false;
+    const exit = (query) => {
+      if (exited) return;
+      exited = true;
+      evHandler.event("exit", query);
+      app.off("exit", killApp);
+    };
+
     execService.stdout.on("data", (data) => {
       data = data.toString();
       evHandler.event("data", { data });
@@ -29,10 +39,15 @@ const start = (app) => {
       evHandler.event("data", { type: "error", data });
     });
 
+    execService.on("error", (error) => {
+      evHandler.event("data", { type: "error", data: `${error}\n` });
+      exit({ code: error.code });
+      console.log(`Start failed ${path}/${program}`, error);
+    });
+
     execService.on("exit", (code) => {
-      evHandler.event("exit", { code });
+      exit({ code });
       console.log(`Stopped ${path}/${program}`);
-      app.off("exit", killApp);
     });
 
     evHandler.on("stop", () => {
@@ -47,44 +62,32 @@ const start = (app) => {
     return evHandler;
   };
 
-  const programRunner = ({ field, callWin, call }) => {
-    const start = async (id) => {
+  const programRunner = ({ name, callWin, call }) => {
+    programs[name] = async (id) => {
       const { data: server } = await app.database.server.get({ id, role });
       const paths = { ...server, ...(await app.event("serverPath", server)) };
 
       const ev =
         process.platform !== "win32" ? await call(paths) : await callWin(paths);
 
-      if (!ev) return;
-
-      ev.on("data", ({ data }) => console.log(data));
-
-      const stopped = async ({ data, oldData = {} }) => {
-        if (data._id === id && !data[field] && oldData[field]) {
-          ev.event("stop");
-          app.database.serverStatus.off("save", stopped);
-        }
-      };
-
-      ev.on("exit", () => {
-        console.log(`Stop ${field}`);
-        app.database.serverStatus.save({
-          data: { _id: id, [field]: false },
-          fields: true,
-          role,
-        });
-      });
-
-      app.database.serverStatus.on("save", stopped);
+      if (ev) ev.on("data", ({ data }) => console.log(data));
     };
-
-    app.database.serverStatus.on("save", async ({ id, data, oldData = {} }) => {
-      if (data[field] && !oldData[field]) start(id);
-    });
   };
 
+  const { data: servers = [] } = await app.database.server.search({ role });
+  await Promise.all(
+    servers.map(async (server) => {
+      const { runbasepath } = await app.event("serverPath", server);
+      return app.database.serverStatus.save({
+        data: { _id: server._id, basepath: runbasepath },
+        fields: true,
+        role,
+      });
+    }),
+  );
+
   programRunner({
-    field: "vscode",
+    name: "vscode",
     call: ({ runbasepath }) => {
       console.log("Open code path", runbasepath);
       exec(`code ${runbasepath}`);
@@ -101,10 +104,25 @@ const start = (app) => {
   });
 
   programRunner({
-    field: "term",
-    call: ({ runbasepath }) => {
+    name: "term",
+    call: ({ name, runbasepath }) => {
       console.log("Open terminal path", runbasepath);
-      exec(`open -a Terminal "${runbasepath}"`);
+      const cmux = "/Applications/cmux.app/Contents/Resources/bin/cmux";
+
+      if (app.fs.existsSync(cmux))
+        spawn(
+          cmux,
+          [
+            "workspace",
+            "create",
+            "--name",
+            `${name} - terminal`,
+            "--cwd",
+            runbasepath,
+          ],
+          { detached: true, stdio: "ignore" },
+        ).unref();
+      else exec(`open -a Terminal "${runbasepath}"`);
     },
     callWin: ({ runbasepath }) => {
       console.log("Open terminal path", runbasepath);
@@ -113,7 +131,7 @@ const start = (app) => {
   });
 
   programRunner({
-    field: "filexplorer",
+    name: "fileExplorer",
     call: ({ runbasepath }) => {
       console.log("Open explorer path", runbasepath);
       return runProgram("open", ["."], runbasepath);
@@ -125,10 +143,14 @@ const start = (app) => {
   });
 
   programRunner({
-    field: "codex",
+    name: "codex",
     call: ({ runbasepath }) => {
       console.log("Open codex path", runbasepath);
-      return runProgram("open", ["-a", "Codex", runbasepath]);
+      const codexPath = "/Applications/Codex.app/Contents/Resources/codex";
+      return runProgram(
+        app.fs.existsSync(codexPath) ? codexPath : "codex",
+        ["app", runbasepath],
+      );
     },
     callWin: ({ runbasepath }) => {
       console.log("Open codex path", runbasepath);
@@ -143,10 +165,10 @@ const start = (app) => {
   });
 
   programRunner({
-    field: "sourcetree",
+    name: "sourcetree",
     call: ({ basepath }) => {
       console.log("Open sourcetree", basepath.replace(/\//g, "\\"));
-      return runProgram("SourceTree", ["."], basepath);
+      return runProgram("open", ["-a", "Sourcetree", "."], basepath);
     },
     callWin: ({ basepath }) => {
       console.log("Open sourcetree", basepath.replace(/\//g, "\\"));
@@ -158,37 +180,17 @@ const start = (app) => {
     },
   });
 
-  programRunner({
-    field: "manager",
-    call: async ({ basepath, runbasepath, port }) => {
-      console.log("Open manager", runbasepath.replace(/\//g, "\\"));
+  app.connection.on("serverProgram", async (query) => {
+    await app.session.add(query);
+    if (
+      query.session?.role !== role ||
+      !query.serverId ||
+      !programs[query.program]
+    )
+      return;
 
-      const { runbasepath: cmdPath } = await app.event("serverPath", {
-        path: "{localdeploy}nystemmanager",
-      });
-
-      return runProgram("open", [
-        app.settings.nystemmanagerpathMac,
-        "--args",
-        runbasepath,
-        runbasepath,
-      ]);
-      /*
-      return runProgram(
-        "node",
-        ["app.js", "server.js", basepath, port, runbasepath],
-        cmdPath
-      );
-      */
-    },
-    callWin: async ({ runbasepath }) => {
-      console.log("Open manager", runbasepath.replace(/\//g, "\\"));
-
-      return runProgram(app.settings.nystemmanagerpath, [
-        runbasepath,
-        runbasepath,
-      ]);
-    },
+    await programs[query.program](query.serverId);
+    return query;
   });
 
   app.event("favicon", { file: "/files/image/original/logo2.svg" });

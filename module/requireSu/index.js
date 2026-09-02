@@ -39,6 +39,8 @@ const start = async (app) => {
       console.log(`stdout: ${stdout}`);
     });
   } else {
+    const cmux = "/Applications/cmux.app/Contents/Resources/bin/cmux";
+    const useCmux = os === "darwin" && app.fs.existsSync(cmux);
     const opt = {
       cwd: `${app.__dirname}`,
       env: process.env,
@@ -46,12 +48,22 @@ const start = async (app) => {
       detached: false,
     };
 
-    const args = [
-      "-e",
-      `tell app "Terminal" to activate\ntell app "Terminal" to do script "cd \\"${app.__dirname}\\" && npm run worker && exit"`,
-    ];
+    const args = useCmux
+      ? [
+          "new-workspace",
+          "--name",
+          `${app.settings.client.name} - worker`,
+          "--cwd",
+          app.__dirname,
+          "--command",
+          "npm run worker && exit",
+        ]
+      : [
+          "-e",
+          `tell app "Terminal" to activate\ntell app "Terminal" to do script "cd \\"${app.__dirname}\\" && npm run worker && exit"`,
+        ];
 
-    spawn("osascript", args, opt);
+    spawn(useCmux ? cmux : "osascript", args, opt);
   }
 
   if (!startCallback)

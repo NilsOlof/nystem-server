@@ -4,7 +4,7 @@ import { Wrapper } from "nystem-components";
 const types = {
   primary: "bg-blue-500 hover:bg-blue-500 text-white rounded shadow-sm",
   secondary:
-    "bg-gray-200 hover:bg-gray-300 text-gray-900 border border-gray-300 rounded shadow-sm",
+    "bg-gray-800 hover:bg-gray-700 text-gray-200 border border-gray-700 rounded shadow-sm",
   "ehc-primary": "floatlabel bg-primary text-white w-full",
   "ehc-secondary": "floatlabel bg-secondary border border-gray-300 w-full",
   danger: "bg-red-700 hover:bg-red-600 text-white rounded shadow-sm",
@@ -12,7 +12,8 @@ const types = {
   success: "bg-green-600 hover:bg-green-500 text-white rounded shadow-sm",
   info: "btn",
   error: "btn",
-  default: "bg-gray-200 hover:bg-gray-300 text-gray-900 border border-gray-300",
+  default:
+    "bg-gray-800 hover:bg-gray-700 text-gray-200 border border-gray-700 rounded shadow-sm",
   primaryDisabled: "bg-blue-400 cursor-not-allowed",
   secondaryDisabled: "bg-gray-600 text-white cursor-not-allowed",
   dangerDisabled: "bg-red-400 text-white cursor-not-allowed",

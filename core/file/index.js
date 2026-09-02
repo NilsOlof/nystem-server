@@ -1,4 +1,9 @@
 import * as http from "node:http";
+import { execFile } from "node:child_process";
+import { isAbsolute, resolve } from "node:path";
+import { promisify } from "node:util";
+
+const execFileAsync = promisify(execFile);
 
 export default async (app) => {
   app.file = app.addeventhandler();
@@ -33,12 +38,81 @@ export default async (app) => {
         app.file.event("socket", { req, socket, head, id: app.uuid() });
       });
 
-      server.listen(
-        app.settings.port,
-        app.settings.host === "*"
-          ? undefined
-          : app.settings.host || "127.0.0.1",
-      );
+      let recoveringPort = false;
+      const listen = () =>
+        server.listen(
+          app.settings.port,
+          app.settings.host === "*"
+            ? undefined
+            : app.settings.host || "127.0.0.1",
+        );
+
+      if (app.settings.debug)
+        server.on("error", async (error) => {
+          if (error.code !== "EADDRINUSE" || recoveringPort) throw error;
+          recoveringPort = true;
+
+          try {
+            const { stdout } = await execFileAsync("lsof", [
+              "-ti",
+              `tcp:${app.settings.port}`,
+            ]);
+            const processIds = stdout
+              .trim()
+              .split("\n")
+              .map(Number)
+              .filter((processId) => processId && processId !== process.pid);
+            const [processId] = processIds;
+
+            if (!processId) throw error;
+            const { stdout: processInfo } = await execFileAsync("lsof", [
+              "-a",
+              "-p",
+              `${processId}`,
+              "-d",
+              "cwd",
+              "-Fn",
+            ]);
+            const processPath = processInfo
+              .split("\n")
+              .find((line) => line.startsWith("n"))
+              ?.substring(1);
+            const { stdout: processCommand } = await execFileAsync("ps", [
+              "-p",
+              `${processId}`,
+              "-o",
+              "command=",
+            ]);
+            const processFile = processCommand
+              .trim()
+              .split(/\s+/)
+              .find(
+                (argument, index) =>
+                  index &&
+                  !argument.startsWith("-") &&
+                  /\.(cjs|js|mjs)$/.test(argument),
+              );
+            const processFilePath =
+              processFile && processPath && !isAbsolute(processFile)
+                ? resolve(processPath, processFile)
+                : processFile;
+            console.log(
+              `Stopping process ${processId} at ${processFilePath || "unknown file"} using port ${app.settings.port}`,
+            );
+            process.kill(processId, "SIGTERM");
+            await app.delay(500);
+            recoveringPort = false;
+            server.once("listening", () => console.log("Started"));
+            listen();
+          } catch (recoveryError) {
+            console.log(
+              `Unable to replace process using port ${app.settings.port}: ${recoveryError.message}`,
+            );
+            app.event("exit");
+          }
+        });
+
+      listen();
       app.on("exit", 100, () => {
         server.close();
       });

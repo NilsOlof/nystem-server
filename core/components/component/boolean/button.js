@@ -14,7 +14,7 @@ const BooleanButton = ({ setValue, model, value }) => {
       type={value ? model.btnType : model.falseBtnType}
       size={model.size}
       className={[...classNames(className), ...classNames(model.className)]}
-      onClick={() => setValue(!value)}
+      onClick={() => setValue(model.turnOnOnly || !value)}
     >
       {[
         "code",

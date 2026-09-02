@@ -21,7 +21,10 @@ const TextareaLog = ({ view, model, value = "" }) => {
 
       if (replace) {
         parsedLog = parsedLog.replace(
-          new RegExp(`(module\\.exports )?[( ](${replace})([^) ]+)[) ]`, "gim"),
+          new RegExp(
+            `(module\\.exports )?[( ](${replace})([^) ]+:[0-9]+(?::[0-9]+)?)[) ]`,
+            "gim",
+          ),
           makeLinks,
         );
       }

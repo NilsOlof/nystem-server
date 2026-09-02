@@ -39,7 +39,7 @@ const ExtensionView = ({ invert, model = {}, path, view, setValue, children }) =
         return;
       }
 
-      setValue(data[0]);
+      if (view.value?._id !== data[0]._id) setValue(data[0]);
       view.id = data[0]._id;
     });
 

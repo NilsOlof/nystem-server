@@ -126,14 +126,26 @@ export default async (app) => {
     const { platform } = await import("node:os");
 
     const isWin = platform() === "win32";
+    const cmux = "/Applications/cmux.app/Contents/Resources/bin/cmux";
+    const useCmux = platform() === "darwin" && app.fs.existsSync(cmux);
 
-    const command = isWin ? "cmd" : "osascript";
+    const command = isWin ? "cmd" : useCmux ? cmux : "osascript";
     const args = isWin
       ? ["start"]
-      : [
-          "-e",
-          `tell application "Terminal" to do script "cd ${app.__dirname}/web && npm start"`,
-        ];
+      : useCmux
+        ? [
+            "new-workspace",
+            "--name",
+            `${app.settings.client.name} - client`,
+            "--cwd",
+            `${app.__dirname}/web`,
+            "--command",
+            "CHOKIDAR_USEPOLLING=false npm start",
+          ]
+        : [
+            "-e",
+            `tell application "Terminal" to do script "cd ${app.__dirname}/web && CHOKIDAR_USEPOLLING=false npm start"`,
+          ];
 
     const opt = {
       cwd: `${app.__dirname}/web`,

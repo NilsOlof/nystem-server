@@ -6,6 +6,11 @@
       "text": "Class"
     },
     {
+      "type": "boolean",
+      "id": "turnOnOnly",
+      "text": "Turn on only"
+    },
+    {
       "type": "text",
       "id": "text",
       "text": "True text"

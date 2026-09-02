@@ -44,6 +44,7 @@ export default async (app) => {
       ignored: /[/\\]\./,
       persistent: true,
       ignoreInitial: true,
+      usePolling: false,
     });
 
     basePath = basePath.replace(/\\/g, "/");

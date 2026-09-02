@@ -1,0 +1,30 @@
+body {
+  font-family: "Fira Code", monospace;
+  font-size: 13px;
+  background-color: #1e1f1c;
+  background-color: #272822;
+  color: #cfcbad;
+  color: #becfcf;
+}
+.default-bg-color {
+  background-color: #272822;
+}
+
+::-webkit-scrollbar {
+  width: 14px;
+}
+::-webkit-scrollbar-track {
+  background: #202020;
+}
+::-webkit-scrollbar-thumb {
+  background-color: #a7a5a5;
+  border-radius: 20px;
+  border: 3px solid #242323;
+}
+textarea {
+  background-color: black;
+  padding-left: 0.75rem !important;
+  padding-right: 0.75rem !important;
+  padding-top: 0.25rem !important;
+  padding-bottom: 0.25rem !important;
+}

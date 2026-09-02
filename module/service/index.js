@@ -1,6 +1,7 @@
 import { spawn } from "node:child_process";
 
 const role = "super";
+const maxLogLength = 100000;
 
 const insertValues = (text, data) =>
   text.replace(/{([a-z0-9_\.]+)}/gi, (str, p1) => {
@@ -39,21 +40,27 @@ const start = function (app) {
       evHandler.event("data", { type: "error", data });
     });
 
+    let exited = false;
+    const exit = (query) => {
+      if (exited) return;
+      exited = true;
+      evHandler.event("exit", query);
+      app.off("exit", killApp);
+    };
+
     execService.on("error", (error) => {
       evHandler.event("data", { type: "error", data: `${error}\n` });
-      evHandler.event("exit", { code: error.code });
-      app.off("exit", killApp);
+      exit({ code: error.code });
       console.log(`Start failed ${path}/${program}`, error);
     });
 
     execService.on("exit", (code) => {
-      evHandler.event("exit", { code });
-      app.off("exit", killApp);
+      exit({ code });
       console.log(`Stopped ${path}/${program}`);
     });
 
     evHandler.on("stop", () => {
-      execService.stdin.write("exit");
+      if (execService.stdin.writable) execService.stdin.write("exit");
       setTimeout(() => execService.kill("SIGINT"), 300);
     });
 
@@ -67,71 +74,112 @@ const start = function (app) {
   };
 
   const logs = {};
+  const servers = new Map();
 
   const startServer = async (id) => {
+    if (servers.has(id)) return;
+
     logs[id] = logs[id] || "";
-    let running = true;
+    const runningServer = {
+      restartRequested: false,
+      service: false,
+      stopRequested: false,
+    };
+    servers.set(id, runningServer);
 
-    const { data: server } = await app.database.server.get({ id, role });
+    try {
+      const { data: server } = await app.database.server.get({ id, role });
 
-    const { runbasepath: path, basepath } = await app.event(
-      "serverPath",
-      server
-    );
+      const { runbasepath: path, basepath } = await app.event(
+        "serverPath",
+        server,
+      );
 
-    const update = async (updatedData) => {
+      const update = async (updatedData) => {
+        app.database.serverStatus.save({
+          data: { _id: id, basepath: path, ...updatedData },
+          fields: true,
+          role,
+        });
+      };
+
+      const hasAppJs = await app.fs.exists(`${path}/app.js`);
+
+      if (runningServer.stopRequested) {
+        servers.delete(id);
+        return;
+      }
+
+      const service = runProgram(path, hasAppJs ? "app.js" : "server.js");
+      runningServer.service = service;
+
+      const onData = (dataType) => (query) => {
+        app.connection.broadcast({
+          type: `serverLog${id}`,
+          ...query,
+          dataType,
+          path,
+          basepath,
+        });
+
+        logs[id] += query.data;
+        if (logs[id].length > maxLogLength)
+          logs[id] = logs[id].substring(logs[id].length - maxLogLength);
+
+        update({ log: logs[id] });
+      };
+      service.on("data", onData("data"));
+      service.on("error", onData("error"));
+
+      service.on("exit", async (query) => {
+        if (servers.get(id) !== runningServer) return;
+
+        servers.delete(id);
+        if (runningServer.restartRequested) startServer(id);
+        else update({ running: false, ...query });
+      });
+
+      if (runningServer.stopRequested) service.event("stop");
+    } catch (error) {
+      if (servers.get(id) !== runningServer) return;
+
+      servers.delete(id);
+      console.log(`Start failed for server ${id}`, error);
       app.database.serverStatus.save({
-        data: { _id: id, basepath, ...updatedData },
+        data: { _id: id, running: false, code: error.code },
         fields: true,
         role,
       });
-    };
-
-    const hasAppJs = await app.fs.exists(`${path}/app.js`);
-
-    const service = runProgram(path, hasAppJs ? "app.js" : "server.js");
-
-    const onData = (dataType) => (query) => {
-      app.connection.broadcast({
-        type: `serverLog${id}`,
-        ...query,
-        dataType,
-        path,
-        basepath,
-      });
-
-      logs[id] += query.data;
-      if (logs[id].length > 2000)
-        logs[id] = logs[id].substring(logs[id].length - 2000);
-
-      update({ log: logs[id] });
-    };
-    service.on("data", onData("data"));
-    service.on("error", onData("error"));
-
-    service.on("exit", async (query) => {
-      running = false;
-      update({ running, ...query });
-    });
-
-    const event = ({ id: inId, data, oldData }) => {
-      if (inId !== id || data.running) return;
-
-      if (running) service.event("stop");
-
-      app.database.serverStatus.off("save", event);
-    };
-
-    app.database.serverStatus.on("save", event);
+    }
   };
 
-  app.database.serverStatus.on("save", (query) => {
-    const { data } = query;
-    let { oldData } = query;
-    oldData = oldData || {};
+  app.database.serverStatus.on("save", ({ data, oldData = {} }) => {
     const { _id, running } = data;
+    if (running === oldData.running) return;
 
-    if (running && !oldData.running) startServer(_id);
+    setTimeout(() => {
+      app.connection.broadcast({
+        type: "databaseUpdate",
+        contentType: "serverStatus",
+        ids: [_id],
+      });
+    });
+
+    const runningServer = servers.get(_id);
+    if (running) {
+      if (!runningServer) startServer(_id);
+      else if (runningServer.stopRequested) {
+        runningServer.restartRequested = Boolean(runningServer.service);
+        runningServer.stopRequested = false;
+      }
+      return;
+    }
+
+    if (!runningServer) return;
+
+    runningServer.restartRequested = false;
+    runningServer.stopRequested = true;
+    if (runningServer.service) runningServer.service.event("stop");
   });
 };
 
