@@ -1,9 +1,10 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { Wrapper } from "nystem-components";
 import app from "nystem";
 
 const TextareaLog = ({ view, model, value = "" }) => {
   const [log, setLog] = useState("");
+  const rawLog = useRef();
 
   useEffect(() => {
     const makeLinks = (match, p1, p2, p3) => {
@@ -38,18 +39,22 @@ const TextareaLog = ({ view, model, value = "" }) => {
       return `<pre>${parsedLog.replace(/\n/g, "</span><br/><span>")}</pre>`;
     };
 
-    let fullLog = parseLog(value);
-    setLog(fullLog);
+    if (rawLog.current !== value) {
+      rawLog.current = value;
+      setLog(parseLog(value));
+    }
 
     const updateLog = ({ data }) => {
-      fullLog += parseLog(data);
-      setLog(fullLog);
+      if (!data) return;
+
+      rawLog.current = `${rawLog.current || ""}${data}`;
+      setLog((currentLog) => currentLog + parseLog(data));
     };
 
     app.connection.on(`serverLog${view.id}`, updateLog);
     const clearLog = () => {
       setLog("");
-      fullLog = "";
+      rawLog.current = "";
     };
     view.on("clearlog", clearLog);
     return () => {

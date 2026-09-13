@@ -115,13 +115,21 @@ const start = async (app) => {
           [
             "workspace",
             "create",
+            "--focus",
+            "true",
             "--name",
             `${name} - terminal`,
             "--cwd",
             runbasepath,
           ],
           { detached: true, stdio: "ignore" },
-        ).unref();
+        ).on("exit", (code) => {
+          if (code === 0)
+            spawn("open", ["-a", "cmux"], {
+              detached: true,
+              stdio: "ignore",
+            }).unref();
+        }).unref();
       else exec(`open -a Terminal "${runbasepath}"`);
     },
     callWin: ({ runbasepath }) => {

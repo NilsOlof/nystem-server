@@ -1,7 +1,11 @@
 import { spawn } from "node:child_process";
+import { randomBytes, timingSafeEqual } from "node:crypto";
+import { homedir } from "node:os";
+import { resolveProjectPath, findServerByPath } from "./projectPath.js";
 
 const role = "super";
 const maxLogLength = 100000;
+const apiKeyPath = `${homedir()}/.codex/nystem-server-control.key`;
 
 const insertValues = (text, data) =>
   text.replace(/{([a-z0-9_\.]+)}/gi, (str, p1) => {
@@ -9,6 +13,7 @@ const insertValues = (text, data) =>
   });
 
 const resolveExistingPath = (app, path) => {
+  path = resolveProjectPath(app.fs, path);
   if (app.fs.existsSync(path)) return path;
 
   const home = process.env.HOME;
@@ -20,6 +25,14 @@ const resolveExistingPath = (app, path) => {
 };
 
 const start = function (app) {
+  app.fs.ensureDirSync(`${homedir()}/.codex`);
+  if (!app.fs.existsSync(apiKeyPath))
+    app.fs.writeFileSync(apiKeyPath, randomBytes(32).toString("hex"), {
+      mode: 0o600,
+    });
+  else app.fs.chmodSync(apiKeyPath, 0o600);
+  const apiKey = app.fs.readFileSync(apiKeyPath, "utf8").trim();
+
   const runProgram = function (path, program) {
     const execService = spawn(process.execPath, [`${path}/${program}`], {
       cwd: path,
@@ -180,6 +193,90 @@ const start = function (app) {
     runningServer.restartRequested = false;
     runningServer.stopRequested = true;
     if (runningServer.service) runningServer.service.event("stop");
+  });
+
+  const restartServer = (serverId) => {
+    const runningServer = servers.get(serverId);
+    if (!runningServer) {
+      startServer(serverId);
+      return;
+    }
+
+    runningServer.restartRequested = true;
+    runningServer.stopRequested = true;
+    if (runningServer.service) runningServer.service.event("stop");
+  };
+
+  const sendApiResponse = (id, statusCode, data) => {
+    app.file.event("response", {
+      id,
+      statusCode,
+      headers: { "Content-Type": "application/json" },
+      data: JSON.stringify(data),
+      closed: true,
+    });
+    return {};
+  };
+
+  const authenticateApi = (headers = {}) => {
+    const authorization = headers.authorization || "";
+    const key = authorization.startsWith("Bearer ")
+      ? authorization.substring(7)
+      : "";
+    const suppliedKey = Buffer.from(key);
+    const expectedKey = Buffer.from(apiKey);
+    return (
+      suppliedKey.length === expectedKey.length &&
+      timingSafeEqual(suppliedKey, expectedKey)
+    );
+  };
+
+  const getStatusByPath = async (path) => {
+    const { data = [] } = await app.database.serverStatus.search({ role });
+    return findServerByPath(app.fs, data, path);
+  };
+
+  app.file.on(["get", "post"], 800, async ({ id, url, headers, method }) => {
+    if (!url?.startsWith("/codex-api/server")) return;
+    if (!authenticateApi(headers))
+      return sendApiResponse(id, 401, { error: "Unauthorized" });
+
+    const requestUrl = new URL(url, "http://localhost");
+    const path = requestUrl.searchParams.get("path");
+    if (!path)
+      return sendApiResponse(id, 400, { error: "Missing project path" });
+
+    const status = await getStatusByPath(path);
+    if (!status)
+      return sendApiResponse(id, 404, {
+        error: "No unique server found for project path",
+      });
+
+    if (requestUrl.pathname === "/codex-api/server/restart") {
+      if (method !== "post")
+        return sendApiResponse(id, 405, { error: "Method not allowed" });
+      restartServer(status._id);
+      return sendApiResponse(id, 202, {
+        accepted: true,
+        serverId: status._id,
+        basepath: status.basepath,
+      });
+    }
+
+    if (requestUrl.pathname !== "/codex-api/server" || method !== "get")
+      return sendApiResponse(id, 404, { error: "Not found" });
+
+    const lineCount = Math.max(
+      1,
+      Math.min(200, Number(requestUrl.searchParams.get("lines")) || 40),
+    );
+    return sendApiResponse(id, 200, {
+      serverId: status._id,
+      basepath: status.basepath,
+      running: status.running,
+      code: status.code,
+      log: (status.log || "").split("\n").slice(-lineCount).join("\n"),
+    });
   });
 };
 

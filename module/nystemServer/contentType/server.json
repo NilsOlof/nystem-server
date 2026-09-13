@@ -134,6 +134,7 @@
                               "viewId": "{_id}"
                             }
                           ],
+                          "format": "onOverHandle",
                           "className": ["flex", "items-center"]
                         }
                       ],
@@ -152,7 +153,6 @@
                       "expanded": true
                     }
                   ],
-                  "format": "onOverHandle",
                   "className": ["m-3", "max-w-4xl"]
                 }
               ],
@@ -339,6 +339,7 @@
                       "viewId": "{_id}"
                     }
                   ],
+                  "format": "onOverHandle",
                   "className": ["flex", "items-center"]
                 }
               ],
@@ -356,7 +357,6 @@
               "stateStore": "byUrl"
             }
           ],
-          "format": "onOverHandle",
           "className": ["p-3", "max-w-4xl"]
         },
         {
@@ -691,6 +691,7 @@
                           "viewId": "{_id}"
                         }
                       ],
+                      "format": "onOverHandle",
                       "className": ["flex", "items-center"]
                     }
                   ],
@@ -707,7 +708,6 @@
                   "typeClass": "defaultWithoutPadding"
                 }
               ],
-              "format": "onOverHandle",
               "className": [""]
             }
           ],

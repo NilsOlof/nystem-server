@@ -51,6 +51,8 @@ const start = async (app) => {
     const args = useCmux
       ? [
           "new-workspace",
+          "--focus",
+          "true",
           "--name",
           `${app.settings.client.name} - worker`,
           "--cwd",
@@ -63,7 +65,13 @@ const start = async (app) => {
           `tell app "Terminal" to activate\ntell app "Terminal" to do script "cd \\"${app.__dirname}\\" && npm run worker && exit"`,
         ];
 
-    spawn(useCmux ? cmux : "osascript", args, opt);
+    spawn(useCmux ? cmux : "osascript", args, opt).on("exit", (code) => {
+      if (useCmux && code === 0)
+        spawn("open", ["-a", "cmux"], {
+          detached: true,
+          stdio: "ignore",
+        }).unref();
+    });
   }
 
   if (!startCallback)
