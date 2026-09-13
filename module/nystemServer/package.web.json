@@ -1,5 +1,1 @@
-{
-  "dependencies": {
-    "@uiw/react-codemirror": "3.2.1"
-  }
-}
+{ "dependencies": { "@uiw/react-codemirror": "3.2.1", "@babel/runtime": "7", "codemirror": "5" } }

@@ -14,18 +14,14 @@ const devStartingIfno = `
 </html>
 `;
 
-const getRelReplace = (dirname) =>
-  new RegExp(`(${dirname.replace(/\\/g, "/")})/web/src/`, "gi");
+const getRelReplace = (dirname) => new RegExp(`(${dirname.replace(/\\/g, "/")})/web/src/`, "gi");
 
 export default async (app) => {
   const rewrite = (url, data) => {
     if (url.startsWith("/node_modules/.vite/deps/chunk-"))
-      return data
-        .toString()
-        .replace('console.info("%cDownload', 'const a = ()=>{}; a("%cDownload');
+      return data.toString().replace('console.info("%cDownload', 'const a = ()=>{}; a("%cDownload');
 
-    if (/\.js\.map$/im.test(url))
-      return data.toString().replace(getRelReplace(app.__dirname), "$1/");
+    if (/\.js\.map$/im.test(url)) return data.toString().replace(getRelReplace(app.__dirname), "$1/");
 
     return data;
   };
@@ -70,14 +66,7 @@ export default async (app) => {
             return;
           }
 
-          app.file.event("response", {
-            id,
-            type,
-            headers,
-            statusMessage,
-            statusCode,
-            url,
-          });
+          app.file.event("response", { id, type, headers, statusMessage, statusCode, url });
 
           response.on("end", () => {
             app.file.event("response", { id, closed: true });
@@ -97,10 +86,7 @@ export default async (app) => {
         if (error.code === "ECONNREFUSED") {
           console.log("Client not found, starting dev server...");
           startApp();
-        } else
-          console.log(
-            `💥 Res error ${error.stack.toString().replace(/\n/g, "")}`,
-          );
+        } else console.log(`💥 Res error ${error.stack.toString().replace(/\n/g, "")}`);
 
         app.file.event("response", {
           id,
@@ -127,7 +113,7 @@ export default async (app) => {
 
     const isWin = platform() === "win32";
     const cmux = "/Applications/cmux.app/Contents/Resources/bin/cmux";
-    const useCmux = platform() === "darwin" && app.fs.existsSync(cmux);
+    const useCmux = platform() === "darwin" && process.env.CMUX_SOCKET_PATH && app.fs.existsSync(cmux);
 
     const command = isWin ? "cmd" : useCmux ? cmux : "osascript";
     const args = isWin
@@ -140,11 +126,11 @@ export default async (app) => {
             "--cwd",
             `${app.__dirname}/web`,
             "--command",
-            "CHOKIDAR_USEPOLLING=false npm start",
+            "CHOKIDAR_USEPOLLING=false pnpm start",
           ]
         : [
             "-e",
-            `tell application "Terminal" to do script "cd ${app.__dirname}/web && CHOKIDAR_USEPOLLING=false npm start"`,
+            `tell application "Terminal" to do script "cd ${app.__dirname}/web && CHOKIDAR_USEPOLLING=false pnpm start"`,
           ];
 
     const opt = {

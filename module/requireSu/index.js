@@ -30,7 +30,7 @@ const start = async (app) => {
   });
   app.on("requireSu.start", (query) => ({ ...query, settings: app.settings }));
 
-  const command = `node "${app.__dirname}/app.js" "${__dirname}/worker.js"`;
+  const command = `node "${__dirname}/worker.js"`;
 
   if (os === "win32") {
     const sudo = (await import(app.nodePath("sudo-prompt"))).default;
@@ -40,7 +40,7 @@ const start = async (app) => {
     });
   } else {
     const cmux = "/Applications/cmux.app/Contents/Resources/bin/cmux";
-    const useCmux = os === "darwin" && app.fs.existsSync(cmux);
+    const useCmux = os === "darwin" && process.env.CMUX_SOCKET_PATH && app.fs.existsSync(cmux);
     const opt = {
       cwd: `${app.__dirname}`,
       env: process.env,
@@ -58,19 +58,15 @@ const start = async (app) => {
           "--cwd",
           app.__dirname,
           "--command",
-          "npm run worker && exit",
+          "pnpm run worker && exit",
         ]
       : [
           "-e",
-          `tell app "Terminal" to activate\ntell app "Terminal" to do script "cd \\"${app.__dirname}\\" && npm run worker && exit"`,
+          `tell app "Terminal" to activate\ntell app "Terminal" to do script "cd \\"${app.__dirname}\\" && pnpm run worker && exit"`,
         ];
 
     spawn(useCmux ? cmux : "osascript", args, opt).on("exit", (code) => {
-      if (useCmux && code === 0)
-        spawn("open", ["-a", "cmux"], {
-          detached: true,
-          stdio: "ignore",
-        }).unref();
+      if (useCmux && code === 0) spawn("open", ["-a", "cmux"], { detached: true, stdio: "ignore" }).unref();
     });
   }
 

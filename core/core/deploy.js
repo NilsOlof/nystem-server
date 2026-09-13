@@ -8,9 +8,7 @@ const nodePath = (name) => {
   const nodePath = process.env.NODE_PATH;
   if (!nodePath) return name;
 
-  const { main } = JSON.parse(
-    fs.readFileSync(`${nodePath}/${name}/package.json`),
-  );
+  const { main } = JSON.parse(fs.readFileSync(`${nodePath}/${name}/package.json`));
 
   return `file://${process.env.NODE_PATH}/${name}/${main.replace("./", "")}`;
 };
@@ -25,9 +23,7 @@ const addPreload = (html) => {
   let match = files.exec(html);
   while (match != null) {
     const [, type, src] = match;
-    out += `<link rel="preload" href="${src}" as="${
-      type === "link" ? "style" : "script"
-    }">`;
+    out += `<link rel="preload" href="${src}" as="${type === "link" ? "style" : "script"}">`;
     match = files.exec(html);
   }
   return html.replace("<head>", `<head>${out}`);
@@ -35,18 +31,15 @@ const addPreload = (html) => {
 
 const runCommandExec = (command, env = {}) =>
   new Promise((resolve, reject) =>
-    exec(
-      command,
-      { env: { ...process.env, ...env } },
-      (error, stdout, stderr) =>
-        error ? reject(error) : resolve(stdout + stderr),
+    exec(command, { env: { ...process.env, ...env } }, (error, stdout, stderr) =>
+      error ? reject(error) : resolve(stdout + stderr),
     ),
   );
 
 const runCommand = (commandLine, cwd) =>
   new Promise((resolve, reject) => {
     let [command, ...args] = commandLine.split(" ");
-    if (os.platform() === "win32" && command === "npm") command = "npm.cmd";
+    if (os.platform() === "win32" && command === "pnpm") command = "pnpm.cmd";
 
     const opts = {
       cwd: cwd ? folder + cwd : null,
@@ -60,19 +53,13 @@ const runCommand = (commandLine, cwd) =>
   });
 
 const runGitCommand = (command, env) =>
-  runCommandExec(
-    `git --git-dir="${gitFolder}.git" --work-tree="${gitFolder}" ${command}`,
-    env,
-  );
+  runCommandExec(`git --git-dir="${gitFolder}.git" --work-tree="${gitFolder}" ${command}`, env);
 
 const dirname = process.env.NODE__DIRNAME || __dirname;
 const folder = dirname.replace(/\\/g, "/");
-const folderAsUnix =
-  process.platform === "win32" ? folder.replace(/\//g, "\\") : folder;
+const folderAsUnix = process.platform === "win32" ? folder.replace(/\//g, "\\") : folder;
 
-const settings = JSON.parse(
-  fs.readFileSync(`${dirname}/data/host.json`, "utf8"),
-);
+const settings = JSON.parse(fs.readFileSync(`${dirname}/data/host.json`, "utf8"));
 const { buildBranch = "master", devBranch = "develop" } = settings;
 
 let gitFolder = __dirname.replace(/\\/g, "/");
@@ -83,8 +70,7 @@ const saveContentTypes = () => {
     if (fs.statSync(file).isDirectory()) {
       if (!depthLimit) return;
       const files = fs.readdirSync(file);
-      for (let i = 0; i < files.length; i++)
-        file2Type(`${file}/${files[i]}`, depthLimit - 1, files[i], filename);
+      for (let i = 0; i < files.length; i++) file2Type(`${file}/${files[i]}`, depthLimit - 1, files[i], filename);
     } else if (
       parent === "contentType" &&
       file.indexOf(".json") !== -1 &&
@@ -92,9 +78,7 @@ const saveContentTypes = () => {
       file.indexOf("package.") === -1
     ) {
       try {
-        out[filename.replace(".json", "")] = JSON.parse(
-          fs.readFileSync(file, "utf8"),
-        );
+        out[filename.replace(".json", "")] = JSON.parse(fs.readFileSync(file, "utf8"));
       } catch (e) {
         console.log("Parse error", file);
       }
@@ -126,30 +110,20 @@ const deploy = async () => {
     await runGitCommand(`merge ${devBranch}`);
     console.log("Merge done, building");
 
-    // await runCommand("npm run build:css:prod", "/web");
-    await runCommand("npm run build", "/web");
+    // await runCommand("pnpm run build:css:prod", "/web");
+    await runCommand("pnpm run build", "/web");
     await delay(500);
     console.log("Build done, copying");
 
     const items = await fs.readdir(`${folderAsUnix}/web/dist`);
     await Promise.all(
-      items.map((item) =>
-        fs.copy(
-          `${folderAsUnix}/web/dist/${item}`,
-          `${folderAsUnix}/build/${item}`,
-        ),
-      ),
+      items.map((item) => fs.copy(`${folderAsUnix}/web/dist/${item}`, `${folderAsUnix}/build/${item}`)),
     );
-    await fs.copy(
-      `${folderAsUnix}/web/src/contenttype.json`,
-      `${folderAsUnix}/build/contenttype.json`,
-    );
+    await fs.copy(`${folderAsUnix}/web/src/contenttype.json`, `${folderAsUnix}/build/contenttype.json`);
 
     await fs.writeFile(
       `${folderAsUnix}/build/index.html`,
-      addPreload(
-        await fs.readFile(`${folderAsUnix}/web/dist/index.html`, "utf8"),
-      ),
+      addPreload(await fs.readFile(`${folderAsUnix}/web/dist/index.html`, "utf8")),
     );
 
     console.log("Copy done, adding to git");
@@ -157,16 +131,13 @@ const deploy = async () => {
     await runGitCommand("add *");
     await runGitCommand("commit -m Build");
 
-    if (process.platform === "win32")
-      await runGitCommand("push", {
-        GIT_SSH: "C:\\Program Files\\PuTTY\\plink.exe",
-      });
+    if (process.platform === "win32") await runGitCommand("push", { GIT_SSH: "C:\\Program Files\\PuTTY\\plink.exe" });
     else await runGitCommand("push");
 
     await runGitCommand("status");
     await delay(5000);
     await runGitCommand(`checkout ${devBranch}`);
-    // await runCommand("npm run build:css", "/web");
+    // await runCommand("pnpm run build:css", "/web");
     console.log("Deploy done");
   } catch (e) {
     console.log("Error", e);

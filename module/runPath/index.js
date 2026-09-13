@@ -48,16 +48,8 @@ const start = async (app) => {
       if (fs.existsSync(`${runbasepath}/${path}`)) return;
       if (excludePaths.indexOf(path) !== -1) return;
 
-      app.event("mkSymLink", {
-        path: `${basepath}/${path}`,
-        topath: `${runbasepath}/${path}`,
-      });
+      app.event("mkSymLink", { path: `${basepath}/${path}`, topath: `${runbasepath}/${path}` });
     });
-
-    if (!fs.existsSync(`${runbasepath}/app.js`)) {
-      fs.copy(`${__dirname}/app.js`, `${runbasepath}/app.js`);
-      fs.copy(`${app.__dirname}/server.js`, `${basepath}/server.js`);
-    }
   });
 };
 

@@ -4,13 +4,10 @@ import { normalize, join, sep } from "node:path";
 export const resolveProjectPath = (fs, projectPath, home = homedir()) => {
   if (!projectPath) return projectPath;
   const normalized = normalize(projectPath).replace(/\/+$/, "") || sep;
-  const oldRoot = join(home, "Dropbox", "nodejs");
-  if (normalized !== oldRoot && !normalized.startsWith(`${oldRoot}${sep}`))
-    return normalized;
-  const destination = join(home, "Documents", "nodejs", normalized.slice(oldRoot.length));
-  return fs.existsSync(destination) && fs.statSync(destination).isDirectory()
-    ? destination
-    : normalized;
+  const oldRoot = join(home, "Documents", "nodejs");
+  if (normalized !== oldRoot && !normalized.startsWith(`${oldRoot}${sep}`)) return normalized;
+  const destination = join(home, "Dropbox", "nodejs", normalized.slice(oldRoot.length));
+  return fs.existsSync(destination) && fs.statSync(destination).isDirectory() ? destination : normalized;
 };
 
 export const findServerByPath = (fs, statuses, projectPath, home = homedir()) => {

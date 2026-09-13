@@ -4,6 +4,6 @@
     "sudo-prompt": "*"
   },
   "scripts": {
-    "worker": "sudo node app.js module/requireSu/worker.js"
+    "worker": "sudo node module/requireSu/worker.js"
   }
 }

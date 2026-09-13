@@ -5,9 +5,7 @@ export default async (ev) => {
   console.log("[router] proxy start", { routerPort: routerPort || 80 });
 
   let routes = {};
-  const httpProxy = (
-    await import(`file://${process.env.NODE_PATH}/http-proxy/index.js`)
-  ).default;
+  const httpProxy = (await import("http-proxy")).default;
   let proxy = {};
 
   function loadConfig() {
@@ -17,18 +15,8 @@ export default async (ev) => {
       if (proxyOld[item]) proxy[item] = proxyOld[item];
       else {
         const [host, port] = routes[item].split(":");
-        console.log("[router] create proxy", {
-          host: item,
-          target: routes[item],
-        });
-        proxy[item] = httpProxy.createProxyServer({
-          target: {
-            host,
-            port,
-          },
-          ws: true,
-          xfwd: true,
-        });
+        console.log("[router] create proxy", { host: item, target: routes[item] });
+        proxy[item] = httpProxy.createProxyServer({ target: { host, port }, ws: true, xfwd: true });
         proxy[item].on("error", (err, req, res) => {
           console.log("[router] proxy error", {
             host: req?.headers?.host,
@@ -48,9 +36,7 @@ export default async (ev) => {
 
   const getHost = ({ headers }) => {
     const { host } = headers;
-    return host.indexOf(":") !== -1
-      ? host.substring(0, host.indexOf(":"))
-      : host;
+    return host.indexOf(":") !== -1 ? host.substring(0, host.indexOf(":")) : host;
   };
 
   const proxyServer = createServer((req, res) => {
@@ -59,12 +45,7 @@ export default async (ev) => {
     if (proxy[host])
       proxy[host].web(req, res, (err) => {
         if (err)
-          console.log("[router] web callback error", {
-            host,
-            url: req.url,
-            message: err.message,
-            code: err.code,
-          });
+          console.log("[router] web callback error", { host, url: req.url, message: err.message, code: err.code });
       });
     else res.end(`Missing host ${host}`);
   });
@@ -73,10 +54,7 @@ export default async (ev) => {
     const host = getHost(req);
 
     socket.on("error", (err, req, res) => {
-      console.log("[router] socket error", {
-        message: err.message,
-        code: err.code,
-      });
+      console.log("[router] socket error", { message: err.message, code: err.code });
     });
     if (proxy[host]) proxy[host].ws(req, socket, head);
   });

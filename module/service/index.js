@@ -27,17 +27,12 @@ const resolveExistingPath = (app, path) => {
 const start = function (app) {
   app.fs.ensureDirSync(`${homedir()}/.codex`);
   if (!app.fs.existsSync(apiKeyPath))
-    app.fs.writeFileSync(apiKeyPath, randomBytes(32).toString("hex"), {
-      mode: 0o600,
-    });
+    app.fs.writeFileSync(apiKeyPath, randomBytes(32).toString("hex"), { mode: 0o600 });
   else app.fs.chmodSync(apiKeyPath, 0o600);
   const apiKey = app.fs.readFileSync(apiKeyPath, "utf8").trim();
 
   const runProgram = function (path, program) {
-    const execService = spawn(process.execPath, [`${path}/${program}`], {
-      cwd: path,
-      detached: false,
-    });
+    const execService = spawn(process.execPath, [`${path}/${program}`], { cwd: path, detached: false });
 
     console.log(`start ${path}/${program} pid:${execService.pid}`);
 
@@ -93,51 +88,31 @@ const start = function (app) {
     if (servers.has(id)) return;
 
     logs[id] = logs[id] || "";
-    const runningServer = {
-      restartRequested: false,
-      service: false,
-      stopRequested: false,
-    };
+    const runningServer = { restartRequested: false, service: false, stopRequested: false };
     servers.set(id, runningServer);
 
     try {
       const { data: server } = await app.database.server.get({ id, role });
 
-      const { runbasepath: path, basepath } = await app.event(
-        "serverPath",
-        server,
-      );
+      const { runbasepath: path, basepath } = await app.event("serverPath", server);
 
       const update = async (updatedData) => {
-        app.database.serverStatus.save({
-          data: { _id: id, basepath: path, ...updatedData },
-          fields: true,
-          role,
-        });
+        app.database.serverStatus.save({ data: { _id: id, basepath: path, ...updatedData }, fields: true, role });
       };
-
-      const hasAppJs = await app.fs.exists(`${path}/app.js`);
 
       if (runningServer.stopRequested) {
         servers.delete(id);
         return;
       }
 
-      const service = runProgram(path, hasAppJs ? "app.js" : "server.js");
+      const service = runProgram(path, "server.js");
       runningServer.service = service;
 
       const onData = (dataType) => (query) => {
-        app.connection.broadcast({
-          type: `serverLog${id}`,
-          ...query,
-          dataType,
-          path,
-          basepath,
-        });
+        app.connection.broadcast({ type: `serverLog${id}`, ...query, dataType, path, basepath });
 
         logs[id] += query.data;
-        if (logs[id].length > maxLogLength)
-          logs[id] = logs[id].substring(logs[id].length - maxLogLength);
+        if (logs[id].length > maxLogLength) logs[id] = logs[id].substring(logs[id].length - maxLogLength);
 
         update({ log: logs[id] });
       };
@@ -158,11 +133,7 @@ const start = function (app) {
 
       servers.delete(id);
       console.log(`Start failed for server ${id}`, error);
-      app.database.serverStatus.save({
-        data: { _id: id, running: false, code: error.code },
-        fields: true,
-        role,
-      });
+      app.database.serverStatus.save({ data: { _id: id, running: false, code: error.code }, fields: true, role });
     }
   };
 
@@ -171,11 +142,7 @@ const start = function (app) {
     if (running === oldData.running) return;
 
     setTimeout(() => {
-      app.connection.broadcast({
-        type: "databaseUpdate",
-        contentType: "serverStatus",
-        ids: [_id],
-      });
+      app.connection.broadcast({ type: "databaseUpdate", contentType: "serverStatus", ids: [_id] });
     });
 
     const runningServer = servers.get(_id);
@@ -220,15 +187,10 @@ const start = function (app) {
 
   const authenticateApi = (headers = {}) => {
     const authorization = headers.authorization || "";
-    const key = authorization.startsWith("Bearer ")
-      ? authorization.substring(7)
-      : "";
+    const key = authorization.startsWith("Bearer ") ? authorization.substring(7) : "";
     const suppliedKey = Buffer.from(key);
     const expectedKey = Buffer.from(apiKey);
-    return (
-      suppliedKey.length === expectedKey.length &&
-      timingSafeEqual(suppliedKey, expectedKey)
-    );
+    return suppliedKey.length === expectedKey.length && timingSafeEqual(suppliedKey, expectedKey);
   };
 
   const getStatusByPath = async (path) => {
@@ -238,38 +200,25 @@ const start = function (app) {
 
   app.file.on(["get", "post"], 800, async ({ id, url, headers, method }) => {
     if (!url?.startsWith("/codex-api/server")) return;
-    if (!authenticateApi(headers))
-      return sendApiResponse(id, 401, { error: "Unauthorized" });
+    if (!authenticateApi(headers)) return sendApiResponse(id, 401, { error: "Unauthorized" });
 
     const requestUrl = new URL(url, "http://localhost");
     const path = requestUrl.searchParams.get("path");
-    if (!path)
-      return sendApiResponse(id, 400, { error: "Missing project path" });
+    if (!path) return sendApiResponse(id, 400, { error: "Missing project path" });
 
     const status = await getStatusByPath(path);
-    if (!status)
-      return sendApiResponse(id, 404, {
-        error: "No unique server found for project path",
-      });
+    if (!status) return sendApiResponse(id, 404, { error: "No unique server found for project path" });
 
     if (requestUrl.pathname === "/codex-api/server/restart") {
-      if (method !== "post")
-        return sendApiResponse(id, 405, { error: "Method not allowed" });
+      if (method !== "post") return sendApiResponse(id, 405, { error: "Method not allowed" });
       restartServer(status._id);
-      return sendApiResponse(id, 202, {
-        accepted: true,
-        serverId: status._id,
-        basepath: status.basepath,
-      });
+      return sendApiResponse(id, 202, { accepted: true, serverId: status._id, basepath: status.basepath });
     }
 
     if (requestUrl.pathname !== "/codex-api/server" || method !== "get")
       return sendApiResponse(id, 404, { error: "Not found" });
 
-    const lineCount = Math.max(
-      1,
-      Math.min(200, Number(requestUrl.searchParams.get("lines")) || 40),
-    );
+    const lineCount = Math.max(1, Math.min(200, Number(requestUrl.searchParams.get("lines")) || 40));
     return sendApiResponse(id, 200, {
       serverId: status._id,
       basepath: status.basepath,
@@ -284,18 +233,14 @@ export default (app) => {
   app.on("serverPath", (server) => {
     const { atHost } = app.settings;
     const hostBasepath = resolveExistingPath(app, atHost.basepath || "");
-    const hostRunbasepath = atHost.runbasepath
-      ? resolveExistingPath(app, atHost.runbasepath)
-      : "";
+    const hostRunbasepath = atHost.runbasepath ? resolveExistingPath(app, atHost.runbasepath) : "";
 
     let basepath = insertValues(server.path, atHost.folders).replace(/\\/g, "/");
     let runbasepath = basepath;
 
     if (basepath[0] !== "/" && basepath[1] !== ":") {
       basepath = `${hostBasepath}/${basepath}`;
-      runbasepath = hostRunbasepath
-        ? `${hostRunbasepath}/${runbasepath}`
-        : basepath;
+      runbasepath = hostRunbasepath ? `${hostRunbasepath}/${runbasepath}` : basepath;
     }
 
     basepath = resolveExistingPath(app, basepath);
@@ -312,10 +257,7 @@ export default (app) => {
       basepath = pathSplit.slice(0, len - 1).join("/");
     }
 
-    if (
-      app.fs.existsSync(runbasepath) &&
-      !app.fs.lstatSync(runbasepath).isDirectory()
-    ) {
+    if (app.fs.existsSync(runbasepath) && !app.fs.lstatSync(runbasepath).isDirectory()) {
       const pathSplit = runbasepath.split("/");
       const len = pathSplit.length;
       runbasepath = pathSplit.slice(0, len - 1).join("/");

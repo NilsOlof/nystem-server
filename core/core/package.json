@@ -1,7 +1,7 @@
 {
   "scripts": {
     "start": "node server.js",
-    "deploy": "node app.js core/core/deploy.js"
+    "deploy": "node core/core/deploy.js"
   },
   "license": "MIT",
   "dependencies": {

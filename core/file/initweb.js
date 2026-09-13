@@ -9,9 +9,7 @@ const nodePath = (name) => {
   const nodePath = process.env.NODE_PATH;
   if (!nodePath) return name;
 
-  const { main } = JSON.parse(
-    fs.readFileSync(`${nodePath}/${name}/package.json`),
-  );
+  const { main } = JSON.parse(fs.readFileSync(`${nodePath}/${name}/package.json`));
 
   return `file://${process.env.NODE_PATH}/${name}/${main.replace("./", "")}`;
 };
@@ -28,8 +26,7 @@ const runCommand = (commandLine, cwd) =>
     // eslint-disable-next-line prefer-const
     let [command, ...args] = commandLine.split(" ");
 
-    if (os.platform() === "win32" && command === "npm") command = "npm.cmd";
-    if (os.platform() === "win32" && command === "npx") command = "npx.cmd";
+    if (os.platform() === "win32" && command === "pnpm") command = "pnpm.cmd";
 
     const opts = {
       cwd: cwd ? folder + cwd : null,
@@ -44,19 +41,21 @@ const runCommand = (commandLine, cwd) =>
 
 const dirname = process.env.NODE__DIRNAME || __dirname;
 const folder = dirname.replace(/\\/g, "/");
-const folderAsUnix =
-  process.platform === "win32" ? folder.replace(/\//g, "\\") : folder;
+const folderAsUnix = process.platform === "win32" ? folder.replace(/\//g, "\\") : folder;
 
 const webinit = async () => {
   try {
     const app = init;
 
-    if (app.fs.existsSync(`${app.__dirname}/web`)) runCommand("rmdir /q/s web");
+    if (app.fs.existsSync(`${app.__dirname}/web`)) {
+      const webDirectory = fs.lstatSync(`${app.__dirname}/web`).isSymbolicLink()
+        ? fs.realpathSync(`${app.__dirname}/web`)
+        : `${app.__dirname}/web`;
+      await fs.remove(webDirectory);
+      await fs.ensureDir(webDirectory);
+    }
 
-    await runCommand(
-      "npm create vite@latest web -- --template react --no-interactive",
-      "/",
-    );
+    await runCommand("pnpm create vite@latest web --template react --no-interactive", "/");
 
     console.log("Init done, copying");
     await app.writeFileChanged(
@@ -65,21 +64,15 @@ const webinit = async () => {
         .readFileSync(`${folderAsUnix}/core/file/vite.config.js`, "utf-8")
         .replace(/99999999/g, app.settings.port + 5000),
     );
-    await fs.copy(
-      `${folderAsUnix}/core/file/eslint.json`,
-      `${folderAsUnix}/web/.eslintrc`,
-    );
-    await fs.copy(
-      `${folderAsUnix}/core/style/tailwind.config.js`,
-      `${folderAsUnix}/web/tailwind.config.js`,
-    );
+    await fs.copy(`${folderAsUnix}/core/file/eslint.json`, `${folderAsUnix}/web/.eslintrc`);
+    await fs.copy(`${folderAsUnix}/core/style/tailwind.config.js`, `${folderAsUnix}/web/tailwind.config.js`);
     await fs.remove(`${folderAsUnix}/web/src/assets`);
     await fs.unlink(`${folderAsUnix}/web/src/main.jsx`);
     await fs.unlink(`${folderAsUnix}/web/src/App.css`);
     console.log("Copy done, creating package.js");
     packageM(app);
 
-    await runCommand("npm install", "/web");
+    await runCommand("pnpm install", "/web");
 
     console.log("");
     console.log("Init web done");
