@@ -7,7 +7,14 @@
     { "type": "text", "text": "code", "id": "code" },
     { "type": "text", "text": "basepath", "id": "basepath" },
     { "type": "boolean", "id": "running", "text": "Running" },
-    { "type": "textarea", "id": "log", "text": "Log" }
+    { "type": "textarea", "id": "log", "text": "Log" },
+    { "type": "textarea", "id": "deployLog", "text": "Deploy log" },
+    { "type": "boolean", "id": "deployRunning", "text": "Deploy running" },
+    { "type": "textarea", "id": "commitLog", "text": "Commit log" },
+    { "type": "boolean", "id": "commitRunning", "text": "Commit running" },
+    { "type": "textarea", "id": "taskLog", "text": "Build and deploy log" },
+    { "type": "boolean", "id": "taskRunning", "text": "Build or deploy running" },
+    { "type": "text", "id": "taskAction", "text": "Current task" }
   ],
   "views": [
     {
@@ -85,36 +92,6 @@
                         "ease-in-out"
                       ],
                       "item": [{ "type": "icon", "icon": "code", "className": ["h-4", "w-4"] }]
-                    },
-                    {
-                      "category": "view",
-                      "type": "viewButton",
-                      "format": "eventEmitter",
-                      "event": "serverProgram",
-                      "fields": [["{id}", "serverId"], ["term", "program"]],
-                      "className": [
-                        "mr-1",
-                        "bg-blue-500",
-                        "hover:bg-blue-500",
-                        "text-white",
-                        "rounded",
-                        "shadow-sm",
-                        "py-1",
-                        "px-2",
-                        "text-xs",
-                        "inline-flex",
-                        "items-center",
-                        "justify-center",
-                        "cursor-pointer",
-                        "hide-on-false",
-                        "transition",
-                        "transition-opacity",
-                        "duration-500",
-                        "ease-in-out"
-                      ],
-                      "btnType": "primary",
-                      "size": "xs",
-                      "item": [{ "type": "icon", "icon": "terminal-solid", "className": ["h-4", "w-4"] }]
                     },
                     {
                       "category": "view",
@@ -205,6 +182,13 @@
                         "ease-in-out"
                       ],
                       "item": [{ "type": "icon", "icon": "robot", "className": ["h-4", "w-4"] }]
+                    },
+                    {
+                      "category": "view",
+                      "type": "viewButton",
+                      "format": "deploy",
+                      "icon": "screwdriver-wrench",
+                      "className": ["mr-1", "bg-blue-500", "hover:bg-blue-500", "text-white", "rounded", "shadow-sm", "py-1", "px-2", "text-xs", "inline-flex", "items-center", "justify-center", "cursor-pointer", "hide-on-false", "transition", "transition-opacity", "duration-500", "ease-in-out"]
                     },
                     {
                       "category": "view",
@@ -339,17 +323,6 @@
               "type": "viewButton",
               "format": "eventEmitter",
               "event": "serverProgram",
-              "fields": [["{id}", "serverId"], ["term", "program"]],
-              "className": ["mr-1", "bg-blue-500", "hover:bg-blue-500", "text-white", "rounded", "shadow-sm", "py-1", "px-2", "text-xs", "inline-flex", "items-center", "justify-center", "cursor-pointer"],
-              "btnType": "primary",
-              "size": "xs",
-              "item": [{ "type": "icon", "icon": "terminal-solid", "className": ["h-4", "w-4"] }]
-            },
-            {
-              "category": "view",
-              "type": "viewButton",
-              "format": "eventEmitter",
-              "event": "serverProgram",
               "fields": [["{id}", "serverId"], ["sourcetree", "program"]],
               "btnType": "primary",
               "size": "xs",
@@ -377,6 +350,13 @@
               "size": "xs",
               "className": ["mr-1", "bg-blue-500", "hover:bg-blue-500", "text-white", "rounded", "shadow-sm", "py-1", "px-2", "text-xs", "inline-flex", "items-center", "justify-center", "cursor-pointer"],
               "item": [{ "type": "icon", "icon": "robot", "className": ["h-4", "w-4"] }]
+            },
+            {
+              "category": "view",
+              "type": "viewButton",
+              "format": "deploy",
+              "icon": "screwdriver-wrench",
+              "className": ["mr-1", "bg-blue-500", "hover:bg-blue-500", "text-white", "rounded", "shadow-sm", "py-1", "px-2", "text-xs", "inline-flex", "items-center", "justify-center", "cursor-pointer"]
             },
             {
               "category": "view",
@@ -419,25 +399,17 @@
       "format": "input",
       "item": [
         {
+          "category": "contentTypeField",
+          "type": "textarea",
+          "id": "taskLog",
+          "format": "deployLog"
+        },
+        {
           "category": "view",
           "type": "viewInView",
           "format": "setBaseViewValue",
           "fromField": "_id",
           "toField": "_id"
-        },
-        {
-          "type": "style",
-          "item": [
-            {
-              "type": "viewButton",
-              "format": "view",
-              "text": "Clear",
-              "event": "clearlog",
-              "btnType": "default",
-              "className": ["opacity-20", "absolute", "right-0"]
-            }
-          ],
-          "className": ["relative"]
         },
         {
           "category": "contentTypeField",

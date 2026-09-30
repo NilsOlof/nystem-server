@@ -464,13 +464,17 @@
             }
           ]
         },
-        { "category": "view", "type": "database", "format": "search" },
+        {
+          "category": "view",
+          "type": "database",
+          "format": "search",
+          "sortby": { "id": "name", "text": "Name" }
+        },
         {
           "type": "viewList",
           "category": "view",
           "renderFormat": "table",
           "autoupdate": true,
-          "reversesortby": true,
           "item": [
             {
               "id": "name",
@@ -530,7 +534,6 @@
               "className": ["", "py-1", "px-2"]
             }
           ],
-          "sortby": { "id": "_chdate", "text": "Change date" },
           "filter": [],
           "className": ["table-striped"],
           "rowClassName": [""]
@@ -580,7 +583,23 @@
                   "format": "link",
                   "text": "Nystem server",
                   "href": "/",
-                  "className": ["pl-1", "flex-grow", "select-none"]
+                  "className": ["pl-1", "flex-grow", "lg:grow-0", "text-lg", "font-bold", "tracking-tight", "text-white", "select-none"]
+                },
+                {
+                  "category": "view",
+                  "type": "viewLink",
+                  "format": "link",
+                  "text": "Servers",
+                  "href": "/server/list",
+                  "className": ["hidden", "lg:block", "ml-6", "text-xs", "font-medium", "text-gray-400", "hover:text-white", "select-none"]
+                },
+                {
+                  "category": "view",
+                  "type": "viewLink",
+                  "format": "link",
+                  "text": "Hosts",
+                  "href": "/host/list",
+                  "className": ["hidden", "lg:block", "ml-5", "mr-auto", "text-xs", "font-medium", "text-gray-400", "hover:text-white", "select-none"]
                 },
                 {
                   "type": "connection",

@@ -54,7 +54,7 @@ const start = async (app) => {
           "--focus",
           "true",
           "--name",
-          `${app.settings.client.name} - worker`,
+          `Worker - ${app.settings.client.name}`,
           "--cwd",
           app.__dirname,
           "--command",

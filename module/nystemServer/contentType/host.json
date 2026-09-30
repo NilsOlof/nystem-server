@@ -1,0 +1,79 @@
+{
+  "name": "host",
+  "machinename": "host",
+  "storage": "data",
+  "_roles": { "save": [] },
+  "item": [
+    { "id": "name", "text": "Name", "type": "text" },
+    { "id": "host", "text": "Host", "type": "multilinetext" },
+    { "id": "ip", "text": "IP Address", "type": "text" }
+  ],
+  "views": [
+    {
+      "name": "list",
+      "format": "list",
+      "item": [
+        {
+          "category": "view",
+          "type": "database",
+          "format": "search",
+          "sortby": { "id": "name", "text": "Name" }
+        },
+        {
+          "category": "view",
+          "type": "viewText",
+          "text": "Hosts",
+          "renderAs": "h4",
+          "className": ["pl-4", "py-2"]
+        },
+        {
+          "category": "view",
+          "type": "viewList",
+          "renderFormat": "table",
+          "autoupdate": true,
+          "className": ["ml-4"],
+          "item": [
+            {
+              "category": "contentTypeField",
+              "type": "text",
+              "id": "name",
+              "format": "view",
+              "className": ["p-2", "block"]
+            },
+            {
+              "category": "contentTypeField",
+              "type": "multilinetext",
+              "id": "host",
+              "format": "view",
+              "className": ["p-2", "block"]
+            },
+            {
+              "category": "contentTypeField",
+              "type": "text",
+              "id": "ip",
+              "format": "view",
+              "className": ["p-2", "block"]
+            }
+          ],
+          "headerFields": [
+            {
+              "category": "contentTypeField",
+              "type": "text",
+              "id": "name",
+              "format": "sortBy",
+              "className": ["p-2", "block"]
+            },
+            { "category": "view", "type": "viewText", "text": "Host", "className": ["p-2", "block"] },
+            {
+              "category": "contentTypeField",
+              "type": "text",
+              "id": "ip",
+              "format": "sortBy",
+              "className": ["p-2", "block"]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

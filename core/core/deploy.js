@@ -55,7 +55,7 @@ const runCommand = (commandLine, cwd) =>
 const runGitCommand = (command, env) =>
   runCommandExec(`git --git-dir="${gitFolder}.git" --work-tree="${gitFolder}" ${command}`, env);
 
-const dirname = process.env.NODE__DIRNAME || __dirname;
+const dirname = process.env.NODE__DIRNAME || url.fileURLToPath(new URL("../../", import.meta.url));
 const folder = dirname.replace(/\\/g, "/");
 const folderAsUnix = process.platform === "win32" ? folder.replace(/\//g, "\\") : folder;
 

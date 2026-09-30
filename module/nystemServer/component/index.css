@@ -54,6 +54,11 @@ body {
   opacity: 0;
 }
 
+.pointer:hover .hide-on-false,
+.pointer:focus-within .hide-on-false {
+  opacity: 1;
+}
+
 .is-open .hide-on-false {
   opacity: 100;
 }
@@ -66,18 +71,17 @@ body {
 .grayscale {
   filter: sepia(100%) opacity(50%);
 }
-::-webkit-scrollbar,
 ::-webkit-scrollbar {
   width: 14px; /* width of the entire scrollbar */
 }
 ::-webkit-scrollbar-track,
 body::-webkit-scrollbar-track {
-  background: white; /* color of the tracking area */
+  background: #242622; /* color of the window scrollbar track */
 }
 ::-webkit-scrollbar-thumb {
-  background-color: #a7a5a5; /* color of the scroll thumb */
+  background-color: #777f80; /* color of the scroll thumb */
   border-radius: 20px; /* roundness of the scroll thumb */
-  border: 3px solid white; /* creates padding around scroll thumb */
+  border: 3px solid #242622; /* creates padding around scroll thumb */
 }
 .scrollbar-dark::-webkit-scrollbar-thumb {
   background-color: #a7a5a5; /* color of the scroll thumb */

@@ -1,6 +1,7 @@
 import { spawn } from "node:child_process";
 import { randomBytes, timingSafeEqual } from "node:crypto";
 import { homedir } from "node:os";
+import { setTimeout as delay } from "node:timers/promises";
 import { resolveProjectPath, findServerByPath } from "./projectPath.js";
 
 const role = "super";
@@ -96,12 +97,17 @@ const start = function (app) {
 
       const { runbasepath: path, basepath } = await app.event("serverPath", server);
 
-      const update = async (updatedData) => {
-        app.database.serverStatus.save({ data: { _id: id, basepath: path, ...updatedData }, fields: true, role });
+      const update = (updatedData) => {
+        return app.database.serverStatus.save({
+          data: { _id: id, basepath: path, ...updatedData },
+          fields: true,
+          role,
+        });
       };
 
       if (runningServer.stopRequested) {
         servers.delete(id);
+        await update({ running: false });
         return;
       }
 
@@ -128,6 +134,7 @@ const start = function (app) {
       });
 
       if (runningServer.stopRequested) service.event("stop");
+      else update({ running: true, code: null });
     } catch (error) {
       if (servers.get(id) !== runningServer) return;
 
@@ -174,6 +181,27 @@ const start = function (app) {
     if (runningServer.service) runningServer.service.event("stop");
   };
 
+  const requestStop = async (serverId) => {
+    const runningServer = servers.get(serverId);
+    if (runningServer) {
+      runningServer.restartRequested = false;
+      runningServer.stopRequested = true;
+      if (runningServer.service) runningServer.service.event("stop");
+    } else {
+      await app.database.serverStatus.save({ data: { _id: serverId, running: false }, fields: true, role });
+    }
+  };
+
+  app.on("serverStop", async ({ serverId }) => {
+    await requestStop(serverId);
+    for (let attempt = 0; attempt < 300; attempt++) {
+      const { data: status } = await app.database.serverStatus.get({ id: serverId, role });
+      if (!servers.has(serverId) && status?.running === false) return { stopped: true };
+      await delay(100);
+    }
+    throw new Error("Timed out waiting for the server to stop");
+  });
+
   const sendApiResponse = (id, statusCode, data) => {
     app.file.event("response", {
       id,
@@ -208,6 +236,12 @@ const start = function (app) {
 
     const status = await getStatusByPath(path);
     if (!status) return sendApiResponse(id, 404, { error: "No unique server found for project path" });
+
+    if (requestUrl.pathname === "/codex-api/server/stop") {
+      if (method !== "post") return sendApiResponse(id, 405, { error: "Method not allowed" });
+      await requestStop(status._id);
+      return sendApiResponse(id, 202, { accepted: true, serverId: status._id, basepath: status.basepath });
+    }
 
     if (requestUrl.pathname === "/codex-api/server/restart") {
       if (method !== "post") return sendApiResponse(id, 405, { error: "Method not allowed" });

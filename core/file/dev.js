@@ -122,7 +122,7 @@ export default async (app) => {
         ? [
             "new-workspace",
             "--name",
-            `${app.settings.client.name} - client`,
+            `Client - ${app.settings.client.name}`,
             "--cwd",
             `${app.__dirname}/web`,
             "--command",

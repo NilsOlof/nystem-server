@@ -361,7 +361,7 @@ globalThis.chrome?.runtime?.onInstalled?.addListener?.(() => {});
     setTimeout(compileAndCopy, 1000);
   });
 
-  if (app.settings.debug === "hhhå")
+  if (app.settings.debug)
     app.on("debugModeFileChange", (event) => {
       const parts = event.path.split("/");
       if (!["component", "style", "contentType"].includes(parts[3])) return;
