@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import app from "nystem";
 import { Icon } from "nystem-components";
+import Tooltip from "../tooltip";
 
 const TextareaDeployLog = ({ view, value = "" }) => {
   const openKey = `serverPanelOpen${view.id}`;
@@ -44,24 +45,34 @@ const TextareaDeployLog = ({ view, value = "" }) => {
   return (
     <div className="flex h-100 max-h-128 flex-col bg-black text-gray-400 rounded shadow">
       <div className="flex shrink-0 flex-wrap items-center gap-2 p-2 bg-gray-900">
-        <button type="button" disabled={running} className="inline-flex items-center gap-2 rounded bg-blue-600 px-3 py-1 text-white hover:bg-blue-500 disabled:opacity-50" onClick={() => app.connection.emit({ type: "serverGitStatus", serverId: view.id })}>
-          <Icon icon="brands-git-alt" className={["h-4", "w-4"]} /> Status
-        </button>
-        <button type="button" disabled={running} className="inline-flex items-center gap-2 rounded bg-blue-600 px-3 py-1 text-white hover:bg-blue-500 disabled:opacity-50" onClick={() => app.connection.emit({ type: "serverCommit", serverId: view.id })}>
-          <Icon icon="code-commit" className={["h-4", "w-4"]} /> Commit
-        </button>
-        <button type="button" disabled={running} className="inline-flex items-center gap-2 rounded bg-blue-600 px-3 py-1 text-white hover:bg-blue-500 disabled:opacity-50" onClick={() => app.connection.emit({ type: "serverDeploy", serverId: view.id })}>
-          <Icon icon="rocket" className={["h-4", "w-4"]} /> Deploy
-        </button>
-        <button type="button" className="inline-flex items-center gap-2 rounded bg-blue-600 px-3 py-1 text-white hover:bg-blue-500" onClick={() => app.connection.emit({ type: "serverProgram", serverId: view.id, program: "term" })}>
-          <Icon icon="terminal-solid" className={["h-4", "w-4"]} /> Terminal
-        </button>
-        <button type="button" className="inline-flex items-center gap-2 rounded bg-gray-800 px-3 py-1 text-gray-200 hover:bg-gray-700" onClick={() => {
-          setLog("");
-          app.connection.emit({ type: "serverTaskClear", serverId: view.id });
-        }}>
-          <Icon icon="trash" className={["h-4", "w-4"]} /> Clear
-        </button>
+        <Tooltip text="Git status">
+          <button type="button" aria-label="Git status" disabled={running} className={`inline-flex items-center justify-center h-8 w-8 rounded text-white ${running && action === "Git status" ? "bg-red-600 hover:bg-red-500" : "bg-blue-600 hover:bg-blue-500"}`} onClick={() => app.connection.emit({ type: "serverGitStatus", serverId: view.id })}>
+            <Icon title={false} aria-hidden="true" icon="brands-git-alt" className={["h-4", "w-4"]} />
+          </button>
+        </Tooltip>
+        <Tooltip text="Commit and push staged changes">
+          <button type="button" aria-label="Commit and push staged changes" disabled={running} className={`inline-flex items-center justify-center h-8 w-8 rounded text-white ${running && action === "Commit" ? "bg-red-600 hover:bg-red-500" : "bg-blue-600 hover:bg-blue-500"}`} onClick={() => app.connection.emit({ type: "serverCommit", serverId: view.id })}>
+            <Icon title={false} aria-hidden="true" icon="code-commit" className={["h-4", "w-4"]} />
+          </button>
+        </Tooltip>
+        <Tooltip text="Deploy">
+          <button type="button" aria-label="Deploy" disabled={running} className={`inline-flex items-center justify-center h-8 w-8 rounded text-white ${running && action === "Deploy" ? "bg-red-600 hover:bg-red-500" : "bg-blue-600 hover:bg-blue-500"}`} onClick={() => app.connection.emit({ type: "serverDeploy", serverId: view.id })}>
+            <Icon title={false} aria-hidden="true" icon="rocket" className={["h-4", "w-4"]} />
+          </button>
+        </Tooltip>
+        <Tooltip text="Open terminal">
+          <button type="button" aria-label="Open terminal" className={`inline-flex items-center justify-center h-8 w-8 rounded text-white ${"bg-blue-600 hover:bg-blue-500"}`} onClick={() => app.connection.emit({ type: "serverProgram", serverId: view.id, program: "term" })}>
+            <Icon title={false} aria-hidden="true" icon="terminal-solid" className={["h-4", "w-4"]} />
+          </button>
+        </Tooltip>
+        <Tooltip text="Clear task log">
+          <button type="button" aria-label="Clear task log" className="inline-flex items-center justify-center h-8 w-8 rounded bg-gray-800 text-gray-200 hover:bg-gray-700" onClick={() => {
+            setLog("");
+            app.connection.emit({ type: "serverTaskClear", serverId: view.id });
+          }}>
+            <Icon title={false} aria-hidden="true" icon="trash" className={["h-4", "w-4"]} />
+          </button>
+        </Tooltip>
         {running && <span className="ml-auto text-sm">{action} running</span>}
       </div>
       <div ref={output} className="min-h-0 flex-1 overflow-auto p-3 scrollbar scrollbar-dark">

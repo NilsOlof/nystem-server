@@ -55,7 +55,7 @@ const Icon = ({ icon, className, renderAs, deg, ref, ...props }) => {
         {...rotate(deg)}
         {...props}
       >
-        <title>{props.title || icon}</title>
+        {props.title !== false && <title>{props.title || icon}</title>}
         <path d={path} {...add} />
       </svg>
     </Wrapper>

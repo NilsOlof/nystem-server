@@ -293,6 +293,18 @@
       "format": "input",
       "item": [
         {
+          "type": "viewLink",
+          "format": "link",
+          "text": "Git changes",
+          "href": "/server/git/{id}",
+          "className": [
+            "px-3",
+            "py-1",
+            "text-blue-400",
+            "hover:text-blue-300"
+          ]
+        },
+        {
           "category": "view",
           "type": "style",
           "item": [
@@ -502,6 +514,18 @@
               "category": "contentTypeField",
               "format": "view",
               "className": ["", "my-1", "mx-2", "w-4", "h-4"]
+            },
+            {
+              "type": "viewLink",
+              "format": "link",
+              "text": "Git changes",
+              "href": "/server/git/{id}",
+              "className": [
+                "px-3",
+                "py-1",
+                "text-blue-400",
+                "hover:text-blue-300"
+              ]
             }
           ],
           "headerFields": [
@@ -532,7 +556,8 @@
               "type": "viewText",
               "text": "Overview",
               "className": ["", "py-1", "px-2"]
-            }
+            },
+            { "type": "viewText", "text": "Git", "className": ["py-1", "px-2"] }
           ],
           "filter": [],
           "className": ["table-striped"],
@@ -662,77 +687,92 @@
         },
         {
           "category": "view",
-          "type": "viewList",
+          "type": "style",
+          "className": ["server-overview-layout"],
           "item": [
             {
               "category": "view",
-              "type": "style",
+              "type": "viewList",
               "item": [
                 {
                   "category": "view",
-                  "type": "bootstrap",
-                  "format": "panel",
-                  "header": [
+                  "type": "style",
+                  "item": [
                     {
                       "category": "view",
-                      "type": "style",
-                      "item": [
+                      "type": "bootstrap",
+                      "format": "panel",
+                      "header": [
                         {
                           "category": "view",
-                          "type": "bootstrap",
-                          "format": "panelToggle",
+                          "type": "style",
                           "item": [
                             {
-                              "category": "contentTypeField",
-                              "type": "text",
-                              "id": "name",
-                              "renderAs": "div",
-                              "className": [""]
+                              "category": "view",
+                              "type": "bootstrap",
+                              "format": "panelToggle",
+                              "item": [
+                                {
+                                  "category": "contentTypeField",
+                                  "type": "text",
+                                  "id": "name",
+                                  "renderAs": "div",
+                                  "className": [""]
+                                }
+                              ],
+                              "icon": true,
+                              "className": [
+                                "flex",
+                                "items-center",
+                                "content-center",
+                                "py-1",
+                                "",
+                                "flex-grow"
+                              ]
+                            },
+                            {
+                              "category": "view",
+                              "type": "viewInView",
+                              "contentType": "serverStatus",
+                              "view": "control",
+                              "className": [""],
+                              "format": "empty",
+                              "viewId": "{_id}"
                             }
                           ],
-                          "icon": true,
-                          "className": [
-                            "flex",
-                            "items-center",
-                            "content-center",
-                            "py-1",
-                            "",
-                            "flex-grow"
-                          ]
-                        },
+                          "format": "onOverHandle",
+                          "className": ["flex", "items-center"]
+                        }
+                      ],
+                      "item": [
                         {
                           "category": "view",
                           "type": "viewInView",
                           "contentType": "serverStatus",
-                          "view": "control",
-                          "className": [""],
-                          "format": "empty",
-                          "viewId": "{_id}"
+                          "view": "status",
+                          "viewId": "{_id}",
+                          "format": "empty"
                         }
                       ],
-                      "format": "onOverHandle",
-                      "className": ["flex", "items-center"]
+                      "className": ["server-overview-row"],
+                      "typeClass": "defaultWithoutPadding"
                     }
                   ],
-                  "item": [
-                    {
-                      "category": "view",
-                      "type": "viewInView",
-                      "contentType": "serverStatus",
-                      "view": "status",
-                      "viewId": "{_id}",
-                      "format": "empty"
-                    }
-                  ],
-                  "typeClass": "defaultWithoutPadding"
+                  "className": [""]
                 }
               ],
-              "className": [""]
+              "renderFormat": "div",
+              "headerFields": [],
+              "className": ["p-3", "max-w-4xl", "server-overview-list"]
+            },
+            {
+              "category": "view",
+              "type": "style",
+              "format": "gitPanel",
+              "className": ["server-overview-box"],
+              "item": []
             }
-          ],
-          "renderFormat": "div",
-          "headerFields": [],
-          "className": ["p-3", "max-w-4xl"]
+          ]
         }
       ]
     },
@@ -942,6 +982,100 @@
           ],
           "expanded": true,
           "className": ["mx-3", "mt-3"]
+        }
+      ]
+    },
+    {
+      "name": "git",
+      "format": "view",
+      "item": [
+        {
+          "type": "git",
+          "className": [
+            "flex",
+            "flex-col",
+            "bg-gray-900",
+            "text-gray-300",
+            "h-[calc(100vh-64px)]",
+            "min-h-96"
+          ],
+          "item": [
+            {
+              "type": "git",
+              "format": "toolbar",
+              "item": [
+                { "category": "contentTypeField", "type": "text", "id": "name", "format": "view", "renderAs": "span", "className": ["font-bold", "text-white"] }
+              ],
+              "className": [
+                "flex",
+                "flex-wrap",
+                "items-center",
+                "gap-3",
+                "border-b",
+                "border-gray-700",
+                "px-3",
+                "py-2"
+              ]
+            },
+            {
+              "type": "style",
+              "className": [
+                "flex",
+                "flex-1",
+                "min-h-0"
+              ],
+              "item": [
+                {
+                  "type": "style",
+                  "className": [
+                    "flex",
+                    "flex-col",
+                    "w-[30%]",
+                    "min-w-64",
+                    "border-r",
+                    "border-gray-700"
+                  ],
+                  "item": [
+                    {
+                      "type": "git",
+                      "format": "files",
+                      "side": "staged",
+                      "text": "Staged files",
+                      "className": [
+                        "flex",
+                        "flex-col",
+                        "flex-1",
+                        "min-h-0"
+                      ]
+                    },
+                    {
+                      "type": "git",
+                      "format": "files",
+                      "side": "unstaged",
+                      "text": "Unstaged files",
+                      "className": [
+                        "flex",
+                        "flex-col",
+                        "flex-1",
+                        "min-h-0"
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "git",
+                  "format": "diff",
+                  "className": [
+                    "flex",
+                    "flex-col",
+                    "flex-1",
+                    "min-w-0",
+                    "bg-[#232323]"
+                  ]
+                }
+              ]
+            }
+          ]
         }
       ]
     }

@@ -42,7 +42,7 @@ button:focus {
 }
 body {
   min-width: 680px;
-  min-height: 500px;
+  min-height: 550px;
 }
 .h-128 {
   height: 32rem;
@@ -108,4 +108,39 @@ body::-webkit-scrollbar-track {
 
 .select-none {
   -webkit-user-drag: none;
+}
+
+.server-overview-row {
+  margin-bottom: 0.25rem;
+}
+
+.server-overview-box {
+  display: none;
+}
+
+@media (min-width: 1440px) {
+  .server-overview-layout {
+    display: grid;
+    grid-template-columns: 56rem minmax(0, 1fr);
+    align-items: start;
+  }
+
+  .server-overview-list {
+    max-width: 56rem;
+    min-width: 0;
+  }
+
+  .server-overview-box {
+    display: block;
+    min-height: calc(100vh - 4.25rem);
+    margin: 0.75rem 0.75rem 0.75rem 0;
+    border: 1px solid #374151;
+    border-radius: 0.5rem;
+    background: #111827;
+    overflow: hidden;
+  }
+
+  .server-overview-box .h-\[calc\(100vh-64px\)\] {
+    height: calc(100vh - 4.25rem);
+  }
 }
