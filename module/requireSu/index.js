@@ -17,6 +17,7 @@ const start = async (app) => {
 
   const { server } = await app.require("./connection", true);
   const suServer = server(app);
+  await suServer.ready;
   app.on("exit", () => suServer.close());
 
   let startCallback = false;

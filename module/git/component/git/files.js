@@ -50,7 +50,6 @@ const GitFiles = ({ model }) => {
               renderAs="button"
               type="button"
               data-git-file="true"
-              autoFocus={selected?.path === file.path && selected.side === file.side}
               data-git-path={file.path}
               data-git-side={file.side}
               className={["min-w-0", "flex-1", "truncate", "text-left"]}

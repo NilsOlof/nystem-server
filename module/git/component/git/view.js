@@ -13,14 +13,15 @@ const GitView = ({ model, view, path }) => {
   const [error, setError] = useState("");
   const generation = useRef(0);
   const element = useRef(null);
-  const restoreFocus = useRef(false);
+  const restoreFocus = useRef(true);
+  const previewFile = useRef(null);
 
   useLayoutEffect(() => {
-    if (!restoreFocus.current) return;
+    if (!restoreFocus.current || !selected) return;
     restoreFocus.current = false;
     Array.from(element.current.querySelectorAll("button[data-git-file]"))
       .find((button) => button.dataset.gitPath === selected?.path && button.dataset.gitSide === selected.side)
-      ?.focus();
+      ?.focus({ preventScroll: true });
   }, [files, selected]);
   const request = useCallback(
     async (query) => {
@@ -47,13 +48,16 @@ const GitView = ({ model, view, path }) => {
     }
   }, [request]);
   useEffect(() => {
+    restoreFocus.current = true;
+    previewFile.current = null;
     setPreview(null);
     setSelected(null);
     refresh();
   }, [refresh]);
   useEffect(() => {
     const current = ++generation.current;
-    setPreview(null);
+    if (selected?.path !== previewFile.current?.path || selected?.side !== previewFile.current?.side) setPreview(null);
+    previewFile.current = selected;
     if (!selected) return;
     setBusy(true);
     request({ action: "diff", ...selected })

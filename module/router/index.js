@@ -10,17 +10,10 @@ export default (app) => {
 
   app.on("start", 10, async () => {
     const { data = [] } = await app.database.settings.search({ role: "super" });
-    const atHost = {
-      ...data.find(
-        (setting) => hostname.toLowerCase().indexOf(setting.name) !== -1,
-      ),
-    };
+    const atHost = { ...data.find((setting) => hostname.toLowerCase().indexOf(setting.name) !== -1) };
 
     const { folders = [] } = atHost;
-    atHost.folders = folders.reduce(
-      (res, folder) => ({ ...res, [folder.id]: folder.path }),
-      {},
-    );
+    atHost.folders = folders.reduce((res, folder) => ({ ...res, [folder.id]: folder.path }), {});
 
     app.settings.atHost = {
       ...atHost,
@@ -30,24 +23,27 @@ export default (app) => {
   });
 
   app.on("start", async () => {
-    console.log("[router] request worker start", {
-      path: `${__dirname}/proxy.js`,
-    });
+    console.log("[router] request worker start", { path: `${__dirname}/proxy.js` });
     await app.event("requireSu.start", { path: `${__dirname}/proxy.js` });
 
-    app.database.server.on(["delete", "save"], async (query) => {
+    app.database.server.on("delete", async (query) => {
       if (query.oldData) {
         await app.event("router.remove", query.oldData);
       }
     });
     app.database.server.on("save", async (query) => {
+      if (query.oldData?.host) {
+        const host = Array.isArray(query.data.host) ? query.data.host : [query.data.host];
+        await app.event("router.remove", {
+          host: (Array.isArray(query.oldData.host) ? query.oldData.host : [query.oldData.host]).filter(
+            (item) => !host.includes(item),
+          ),
+        });
+      }
       await app.event("router.add", query.data);
     });
 
-    app.database.server.search({ role: "super" }).then(({ data = [] }) => {
-      data.forEach((server) => {
-        app.event("router.add", server);
-      });
-    });
+    const { data = [] } = await app.database.server.search({ role: "super" });
+    for (const server of data) await app.event("router.add", server);
   });
 };
