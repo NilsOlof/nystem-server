@@ -6,6 +6,7 @@ export default async (ev) => {
   const { routerPort = 80 } = await ev.event("settings");
   const httpProxy = (await import("http-proxy")).default;
   const routes = new Map();
+  const retries = new WeakMap();
 
   const remove = (host) => {
     const route = routes.get(host);
@@ -15,7 +16,7 @@ export default async (ev) => {
     routes.delete(host);
   };
 
-  const proxyServer = createServer((req, res) => {
+  const forward = (req, res) => {
     const host = getHost(req.headers.host);
     const route = routes.get(host);
     if (route) route.proxy.web(req, res);
@@ -23,7 +24,8 @@ export default async (ev) => {
       res.statusCode = host ? 404 : 400;
       res.end(host ? "Missing host " + host : "Missing Host header.");
     }
-  });
+  };
+  const proxyServer = createServer(forward);
 
   proxyServer.on("upgrade", (req, socket, head) => {
     const route = routes.get(getHost(req.headers.host));
@@ -74,10 +76,46 @@ export default async (ev) => {
         } else suppressed++;
 
         if (!res || res.destroyed || res.writableEnded) return;
+        // Only replay reads, before sending any upstream response. Uploads and other
+        // writes may already have reached the upstream and must never be repeated.
+        if (
+          res.writeHead &&
+          !res.headersSent &&
+          ["GET", "HEAD"].includes(req.method) &&
+          !(Number(req.headers["content-length"]) > 0 || req.headers["transfer-encoding"]) &&
+          ["ECONNREFUSED", "ECONNRESET", "ETIMEDOUT", "EHOSTUNREACH", "ENETUNREACH", "EPIPE"].includes(error.code)
+        ) {
+          let retry = retries.get(req);
+          if (!retry) {
+            retry = { started: Date.now(), attempt: 0, timer: undefined };
+            retries.set(req, retry);
+            res.once("close", () => {
+              clearTimeout(retry.timer);
+              retries.delete(req);
+            });
+          }
+          if (Date.now() - retry.started < 30000) {
+            clearTimeout(retry.timer);
+            retry.timer = setTimeout(() => {
+              if (!res.destroyed && !res.writableEnded) forward(req, res);
+            }, Math.min(5000, retry.attempt++ * 1000 || 300));
+            return;
+          }
+        }
         if (!res.writeHead || res.headersSent) res.destroy();
         else {
           res.statusCode = 502;
-          res.end("Upstream unavailable.");
+          res.setHeader("Cache-Control", "no-store");
+          res.setHeader("Retry-After", "3");
+          if (
+            req.method === "GET" &&
+            (req.headers["sec-fetch-dest"] === "document" || req.headers.accept?.includes("text/html"))
+          ) {
+            res.setHeader("Content-Type", "text/html; charset=utf-8");
+            res.end(
+              '<!doctype html><html lang="en"><head><meta charset="utf-8"><meta http-equiv="refresh" content="3"><title>Reconnecting…</title></head><body><p>Upstream unavailable. Retrying automatically…</p></body></html>',
+            );
+          } else res.end("Upstream unavailable.");
         }
       };
       proxy.on("error", proxyError);

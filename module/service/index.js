@@ -192,6 +192,8 @@ const start = function (app) {
     }
   };
 
+  app.on("serverRestart", ({ serverId }) => restartServer(serverId));
+
   app.on("serverStop", async ({ serverId }) => {
     await requestStop(serverId);
     for (let attempt = 0; attempt < 300; attempt++) {

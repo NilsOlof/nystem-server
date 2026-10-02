@@ -268,13 +268,25 @@ const start = async (app) => {
 
     const id = query.serverId;
     operations.set(id, true);
+    let wasRunning = false;
+    const restoreServer = async () => {
+      if (!wasRunning) return;
+      await app.event("serverRestart", { serverId: id });
+      await publishTask(id, "Server restart requested (it was running before deployment).\n", true, "Deploy");
+    };
     try {
       const { data: server } = await app.database.server.get({ id, role });
       if (!server) throw new Error("Server was not found");
-      const { runbasepath } = await app.event("serverPath", server);
+      const { basepath, runbasepath } = await app.event("serverPath", server);
       const deployPath = runbasepath.replace(/^(\/Users\/[^/]+)\/Dropbox\/nodejs\//, "$1/Documents/nodejs/");
       if (!app.fs.existsSync(`${deployPath}/package.json`))
         throw new Error(`No deployment checkout with package.json in ${deployPath}`);
+
+      const { stdout: branch } = await runFile("git", ["branch", "--show-current"], { cwd: basepath });
+      if (branch.trim() !== "develop")
+        throw new Error(`Deployment requires develop; current branch is ${branch.trim() || "detached HEAD"}`);
+      const { data: status } = await app.database.serverStatus.get({ id, role });
+      wasRunning = Boolean(status?.running);
 
       await publishTask(id, `\nStopping server ${server.name || id} before deployment...\n`, true, "Deploy");
       await app.event("serverStop", { serverId: id });
@@ -283,13 +295,27 @@ const start = async (app) => {
       const deployment = runProgram("npm", ["run", "deploy"], deployPath);
       operations.set(id, deployment);
       deployment.on("data", ({ data }) => publishTask(id, data, true, "Deploy"));
-      deployment.on("exit", ({ code }) => {
-        operations.delete(id);
-        publishTask(id, `\n[Deployment command exited: ${code}]\n`, false, "Deploy");
+      deployment.on("exit", async ({ code }) => {
+        try {
+          await publishTask(id, `\n[Deployment command exited: ${code}]\n`, true, "Deploy");
+          await restoreServer();
+        } catch (error) {
+          await publishTask(id, `Server could not be restored: ${error.message}\n`, true, "Deploy");
+        } finally {
+          operations.delete(id);
+          await publishTask(id, "", false, "Deploy");
+        }
       });
     } catch (error) {
-      operations.delete(id);
-      await publishTask(id, `Deployment could not start: ${error.message}\n`, false, "Deploy");
+      try {
+        await publishTask(id, `Deployment could not start: ${error.message}\n`, true, "Deploy");
+        await restoreServer();
+      } catch (error) {
+        await publishTask(id, `Server could not be restored: ${error.message}\n`, true, "Deploy");
+      } finally {
+        operations.delete(id);
+        await publishTask(id, "", false, "Deploy");
+      }
     }
     return query;
   });

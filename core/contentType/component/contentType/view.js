@@ -71,10 +71,12 @@ const useValue = ({ view, propvalue }) => {
 
           try {
             const diff = getDiff(savedData, data);
+            savedData = data;
             value = applyDiff(value, diff);
 
             if (diff.length) view.event("change", { value });
           } catch (e) {
+            savedData = data;
             view.event("change", { value: data });
           }
         });
