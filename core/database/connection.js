@@ -10,30 +10,14 @@ export default (app) => {
 
     collection.on("update", (query) =>
       Object.keys(requestLoads).forEach((id) =>
-        connection.emit({
-          type: "database",
-          action: "update",
-          id,
-          query,
-          contentType: machinename,
-        }),
+        connection.emit({ type: "database", action: "update", id, query, contentType: machinename }),
       ),
     );
 
-    const actions = [
-      "get",
-      "find",
-      "save",
-      "search",
-      "delete",
-      "size",
-      "update",
-      "updates",
-    ];
+    const actions = ["get", "find", "save", "search", "delete", "size", "update", "updates"];
 
     connection.on("database", async (event) => {
-      if (event.contentType !== machinename || !actions.includes(event.action))
-        return;
+      if (event.contentType !== machinename || !actions.includes(event.action)) return;
 
       let { query } = event;
       requestLoads[event.id] = true;
@@ -41,7 +25,8 @@ export default (app) => {
       const data = await app.session.add(event);
       query.session = data.session;
       query.requestId = data.id;
-      query.role = query.role || data.session?.role;
+      // Role comes only from the server side session, never from the client
+      query.role = data.session?.role || "";
       query = await collection[event.action](query);
 
       delete event.session;

@@ -1,12 +1,28 @@
 import React, { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
 import app from "nystem";
 import { ContentTypeRender, Wrapper } from "nystem-components";
+import GitHistory from "./history";
 import { GitContext } from "../../client/context";
 
 const GitView = ({ model, view, path }) => {
+  const [taskLog, setTaskLog] = useState({ open: false, action: "" });
+  const showTaskLog = useCallback(
+    (open, action) => {
+      setTaskLog({ open, action });
+      if (open) setHistoryOpen(false);
+      else app.connection.emit({ type: "serverTaskClear", serverId: view.id, action });
+    },
+    [view.id],
+  );
+  const [history, setHistory] = useState(null);
+  const [historyOpen, setHistoryOpen] = useState(false);
+  const [historySelected, setHistorySelected] = useState(null);
   const [files, setFiles] = useState([]);
+  const [branch, setBranch] = useState("");
+  const [branches, setBranches] = useState([]);
   const [selected, setSelected] = useState(null);
   const [preview, setPreview] = useState(null);
+  const [edit, setEdit] = useState(null);
   const [whole, setWhole] = useState(false);
   const [search, setSearch] = useState("");
   const [busy, setBusy] = useState(false);
@@ -63,8 +79,10 @@ const GitView = ({ model, view, path }) => {
     setBusy(true);
     setError("");
     try {
-      const { files } = await request({ action: "status" });
+      const { files, branch, branches } = await request({ action: "status" });
       setFiles(files);
+      setBranch(branch);
+      setBranches(branches || []);
       setSelected(
         (previous) =>
           files.find((file) => file.path === previous?.path && file.side === previous.side) ||
@@ -82,6 +100,7 @@ const GitView = ({ model, view, path }) => {
     restoreFocus.current = true;
     previewFile.current = null;
     setPreview(null);
+    setEdit(null);
     setSelected(null);
     refresh();
     const watchId = app.uuid();
@@ -144,10 +163,74 @@ const GitView = ({ model, view, path }) => {
     };
   }, [selected, request, finish]);
   useEffect(() => {
-    if (!refreshPending || activity.current) return;
+    if (!refreshPending || activity.current || edit) return;
     setRefreshPending(false);
     refresh();
-  }, [refreshPending, busy, refresh]);
+  }, [refreshPending, busy, edit, refresh]);
+  const openHistory = async () => {
+    if (historyOpen) {
+      setHistoryOpen(false);
+      return;
+    }
+    if (activity.current || edit) return;
+    setHistoryOpen(true);
+    setHistory(null);
+    activity.current++;
+    setBusy(true);
+    setError("");
+    try {
+      const { commits } = await request({ action: "history" });
+      setHistory(commits);
+      setHistorySelected(commits[0]?.hash || null);
+    } catch (error) {
+      setError(error.message);
+    } finally {
+      finish();
+    }
+  };
+  const switchBranch = async (branch) => {
+    if (activity.current || edit) return;
+    activity.current++;
+    setBusy(true);
+    setError("");
+    try {
+      const response = await request({ action: "switch", branch });
+      generation.current++;
+      previewFile.current = null;
+      setPreview(null);
+      setBranch(response.branch);
+      setBranches(response.branches);
+      setFiles(response.files);
+      setSelected(response.files[0] || null);
+      if (historyOpen) setHistory((await request({ action: "history" })).commits);
+    } catch (error) {
+      setError(error.message);
+    } finally {
+      finish();
+    }
+  };
+  const editFile = async (action) => {
+    if (activity.current) return;
+    activity.current++;
+    setBusy(true);
+    setError("");
+    try {
+      if (action === "read") {
+        setEdit({ path: selected.path, side: selected.side, value: "" });
+        const { edit } = await request({ action, ...selected });
+        setEdit({ ...edit, path: selected.path, side: selected.side });
+      } else {
+        await request({ action, ...edit });
+        setEdit(null);
+        setRefreshPending(true);
+      }
+    } catch (error) {
+      if (action === "read") setEdit(null);
+      setError(error.message);
+    } finally {
+      finish();
+    }
+  };
   const act = async (action, targets, hunk) => {
     if (activity.current) return;
     if (
@@ -168,12 +251,16 @@ const GitView = ({ model, view, path }) => {
     setBusy(true);
     setError("");
     try {
-      const validated = [];
-      for (const file of targets) {
-        const full =
-          file === selected && preview ? preview.full : (await request({ action: "diff", ...file, whole: true })).diff;
-        validated.push({ path: file.path, side: file.side, token: full.token });
-      }
+      const validated = targets.map(({ path, side }) => ({ path, side }));
+      // Bulk whole-file staging uses the current contents, like Git add/restore.
+      if (targets.length === 1 || hunk !== undefined || action === "discard")
+        for (let i = 0; i < targets.length; i++) {
+          const full =
+            targets[i] === selected && preview
+              ? preview.full
+              : (await request({ action: "diff", ...targets[i], whole: true })).diff;
+          validated[i].token = full.token;
+        }
       const { files } = await request({ action, files: validated, hunk, compactToken: preview?.compact.token });
       restoreFocus.current = Boolean(focused);
       setFiles(files);
@@ -200,22 +287,46 @@ const GitView = ({ model, view, path }) => {
   return (
     <GitContext.Provider
       value={{
+        taskLog: { ...taskLog, open: taskLog.open && !historyOpen },
+        showTaskLog,
+        openHistory,
+        historyOpen,
         files,
+        branch,
+        branches,
+        switchBranch,
         selected,
-        setSelected,
+        setSelected: (selected) => {
+          if (!edit) setSelected(selected);
+        },
         preview: selected && selected.path === preview?.path && selected.side === preview.side ? preview : null,
         whole,
         setWhole,
         search,
         setSearch,
         busy,
+        edit,
+        setEdit,
+        editFile,
         error,
         refresh,
         act,
       }}
     >
-      <Wrapper ref={element} className={model.className}>
-        <ContentTypeRender path={path} items={model.item} />
+      <Wrapper ref={element} className={[model.className, "git-workspace"]}>
+        <ContentTypeRender path={path} items={model.item.slice(0, 1)} />
+        {historyOpen ? (
+          <GitHistory
+            request={request}
+            view={view}
+            error={error}
+            history={history}
+            historySelected={historySelected}
+            setHistorySelected={setHistorySelected}
+          />
+        ) : (
+          <ContentTypeRender path={path} items={model.item.slice(1)} />
+        )}
       </Wrapper>
     </GitContext.Provider>
   );

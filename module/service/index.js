@@ -33,6 +33,8 @@ const start = function (app) {
   const apiKey = app.fs.readFileSync(apiKeyPath, "utf8").trim();
 
   const runProgram = function (path, program) {
+    if (!app.fs.existsSync(path)) throw new Error(`Project runtime folder does not exist: ${path}`);
+
     const execService = spawn(process.execPath, [`${path}/${program}`], { cwd: path, detached: false });
 
     console.log(`start ${path}/${program} pid:${execService.pid}`);
@@ -85,6 +87,18 @@ const start = function (app) {
   const logs = {};
   const servers = new Map();
 
+  const assertCanStart = (basepath) => {
+    if (findServerByPath(app.fs, [{ basepath: app.__dirname }], basepath))
+      throw Object.assign(
+        new Error(
+          "nystem-server is the server manager itself and must be started or restarted manually by the user. " +
+            "Starting it through its own manager would launch a second instance competing for the same ports and worker. " +
+            "Codex: do not retry or use another process-control method; ask the user to restart nystem-server manually.",
+        ),
+        { code: "SELF_MANAGED_SERVER" },
+      );
+  };
+
   const startServer = async (id) => {
     if (servers.has(id)) return;
 
@@ -96,6 +110,8 @@ const start = function (app) {
       const { data: server } = await app.database.server.get({ id, role });
 
       const { runbasepath: path, basepath } = await app.event("serverPath", server);
+      assertCanStart(basepath);
+      assertCanStart(path);
 
       const update = (updatedData) => {
         return app.database.serverStatus.save({
@@ -140,7 +156,12 @@ const start = function (app) {
 
       servers.delete(id);
       console.log(`Start failed for server ${id}`, error);
-      app.database.serverStatus.save({ data: { _id: id, running: false, code: error.code }, fields: true, role });
+      logs[id] = `${logs[id]}Start failed: ${error.message}\n`.slice(-maxLogLength);
+      await app.database.serverStatus.save({
+        data: { _id: id, running: false, code: error.code, log: logs[id] },
+        fields: true,
+        role,
+      });
     }
   };
 
@@ -247,6 +268,11 @@ const start = function (app) {
 
     if (requestUrl.pathname === "/codex-api/server/restart") {
       if (method !== "post") return sendApiResponse(id, 405, { error: "Method not allowed" });
+      try {
+        assertCanStart(status.basepath);
+      } catch (error) {
+        return sendApiResponse(id, 409, { error: error.message, code: error.code });
+      }
       restartServer(status._id);
       return sendApiResponse(id, 202, { accepted: true, serverId: status._id, basepath: status.basepath });
     }

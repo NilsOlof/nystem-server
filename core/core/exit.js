@@ -54,7 +54,7 @@ export default (app) => {
   app.on("start", () => {
     app.connection.on("exitserver", async (query) => {
       app.session.add(query);
-      if (query.session.role !== "super") return;
+      if (query.session?.role !== "super") return;
 
       const { exitservertoken } = app.settings;
       if (exitservertoken && exitservertoken !== query.value.name) return;

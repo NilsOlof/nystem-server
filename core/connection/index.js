@@ -4,6 +4,17 @@ import { createHash } from "node:crypto";
 export default async (app) => {
   app.connection = app.addeventhandler({}, ["emit", "broadcast", "count"]);
 
+  // Server internal events a client must never trigger
+  const internalEvents = ["emit", "broadcast", "connect", "disconnect", "connection"];
+
+  // Session and role are decided by the server, never taken from the client
+  app.connection.fromClient = (query, id) => {
+    if (!query || typeof query !== "object" || internalEvents.includes(query.type)) return;
+    delete query.session;
+    delete query.role;
+    return { ...query, id };
+  };
+
   if (!app.settings.client.domain) return;
 
   await app.require("./httpsfallback");
@@ -11,9 +22,47 @@ export default async (app) => {
   const clients = {};
   let connectedCount = 0;
 
+  // Message size limits, small until the connection has logged in (uploads are sent as one message)
+  const maxSizeAnonymous = app.settings.maxMessageSizeAnonymous || 1024 * 1024;
+  const maxSizeLoggedIn = app.settings.maxMessageSize || 512 * 1024 * 1024;
+  const high64 = (buffer, secondByte) => (secondByte & 0x7f) === 127 && buffer.readUInt32BE(2) !== 0;
+
+  // Browsers always send Origin, only accept our own site (and file:// for the desktop app)
+  const allowedOrigin = (req) => {
+    const { origin, host } = req.headers;
+    if (!origin) return true;
+    if (origin === "file://") return true;
+    let originHost;
+    try {
+      originHost = new URL(origin).host;
+    } catch (e) {
+      return false;
+    }
+    return [
+      host,
+      app.settings.client.domain,
+      `${app.settings.client.domain}:${app.settings.port}`,
+      ...(app.settings.allowedOrigins || []),
+    ].includes(originHost);
+  };
+
+  // Behind a local proxy the real client is the last x-forwarded-for entry (the one the proxy added)
+  const clientIp = (req, socket) => {
+    const ip = (socket.remoteAddress || "").replace(/^::ffff:/, "");
+    const forwarded = req.headers["x-forwarded-for"];
+    if (forwarded && ["127.0.0.1", "::1"].includes(ip))
+      return forwarded
+        .split(",")
+        .pop()
+        .trim()
+        .replace(/^::ffff:/, "");
+    return ip;
+  };
+
+  app.connection.ip = (id) => clients[id]?.ip;
+
   const parseWebSocketFrames = (connectionState, onTextMessage, sendFrame) => {
-    let { buffer, currentMessageFragments, currentMessageOpcode } =
-      connectionState;
+    let { buffer, currentMessageFragments, currentMessageOpcode } = connectionState;
 
     while (buffer.length >= 2) {
       const firstByte = buffer.readUInt8(0);
@@ -36,15 +85,21 @@ export default async (app) => {
         const high = buffer.readUInt32BE(2);
         const low = buffer.readUInt32BE(6);
         if (high !== 0) {
-          console.warn(
-            "Received very large payload length, potentially unsupported.",
-          );
+          console.warn("Received very large payload length, potentially unsupported.");
         }
         payloadLength = low; // Assuming high bits are 0 for simplicity
         headerLength += 8;
       }
 
       if (masked) headerLength += 4;
+
+      // Refuse frames bigger than allowed before buffering them
+      const pendingSize = (currentMessageFragments?.length || 0) + payloadLength;
+      if (high64(buffer, secondByte) || pendingSize > connectionState.maxSize) {
+        sendFrame(Buffer.from([0x03, 0xf1]), 0x8, false); // Close frame with 1009 message too big
+        connectionState.shouldClose = true;
+        break;
+      }
 
       // Check if we have enough data for the full header and payload
       if (buffer.length < headerLength + payloadLength) {
@@ -55,10 +110,7 @@ export default async (app) => {
       let maskingKey;
       if (masked) maskingKey = buffer.subarray(headerLength - 4, headerLength);
 
-      const payloadData = buffer.subarray(
-        headerLength,
-        headerLength + payloadLength,
-      );
+      const payloadData = buffer.subarray(headerLength, headerLength + payloadLength);
 
       // Unmask the payload data if masked (server receives masked client data)
       if (masked)
@@ -71,17 +123,12 @@ export default async (app) => {
       if (opcode === 0x0) {
         // Continuation Frame
         if (!currentMessageFragments) {
-          console.warn(
-            "Received continuation frame without initial frame. Protocol error.",
-          );
+          console.warn("Received continuation frame without initial frame. Protocol error.");
           sendFrame(Buffer.from([0x03, 0xea]), 0x8, false); // Close frame with 1002 protocol error
           connectionState.shouldClose = true; // Signal outer scope to close
           break;
         }
-        currentMessageFragments = Buffer.concat([
-          currentMessageFragments,
-          payloadData,
-        ]);
+        currentMessageFragments = Buffer.concat([currentMessageFragments, payloadData]);
         if (fin) {
           // End of fragmented message
           if (currentMessageOpcode === 0x1) {
@@ -98,9 +145,7 @@ export default async (app) => {
       } else if (opcode === 0x1 || opcode === 0x2) {
         // Text or Binary Frame
         if (currentMessageFragments) {
-          console.warn(
-            "Received new message frame while fragmentation is active. Protocol error.",
-          );
+          console.warn("Received new message frame while fragmentation is active. Protocol error.");
           sendFrame(Buffer.from([0x03, 0xea]), 0x8, false); // Close frame with 1002 protocol error
           connectionState.shouldClose = true;
           break;
@@ -153,8 +198,7 @@ export default async (app) => {
 
   const sendWebSocketFrame = (socket, payload, opcode, mask) => {
     if (mask) console.log("Masssssk!!!");
-    const payloadBuffer =
-      typeof payload === "string" ? Buffer.from(payload, "utf8") : payload;
+    const payloadBuffer = typeof payload === "string" ? Buffer.from(payload, "utf8") : payload;
     const payloadLength = payloadBuffer.length;
 
     // First byte: FIN (1) | RSV (000) | Opcode (4 bits)
@@ -211,6 +255,12 @@ export default async (app) => {
 
   app.on("start", () => {
     app.file.on("socket", ({ id, req, socket }) => {
+      if (!allowedOrigin(req)) {
+        console.log("WebSocket origin refused", req.headers.origin);
+        socket.end("HTTP/1.1 403 Forbidden\r\n\r\n");
+        return;
+      }
+
       const key = req.headers["sec-websocket-key"];
       const sha1 = createHash("sha1");
       sha1.update(`${key}258EAFA5-E914-47DA-95CA-C5AB0DC85B11`);
@@ -236,6 +286,7 @@ export default async (app) => {
 
       clients[requestId] = {
         id: requestId,
+        ip: clientIp(req, socket),
         emit: (data) => sendWebSocketFrame(socket, JSON.stringify(data), 0x1),
       };
 
@@ -244,12 +295,11 @@ export default async (app) => {
         currentMessageFragments: null, // Stores fragments of a multi-frame message
         currentMessageOpcode: null, // Stores opcode of the first fragment (text or binary)
         shouldClose: false, // Flag to signal closure from parseFrames
+        maxSize: maxSizeAnonymous,
       };
       socket.on("data", (wsData) => {
-        connectionState.buffer = Buffer.concat([
-          connectionState.buffer,
-          wsData,
-        ]);
+        if (connectionState.shouldClose) return;
+        connectionState.buffer = Buffer.concat([connectionState.buffer, wsData]);
 
         // Call the parser with the connection's state
         parseWebSocketFrames(
@@ -259,20 +309,22 @@ export default async (app) => {
 
             let query;
             try {
-              query = JSON.parse(output);
-              query.id = requestId;
+              query = app.connection.fromClient(JSON.parse(output), requestId);
             } catch (e) {
               const part = output.substring(0, 50);
               console.log(`Unparsed: ${output.length} ${part}`);
               return;
             }
+            if (!query) return;
             const result = await app.connection.event(query.type, query);
+            if (["login", "logout"].includes(query.type)) {
+              const { session } = await app.session.add({ id: requestId });
+              connectionState.maxSize = session ? maxSizeLoggedIn : maxSizeAnonymous;
+            }
             // Remove callbackid in future
-            if (result.callbackClient || result.callbackid)
-              sendWebSocketFrame(socket, JSON.stringify(result), 0x1);
+            if (result.callbackClient || result.callbackid) sendWebSocketFrame(socket, JSON.stringify(result), 0x1);
           },
-          (payload, opcode, mask) =>
-            sendWebSocketFrame(socket, payload, opcode, mask),
+          (payload, opcode, mask) => sendWebSocketFrame(socket, payload, opcode, mask),
         );
 
         // If parseWebSocketFrames signaled to close, do it here
@@ -307,7 +359,7 @@ export default async (app) => {
   app.connection.on("count", (query) => {
     app.session.add(query);
 
-    if (!["config", "super"].includes(query.session.role)) return;
+    if (!["config", "super"].includes(query.session?.role)) return;
     return { ...query, connectedCount };
   });
 };

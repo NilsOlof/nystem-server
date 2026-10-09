@@ -4,21 +4,7 @@ import app from "nystem";
 
 const TextareaLog = ({ view, model, value = "" }) => {
   const [log, setLog] = useState("");
-  const panelKey = `serverPanelOpen${view.id}`;
-  const [open, setOpen] = useState(() => sessionStorage.getItem(panelKey) === "log");
   const rawLog = useRef();
-
-  useEffect(() => {
-    if (model.event !== "log") return;
-    const toggle = ({ open }) => setOpen(open === "log");
-    app.connection.on(`serverPanel${view.id}`, toggle);
-    if (!sessionStorage.getItem(panelKey)) {
-      sessionStorage.setItem(panelKey, "log");
-      setOpen(true);
-      app.connection.event(`serverPanel${view.id}`, { open: "log" });
-    }
-    return () => app.connection.off(`serverPanel${view.id}`, toggle);
-  }, [model.event, panelKey, view.id]);
 
   useEffect(() => {
     const makeLinks = (match, p1, p2, p3) => {
@@ -79,7 +65,6 @@ const TextareaLog = ({ view, model, value = "" }) => {
   }, [value, view.id, view.value.basepath]);
 
   const className = model.className && model.className.join(" ");
-  if (model.event === "log" && !open) return null;
   return (
     <div className={model.event === "log" ? "relative bg-black" : ""}>
       {model.event === "log" && (
@@ -88,7 +73,7 @@ const TextareaLog = ({ view, model, value = "" }) => {
           rawLog.current = "";
         }}>Clear</button>
       )}
-      <code>
+      <code className="text-[12px] leading-[18px]">
       <Wrapper
         className={model.wrapperClass}
         onClick={(e) => {

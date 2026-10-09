@@ -10,6 +10,7 @@
   "dependencies": {
     "http-proxy": "*",
     "sudo-prompt": "*",
+    "prettier": "3.9.9",
     "bcryptjs": "*",
     "pngjs": "*",
     "sharp": "*",

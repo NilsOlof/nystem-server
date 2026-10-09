@@ -129,7 +129,8 @@ const deploy = async () => {
     console.log("Copy done, adding to git");
     await delay(500);
     await runGitCommand("add *");
-    await runGitCommand("commit -m Build");
+    if ((await runGitCommand("diff --cached --name-only")).trim()) await runGitCommand("commit -m Build");
+    else console.log("Build unchanged, skipping commit");
 
     if (process.platform === "win32") await runGitCommand("push", { GIT_SSH: "C:\\Program Files\\PuTTY\\plink.exe" });
     else await runGitCommand("push");

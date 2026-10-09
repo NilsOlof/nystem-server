@@ -1,23 +1,13 @@
 {
   "name": "server",
   "_roles": { "save": [] },
-  "default": {
-    "length": "50",
-    "text_mandatory": "Field is mandatory",
-    "mandatory": true,
-    "type": "text"
-  },
+  "default": { "length": "50", "text_mandatory": "Field is mandatory", "mandatory": true, "type": "text" },
   "item": [
     { "id": "name", "text": "Name", "type": "text" },
     { "id": "host", "text": "Host", "type": "multilinetext" },
     { "id": "path", "text": "Path", "type": "text", "length": "100" },
     { "type": "int", "id": "port", "text": "Port" },
-    {
-      "id": "showinoverview",
-      "text": "In overview",
-      "type": "boolean",
-      "mandatory": false
-    }
+    { "id": "showinoverview", "text": "In overview", "type": "boolean", "mandatory": false }
   ],
   "machinename": "server",
   "storage": "data",
@@ -115,14 +105,7 @@
                                 }
                               ],
                               "icon": true,
-                              "className": [
-                                "flex",
-                                "items-center",
-                                "content-center",
-                                "py-1",
-                                "",
-                                "flex-grow"
-                              ]
+                              "className": ["flex", "items-center", "content-center", "py-1", "", "flex-grow"]
                             },
                             {
                               "category": "view",
@@ -159,16 +142,8 @@
               "match": "localhost"
             },
             { "type": "devtools" },
-            {
-              "type": "viewInView",
-              "contentType": "dbexplorer",
-              "view": "list"
-            },
-            {
-              "type": "viewInView",
-              "contentType": "server",
-              "view": "devtoolsettings"
-            }
+            { "type": "viewInView", "contentType": "dbexplorer", "view": "list" },
+            { "type": "viewInView", "contentType": "server", "view": "devtoolsettings" }
           ]
         }
       ]
@@ -186,22 +161,12 @@
               "format": "panelToggle",
               "icon": true,
               "className": ["flex", "items-center"],
-              "item": [
-                {
-                  "type": "viewText",
-                  "text": "Settings",
-                  "className": ["py-2"]
-                }
-              ]
+              "item": [{ "type": "viewText", "text": "Settings", "className": ["py-2"] }]
             }
           ],
           "item": [
             { "type": "devtools", "format": "settings" },
-            {
-              "type": "viewText",
-              "format": "codemirror",
-              "className": ["h-96"]
-            }
+            { "type": "viewText", "format": "codemirror", "className": ["h-96"] }
           ],
           "className": ["m-3", "shadow"],
           "typeClass": "defaultWithoutPadding"
@@ -226,14 +191,7 @@
                   "format": "search",
                   "field": "host",
                   "extract": "(\\/\\/)([^\\/]+)",
-                  "item": [
-                    {
-                      "category": "view",
-                      "type": "router",
-                      "format": "redirect",
-                      "to": "/"
-                    }
-                  ]
+                  "item": [{ "category": "view", "type": "router", "format": "redirect", "to": "/" }]
                 },
                 {
                   "category": "view",
@@ -275,14 +233,7 @@
               "format": "tab",
               "match": "localhost",
               "invert": true,
-              "item": [
-                {
-                  "category": "view",
-                  "type": "router",
-                  "format": "redirect",
-                  "to": "/"
-                }
-              ]
+              "item": [{ "category": "view", "type": "router", "format": "redirect", "to": "/" }]
             }
           ]
         }
@@ -295,14 +246,9 @@
         {
           "type": "viewLink",
           "format": "link",
-          "text": "Git changes",
+          "text": "Git workspace",
           "href": "/server/git/{id}",
-          "className": [
-            "px-3",
-            "py-1",
-            "text-blue-400",
-            "hover:text-blue-300"
-          ]
+          "className": ["px-3", "py-1", "text-blue-400", "hover:text-blue-300"]
         },
         {
           "category": "view",
@@ -332,14 +278,7 @@
                         }
                       ],
                       "icon": true,
-                      "className": [
-                        "flex",
-                        "items-center",
-                        "content-center",
-                        "py-1",
-                        "",
-                        "flex-grow"
-                      ]
+                      "className": ["flex", "items-center", "content-center", "py-1", "", "flex-grow"]
                     },
                     {
                       "category": "view",
@@ -377,37 +316,12 @@
           "row": true,
           "format": "view",
           "item": [
-            {
-              "category": "contentTypeField",
-              "type": "text",
-              "id": "name",
-              "format": "view",
-              "renderAs": "h4"
-            },
-            {
-              "id": "name",
-              "type": "text",
-              "category": "contentTypeField",
-              "mandatory": true
-            },
-            {
-              "id": "host",
-              "type": "multilinetext",
-              "category": "contentTypeField"
-            },
+            { "category": "contentTypeField", "type": "text", "id": "name", "format": "view", "renderAs": "h4" },
+            { "id": "name", "type": "text", "category": "contentTypeField", "mandatory": true },
+            { "id": "host", "type": "multilinetext", "category": "contentTypeField" },
             { "category": "contentTypeField", "type": "int", "id": "port" },
-            {
-              "id": "path",
-              "type": "text",
-              "category": "contentTypeField",
-              "mandatory": true
-            },
-            {
-              "category": "contentTypeField",
-              "type": "boolean",
-              "id": "showinoverview",
-              "text": "In overview"
-            },
+            { "id": "path", "type": "text", "category": "contentTypeField", "mandatory": true },
+            { "category": "contentTypeField", "type": "boolean", "id": "showinoverview", "text": "In overview" },
             { "type": "viewButton", "category": "view" }
           ],
           "className": ["px-4"]
@@ -424,13 +338,7 @@
           "id": "host",
           "format": "fields",
           "limit": "1",
-          "item": [
-            {
-              "type": "icon",
-              "icon": "arrow-up-right-from-square",
-              "className": ["w-4", "h-4"]
-            }
-          ],
+          "item": [{ "type": "icon", "icon": "arrow-up-right-from-square", "className": ["w-4", "h-4"] }],
           "className": [""]
         }
       ]
@@ -443,32 +351,12 @@
           "type": "style",
           "className": ["flex", "items-center", "max-w-xl", "pl-4"],
           "item": [
-            {
-              "type": "viewText",
-              "category": "view",
-              "text": "Servers",
-              "renderAs": "h4",
-              "className": ["flex-grow"]
-            },
-            {
-              "category": "view",
-              "type": "viewList",
-              "format": "search",
-              "text": "Search",
-              "className": [""]
-            },
+            { "type": "viewText", "category": "view", "text": "Servers", "renderAs": "h4", "className": ["flex-grow"] },
+            { "category": "view", "type": "viewList", "format": "search", "text": "Search", "className": [""] },
             {
               "type": "viewLink",
               "category": "view",
-              "className": [
-                "bg-blue-500",
-                "hover:bg-blue-500",
-                "text-white",
-                "rounded",
-                "shadow-sm",
-                "px-3",
-                "py-2"
-              ],
+              "className": ["bg-blue-500", "hover:bg-blue-500", "text-white", "rounded", "shadow-sm", "px-3", "py-2"],
               "text": "Add",
               "href": "/server/input",
               "renderType": "primary",
@@ -476,12 +364,7 @@
             }
           ]
         },
-        {
-          "category": "view",
-          "type": "database",
-          "format": "search",
-          "sortby": { "id": "name", "text": "Name" }
-        },
+        { "category": "view", "type": "database", "format": "search", "sortby": { "id": "name", "text": "Name" } },
         {
           "type": "viewList",
           "category": "view",
@@ -496,18 +379,8 @@
               "toFormat": "input",
               "className": ["font-bold", "py-1", "px-2", "block"]
             },
-            {
-              "id": "path",
-              "type": "text",
-              "category": "contentTypeField",
-              "className": ["", "py-1", "px-2"]
-            },
-            {
-              "id": "port",
-              "type": "text",
-              "category": "contentTypeField",
-              "className": ["", "py-1", "px-2"]
-            },
+            { "id": "path", "type": "text", "category": "contentTypeField", "className": ["", "py-1", "px-2"] },
+            { "id": "port", "type": "text", "category": "contentTypeField", "className": ["", "py-1", "px-2"] },
             {
               "id": "showinoverview",
               "type": "boolean",
@@ -518,14 +391,9 @@
             {
               "type": "viewLink",
               "format": "link",
-              "text": "Git changes",
+              "text": "Git workspace",
               "href": "/server/git/{id}",
-              "className": [
-                "px-3",
-                "py-1",
-                "text-blue-400",
-                "hover:text-blue-300"
-              ]
+              "className": ["px-3", "py-1", "text-blue-400", "hover:text-blue-300"]
             }
           ],
           "headerFields": [
@@ -551,12 +419,7 @@
               "format": "sortBy",
               "className": ["", "py-1", "px-2"]
             },
-            {
-              "category": "view",
-              "type": "viewText",
-              "text": "Overview",
-              "className": ["", "py-1", "px-2"]
-            },
+            { "category": "view", "type": "viewText", "text": "Overview", "className": ["", "py-1", "px-2"] },
             { "type": "viewText", "text": "Git", "className": ["py-1", "px-2"] }
           ],
           "filter": [],
@@ -569,23 +432,13 @@
       "name": "menu",
       "format": "view",
       "item": [
-        {
-          "type": "router",
-          "match": "index.html",
-          "item": [{ "type": "router", "format": "redirect", "to": "/" }]
-        },
+        { "type": "router", "match": "index.html", "item": [{ "type": "router", "format": "redirect", "to": "/" }] },
         {
           "type": "style",
           "item": [
             {
               "type": "style",
-              "className": [
-                "flex",
-                "items-center",
-                "max-w-4xl",
-                "w-full",
-                "px-4"
-              ],
+              "className": ["flex", "items-center", "max-w-4xl", "w-full", "px-4"],
               "item": [
                 {
                   "category": "view",
@@ -608,7 +461,16 @@
                   "format": "link",
                   "text": "Nystem server",
                   "href": "/",
-                  "className": ["pl-1", "flex-grow", "lg:grow-0", "text-lg", "font-bold", "tracking-tight", "text-white", "select-none"]
+                  "className": [
+                    "pl-1",
+                    "flex-grow",
+                    "lg:grow-0",
+                    "text-lg",
+                    "font-bold",
+                    "tracking-tight",
+                    "text-white",
+                    "select-none"
+                  ]
                 },
                 {
                   "category": "view",
@@ -616,7 +478,16 @@
                   "format": "link",
                   "text": "Servers",
                   "href": "/server/list",
-                  "className": ["hidden", "lg:block", "ml-6", "text-xs", "font-medium", "text-gray-400", "hover:text-white", "select-none"]
+                  "className": [
+                    "hidden",
+                    "lg:block",
+                    "ml-6",
+                    "text-xs",
+                    "font-medium",
+                    "text-gray-400",
+                    "hover:text-white",
+                    "select-none"
+                  ]
                 },
                 {
                   "category": "view",
@@ -624,7 +495,17 @@
                   "format": "link",
                   "text": "Hosts",
                   "href": "/host/list",
-                  "className": ["hidden", "lg:block", "ml-5", "mr-auto", "text-xs", "font-medium", "text-gray-400", "hover:text-white", "select-none"]
+                  "className": [
+                    "hidden",
+                    "lg:block",
+                    "ml-5",
+                    "mr-auto",
+                    "text-xs",
+                    "font-medium",
+                    "text-gray-400",
+                    "hover:text-white",
+                    "select-none"
+                  ]
                 },
                 {
                   "type": "connection",
@@ -632,14 +513,7 @@
                     {
                       "category": "view",
                       "type": "viewImage",
-                      "className": [
-                        "w-10",
-                        "h-10",
-                        "grayscale",
-                        "mb-1",
-                        "select-none",
-                        "opacity-30"
-                      ],
+                      "className": ["w-10", "h-10", "grayscale", "mb-1", "select-none", "opacity-30"],
                       "filename": "logo3.svg"
                     }
                   ],
@@ -661,15 +535,7 @@
             },
             { "type": "viewText", "className": ["flex-grow", "select-none"] }
           ],
-          "className": [
-            "flex",
-            "text-left",
-            "font-bold",
-            "py-2",
-            "pb-0",
-            "items-center",
-            "w-full"
-          ]
+          "className": ["flex", "text-left", "font-bold", "py-2", "pb-0", "items-center", "w-full"]
         }
       ]
     },
@@ -721,14 +587,7 @@
                                 }
                               ],
                               "icon": true,
-                              "className": [
-                                "flex",
-                                "items-center",
-                                "content-center",
-                                "py-1",
-                                "",
-                                "flex-grow"
-                              ]
+                              "className": ["flex", "items-center", "content-center", "py-1", "", "flex-grow"]
                             },
                             {
                               "category": "view",
@@ -758,7 +617,8 @@
                       "typeClass": "defaultWithoutPadding"
                     }
                   ],
-                  "className": [""]
+                  "className": [""],
+                  "format": "gitPanel"
                 }
               ],
               "renderFormat": "div",
@@ -772,7 +632,9 @@
               "className": ["server-overview-box"],
               "item": []
             }
-          ]
+          ],
+          "format": "gitPanel",
+          "layout": true
         }
       ]
     },
@@ -801,21 +663,11 @@
               "sortby": [{ "id": "_chdate", "type": "date" }],
               "reversesortby": true
             },
-            {
-              "type": "devtools",
-              "format": "selectContenttype",
-              "limit": 1,
-              "inline": true,
-              "render": "button"
-            },
+            { "type": "devtools", "format": "selectContenttype", "limit": 1, "inline": true, "render": "button" },
             {
               "type": "style",
               "item": [
-                {
-                  "type": "viewList",
-                  "format": "search",
-                  "className": ["w-96"]
-                },
+                { "type": "viewList", "format": "search", "className": ["w-96"] },
                 { "type": "viewText", "text": "Count", "className": ["ml-6"] },
                 {
                   "type": "viewList",
@@ -830,33 +682,10 @@
             {
               "type": "style",
               "item": [
-                {
-                  "id": "_crdate",
-                  "type": "date",
-                  "format": "sortBy",
-                  "text": "Created",
-                  "className": ["w-40"]
-                },
-                {
-                  "id": "_chdate",
-                  "type": "date",
-                  "format": "sortBy",
-                  "text": "Changed",
-                  "className": ["w-40"]
-                },
-                {
-                  "type": "text",
-                  "id": "name",
-                  "format": "sortBy",
-                  "className": ["w-40"]
-                },
-                {
-                  "id": "_id",
-                  "type": "text",
-                  "format": "sortBy",
-                  "text": "Id",
-                  "className": ["w-32"]
-                }
+                { "id": "_crdate", "type": "date", "format": "sortBy", "text": "Created", "className": ["w-40"] },
+                { "id": "_chdate", "type": "date", "format": "sortBy", "text": "Changed", "className": ["w-40"] },
+                { "type": "text", "id": "name", "format": "sortBy", "className": ["w-40"] },
+                { "id": "_id", "type": "text", "format": "sortBy", "text": "Id", "className": ["w-32"] }
               ],
               "className": ["flex", "ml-6", "mb-6"]
             },
@@ -879,27 +708,13 @@
                           "iconClassName": ["w-4", "h-4"],
                           "icon": true,
                           "item": [
-                            {
-                              "id": "_crdate",
-                              "type": "date",
-                              "className": ["w-40"]
-                            },
-                            {
-                              "id": "_chdate",
-                              "type": "date",
-                              "className": ["w-40"]
-                            },
+                            { "id": "_crdate", "type": "date", "className": ["w-40"] },
+                            { "id": "_chdate", "type": "date", "className": ["w-40"] },
                             { "type": "text", "id": "name" },
                             {
                               "type": "conditional",
                               "condition": [["name", "false"]],
-                              "item": [
-                                {
-                                  "id": "_id",
-                                  "type": "text",
-                                  "className": ["w-32"]
-                                }
-                              ]
+                              "item": [{ "id": "_id", "type": "text", "className": ["w-32"] }]
                             },
                             { "type": "viewText", "className": ["flex-grow"] },
                             {
@@ -964,9 +779,7 @@
                   ],
                   "headerFields": [],
                   "className": [""],
-                  "header": [
-                    { "type": "viewText", "text": "Database explorer" }
-                  ],
+                  "header": [{ "type": "viewText", "text": "Database explorer" }],
                   "emptyFields": [
                     {
                       "type": "viewText",
@@ -991,20 +804,20 @@
       "item": [
         {
           "type": "git",
-          "className": [
-            "flex",
-            "flex-col",
-            "bg-gray-900",
-            "text-gray-300",
-            "h-[calc(100vh-64px)]",
-            "min-h-96"
-          ],
+          "className": ["flex", "flex-col", "bg-gray-900", "text-gray-300", "h-[calc(100vh-64px)]", "min-h-96"],
           "item": [
             {
               "type": "git",
               "format": "toolbar",
               "item": [
-                { "category": "contentTypeField", "type": "text", "id": "name", "format": "view", "renderAs": "span", "className": ["font-bold", "text-white"] }
+                {
+                  "category": "contentTypeField",
+                  "type": "text",
+                  "id": "name",
+                  "format": "view",
+                  "renderAs": "span",
+                  "className": ["text-xl", "font-bold", "text-white"]
+                }
               ],
               "className": [
                 "flex",
@@ -1015,65 +828,26 @@
                 "border-gray-700",
                 "px-3",
                 "py-2"
+              ],
+              "actions": [
+                {
+                  "category": "view",
+                  "type": "viewInView",
+                  "contentType": "serverStatus",
+                  "view": "taskControls",
+                  "viewId": "{_id}",
+                  "format": "empty"
+                }
               ]
             },
             {
-              "type": "style",
-              "className": [
-                "flex",
-                "flex-1",
-                "min-h-0"
-              ],
-              "item": [
-                {
-                  "type": "style",
-                  "className": [
-                    "flex",
-                    "flex-col",
-                    "w-[30%]",
-                    "min-w-64",
-                    "border-r",
-                    "border-gray-700"
-                  ],
-                  "item": [
-                    {
-                      "type": "git",
-                      "format": "files",
-                      "side": "staged",
-                      "text": "Staged files",
-                      "className": [
-                        "flex",
-                        "flex-col",
-                        "flex-1",
-                        "min-h-0"
-                      ]
-                    },
-                    {
-                      "type": "git",
-                      "format": "files",
-                      "side": "unstaged",
-                      "text": "Unstaged files",
-                      "className": [
-                        "flex",
-                        "flex-col",
-                        "flex-1",
-                        "min-h-0"
-                      ]
-                    }
-                  ]
-                },
-                {
-                  "type": "git",
-                  "format": "diff",
-                  "className": [
-                    "flex",
-                    "flex-col",
-                    "flex-1",
-                    "min-w-0",
-                    "bg-[#232323]"
-                  ]
-                }
-              ]
+              "category": "view",
+              "type": "viewInView",
+              "contentType": "serverStatus",
+              "view": "tasks",
+              "viewId": "{_id}",
+              "format": "empty",
+              "className": ["flex", "flex-col", "flex-1", "min-h-0"]
             }
           ]
         }

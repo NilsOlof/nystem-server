@@ -36,13 +36,7 @@
                       "type": "viewLink",
                       "format": "dynamicFields",
                       "href": "http://nystemcontenttypemanager.localhost/redirect?path={basepath}",
-                      "item": [
-                        {
-                          "type": "icon",
-                          "icon": "gear",
-                          "className": ["w-4", "h-4"]
-                        }
-                      ],
+                      "item": [{ "type": "icon", "icon": "gear", "className": ["w-4", "h-4"] }],
                       "className": [
                         "mr-1",
                         "transition",
@@ -68,7 +62,10 @@
                       "type": "viewButton",
                       "format": "eventEmitter",
                       "event": "serverProgram",
-                      "fields": [["{id}", "serverId"], ["vscode", "program"]],
+                      "fields": [
+                        ["{id}", "serverId"],
+                        ["vscode", "program"]
+                      ],
                       "btnType": "success",
                       "size": "xs",
                       "className": [
@@ -98,7 +95,10 @@
                       "type": "viewButton",
                       "format": "eventEmitter",
                       "event": "serverProgram",
-                      "fields": [["{id}", "serverId"], ["sourcetree", "program"]],
+                      "fields": [
+                        ["{id}", "serverId"],
+                        ["sourcetree", "program"]
+                      ],
                       "btnType": "primary",
                       "size": "xs",
                       "className": [
@@ -128,7 +128,10 @@
                       "type": "viewButton",
                       "format": "eventEmitter",
                       "event": "serverProgram",
-                      "fields": [["{id}", "serverId"], ["fileExplorer", "program"]],
+                      "fields": [
+                        ["{id}", "serverId"],
+                        ["fileExplorer", "program"]
+                      ],
                       "btnType": "primary",
                       "size": "xs",
                       "className": [
@@ -158,7 +161,10 @@
                       "type": "viewButton",
                       "format": "eventEmitter",
                       "event": "serverProgram",
-                      "fields": [["{id}", "serverId"], ["codex", "program"]],
+                      "fields": [
+                        ["{id}", "serverId"],
+                        ["codex", "program"]
+                      ],
                       "btnType": "primary",
                       "size": "xs",
                       "className": [
@@ -186,24 +192,16 @@
                     {
                       "category": "view",
                       "type": "viewButton",
-                      "format": "deploy",
-                      "icon": "screwdriver-wrench",
-                      "className": ["mr-1", "bg-blue-500", "hover:bg-blue-500", "text-white", "rounded", "shadow-sm", "py-1", "px-2", "text-xs", "inline-flex", "items-center", "justify-center", "cursor-pointer", "hide-on-false", "transition", "transition-opacity", "duration-500", "ease-in-out"]
-                    },
-                    {
-                      "category": "view",
-                      "type": "viewInView",
-                      "contentType": "server",
-                      "view": "link",
-                      "viewId": "{id}",
-                      "format": "view",
+                      "format": "eventEmitter",
+                      "event": "serverProgram",
+                      "fields": [
+                        ["{id}", "serverId"],
+                        ["term", "program"]
+                      ],
+                      "btnType": "primary",
+                      "size": "xs",
                       "className": [
-                        "py-2",
-                        "transition",
-                        "transition-opacity",
-                        "duration-500",
-                        "ease-in-out",
-                        "hide-on-false",
+                        "mr-1",
                         "bg-blue-500",
                         "hover:bg-blue-500",
                         "text-white",
@@ -211,53 +209,117 @@
                         "shadow-sm",
                         "py-1",
                         "px-2",
-                        "mr-1"
-                      ]
+                        "text-xs",
+                        "inline-flex",
+                        "items-center",
+                        "justify-center",
+                        "cursor-pointer",
+                        "hide-on-false",
+                        "transition",
+                        "transition-opacity",
+                        "duration-500",
+                        "ease-in-out"
+                      ],
+                      "item": [{ "type": "icon", "icon": "terminal", "className": ["h-4", "w-4"] }]
                     },
                     {
-                      "category": "view",
-                      "type": "viewText",
-                      "format": "titlePopup",
+                      "type": "style",
+                      "format": "classNameByValue",
+                      "className": ["flex", "items-center"],
+                      "mapper": [
+                        { "field": "running", "classNameByValue": [["true", "[&_.hide-on-false]:opacity-100!"]] }
+                      ],
                       "item": [
                         {
-                          "category": "contentTypeField",
-                          "type": "boolean",
-                          "id": "running",
-                          "format": "button",
-                          "text": "pause",
-                          "falseText": "play:hide-on-false",
-                          "btnType": "danger",
-                          "falseBtnType": "primary",
-                          "size": "xs",
+                          "category": "view",
+                          "type": "viewButton",
+                          "format": "deploy",
+                          "icon": "screwdriver-wrench",
+                          "className": [
+                            "mr-1",
+                            "bg-blue-500",
+                            "hover:bg-blue-500",
+                            "text-white",
+                            "rounded",
+                            "shadow-sm",
+                            "py-1",
+                            "px-2",
+                            "text-xs",
+                            "inline-flex",
+                            "items-center",
+                            "justify-center",
+                            "cursor-pointer",
+                            "transition",
+                            "transition-opacity",
+                            "duration-500",
+                            "ease-in-out",
+                            "hide-on-false"
+                          ]
+                        },
+                        {
+                          "category": "view",
+                          "type": "viewInView",
+                          "contentType": "server",
+                          "view": "link",
+                          "viewId": "{id}",
+                          "format": "view",
                           "className": [
                             "py-2",
                             "transition",
                             "transition-opacity",
                             "duration-500",
-                            "ease-in-out"
-                          ]
-                        }
-                      ],
-                      "popup": [
-                        {
-                          "category": "contentTypeField",
-                          "type": "textarea",
-                          "id": "log",
-                          "format": "log",
-                          "className": ["bg-black", "text-gray-400", "p-3"],
-                          "wrapperClass": [
-                            "flex",
-                            "flex-col-reverse",
-                            "max-h-128",
-                            "overflow-hidden",
-                            "bg-black",
-                            "w-64",
+                            "ease-in-out",
+                            "bg-blue-500",
+                            "hover:bg-blue-500",
+                            "text-white",
                             "rounded",
-                            "shadow"
+                            "shadow-sm",
+                            "py-1",
+                            "px-2",
+                            "mr-1",
+                            "hide-on-false"
                           ]
+                        },
+                        {
+                          "category": "view",
+                          "type": "viewText",
+                          "format": "titlePopup",
+                          "item": [
+                            {
+                              "category": "contentTypeField",
+                              "type": "boolean",
+                              "id": "running",
+                              "format": "button",
+                              "text": "pause",
+                              "falseText": "play:hide-on-false",
+                              "btnType": "danger",
+                              "falseBtnType": "primary",
+                              "size": "xs",
+                              "className": ["py-2", "transition", "transition-opacity", "duration-500", "ease-in-out"]
+                            }
+                          ],
+                          "popup": [
+                            {
+                              "category": "contentTypeField",
+                              "type": "textarea",
+                              "id": "log",
+                              "format": "log",
+                              "className": ["bg-black", "text-gray-400", "p-3"],
+                              "wrapperClass": [
+                                "flex",
+                                "flex-col-reverse",
+                                "max-h-128",
+                                "overflow-hidden",
+                                "bg-black",
+                                "w-[40rem]",
+                                "rounded",
+                                "shadow"
+                              ]
+                            }
+                          ],
+                          "className": [""]
                         }
-                      ],
-                      "className": [""]
+                      ]
                     }
                   ],
                   "className": ["flex", "py-1"],
@@ -289,9 +351,7 @@
               "type": "viewLink",
               "format": "dynamicFields",
               "href": "http://nystemcontenttypemanager.localhost/redirect?path={basepath}",
-              "item": [
-                { "type": "icon", "icon": "gear", "className": ["w-4", "h-4"] }
-              ],
+              "item": [{ "type": "icon", "icon": "gear", "className": ["w-4", "h-4"] }],
               "className": [
                 "mr-1",
                 "bg-blue-500",
@@ -312,10 +372,27 @@
               "type": "viewButton",
               "format": "eventEmitter",
               "event": "serverProgram",
-              "fields": [["{id}", "serverId"], ["vscode", "program"]],
+              "fields": [
+                ["{id}", "serverId"],
+                ["vscode", "program"]
+              ],
               "btnType": "success",
               "size": "xs",
-              "className": ["mr-1", "bg-green-600", "hover:bg-green-500", "text-white", "rounded", "shadow-sm", "py-1", "px-2", "text-xs", "inline-flex", "items-center", "justify-center", "cursor-pointer"],
+              "className": [
+                "mr-1",
+                "bg-green-600",
+                "hover:bg-green-500",
+                "text-white",
+                "rounded",
+                "shadow-sm",
+                "py-1",
+                "px-2",
+                "text-xs",
+                "inline-flex",
+                "items-center",
+                "justify-center",
+                "cursor-pointer"
+              ],
               "item": [{ "type": "icon", "icon": "code", "className": ["h-4", "w-4"] }]
             },
             {
@@ -323,10 +400,27 @@
               "type": "viewButton",
               "format": "eventEmitter",
               "event": "serverProgram",
-              "fields": [["{id}", "serverId"], ["sourcetree", "program"]],
+              "fields": [
+                ["{id}", "serverId"],
+                ["sourcetree", "program"]
+              ],
               "btnType": "primary",
               "size": "xs",
-              "className": ["mr-1", "bg-blue-500", "hover:bg-blue-500", "text-white", "rounded", "shadow-sm", "py-1", "px-2", "text-xs", "inline-flex", "items-center", "justify-center", "cursor-pointer"],
+              "className": [
+                "mr-1",
+                "bg-blue-500",
+                "hover:bg-blue-500",
+                "text-white",
+                "rounded",
+                "shadow-sm",
+                "py-1",
+                "px-2",
+                "text-xs",
+                "inline-flex",
+                "items-center",
+                "justify-center",
+                "cursor-pointer"
+              ],
               "item": [{ "type": "icon", "icon": "brands-github", "className": ["h-4", "w-4"] }]
             },
             {
@@ -334,10 +428,27 @@
               "type": "viewButton",
               "format": "eventEmitter",
               "event": "serverProgram",
-              "fields": [["{id}", "serverId"], ["fileExplorer", "program"]],
+              "fields": [
+                ["{id}", "serverId"],
+                ["fileExplorer", "program"]
+              ],
               "btnType": "primary",
               "size": "xs",
-              "className": ["mr-1", "bg-blue-500", "hover:bg-blue-500", "text-white", "rounded", "shadow-sm", "py-1", "px-2", "text-xs", "inline-flex", "items-center", "justify-center", "cursor-pointer"],
+              "className": [
+                "mr-1",
+                "bg-blue-500",
+                "hover:bg-blue-500",
+                "text-white",
+                "rounded",
+                "shadow-sm",
+                "py-1",
+                "px-2",
+                "text-xs",
+                "inline-flex",
+                "items-center",
+                "justify-center",
+                "cursor-pointer"
+              ],
               "item": [{ "type": "icon", "icon": "folder", "className": ["h-4", "w-4"] }]
             },
             {
@@ -345,18 +456,77 @@
               "type": "viewButton",
               "format": "eventEmitter",
               "event": "serverProgram",
-              "fields": [["{id}", "serverId"], ["codex", "program"]],
+              "fields": [
+                ["{id}", "serverId"],
+                ["codex", "program"]
+              ],
               "btnType": "primary",
               "size": "xs",
-              "className": ["mr-1", "bg-blue-500", "hover:bg-blue-500", "text-white", "rounded", "shadow-sm", "py-1", "px-2", "text-xs", "inline-flex", "items-center", "justify-center", "cursor-pointer"],
+              "className": [
+                "mr-1",
+                "bg-blue-500",
+                "hover:bg-blue-500",
+                "text-white",
+                "rounded",
+                "shadow-sm",
+                "py-1",
+                "px-2",
+                "text-xs",
+                "inline-flex",
+                "items-center",
+                "justify-center",
+                "cursor-pointer"
+              ],
               "item": [{ "type": "icon", "icon": "robot", "className": ["h-4", "w-4"] }]
+            },
+            {
+              "category": "view",
+              "type": "viewButton",
+              "format": "eventEmitter",
+              "event": "serverProgram",
+              "fields": [
+                ["{id}", "serverId"],
+                ["term", "program"]
+              ],
+              "btnType": "primary",
+              "size": "xs",
+              "className": [
+                "mr-1",
+                "bg-blue-500",
+                "hover:bg-blue-500",
+                "text-white",
+                "rounded",
+                "shadow-sm",
+                "py-1",
+                "px-2",
+                "text-xs",
+                "inline-flex",
+                "items-center",
+                "justify-center",
+                "cursor-pointer"
+              ],
+              "item": [{ "type": "icon", "icon": "terminal", "className": ["h-4", "w-4"] }]
             },
             {
               "category": "view",
               "type": "viewButton",
               "format": "deploy",
               "icon": "screwdriver-wrench",
-              "className": ["mr-1", "bg-blue-500", "hover:bg-blue-500", "text-white", "rounded", "shadow-sm", "py-1", "px-2", "text-xs", "inline-flex", "items-center", "justify-center", "cursor-pointer"]
+              "className": [
+                "mr-1",
+                "bg-blue-500",
+                "hover:bg-blue-500",
+                "text-white",
+                "rounded",
+                "shadow-sm",
+                "py-1",
+                "px-2",
+                "text-xs",
+                "inline-flex",
+                "items-center",
+                "justify-center",
+                "cursor-pointer"
+              ]
             },
             {
               "category": "view",
@@ -399,12 +569,6 @@
       "format": "input",
       "item": [
         {
-          "category": "contentTypeField",
-          "type": "textarea",
-          "id": "taskLog",
-          "format": "deployLog"
-        },
-        {
           "category": "view",
           "type": "viewInView",
           "format": "setBaseViewValue",
@@ -430,6 +594,66 @@
             "scrollbar-dark"
           ],
           "event": "log"
+        }
+      ]
+    },
+    {
+      "name": "tasks",
+      "format": "view",
+      "item": [
+        {
+          "category": "contentTypeField",
+          "type": "textarea",
+          "id": "taskLog",
+          "format": "deployLog",
+          "logOnly": true,
+          "stageArea": true,
+          "item": [
+            {
+              "type": "style",
+              "className": ["flex", "flex-1", "min-h-0"],
+              "item": [
+                {
+                  "type": "style",
+                  "className": ["flex", "flex-col", "w-[30%]", "min-w-64", "border-r", "border-gray-700"],
+                  "item": [
+                    {
+                      "type": "git",
+                      "format": "files",
+                      "side": "staged",
+                      "text": "Staged files",
+                      "className": ["flex", "flex-col", "flex-1", "min-h-0"]
+                    },
+                    {
+                      "type": "git",
+                      "format": "files",
+                      "side": "unstaged",
+                      "text": "Unstaged files",
+                      "className": ["flex", "flex-col", "flex-1", "min-h-0"]
+                    }
+                  ]
+                },
+                {
+                  "type": "git",
+                  "format": "diff",
+                  "className": ["flex", "flex-col", "flex-1", "min-w-0", "bg-[#232323]"]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "taskControls",
+      "format": "view",
+      "item": [
+        {
+          "category": "contentTypeField",
+          "type": "textarea",
+          "id": "taskLog",
+          "format": "deployLog",
+          "controlsOnly": true
         }
       ]
     }

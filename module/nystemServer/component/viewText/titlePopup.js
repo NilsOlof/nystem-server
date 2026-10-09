@@ -67,13 +67,7 @@ const ViewTextTitlePopup = ({ model, path }) => {
     <>
       {overPos && (
         <Portal>
-          <Wrapper
-            style={{
-              position: "fixed",
-              left: overPos.x + 10,
-              top: overPos.y + 12,
-            }}
-          >
+          <Wrapper className={["z-50"]} style={{ position: "fixed", left: overPos.x + 10, top: overPos.y + 12 }}>
             <ContentTypeRender path={path} items={popup} />
           </Wrapper>
         </Portal>
