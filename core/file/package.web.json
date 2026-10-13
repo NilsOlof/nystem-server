@@ -1,5 +1,4 @@
 {
-  "scripts": {
-    "start": "vite"
-  }
+  "scripts": { "start": "vite" },
+  "devDependencies": { "@rolldown/plugin-babel": "*", "babel-plugin-react-compiler": "*" }
 }

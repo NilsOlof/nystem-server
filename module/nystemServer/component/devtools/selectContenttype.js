@@ -4,12 +4,12 @@ import app from "nystem";
 
 const DevtoolsSelectContenttype = ({ model, view }) => {
   const [option, setOption] = useState();
-  const [searches, setSetsearches] = useState([]);
+  const [searches, setSearches] = useState([]);
   const [value, setValue] = useState({});
   const valRef = useRef();
   valRef.current = value.id;
   const paramRef = useRef();
-  paramRef.current = searches[value.index];
+  paramRef.current = value.search;
 
   useEffect(() => {
     const onSearch = async (query) => {
@@ -20,6 +20,7 @@ const DevtoolsSelectContenttype = ({ model, view }) => {
 
       const result = await app.event("devtools", {
         ...query,
+        ...(paramRef.current ? { sortby: paramRef.current.sortby, reverse: paramRef.current.reverse } : {}),
         filter,
         path: `database.${valRef.current}`,
         event: "search",
@@ -27,12 +28,7 @@ const DevtoolsSelectContenttype = ({ model, view }) => {
         data: undefined,
       });
 
-      return {
-        ...query,
-        data: result.data,
-        total: result.total,
-        searchTotal: result.searchTotal,
-      };
+      return { ...query, data: result.data, total: result.total, searchTotal: result.searchTotal };
     };
     app.database[view.contentType].on("search", onSearch);
 
@@ -54,24 +50,20 @@ const DevtoolsSelectContenttype = ({ model, view }) => {
     const onSave = async (query) => {
       if (!valRef.current) return;
 
-      await app.event("devtools", {
+      const { data, error } = await app.event("devtools", {
         ...query,
         path: `database.${valRef.current}`,
         event: "save",
       });
 
-      return { ...query, data: false };
+      return { ...query, data, error };
     };
     app.database[view.contentType].on("save", onSave);
 
     const onDelete = async (query) => {
       if (!valRef.current) return;
 
-      await app.event("devtools", {
-        ...query,
-        path: `database.${valRef.current}`,
-        event: "delete",
-      });
+      await app.event("devtools", { ...query, path: `database.${valRef.current}`, event: "delete" });
 
       return { ...query, data: false };
     };
@@ -100,45 +92,39 @@ const DevtoolsSelectContenttype = ({ model, view }) => {
   }, [view]);
 
   useEffect(() => {
+    setSearches([]);
+    view.event("setSearch");
     if (!value.id) return;
 
-    let id = 0;
+    let listnerId;
+    let mounted = true;
     let searches = [];
-    setSetsearches(searches);
 
-    view.event("setSearch");
+    app.event("devtools", { on: "search", path: `database.${value.id}` }).then((result) => {
+      listnerId = result.data?.listnerId;
+      if (!mounted && listnerId) app.event("devtools", { off: "search", path: `database.${value.id}`, listnerId });
+    });
 
-    app
-      .event("devtools", { on: "search", path: `database.${value.id}` })
-      .then(({ listenId }) => {
-        id = listenId;
-      });
-
-    const onSearch = ({ query, listenId }) => {
-      if (!query || id !== listenId || query.devtoolsId) return;
+    const onSearch = (message) => {
+      const { query } = message;
+      if (!query || message.listnerId !== listnerId || query.devtoolsId) return;
 
       const { sortby, filter, reverse } = query;
-      if (
-        searches.find(
-          (search) =>
-            JSON.stringify(search) ===
-            JSON.stringify({ sortby, filter, reverse }),
-        )
-      )
-        return;
+      if (searches.find((search) => JSON.stringify(search) === JSON.stringify({ sortby, filter, reverse }))) return;
 
       searches = [{ sortby, filter, reverse }, ...searches].slice(0, 20);
-
-      setSetsearches(searches);
+      setSearches(searches);
     };
     app.on("devtools", onSearch);
 
     return () => {
+      mounted = false;
       app.off("devtools", onSearch);
+      if (listnerId) app.event("devtools", { off: "search", path: `database.${value.id}`, listnerId });
     };
   }, [value.id, view]);
 
-  const at = searches[value.index];
+  const at = value.search;
   useEffect(() => {
     view.event("setSearch");
   }, [view, at]);
@@ -147,22 +133,12 @@ const DevtoolsSelectContenttype = ({ model, view }) => {
 
   return (
     <Wrapper>
-      <SelectInput
-        model={{ ...model, option }}
-        value={value.id}
-        setValue={(val) => setValue({ id: val })}
-      />
-      {value && (
+      <SelectInput model={{ ...model, option }} value={value.id} setValue={(val) => setValue({ id: val })} />
+      {searches.length > 0 && (
         <SelectInput
-          model={{
-            ...model,
-            text: "Searches",
-            option: searches.map((item, index) => `0${index}`),
-          }}
-          value={`0${value.index}`}
-          setValue={(index) =>
-            setValue({ id: value.id, index: parseInt(index, 10) })
-          }
+          model={{ ...model, text: "Searches", option: searches.map((item, index) => `0${index}`) }}
+          value={at ? `0${searches.indexOf(at)}` : undefined}
+          setValue={(index) => setValue({ id: value.id, search: searches[parseInt(index, 10)] })}
         />
       )}
       {at !== undefined && JSON.stringify(at)}

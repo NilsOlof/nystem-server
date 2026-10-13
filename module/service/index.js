@@ -65,7 +65,7 @@ const start = function (app) {
       console.log(`Start failed ${path}/${program}`, error);
     });
 
-    execService.on("exit", (code) => {
+    execService.on("close", (code) => {
       exit({ code });
       console.log(`Stopped ${path}/${program}`);
     });

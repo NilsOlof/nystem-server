@@ -106,6 +106,7 @@ const deploy = async () => {
       return;
     }
 
+    await delay(2000);
     await runGitCommand(`checkout ${buildBranch}`);
     await runGitCommand(`merge ${devBranch}`);
     console.log("Merge done, building");

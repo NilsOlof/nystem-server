@@ -14,8 +14,7 @@ let encryptPassword = (password, salt) => {
     return md5(password);
   }
 };
-let checkPassword = (inPassword, bdPassword, salt) =>
-  bdPassword === encryptPassword(inPassword, salt);
+let checkPassword = (inPassword, bdPassword, salt) => bdPassword === encryptPassword(inPassword, salt);
 
 export default async (app) => {
   try {
@@ -25,32 +24,24 @@ export default async (app) => {
     encryptPassword = (password) => bcrypt.hashSync(password, 12);
 
     checkPassword = (inPassword, bdPassword, salt) =>
-      bcrypt.compareSync(inPassword, bdPassword) ||
-      (bdPassword === encryptPasswordOld(inPassword, salt) && "old");
+      bcrypt.compareSync(inPassword, bdPassword) || (bdPassword === encryptPasswordOld(inPassword, salt) && "old");
   } catch (e) {
     console.log("no bcrypt module installed", e);
   }
 
   app.on("init", () => {
     app.database.on("init", ({ collection, contentType, db }) => {
-      if (
-        !contentType._features ||
-        contentType._features.indexOf("password") === -1
-      )
-        return;
+      if (!contentType._features || contentType._features.indexOf("password") === -1) return;
 
       collection.on(["get", "search", "find"], 990, (query) => {
         if (!query.data) return;
         query.data = JSON.parse(JSON.stringify(query.data));
-        if (query.data instanceof Array)
-          for (let i = 0; i < query.data.length; i++)
-            delete query.data[i].password;
+        if (query.data instanceof Array) for (let i = 0; i < query.data.length; i++) delete query.data[i].password;
         else delete query.data.password;
       });
 
       collection.on("save", ({ data = {}, oldData = {}, session = {} }) => {
-        if (data.role === oldData.role && data.password === oldData.password)
-          return;
+        if (data.role === oldData.role && data.password === oldData.password) return;
         if (session._id === data._id) return;
 
         app.session.logout(data);
@@ -63,17 +54,19 @@ export default async (app) => {
 
         if (_id) {
           if (typeof password === "string" && password.length > 2) {
-            if (
-              query.data.password !== query.oldData?.password &&
-              !query.passwordEncoded
-            )
+            if (query.data.password !== query.oldData?.password && !query.passwordEncoded)
               query.data.password = encryptPassword(password, _id);
-          } else
-            query.data.password = query.oldData ? query.oldData.password : "aa";
+          } else query.data.password = query.oldData ? query.oldData.password : "aa";
         } else {
           query.data._id = app.uuid();
           query.data.password = encryptPassword(password, query.data._id);
         }
+      });
+
+      collection.on("save", -1100, (query) => {
+        if (!query.data) return;
+        query.data = { ...query.data };
+        delete query.data.password;
       });
 
       let loginField = false;
@@ -88,27 +81,15 @@ export default async (app) => {
         const value = data.email || data.login;
         if (!value) return { ...data, error: "missing" };
 
-        const query = await collection.find({
-          field: loginField,
-          value,
-          role: "super",
-        });
+        const query = await collection.find({ field: loginField, value, role: "super" });
 
         const user = query.data;
         if (!user) return { ...data, error: "missing" };
         if (!data.password) return { ...data, error: "password" };
 
-        const valid = checkPassword(
-          data.password,
-          db.dbIndex[user._id].password,
-          user._id,
-        );
+        const valid = checkPassword(data.password, db.dbIndex[user._id].password, user._id);
 
-        if (valid === "old")
-          await collection.save({
-            data: { ...user, password: data.password },
-            role: "super",
-          });
+        if (valid === "old") await collection.save({ data: { ...user, password: data.password }, role: "super" });
 
         return valid ? { ...data, user } : { ...data, error: "password" };
       });

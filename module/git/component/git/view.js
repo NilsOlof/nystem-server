@@ -87,6 +87,7 @@ const GitView = ({ model, view, path }) => {
         (previous) =>
           files.find((file) => file.path === previous?.path && file.side === previous.side) ||
           files.find((file) => file.path === previous?.path) ||
+          files.find((file) => file.side === "unstaged") ||
           files[0] ||
           null,
       );
@@ -239,12 +240,16 @@ const GitView = ({ model, view, path }) => {
     )
       return;
     const focused =
-      element.current.contains(document.activeElement) && document.activeElement.matches("button[data-git-file]")
+      element.current.contains(document.activeElement) && document.activeElement.matches("[data-git-file]")
         ? { path: document.activeElement.dataset.gitPath, side: document.activeElement.dataset.gitSide }
         : null;
     const index = focused
       ? files
-          .filter((file) => file.side === focused.side && file.path.toLowerCase().includes(search.toLowerCase()))
+          .filter(
+            (file) =>
+              file.side === focused.side &&
+              `${file.original || ""} ${file.path}`.toLowerCase().includes(search.toLowerCase()),
+          )
           .findIndex((file) => file.path === focused.path)
       : -1;
     activity.current++;
@@ -266,7 +271,9 @@ const GitView = ({ model, view, path }) => {
       setFiles(files);
       if (focused) {
         const remaining = files.filter(
-          (file) => file.side === focused.side && file.path.toLowerCase().includes(search.toLowerCase()),
+          (file) =>
+            file.side === focused.side &&
+            `${file.original || ""} ${file.path}`.toLowerCase().includes(search.toLowerCase()),
         );
         setSelected(
           remaining[Math.min(index, remaining.length - 1)] ||

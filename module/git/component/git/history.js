@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from "react";
-import { DateView } from "nystem-components";
+import { DateView, Icon } from "nystem-components";
 import { GitContext } from "../../client/context";
 import GitDiff from "./diff";
 
@@ -202,13 +202,29 @@ const GitHistory = ({ history, historySelected, setHistorySelected, error, reque
                     onClick={() => setSelected(file)}
                   >
                     <span
+                      title={file.original ? (file.code === "C" ? "Copied file" : "Moved file") : undefined}
+                      aria-label={file.original ? (file.code === "C" ? "Copied file" : "Moved file") : undefined}
                       className={
-                        file.code === "A" ? "text-emerald-300" : file.code === "D" ? "text-red-300" : "text-orange-300"
+                        file.original
+                          ? "text-amber-400"
+                          : file.code === "A"
+                            ? "text-emerald-300"
+                            : file.code === "D"
+                              ? "text-red-300"
+                              : "text-orange-300"
                       }
                     >
-                      {file.code}
+                      {file.original && file.code !== "C" ? (
+                        <Icon icon="file-import" className="h-4 w-4 shrink-0" aria-hidden="true" title={false} />
+                      ) : file.original ? (
+                        "Copied"
+                      ) : (
+                        file.code
+                      )}
                     </span>
-                    <span className="min-w-0 truncate">{file.path}</span>
+                    <span className="min-w-0 truncate">
+                      {file.original ? `${file.original} → ${file.path}` : file.path}
+                    </span>
                   </button>
                 ))}
               {!commit && (

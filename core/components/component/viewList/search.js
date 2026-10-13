@@ -1,12 +1,13 @@
 import { useEffect, useState } from "react";
 import { TextInput, useSearch, useRouterQueryStore } from "nystem-components";
 
+const searchFields = ["$all", "_id"];
+
 const ViewListSearch = ({ model, view }) => {
   const [className, setClassName] = useState("");
   const [value, setValue] = useRouterQueryStore(model.saveId);
 
-  const idVal = model.includeId ? ["$all", "_id"] : "$all";
-  useSearch({ view, id: idVal, value, exact: model.exact || undefined });
+  useSearch({ view, id: model.includeId ? searchFields : "$all", value, exact: model.exact || undefined });
 
   useEffect(() => {
     if (!value) {
@@ -35,11 +36,7 @@ const ViewListSearch = ({ model, view }) => {
         ...model,
         mandatory: false,
         clearButton: !model.noClearButton,
-        classNameInput: [
-          !model.noWrapper && "w-full",
-          className,
-          model.classNameInput,
-        ],
+        classNameInput: [!model.noWrapper && "w-full", className, model.classNameInput],
         selectAllOnFocus: true,
         text: model.text || "Search",
       }}

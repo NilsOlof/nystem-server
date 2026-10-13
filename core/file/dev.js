@@ -29,6 +29,10 @@ export default async (app) => {
   app.on("start", async () => {
     const port = app.settings.port + 5000;
     if (app.fs.existsSync(`${app.__dirname}/web`)) {
+      await app.writeFileChanged(
+        `${app.__dirname}/web/vite.config.js`,
+        (await app.readFile(`${app.__dirname}/core/file/vite.config.js`)).replace(/99999999/g, port),
+      );
       await app.require("./htmlFolder");
       await app.require("./manifest");
     }

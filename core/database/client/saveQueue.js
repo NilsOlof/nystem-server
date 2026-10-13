@@ -1,44 +1,47 @@
 export default (app) => {
   if (app.settings.noClientCache) return;
 
-  app.database.on("init", ({ collection, db }) => {
+  app.database.on("init", ({ collection }) => {
     const storageId = `dbSaveQueue${collection.contentType.machinename}`;
 
     let saveQueue = {};
-    app.storage
-      .getItem({ id: storageId })
-      // eslint-disable-next-line no-return-assign
-      .then(({ value }) => (saveQueue = value || {}));
+    const copy = (value) => JSON.parse(JSON.stringify(value));
+    let storageWrite = Promise.resolve();
+    const restored = app.storage.getItem({ id: storageId }).then(({ value }) => {
+      // Saves made while the cache loads must take precedence over cached entries.
+      saveQueue = { ...value, ...saveQueue };
+    });
+    const persist = () => {
+      const value = copy(saveQueue);
+      // Keep cache writes ordered; an older acknowledgement must not overwrite a newer save.
+      storageWrite = storageWrite.catch(() => {}).then(() => app.storage.setItem({ id: storageId, value }));
+      return storageWrite;
+    };
 
-    const add = ({ id, data, offline }) => {
-      if (!offline) return;
-      saveQueue[id] = data;
-      app.storage.setItemDebounce({
-        id: storageId,
-        value: saveQueue,
-        delay: 300,
-      });
+    const add = async ({ id, data, offline, error }) => {
+      if (!offline || !id || !data || error) return;
+      saveQueue[id] = copy(data);
+      await restored;
+      await persist();
     };
     collection.on("save", -1000, (query) => add(query));
     collection.on("delete", -1000, (query) =>
-      add({ ...query, data: "deleted" }),
+      query.data && !query.error ? add({ ...query, data: "deleted" }) : undefined,
     );
 
-    collection.on("updates", 500, (query) => {
-      const { dbArray } = db;
-      const { date } = query;
-      if (!date) return;
-
-      let i = dbArray.length - 1;
-      while (i !== -1 && !saveQueue[dbArray[i]._id]) {
-        // date = dbArray[i]._chdate;
-        i--;
-      }
-      return { ...query, saveQueue, date };
+    collection.on("updates", 500, async (query) => {
+      await restored;
+      if (!Object.keys(saveQueue).length) return { ...query, saveQueueAck: undefined };
+      // A new offline record may not have a cursor yet. Still send its queued save.
+      return { ...query, saveQueue: copy(saveQueue), date: query.date || 1, saveQueueAck: undefined };
     });
-    collection.on("updates", -500, () => {
-      saveQueue = {};
-      app.storage.setItem({ id: storageId, value: {} });
+    collection.on("updates", -500, async (query) => {
+      if (query.offline || !query.saveQueueAck) return;
+      for (const [id, data] of Object.entries(query.saveQueueAck)) {
+        // The same ID can have a newer local save while its previous value is in flight.
+        if (JSON.stringify(saveQueue[id]) === JSON.stringify(data)) delete saveQueue[id];
+      }
+      await persist();
     });
   });
 };

@@ -34,13 +34,22 @@
               "format": "selectContenttype",
               "limit": 1,
               "inline": true,
-              "render": "button"
+              "render": "button",
+              "nolabel": true,
+              "className": ["mb-3"],
+              "classNameInput": ["flex", "flex-wrap", "gap-1.5"],
+              "classNameItem": ["!text-xs", "!px-2", "!py-1"],
+              "size": "xs"
             },
             {
               "type": "devtools",
               "format": "urlPartFilter",
               "text": "Filter",
-              "includeId": true
+              "includeId": true,
+              "className": ["flex", "items-center", "!my-0", "mb-3", "gap-2"],
+              "classNameLabel": ["!min-w-0", "!w-auto", "!text-left", "!mt-0", "!mr-0", "text-sm", "shrink-0"],
+              "classNameInput": ["flex", "flex-wrap", "gap-1.5"],
+              "classNameItem": ["!text-xs", "!px-2", "!py-1"]
             },
             {
               "type": "style",
@@ -48,19 +57,32 @@
                 {
                   "type": "viewList",
                   "format": "search",
-                  "className": ["w-96"],
-                  "includeId": true
+                  "className": ["flex-1", "min-w-40"],
+                  "includeId": true,
+                  "nolabel": true,
+                  "placeholder": "Search records",
+                  "classNameInput": [
+                    "w-full",
+                    "rounded",
+                    "!border-gray-600",
+                    "!bg-gray-900",
+                    "!text-white",
+                    "!px-3",
+                    "!py-2",
+                    "text-sm",
+                    "focus:!border-blue-500"
+                  ]
                 },
-                { "type": "viewText", "text": "Count", "className": ["ml-6"] },
+                { "type": "viewText", "text": "Count", "className": ["text-sm", "text-gray-400"] },
                 {
                   "type": "viewList",
                   "format": "listStat",
                   "show": ["searchTotal", "total"],
                   "text": "",
-                  "className": ["ml-6"]
+                  "className": ["text-sm", "tabular-nums"]
                 }
               ],
-              "className": ["flex", "items-center", "my-3"]
+              "className": ["flex", "flex-wrap", "items-center", "gap-3", "my-3"]
             },
             {
               "type": "style",
@@ -70,30 +92,36 @@
                   "type": "date",
                   "format": "sortBy",
                   "text": "Created",
-                  "className": ["w-40"]
+                  "className": ["w-40", "shrink-0"]
                 },
                 {
                   "id": "_chdate",
                   "type": "date",
                   "format": "sortBy",
                   "text": "Changed",
-                  "className": ["w-40"]
+                  "className": ["w-40", "shrink-0"]
                 },
-                {
-                  "type": "text",
-                  "id": "name",
-                  "format": "sortBy",
-                  "className": ["w-40"]
-                },
+                { "type": "text", "id": "name", "format": "sortBy", "className": ["flex-1", "min-w-0"] },
                 {
                   "id": "_id",
                   "type": "text",
                   "format": "sortBy",
                   "text": "Id",
-                  "className": ["w-32"]
+                  "className": ["w-8", "shrink-0", "text-center"]
                 }
               ],
-              "className": ["flex", "ml-6", "mb-6"]
+              "className": [
+                "flex",
+                "items-center",
+                "py-2",
+                "mb-2",
+                "border-b",
+                "border-gray-700",
+                "text-xs",
+                "text-gray-400",
+                "pl-9",
+                "pr-3"
+              ]
             },
             {
               "type": "viewList",
@@ -111,49 +139,66 @@
                         {
                           "type": "bootstrap",
                           "format": "panelToggle",
-                          "iconClassName": ["w-4", "h-4"],
+                          "iconClassName": ["w-4", "h-4", "mr-2", "shrink-0"],
                           "icon": true,
                           "item": [
                             {
                               "id": "_crdate",
                               "type": "date",
-                              "className": ["w-40"]
+                              "className": ["w-40", "shrink-0", "truncate"],
+                              "format": "view"
                             },
                             {
                               "id": "_chdate",
                               "type": "date",
-                              "className": ["w-40"]
+                              "className": ["w-40", "shrink-0", "truncate"],
+                              "format": "view"
                             },
-                            { "type": "text", "id": "name" },
-                            { "type": "text", "id": "title" },
                             {
-                              "type": "conditional",
-                              "condition": [["name", "false"]],
+                              "type": "style",
+                              "className": ["flex-1", "min-w-0", "truncate"],
                               "item": [
                                 {
                                   "type": "conditional",
+                                  "condition": [["name", "true"]],
+                                  "item": [{ "type": "text", "id": "name", "className": ["truncate"] }]
+                                },
+                                {
+                                  "type": "conditional",
+                                  "condition": [["name", "false"]],
                                   "item": [
                                     {
-                                      "id": "_id",
-                                      "type": "text",
-                                      "className": ["w-32"]
+                                      "type": "conditional",
+                                      "condition": [["title", "true"]],
+                                      "item": [{ "type": "text", "id": "title", "className": ["truncate"] }]
+                                    },
+                                    {
+                                      "type": "conditional",
+                                      "condition": [["title", "false"]],
+                                      "item": [
+                                        {
+                                          "type": "text",
+                                          "id": "_id",
+                                          "className": ["truncate", "text-xs", "font-mono"]
+                                        }
+                                      ]
                                     }
-                                  ],
-                                  "condition": [["title", "false"]]
+                                  ]
                                 }
                               ]
                             },
-                            { "type": "viewText", "className": ["flex-grow"] },
                             {
                               "type": "copyToClipBoard",
-                              "text": "copy",
+                              "text": "Copy ID",
                               "field": "_id",
                               "btnSize": "xs",
                               "gotoOnClick": false,
-                              "btnType": "primary"
+                              "btnType": "secondary",
+                              "className": ["inline-flex", "items-center", "justify-center", "h-8", "w-8", "shrink-0"],
+                              "icon": "copy"
                             }
                           ],
-                          "className": ["flex", "items-center", "py-1"]
+                          "className": ["flex", "items-center", "py-1", "min-w-0"]
                         }
                       ],
                       "item": [
@@ -164,40 +209,146 @@
                               "type": "style",
                               "item": [
                                 {
+                                  "type": "bootstrap",
+                                  "format": "panel",
+                                  "typeClass": "compact",
+                                  "stateStore": "disabled",
+                                  "expanded": false,
+                                  "className": ["relative", "!border-0", "!bg-transparent", "[&>*]:!p-0"],
+                                  "header": [
+                                    {
+                                      "type": "bootstrap",
+                                      "format": "panelToggle",
+                                      "className": [
+                                        "flex",
+                                        "items-center",
+                                        "justify-center",
+                                        "rounded",
+                                        "bg-gray-700",
+                                        "hover:bg-gray-600",
+                                        "h-8",
+                                        "w-8",
+                                        "text-white",
+                                        "cursor-pointer"
+                                      ],
+                                      "item": [
+                                        {
+                                          "type": "icon",
+                                          "icon": "key",
+                                          "title": "Set password",
+                                          "className": ["h-4", "w-4"]
+                                        }
+                                      ]
+                                    }
+                                  ],
+                                  "item": [
+                                    {
+                                      "type": "style",
+                                      "className": [
+                                        "absolute",
+                                        "right-0",
+                                        "top-full",
+                                        "z-30",
+                                        "mt-2",
+                                        "rounded-lg",
+                                        "border",
+                                        "border-gray-600",
+                                        "bg-gray-900",
+                                        "p-3",
+                                        "shadow-lg",
+                                        "w-96",
+                                        "max-w-[calc(100vw-3rem)]",
+                                        "flex",
+                                        "items-center",
+                                        "gap-2"
+                                      ],
+                                      "item": [
+                                        {
+                                          "type": "password",
+                                          "format": "input",
+                                          "id": "password",
+                                          "text": "Password",
+                                          "nolabel": true,
+                                          "mandatory": false,
+                                          "classNameInput": [
+                                            "w-full",
+                                            "rounded",
+                                            "border",
+                                            "border-gray-600",
+                                            "bg-gray-800",
+                                            "px-3",
+                                            "py-2",
+                                            "text-white"
+                                          ],
+                                          "className": ["flex-1", "min-w-0"],
+                                          "focus": true
+                                        },
+                                        {
+                                          "type": "viewButton",
+                                          "format": "eventEmitter",
+                                          "eventType": "view",
+                                          "event": "submit",
+                                          "text": "Save",
+                                          "noValidation": true,
+                                          "btnType": "primary",
+                                          "size": "sm",
+                                          "className": ["shrink-0", "whitespace-nowrap"]
+                                        }
+                                      ]
+                                    }
+                                  ]
+                                },
+                                {
                                   "type": "copyToClipBoard",
-                                  "text": "copy",
-                                  "btnSize": "xs",
+                                  "text": "Copy JSON",
+                                  "btnSize": "sm",
                                   "btnType": "default",
-                                  "className": ["rounded", "mr-1"]
+                                  "className": [
+                                    "inline-flex",
+                                    "items-center",
+                                    "justify-center",
+                                    "h-8",
+                                    "w-8",
+                                    "shrink-0"
+                                  ],
+                                  "icon": "copy"
                                 },
                                 {
                                   "type": "viewButton",
                                   "format": "input",
-                                  "text": "",
-                                  "event": "",
-                                  "btnType": "default",
-                                  "className": [""],
+                                  "text": "Save",
+                                  "btnType": "primary",
+                                  "className": ["flex", "flex-wrap", "gap-2"],
                                   "size": "sm"
                                 }
                               ],
                               "className": [
-                                "opacity-60",
-                                "hover:opacity-100",
-                                "absolute",
-                                "right-0",
-                                "z-20",
                                 "flex",
-                                "m-1"
+                                "flex-wrap",
+                                "items-center",
+                                "justify-end",
+                                "gap-2",
+                                "p-2",
+                                "bg-gray-900",
+                                "border-b",
+                                "border-gray-700"
                               ]
                             }
                           ],
-                          "className": ["relative", "z-20"]
+                          "className": []
                         },
                         {
                           "type": "viewText",
                           "text": "content",
                           "format": "codemirror",
-                          "className": ["h-96", "w-full", "z-10", "relative"]
+                          "className": [
+                            "h-96",
+                            "w-full",
+                            "relative",
+                            "[&_.CodeMirror]:text-sm",
+                            "[&_.CodeMirror]:leading-6",
+                            "[&_.CodeMirror]:h-full"
+                          ]
                         }
                       ],
                       "className": ["w-full", "my-3"],
@@ -206,9 +357,7 @@
                   ],
                   "headerFields": [],
                   "className": [""],
-                  "header": [
-                    { "type": "viewText", "text": "Database explorer" }
-                  ],
+                  "header": [{ "type": "viewText", "text": "Database explorer" }],
                   "emptyFields": [
                     {
                       "type": "viewText",
@@ -219,11 +368,12 @@
                   ]
                 }
               ],
-              "slotLimit": 5
+              "slotLimit": 5,
+              "clearHeightOnUpdate": true
             }
           ],
           "expanded": true,
-          "className": ["mx-3", "mt-3"]
+          "className": ["mx-3", "mt-3", "devtools-explorer-panel"]
         }
       ]
     }

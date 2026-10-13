@@ -1,12 +1,7 @@
 {
   "name": "settings",
   "_roles": { "save": [] },
-  "default": {
-    "length": "50",
-    "text_mandatory": "Field is mandatory",
-    "mandatory": true,
-    "type": "text"
-  },
+  "default": { "length": "50", "text_mandatory": "Field is mandatory", "mandatory": true, "type": "text" },
   "input": {
     "add": { "title": "New settings" },
     "edit": { "title": "Edit settings" },
@@ -25,18 +20,8 @@
         "link": "settings/form/",
         "type": "text"
       },
-      {
-        "format": "list",
-        "text": "Base path",
-        "id": "basepath",
-        "type": "text"
-      },
-      {
-        "format": "list",
-        "text": "Create date",
-        "id": "_crdate",
-        "type": "date"
-      }
+      { "format": "list", "text": "Base path", "id": "basepath", "type": "text" },
+      { "format": "list", "text": "Create date", "id": "_crdate", "type": "date" }
     ]
   },
   "item": [
@@ -96,25 +81,14 @@
                   "type": "viewText",
                   "format": "titlePopup",
                   "item": [
-                    {
-                      "category": "view",
-                      "type": "icon",
-                      "className": ["w-10", "h-10", "p-2"],
-                      "icon": "plus"
-                    }
+                    { "category": "view", "type": "icon", "className": ["w-10", "h-10", "p-2"], "icon": "plus" }
                   ],
                   "popup": [
                     {
                       "category": "view",
                       "type": "viewText",
                       "text": "Add contenttype",
-                      "className": [
-                        "bg-white",
-                        "shadow",
-                        "border",
-                        "p-2",
-                        "rounded"
-                      ]
+                      "className": ["bg-white", "shadow", "border", "p-2", "rounded"]
                     }
                   ]
                 }
@@ -138,18 +112,8 @@
           "renderAs": "h1",
           "fallback": "Settings"
         },
-        {
-          "id": "name",
-          "type": "text",
-          "category": "view",
-          "text": "Computer name match (in lower case)"
-        },
-        {
-          "id": "basepath",
-          "type": "text",
-          "category": "view",
-          "text": "Base path"
-        },
+        { "id": "name", "type": "text", "category": "view", "text": "Computer name match (in lower case)" },
+        { "id": "basepath", "type": "text", "category": "view", "text": "Base path" },
         { "category": "contentTypeField", "type": "text", "id": "runbasepath" },
         {
           "category": "contentTypeField",
@@ -208,35 +172,12 @@
           "autoupdate": true,
           "reversesortby": true,
           "item": [
-            {
-              "id": "name",
-              "type": "text",
-              "category": "view",
-              "format": "link",
-              "className": ["p-2", "block"]
-            },
-            {
-              "id": "basepath",
-              "type": "text",
-              "category": "view",
-              "className": ["p-2", "block"]
-            }
+            { "id": "name", "type": "text", "category": "view", "format": "link", "className": ["p-2", "block"] },
+            { "id": "basepath", "type": "text", "category": "view", "className": ["p-2", "block"] }
           ],
           "headerFields": [
-            {
-              "id": "name",
-              "type": "text",
-              "category": "view",
-              "format": "sortBy",
-              "className": ["p-2", "block"]
-            },
-            {
-              "id": "basepath",
-              "type": "text",
-              "category": "view",
-              "format": "sortBy",
-              "className": ["p-2", "block"]
-            }
+            { "id": "name", "type": "text", "category": "view", "format": "sortBy", "className": ["p-2", "block"] },
+            { "id": "basepath", "type": "text", "category": "view", "format": "sortBy", "className": ["p-2", "block"] }
           ],
           "sortby": { "id": "_chdate", "text": "Change date" },
           "className": ["table-striped"]
@@ -248,109 +189,121 @@
       "format": "view",
       "item": [
         {
-          "category": "view",
-          "type": "viewLink",
-          "format": "link",
-          "href": "/",
-          "text": "Overview",
-          "className": [
-            "border",
-            "p-2",
-            "m-2",
-            "block",
-            "w-32",
-            "text-center",
-            "bg-gray-800",
-            "border-gray-700",
-            "text-gray-200",
-            "shadow",
-            "hover:bg-gray-700",
-            "ml-0"
-          ],
-          "match": "/dsfdsf"
-        },
-        {
-          "category": "view",
-          "type": "viewLink",
-          "text": "Servers",
-          "contentType": "server",
-          "view": "list",
-          "renderType": "link",
-          "className": [
-            "border",
-            "p-2",
-            "m-2",
-            "block",
-            "w-32",
-            "text-center",
-            "bg-gray-800",
-            "border-gray-700",
-            "text-gray-200",
-            "shadow",
-            "hover:bg-gray-700",
-            "ml-0"
-          ]
-        },
-        {
-          "category": "view",
-          "type": "viewLink",
-          "text": "Hosts",
-          "contentType": "host",
-          "view": "list",
-          "className": [
-            "border",
-            "p-2",
-            "m-2",
-            "block",
-            "w-32",
-            "text-center",
-            "bg-gray-800",
-            "border-gray-700",
-            "text-gray-200",
-            "shadow",
-            "hover:bg-gray-700",
-            "ml-0"
-          ]
-        },
-        {
-          "category": "view",
-          "type": "viewLink",
-          "contentType": "settings",
-          "view": "list",
-          "text": "Settings",
-          "className": [
-            "border",
-            "p-2",
-            "m-2",
-            "block",
-            "w-32",
-            "text-center",
-            "bg-gray-800",
-            "border-gray-700",
-            "text-gray-200",
-            "shadow",
-            "hover:bg-gray-700",
-            "ml-0"
-          ]
-        },
-        {
-          "type": "session",
-          "format": "logout",
+          "type": "style",
+          "className": ["max-w-xs"],
           "item": [
             {
-              "type": "viewText",
-              "text": "Log out",
+              "category": "view",
+              "type": "viewLink",
+              "format": "link",
+              "href": "/",
+              "text": "Overview",
               "className": [
                 "block",
-                "bg-gray-800",
-                "hover:bg-gray-700",
+                "w-full",
+                "rounded",
+                "px-3",
+                "py-2.5",
+                "text-left",
+                "text-sm",
                 "text-gray-200",
-                "text-sm"
+                "hover:bg-gray-800",
+                "hover:text-white",
+                "[&.active]:bg-gray-800",
+                "[&.active]:text-blue-300"
               ]
+            },
+            {
+              "category": "view",
+              "type": "viewLink",
+              "text": "Servers",
+              "contentType": "server",
+              "view": "list",
+              "renderType": "link",
+              "className": [
+                "block",
+                "w-full",
+                "rounded",
+                "px-3",
+                "py-2.5",
+                "text-left",
+                "text-sm",
+                "text-gray-200",
+                "hover:bg-gray-800",
+                "hover:text-white",
+                "[&.active]:bg-gray-800",
+                "[&.active]:text-blue-300"
+              ]
+            },
+            {
+              "category": "view",
+              "type": "viewLink",
+              "text": "Hosts",
+              "contentType": "host",
+              "view": "list",
+              "className": [
+                "block",
+                "w-full",
+                "rounded",
+                "px-3",
+                "py-2.5",
+                "text-left",
+                "text-sm",
+                "text-gray-200",
+                "hover:bg-gray-800",
+                "hover:text-white",
+                "[&.active]:bg-gray-800",
+                "[&.active]:text-blue-300"
+              ]
+            },
+            {
+              "category": "view",
+              "type": "viewLink",
+              "contentType": "settings",
+              "view": "list",
+              "text": "Settings",
+              "className": [
+                "block",
+                "w-full",
+                "rounded",
+                "px-3",
+                "py-2.5",
+                "text-left",
+                "text-sm",
+                "text-gray-200",
+                "hover:bg-gray-800",
+                "hover:text-white",
+                "[&.active]:bg-gray-800",
+                "[&.active]:text-blue-300"
+              ]
+            },
+            {
+              "type": "session",
+              "format": "logout",
+              "item": [{ "type": "viewText", "text": "Log out", "renderAs": "span" }],
+              "to": "/",
+              "className": [
+                "block",
+                "w-full",
+                "rounded",
+                "px-3",
+                "py-2.5",
+                "text-left",
+                "text-sm",
+                "text-gray-200",
+                "hover:bg-gray-800",
+                "hover:text-white",
+                "[&.active]:bg-gray-800",
+                "[&.active]:text-blue-300",
+                "mt-1",
+                "border-t",
+                "border-gray-700",
+                "text-red-300",
+                "cursor-pointer"
+              ],
+              "renderAs": "button"
             }
-          ],
-          "to": "/",
-          "className": ["w-32"]
+          ]
         }
       ]
     },
@@ -362,30 +315,10 @@
           "category": "view",
           "type": "style",
           "item": [
-            {
-              "category": "contentTypeField",
-              "type": "text",
-              "id": "client.name",
-              "disabled": true
-            },
-            {
-              "category": "contentTypeField",
-              "type": "text",
-              "id": "client.domain",
-              "disabled": true
-            },
-            {
-              "category": "contentTypeField",
-              "type": "boolean",
-              "id": "debug",
-              "disabled": true
-            },
-            {
-              "category": "contentTypeField",
-              "type": "int",
-              "id": "port",
-              "disabled": true
-            },
+            { "category": "contentTypeField", "type": "text", "id": "client.name", "disabled": true },
+            { "category": "contentTypeField", "type": "text", "id": "client.domain", "disabled": true },
+            { "category": "contentTypeField", "type": "boolean", "id": "debug", "disabled": true },
+            { "category": "contentTypeField", "type": "int", "id": "port", "disabled": true },
             {
               "category": "view",
               "type": "bootstrap",
@@ -395,13 +328,7 @@
                   "category": "view",
                   "type": "bootstrap",
                   "format": "panelToggle",
-                  "item": [
-                    {
-                      "category": "view",
-                      "type": "viewText",
-                      "text": "Change settings"
-                    }
-                  ],
+                  "item": [{ "category": "view", "type": "viewText", "text": "Change settings" }],
                   "icon": true,
                   "className": ["flex", "items-center"]
                 }
@@ -428,13 +355,7 @@
                   "format": "input",
                   "disabled": false
                 },
-                {
-                  "category": "contentTypeField",
-                  "type": "int",
-                  "id": "port",
-                  "format": "input",
-                  "disabled": false
-                },
+                { "category": "contentTypeField", "type": "int", "id": "port", "format": "input", "disabled": false },
                 { "category": "view", "type": "viewButton", "sendOnly": true }
               ],
               "className": ["mt-8"]
@@ -448,25 +369,12 @@
                   "category": "view",
                   "type": "bootstrap",
                   "format": "panelToggle",
-                  "item": [
-                    {
-                      "category": "view",
-                      "type": "viewText",
-                      "text": "Component format"
-                    }
-                  ],
+                  "item": [{ "category": "view", "type": "viewText", "text": "Component format" }],
                   "icon": true,
                   "className": ["flex", "items-center"]
                 }
               ],
-              "item": [
-                {
-                  "category": "view",
-                  "type": "viewInView",
-                  "contentType": "componentFormat",
-                  "view": "list"
-                }
-              ]
+              "item": [{ "category": "view", "type": "viewInView", "contentType": "componentFormat", "view": "list" }]
             }
           ],
           "className": ["p-3"]

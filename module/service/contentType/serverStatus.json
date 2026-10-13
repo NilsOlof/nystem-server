@@ -347,24 +347,57 @@
           "type": "style",
           "item": [
             {
-              "category": "view",
-              "type": "viewLink",
-              "format": "dynamicFields",
-              "href": "http://nystemcontenttypemanager.localhost/redirect?path={basepath}",
-              "item": [{ "type": "icon", "icon": "gear", "className": ["w-4", "h-4"] }],
-              "className": [
-                "mr-1",
-                "bg-blue-500",
-                "hover:bg-blue-500",
-                "text-white",
-                "rounded",
-                "shadow-sm",
-                "py-1",
-                "px-2",
-                "text-xs",
-                "inline-flex",
-                "items-center",
-                "justify-center"
+              "type": "conditional",
+              "condition": [["basepath", "true"]],
+              "item": [
+                {
+                  "category": "view",
+                  "type": "viewLink",
+                  "format": "dynamicFields",
+                  "href": "http://nystemcontenttypemanager.localhost/redirect?path={basepath}",
+                  "item": [{ "type": "icon", "icon": "gear", "className": ["w-4", "h-4"] }],
+                  "className": [
+                    "mr-1",
+                    "bg-blue-500",
+                    "hover:bg-blue-500",
+                    "text-white",
+                    "rounded",
+                    "shadow-sm",
+                    "py-1",
+                    "px-2",
+                    "text-xs",
+                    "inline-flex",
+                    "items-center",
+                    "justify-center"
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "conditional",
+              "condition": [["basepath", "false"]],
+              "item": [
+                {
+                  "category": "view",
+                  "type": "viewLink",
+                  "format": "dynamicFields",
+                  "href": "http://nystem.localhost/server/input/{id}",
+                  "item": [{ "type": "icon", "icon": "gear", "className": ["w-4", "h-4"] }],
+                  "className": [
+                    "mr-1",
+                    "bg-blue-500",
+                    "hover:bg-blue-500",
+                    "text-white",
+                    "rounded",
+                    "shadow-sm",
+                    "py-1",
+                    "px-2",
+                    "text-xs",
+                    "inline-flex",
+                    "items-center",
+                    "justify-center"
+                  ]
+                }
               ]
             },
             {

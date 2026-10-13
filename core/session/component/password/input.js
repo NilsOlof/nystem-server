@@ -16,6 +16,7 @@ const PasswordInput = ({ model, value, setValue }) => {
         onChange={setValue}
         type="password"
         disabled={disabled}
+        focus={model.focus}
       />
     </InputWrapper>
   );

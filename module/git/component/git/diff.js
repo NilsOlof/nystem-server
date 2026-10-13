@@ -21,7 +21,12 @@ const GitDiff = ({ model, view }) => {
   return (
     <Wrapper className={model.className}>
       <div className="flex shrink-0 items-center gap-3 bg-gray-800 px-3 py-2">
-        <span className="min-w-0 flex-1 truncate">{selected?.path || "Select a file"}</span>
+        <span
+          className="min-w-0 flex-1 truncate"
+          title={selected?.original ? `${selected.original} → ${selected.path}` : selected?.path}
+        >
+          {selected?.original ? `${selected.original} → ${selected.path}` : selected?.path || "Select a file"}
+        </span>
         {!edit && (
           <Button size="xs" type={whole ? "primary" : "default"} aria-pressed={whole} onClick={() => setWhole(!whole)}>
             Whole file
@@ -29,10 +34,10 @@ const GitDiff = ({ model, view }) => {
         )}
         {edit ? (
           <>
-            <Button size="xs" disabled={busy} onClick={() => editFile("save")}>
+            <Button size="xs" aria-disabled={busy} onClick={() => editFile("save")}>
               Save
             </Button>
-            <Button size="xs" disabled={busy} onClick={() => setEdit(null)}>
+            <Button size="xs" aria-disabled={busy} onClick={() => !busy && setEdit(null)}>
               Cancel
             </Button>
           </>
@@ -41,7 +46,8 @@ const GitDiff = ({ model, view }) => {
           selected && (
             <Button
               size="xs"
-              disabled={busy || selected.code === "D" || preview?.full.binary}
+              disabled={selected.code === "D" || preview?.full.binary}
+              aria-disabled={busy || selected.code === "D" || preview?.full.binary}
               onClick={() => editFile("read")}
             >
               Edit file
@@ -49,7 +55,12 @@ const GitDiff = ({ model, view }) => {
           )
         )}
         {!readOnly && !edit && selected && (
-          <Button size="xs" disabled={busy || !preview || selected.conflict} onClick={() => act(action, [selected])}>
+          <Button
+            size="xs"
+            disabled={selected.conflict}
+            aria-disabled={busy || !preview || selected.conflict}
+            onClick={() => !busy && preview && act(action, [selected])}
+          >
             {action === "stage" ? "Stage file" : "Unstage file"}
           </Button>
         )}
@@ -57,8 +68,9 @@ const GitDiff = ({ model, view }) => {
           <Button
             size="xs"
             type="danger"
-            disabled={busy || !preview || selected.conflict}
-            onClick={() => act("discard", [selected])}
+            disabled={selected.conflict}
+            aria-disabled={busy || !preview || selected.conflict}
+            onClick={() => !busy && preview && act("discard", [selected])}
           >
             Discard file
           </Button>
@@ -114,6 +126,9 @@ const GitDiff = ({ model, view }) => {
         </div>
       ) : (
         <div key="diff" className="min-h-0 flex-1 overflow-auto">
+          {selected?.conflict && (
+            <p className="p-4 text-red-300">Merge conflict. Resolve the conflict before staging this file.</p>
+          )}
           {displayed?.binary && <p className="p-4 text-gray-400">Binary file; use the file staging controls.</p>}
           {preview && !displayed?.binary && !displayed.hunks.length && (
             <p className="p-4 text-gray-400">No text diff (empty file, mode change, or rename).</p>
@@ -135,11 +150,15 @@ const GitDiff = ({ model, view }) => {
                     {compactIndex >= 0 && canHunk && (
                       <div className="flex items-center gap-2 border-y border-gray-700 px-3 py-1">
                         <span className="flex-1 text-gray-500">{preview.compact.hunks[compactIndex].title}</span>
-                        <Button size="xs" disabled={busy} onClick={() => act(action, [selected], compactIndex)}>
+                        <Button size="xs" aria-disabled={busy} onClick={() => act(action, [selected], compactIndex)}>
                           {action === "stage" ? "Stage hunk" : "Unstage hunk"}
                         </Button>
                         {selected.side === "unstaged" && (
-                          <Button size="xs" disabled={busy} onClick={() => act("discard", [selected], compactIndex)}>
+                          <Button
+                            size="xs"
+                            aria-disabled={busy}
+                            onClick={() => act("discard", [selected], compactIndex)}
+                          >
                             Discard hunk
                           </Button>
                         )}

@@ -27,25 +27,6 @@ export default async (app) => {
   const maxSizeLoggedIn = app.settings.maxMessageSize || 512 * 1024 * 1024;
   const high64 = (buffer, secondByte) => (secondByte & 0x7f) === 127 && buffer.readUInt32BE(2) !== 0;
 
-  // Browsers always send Origin, only accept our own site (and file:// for the desktop app)
-  const allowedOrigin = (req) => {
-    const { origin, host } = req.headers;
-    if (!origin) return true;
-    if (origin === "file://") return true;
-    let originHost;
-    try {
-      originHost = new URL(origin).host;
-    } catch (e) {
-      return false;
-    }
-    return [
-      host,
-      app.settings.client.domain,
-      `${app.settings.client.domain}:${app.settings.port}`,
-      ...(app.settings.allowedOrigins || []),
-    ].includes(originHost);
-  };
-
   // Behind a local proxy the real client is the last x-forwarded-for entry (the one the proxy added)
   const clientIp = (req, socket) => {
     const ip = (socket.remoteAddress || "").replace(/^::ffff:/, "");
@@ -255,10 +236,25 @@ export default async (app) => {
 
   app.on("start", () => {
     app.file.on("socket", ({ id, req, socket }) => {
-      if (!allowedOrigin(req)) {
-        console.log("WebSocket origin refused", req.headers.origin);
-        socket.end("HTTP/1.1 403 Forbidden\r\n\r\n");
-        return;
+      if (app.settings.websocketCheckOrigin && req.headers.origin && req.headers.origin !== "file://") {
+        let originHost;
+        try {
+          originHost = new URL(req.headers.origin).host;
+        } catch {
+          // A malformed Origin cannot match the configured domains.
+        }
+        if (
+          ![
+            req.headers.host,
+            app.settings.client.domain,
+            `${app.settings.client.domain}:${app.settings.port}`,
+            ...(app.settings.allowedOrigins || []),
+          ].includes(originHost)
+        ) {
+          console.log("WebSocket origin refused", req.headers.origin);
+          socket.end("HTTP/1.1 403 Forbidden\r\n\r\n");
+          return;
+        }
       }
 
       const key = req.headers["sec-websocket-key"];

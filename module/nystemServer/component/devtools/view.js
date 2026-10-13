@@ -3,22 +3,17 @@ import app from "nystem";
 
 const sendMessage = (message) =>
   new Promise((resolve) =>
-    window.chrome.tabs.sendMessage(
-      window.chrome.devtools.inspectedWindow.tabId,
-      message,
-      resolve,
-    ),
+    window.chrome.tabs.sendMessage(window.chrome.devtools.inspectedWindow.tabId, message, resolve),
   );
 
 const DevtoolsView = () => {
   useEffect(() => {
-    if (!window.chrome) return;
+    if (!window.chrome?.devtools) return;
 
     const callbacks = {};
 
     const onMessage = (message, sender) => {
-      if (window.chrome.devtools.inspectedWindow.tabId !== sender.tab.id)
-        return;
+      if (window.chrome.devtools.inspectedWindow.tabId !== sender.tab?.id) return;
 
       if (!callbacks[message.devtoolsId]) {
         app.event("devtools", message);
@@ -31,8 +26,10 @@ const DevtoolsView = () => {
 
     window.chrome.runtime.onMessage.addListener(onMessage);
 
-    const send = (query) =>
-      new Promise((resolve) => {
+    const send = (query) => {
+      if (query.nystem === "from") return;
+
+      return new Promise((resolve) => {
         query.devtoolsId = app.uuid();
         callbacks[query.devtoolsId] = resolve;
 
@@ -43,8 +40,9 @@ const DevtoolsView = () => {
           delete callbacks[query.devtoolsId];
         }, 4000);
 
-        sendMessage({ nystem: "to", ...query });
+        sendMessage({ ...query, nystem: "to" });
       });
+    };
     app.on("devtools", send);
 
     return () => {
@@ -54,6 +52,7 @@ const DevtoolsView = () => {
   }, []);
 
   useEffect(() => {
+    if (!window.chrome?.devtools) return;
     let domain = "";
     const { tabId } = window.chrome.devtools.inspectedWindow;
     window.chrome.tabs.get(tabId, (tab) => {
@@ -62,23 +61,21 @@ const DevtoolsView = () => {
     });
 
     const onNew = (tab) => {
-      if (!tab.pendingUrl.startsWith(`nystem://${domain}`)) return;
+      if (!tab.pendingUrl?.startsWith(`nystem://${domain}`)) return;
 
-      app
-        .event("devtools", { path: "", event: "devtoolsnystvscode" })
-        .then(({ base }) => {
-          let path = tab.pendingUrl
-            .replace(`nystem://${domain}`, base)
-            .replace(/\.([0-9]+)$/, ":$1")
-            .split("/");
+      app.event("devtools", { path: "", event: "devtoolsnystvscode" }).then(({ base }) => {
+        let path = tab.pendingUrl
+          .replace(`nystem://${domain}`, base)
+          .replace(/\.([0-9]+)$/, ":$1")
+          .split("/");
 
-          if (path[3] === "c") path[3] = "core";
-          if (path[3] === "m") path[3] = "module";
-          if (path[5] === "c") path[5] = "component";
+        if (path[3] === "c") path[3] = "core";
+        if (path[3] === "m") path[3] = "module";
+        if (path[5] === "c") path[5] = "component";
 
-          path = path.join("/");
-          app.connection.emit({ type: "devtoolsnystvscode", path });
-        });
+        path = path.join("/");
+        app.connection.emit({ type: "devtoolsnystvscode", path });
+      });
       window.chrome.tabs.remove(tab.id);
     };
     window.chrome.tabs.onCreated.addListener(onNew);

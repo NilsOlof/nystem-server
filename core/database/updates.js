@@ -1,6 +1,5 @@
 export default (app) => {
-  const timeoutTimes = (app.settings.client.database &&
-    app.settings.client.database.updateFrequency) || [300, 2000];
+  const timeoutTimes = (app.settings.client.database && app.settings.client.database.updateFrequency) || [300, 2000];
 
   app.database.on("init", ({ collection, db }) => {
     const updateSearch = {};
@@ -48,15 +47,11 @@ export default (app) => {
     });
 
     collection.on("update", ({ ids }) => {
-      Object.values(updateSearch).forEach((search) =>
-        collection.search(search),
-      );
+      Object.values(updateSearch).forEach((search) => collection.search(search));
       ids.forEach((id) => {
         if (updateGet[id])
           Object.values(updateGet[id]).forEach((callbackId) =>
-            collection
-              .get({ id })
-              .then((query) => updateGet[id][callbackId](query)),
+            collection.get({ id }).then((query) => updateGet[id][callbackId](query)),
           );
       });
     });
@@ -78,26 +73,36 @@ export default (app) => {
 
       return { ...query, ids };
     });
-    collection.on("updates", (query) => {
+    collection.on("updates", async (query) => {
       const { saveQueue, session } = query;
-      if (!saveQueue) return;
+      if (!saveQueue) return { ...query, saveQueueAck: undefined };
+      const saveQueueAck = {};
+      const saveQueueErrors = {};
 
-      const { dbIndex } = db;
-      Object.keys(saveQueue).forEach((id) => {
-        const item = dbIndex[id];
-
-        if (saveQueue[id] === "deleted") {
-          collection.delete({ id, data: saveQueue[id], session });
-          return;
+      for (const id of Object.keys(saveQueue)) {
+        const queued = JSON.parse(JSON.stringify(saveQueue[id]));
+        try {
+          const item = db.dbIndex[id];
+          // A newer server record supersedes an older queued save.
+          if (queued !== "deleted" && item?._chdate && item._chdate >= queued._chdate) {
+            saveQueueAck[id] = queued;
+            continue;
+          }
+          const result =
+            queued === "deleted"
+              ? await collection.delete({ id, data: queued, session })
+              : await collection.save({ id, data: JSON.parse(JSON.stringify(queued)), session });
+          if (!result?.data || result.error) {
+            saveQueueErrors[id] = result?.error || "Queued write was rejected.";
+            continue;
+          }
+          saveQueueAck[id] = queued;
+        } catch (error) {
+          saveQueueErrors[id] = error.message || "Queued write failed.";
         }
+      }
 
-        if (item && item._chdate && item._chdate >= saveQueue[id]._chdate)
-          return;
-
-        collection.save({ data: saveQueue[id], session });
-      });
-
-      return { ...query, saveQueue: undefined };
+      return { ...query, saveQueue: undefined, saveQueueAck, saveQueueErrors };
     });
   });
 };

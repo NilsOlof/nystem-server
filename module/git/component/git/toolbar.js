@@ -1,9 +1,18 @@
-import React, { useContext } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { Button, ContentTypeRender, Input, Wrapper, Icon } from "nystem-components";
 import { GitContext } from "../../client/context";
 const GitToolbar = ({ model, path }) => {
   const { search, setSearch, busy, edit, error, branch, branches, switchBranch, openHistory, historyOpen } =
     useContext(GitContext);
+  const [loading, setLoading] = useState(false);
+  useEffect(() => {
+    if (!busy) {
+      setLoading(false);
+      return;
+    }
+    const timeout = setTimeout(() => setLoading(true), 150);
+    return () => clearTimeout(timeout);
+  }, [busy]);
   return (
     <Wrapper className={model.className}>
       <ContentTypeRender path={path} items={model.item || []} />
@@ -15,7 +24,8 @@ const GitToolbar = ({ model, path }) => {
             type={branch === name ? "primary" : "default"}
             aria-pressed={branch === name}
             title={branch === name ? `Current branch: ${name}` : `Switch to ${name}`}
-            disabled={busy || Boolean(edit) || !branches.includes(name)}
+            disabled={Boolean(edit) || !branches.includes(name)}
+            aria-disabled={busy || Boolean(edit) || !branches.includes(name)}
             onClick={() => switchBranch(name)}
           >
             {name}
@@ -32,7 +42,8 @@ const GitToolbar = ({ model, path }) => {
         aria-label="Git history"
         aria-pressed={historyOpen}
         type={historyOpen ? "primary" : "default"}
-        disabled={!historyOpen && (busy || Boolean(edit))}
+        disabled={!historyOpen && Boolean(edit)}
+        aria-disabled={!historyOpen && (busy || Boolean(edit))}
         onClick={openHistory}
       >
         <Icon title={false} aria-hidden="true" icon="code-branch" className={["h-4", "w-4"]} />
@@ -40,7 +51,9 @@ const GitToolbar = ({ model, path }) => {
       <div className="flex-grow">
         <ContentTypeRender path={path} items={model.actions || []} />
       </div>
-      {busy && <span role="status">Loading…</span>}
+      <span role="status" className="w-16 shrink-0 text-xs">
+        {busy && loading ? "Loading…" : ""}
+      </span>
       <Input
         value={search}
         onChange={setSearch}

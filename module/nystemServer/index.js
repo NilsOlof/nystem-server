@@ -86,7 +86,7 @@ const start = async (app) => {
       console.log(`Start failed ${path}/${program}`, error);
     });
 
-    execService.on("exit", (code) => {
+    execService.on("close", (code) => {
       exit({ code });
       console.log(`Stopped ${path}/${program}`);
     });
@@ -287,15 +287,28 @@ const start = async (app) => {
     const id = query.serverId;
     operations.set(id, true);
     let wasRunning = false;
+    let stopped = false;
+    let basepath;
+    let runbasepath;
     const restoreServer = async () => {
-      if (!wasRunning) return;
+      if (!wasRunning || !stopped) return;
+      const { stdout: branch } = await runFile("git", ["branch", "--show-current"], { cwd: basepath });
+      if (branch.trim() !== "develop") {
+        await publishTask(
+          id,
+          `Server left stopped: current branch is ${branch.trim() || "detached HEAD"}; restart requires develop.\n`,
+          true,
+          "Deploy",
+        );
+        return;
+      }
       await app.event("serverRestart", { serverId: id });
       await publishTask(id, "Server restart requested (it was running before deployment).\n", true, "Deploy");
     };
     try {
       const { data: server } = await app.database.server.get({ id, role });
       if (!server) throw new Error("Server was not found");
-      const { basepath, runbasepath } = await app.event("serverPath", server);
+      ({ basepath, runbasepath } = await app.event("serverPath", server));
       if (!app.fs.existsSync(`${runbasepath}/package.json`))
         throw new Error(`No deployment checkout with package.json in ${runbasepath}`);
 
@@ -306,7 +319,9 @@ const start = async (app) => {
       wasRunning = Boolean(status?.running);
 
       await publishTask(id, `\nStopping server ${server.name || id} before deployment...\n`, true, "Deploy");
-      await app.event("serverStop", { serverId: id });
+      if (!(await app.event("serverStop", { serverId: id })).stopped)
+        throw new Error("Server shutdown was not confirmed; deployment cancelled");
+      stopped = true;
       await publishTask(id, "Server stopped.\n", true, "Deploy");
       await publishTask(id, `$ npm run deploy in ${runbasepath}\n`, true, "Deploy");
       const deployment = runProgram("npm", ["run", "deploy"], runbasepath);

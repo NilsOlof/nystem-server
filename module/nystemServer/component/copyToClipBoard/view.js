@@ -5,10 +5,7 @@ import { Button, Icon } from "nystem-components";
 const CopyToClipBoardView = ({ model, value }) => {
   const ref = useRef();
   const doVopyVal = (e) => {
-    if (
-      e &&
-      ((e.altKey && !model.gotoOnClick) || (!e.altKey && model.gotoOnClick))
-    ) {
+    if (e && ((e.altKey && !model.gotoOnClick) || (!e.altKey && model.gotoOnClick))) {
       window.open(copyVal, "_blank").focus();
       return;
     }
@@ -27,30 +24,23 @@ const CopyToClipBoardView = ({ model, value }) => {
   };
 
   let copyVal = model.field ? value[model.field] : value;
-  if (typeof copyVal === "object")
-    copyVal = JSON.stringify(copyVal, null, "  ");
+  if (typeof copyVal === "object") copyVal = JSON.stringify(copyVal, null, "  ");
   if (model.addBefore) copyVal = model.addBefore + copyVal;
 
   return (
     <>
-      <input
-        ref={ref}
-        style={{
-          display: "none",
-          position: "absolute",
-        }}
-        value={copyVal}
-        readOnly={true}
-      />
+      <input ref={ref} style={{ display: "none", position: "absolute" }} value={copyVal} readOnly={true} />
       <Button
         renderAs="button"
+        title={app.t(model.text)}
+        aria-label={app.t(model.text)}
         className={model.className}
         type={model.btnType}
         onClick={doVopyVal}
         size={model.btnSize}
       >
-        {["copy", "paste"].includes(model.text) ? (
-          <Icon className="h-4 w-4" icon={model.text} alt={model.text} />
+        {model.icon || ["copy", "paste"].includes(model.text) ? (
+          <Icon className="h-4 w-4" icon={model.icon || model.text} title={false} aria-hidden="true" />
         ) : (
           app.t(model.text)
         )}

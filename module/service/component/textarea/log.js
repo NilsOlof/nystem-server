@@ -22,10 +22,7 @@ const TextareaLog = ({ view, model, value = "" }) => {
 
       if (replace) {
         parsedLog = parsedLog.replace(
-          new RegExp(
-            `(module\\.exports )?[( ](${replace})([^) ]+:[0-9]+(?::[0-9]+)?)[) ]`,
-            "gim",
-          ),
+          new RegExp(`(module\\.exports )?[( ](${replace})([^) ]+:[0-9]+(?::[0-9]+)?)[) ]`, "gim"),
           makeLinks,
         );
       }
@@ -68,29 +65,31 @@ const TextareaLog = ({ view, model, value = "" }) => {
   return (
     <div className={model.event === "log" ? "relative bg-black" : ""}>
       {model.event === "log" && (
-        <button type="button" className="absolute right-2 top-2 z-10 rounded bg-gray-800 px-2 py-1 text-xs text-gray-200 hover:bg-gray-700" onClick={() => {
-          setLog("");
-          rawLog.current = "";
-        }}>Clear</button>
+        <button
+          type="button"
+          className="absolute right-2 top-2 z-10 rounded bg-gray-800 px-2 py-1 text-xs text-gray-200 hover:bg-gray-700"
+          onClick={() => {
+            setLog("");
+            rawLog.current = "";
+          }}
+        >
+          Clear
+        </button>
       )}
       <code className="text-[12px] leading-[18px]">
-      <Wrapper
-        className={model.wrapperClass}
-        onClick={(e) => {
-          if (!e.target.href) return;
-          e.stopPropagation();
-          e.preventDefault();
-          const path = e.target.href.split("/").slice(3);
+        <Wrapper
+          className={model.wrapperClass}
+          onClick={(e) => {
+            if (!e.target.href) return;
+            e.stopPropagation();
+            e.preventDefault();
+            const path = e.target.href.split("/").slice(3);
 
-          app.connection.emit({
-            type: "devtoolsnystvscode",
-            server: view.id,
-            path: path.join("/"),
-          });
-        }}
-      >
-        <div className={className} dangerouslySetInnerHTML={{ __html: log }} />
-      </Wrapper>
+            app.connection.emit({ type: "devtoolsnystvscode", server: view.id, path: path.join("/") });
+          }}
+        >
+          <div className={className} dangerouslySetInnerHTML={{ __html: log }} />
+        </Wrapper>
       </code>
     </div>
   );

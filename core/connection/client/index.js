@@ -5,10 +5,15 @@ export default (app) => {
   if (!app.settings.domain) return;
   app.connection = app.addeventhandler({}, ["emit", "broadcast"], "connection");
   const { connection } = app;
+  let socket;
+  let lastMessage;
+  connection.state = () => ({
+    readyState: socket?.readyState,
+    reconnect: timer === -1 ? "opening" : timer ? "scheduled" : "idle",
+    lastMessage,
+  });
 
-  connection.on("broadcast", (data) =>
-    connection.emit({ ...data, broadcast: true }),
-  );
+  connection.on("broadcast", (data) => connection.emit({ ...data, broadcast: true }));
 
   const callbacks = {};
   const emitSocket = (callback) => (data) =>
@@ -23,6 +28,7 @@ export default (app) => {
 
   let res = "";
   const receiveSocket = (message) => {
+    lastMessage = Date.now();
     message = res + message;
     res = "";
 
@@ -43,28 +49,49 @@ export default (app) => {
   };
 
   const openconnection = () => {
+    clearTimeout(timer);
+    if (socket && socket.readyState < 2) return;
     timer = -1;
     let connectionCheck = false;
-    let isError = false;
+    let closed = false;
     const sendSocket = emitSocket((message) => webSocket.send(message));
 
     const webSocket = new WebSocket(url);
+    socket = webSocket;
+    app.event("clientLog", { message: "Socket opening" });
+
+    const openingTimeout = setTimeout(() => {
+      app.event("clientLog", { message: "Socket opening timed out" });
+      webSocket.onerror(new Error("Socket opening timed out"));
+    }, 15000);
+
+    const closeconnection = (error) => {
+      if (closed) return;
+      closed = true;
+      clearTimeout(openingTimeout);
+      clearInterval(connectionCheck);
+      if (connectionCheck) connection.off("emit", sendSocket);
+      if (timer === -1) timer = false;
+      webSocket.close();
+      connection.event("connection", { error, connected: false });
+      if (error) connection.event("error", { error });
+    };
 
     webSocket.onerror = (error) => {
-      isError = true;
-      timer = false;
-      connection.event("connection", { error, connected: false });
-      connection.event("error", { error });
+      if (closed) return;
+      app.event("clientLog", { message: "Socket error" });
+      closeconnection(error);
     };
-    webSocket.onclose = () => {
-      timer = false;
-      if (!isError) connection.event("connection", { connected: false });
-      if (!connectionCheck) return;
-      clearInterval(connectionCheck);
-      connection.off("emit", sendSocket);
+    webSocket.onclose = ({ code, reason, wasClean }) => {
+      app.event("clientLog", { message: "Socket closed", code, reason, wasClean });
+      closeconnection();
     };
 
     webSocket.onopen = () => {
+      if (closed) return;
+      clearTimeout(openingTimeout);
+      clearTimeout(timer);
+      app.event("clientLog", { message: "Socket open" });
       timer = false;
       connection.on("emit", sendSocket);
 
@@ -72,7 +99,9 @@ export default (app) => {
       connectionCheck = setInterval(() => webSocket.send("{}"), 15000);
     };
 
-    webSocket.onmessage = (message) => receiveSocket(message.data);
+    webSocket.onmessage = (message) => {
+      if (!closed) receiveSocket(message.data);
+    };
   };
 
   const url = `ws${app.settings.secure ? "s" : ""}://${app.settings.domain}`;
@@ -103,8 +132,7 @@ export default (app) => {
 
   connection.connected = false;
   connection.on("connection", 100, (query) => {
-    if (typeof query.connected === "undefined")
-      query.connected = connection.connected;
+    if (typeof query.connected === "undefined") query.connected = connection.connected;
 
     connection.connected = query.connected;
   });
@@ -122,19 +150,20 @@ export default (app) => {
     });
   });
 
-  if (app.settings.waitOnConnect)
-    app.on("loaded", 1000, () =>
-      connection.event("connection", { wait: true }),
-    );
+  if (app.settings.waitOnConnect) app.on("loaded", 1000, () => connection.event("connection", { wait: true }));
 
   if (app.settings.debug) {
     let state = "notconnected";
+    let reloadPending = false;
     connection.on("connection", ({ connected, fallback }) => {
       if (fallback) return;
 
-      if (state === "disconnected" && connected) window.location.reload();
-      if (state === "connected" && !connected) state = "disconnected";
-      if (state === "notconnected" && connected) state = "connected";
+      if (state === "disconnected" && connected && !reloadPending) {
+        reloadPending = true;
+        setTimeout(() => window.location.reload(), 0);
+      }
+      if (connected) state = "connected";
+      else if (state === "connected") state = "disconnected";
     });
   }
 

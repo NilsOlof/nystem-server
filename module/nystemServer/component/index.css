@@ -185,6 +185,12 @@ body::-webkit-scrollbar-track {
   font-size: 14px;
   line-height: 1.5;
 }
+.git-workspace button.cursor-not-allowed {
+  transition:
+    background-color 0s 150ms,
+    color 0s 150ms,
+    border-color 0s 150ms;
+}
 .git-workspace .bg-gray-700,
 .git-workspace .bg-gray-800 {
   background-color: #293544;
@@ -278,4 +284,49 @@ body::-webkit-scrollbar-track {
 .git-workspace ::-webkit-scrollbar-thumb {
   background-color: #63768a;
   border-color: #1b2129;
+}
+
+.devtools-layout .devtools-server {
+  flex-shrink: 0;
+}
+.devtools-layout .devtools-server > * {
+  margin-bottom: 0;
+}
+.devtools-layout .devtools-server .h-100 {
+  height: 24vh;
+  min-height: 6rem;
+}
+.devtools-explorer-panel {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+  margin-bottom: 0;
+}
+.devtools-explorer-panel > :first-child,
+.devtools-settings-panel > :first-child {
+  flex-shrink: 0;
+}
+.devtools-explorer-panel > :nth-child(2) {
+  background-color: #1e2128;
+  flex: 1;
+  min-height: 0;
+  overflow: auto;
+  scrollbar-gutter: stable;
+}
+.devtools-layout .devtools-explorer:has(.devtools-explorer-panel > :only-child) {
+  flex: 0 0 auto;
+}
+.devtools-layout .devtools-settings-panel {
+  display: flex;
+  flex-direction: column;
+  max-height: 45vh;
+  margin-bottom: 0.75rem;
+}
+.devtools-settings-panel > :nth-child(2) {
+  min-height: 0;
+  overflow: auto;
+}
+body:has(.devtools-layout) main {
+  display: none;
 }
