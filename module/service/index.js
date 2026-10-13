@@ -25,19 +25,20 @@ const resolveExistingPath = (app, path) => {
   return app.fs.existsSync(homePath) ? homePath : path;
 };
 
-const start = function (app) {
+const start = async function (app) {
   app.fs.ensureDirSync(`${homedir()}/.codex`);
   if (!app.fs.existsSync(apiKeyPath))
     app.fs.writeFileSync(apiKeyPath, randomBytes(32).toString("hex"), { mode: 0o600 });
   else app.fs.chmodSync(apiKeyPath, 0o600);
   const apiKey = app.fs.readFileSync(apiKeyPath, "utf8").trim();
 
-  const runProgram = function (path, program) {
+  const runProgram = function (path, command, args, options = {}) {
     if (!app.fs.existsSync(path)) throw new Error(`Project runtime folder does not exist: ${path}`);
 
-    const execService = spawn(process.execPath, [`${path}/${program}`], { cwd: path, detached: false });
+    const execService = spawn(command, args, { cwd: path, detached: false, ...options });
+    const program = [command, ...args].join(" ");
 
-    console.log(`start ${path}/${program} pid:${execService.pid}`);
+    console.log(`start ${path} ${program} pid:${execService.pid}`);
 
     const evHandler = app.addeventhandler();
 
@@ -58,6 +59,8 @@ const start = function (app) {
       evHandler.event("exit", query);
       app.off("exit", killApp);
     };
+
+    execService.on("message", (message) => evHandler.event("message", message));
 
     execService.on("error", (error) => {
       evHandler.event("data", { type: "error", data: `${error}\n` });
@@ -86,6 +89,37 @@ const start = function (app) {
 
   const logs = {};
   const servers = new Map();
+  const clients = new Map();
+
+  const startClient = (id, path) => {
+    if (clients.has(id)) return;
+
+    const update = (data) => app.database.serverStatus.save({ data: { _id: id, ...data }, fields: true, role });
+    let clientLog = "";
+    const client = runProgram(`${path}/web`, "pnpm", ["start"], {
+      env: { ...process.env, CHOKIDAR_USEPOLLING: "false" },
+    });
+    clients.set(id, client);
+
+    client.on("data", ({ data, type }) => {
+      data = data.replace(/^.*Local:\s+http\S*\n?/gm, "");
+      if (!data) return;
+
+      const error = type === "error" && /error/i.test(data);
+      app.connection.broadcast({ type: `serverClientLog${id}`, data, error });
+
+      clientLog = `${clientLog}${data}`.slice(-maxLogLength);
+      update({ clientLog, ...(error && { clientError: true }) });
+    });
+
+    client.on("exit", () => {
+      if (clients.get(id) !== client) return;
+      clients.delete(id);
+      update({ clientRunning: false });
+    });
+
+    update({ clientLog: "", clientRunning: true, clientError: false });
+  };
 
   const assertCanStart = (basepath) => {
     if (findServerByPath(app.fs, [{ basepath: app.__dirname }], basepath))
@@ -127,7 +161,9 @@ const start = function (app) {
         return;
       }
 
-      const service = runProgram(path, "server.js");
+      const service = runProgram(path, process.execPath, [`${path}/server.js`, "--client=nystem-server"], {
+        stdio: ["pipe", "pipe", "pipe", "ipc"],
+      });
       runningServer.service = service;
 
       const onData = (dataType) => (query) => {
@@ -141,7 +177,12 @@ const start = function (app) {
       service.on("data", onData("data"));
       service.on("error", onData("error"));
 
+      service.on("message", ({ type }) => {
+        if (type === "startClient") startClient(id, path);
+      });
+
       service.on("exit", async (query) => {
+        clients.get(id)?.event("stop");
         if (servers.get(id) !== runningServer) return;
 
         servers.delete(id);
@@ -249,6 +290,10 @@ const start = function (app) {
     return findServerByPath(app.fs, data, path);
   };
 
+  app.on("startClient", async () => {
+    startClient((await getStatusByPath(app.__dirname))._id, app.__dirname);
+  });
+
   app.file.on(["get", "post"], 800, async ({ id, url, headers, method }) => {
     if (!url?.startsWith("/codex-api/server")) return;
     if (!authenticateApi(headers)) return sendApiResponse(id, 401, { error: "Unauthorized" });
@@ -289,6 +334,9 @@ const start = function (app) {
       log: (status.log || "").split("\n").slice(-lineCount).join("\n"),
     });
   });
+
+  const { data = [] } = await app.database.server.search({ role });
+  for (const { _id, autostart } of data) if (autostart) await startServer(_id);
 };
 
 export default (app) => {

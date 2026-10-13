@@ -1,54 +1,56 @@
 import React, { useState, useEffect, useRef } from "react";
-import { Wrapper } from "nystem-components";
+import { Wrapper, Icon } from "nystem-components";
 import app from "nystem";
 
 const TextareaLog = ({ view, model, value = "" }) => {
   const [log, setLog] = useState("");
+  const [expanded, setExpanded] = useState(false);
+  const [error, setError] = useState(Boolean(view.value[model.errorField]));
   const rawLog = useRef();
 
+  const makeLinks = (match, p1, p2, p3) => {
+    let path = p3.split(/[/\\]/).join("/").split(":");
+    path = `${path[0]}:${path[1]}`;
+
+    return `(<a href="nystem://${view.baseView.value.host?.[0] || ""}${path}">${path}</a>)`;
+  };
+
+  const replace = (view.value.basepath || "").replace(/[/\\]/g, "[/\\\\]");
+
+  const parseLog = (log) => {
+    let parsedLog = log || "";
+
+    if (replace) {
+      parsedLog = parsedLog.replace(
+        new RegExp(`(module\\.exports )?[( ](${replace})([^) ]+:[0-9]+(?::[0-9]+)?)[) ]`, "gim"),
+        makeLinks,
+      );
+    }
+
+    parsedLog = parsedLog
+      // eslint-disable-next-line no-control-regex
+      .replace(/\x1b\[((?:\d{1,3};?)+|)m/gim, (match, p1) => {
+        const color = colors[parseInt(p1, 10)];
+        return `</span><span${color ? ` style='color:${color};'` : ""}>`;
+      });
+    return `<pre>${parsedLog.replace(/\n/g, "</span><br/><span>")}</pre>`;
+  };
+
   useEffect(() => {
-    const makeLinks = (match, p1, p2, p3) => {
-      let path = p3.split(/[/\\]/).join("/").split(":");
-      path = `${path[0]}:${path[1]}`;
-
-      return `(<a href="nystem://${view.baseView.value.host?.[0] || ""}${path}">${path}</a>)`;
-    };
-
-    const basepath = view.value.basepath || "";
-    const replace = basepath.replace(/[/\\]/g, "[/\\\\]");
-
-    const parseLog = (log) => {
-      let parsedLog = log || "";
-
-      if (replace) {
-        parsedLog = parsedLog.replace(
-          new RegExp(`(module\\.exports )?[( ](${replace})([^) ]+:[0-9]+(?::[0-9]+)?)[) ]`, "gim"),
-          makeLinks,
-        );
-      }
-
-      parsedLog = parsedLog
-        // eslint-disable-next-line no-control-regex
-        .replace(/\x1b\[((?:\d{1,3};?)+|)m/gim, (match, p1) => {
-          const color = colors[parseInt(p1, 10)];
-          return `</span><span${color ? ` style='color:${color};'` : ""}>`;
-        });
-      return `<pre>${parsedLog.replace(/\n/g, "</span><br/><span>")}</pre>`;
-    };
-
     if (rawLog.current !== value) {
       rawLog.current = value;
       setLog(parseLog(value));
     }
 
-    const updateLog = ({ data }) => {
+    const updateLog = ({ data, error }) => {
       if (!data) return;
+      if (error) setError(true);
 
       rawLog.current = `${rawLog.current || ""}${data}`;
       setLog((currentLog) => currentLog + parseLog(data));
     };
 
-    app.connection.on(`serverLog${view.id}`, updateLog);
+    app.connection.on(`server${app.capFirst(model.event || "log")}${view.id}`, updateLog);
     const clearLog = () => {
       setLog("");
       rawLog.current = "";
@@ -56,29 +58,42 @@ const TextareaLog = ({ view, model, value = "" }) => {
     view.on("clearlog", clearLog);
     return () => {
       view.off("clearlog", clearLog);
-      app.connection.off(`serverLog${view.id}`, updateLog);
+      app.connection.off(`server${app.capFirst(model.event || "log")}${view.id}`, updateLog);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [value, view.id, view.value.basepath]);
 
   const className = model.className && model.className.join(" ");
   return (
-    <div className={model.event === "log" ? "relative bg-black" : ""}>
-      {model.event === "log" && (
-        <button
-          type="button"
-          className="absolute right-2 top-2 z-10 rounded bg-gray-800 px-2 py-1 text-xs text-gray-200 hover:bg-gray-700"
-          onClick={() => {
-            setLog("");
-            rawLog.current = "";
-          }}
-        >
-          Clear
-        </button>
+    <div className={model.event ? "relative bg-black" : ""}>
+      {model.event && (
+        <div className="absolute right-2 top-1.5 z-10 flex gap-1">
+          <button
+            type="button"
+            className={`rounded bg-gray-800 px-2 py-1 text-xs text-gray-200 hover:bg-gray-700 ${model.collapsedLines && !expanded ? "invisible" : ""}`}
+            onClick={() => {
+              setLog("");
+              setError(false);
+              rawLog.current = "";
+            }}
+          >
+            Clear
+          </button>
+          {model.collapsedLines && (
+            <button
+              type="button"
+              aria-label={expanded ? "Collapse log" : "Expand log"}
+              className={`rounded px-2 py-1 text-gray-200 ${error ? "bg-red-700 hover:bg-red-600" : "bg-gray-800 hover:bg-gray-700"}`}
+              onClick={() => setExpanded(!expanded)}
+            >
+              <Icon icon={expanded ? "chevron-up" : "chevron-down"} className="h-3 w-3" />
+            </button>
+          )}
+        </div>
       )}
       <code className="text-[12px] leading-[18px]">
         <Wrapper
-          className={model.wrapperClass}
+          className={[model.wrapperClass, model.collapsedLines && !expanded && "overflow-x-hidden"]}
           onClick={(e) => {
             if (!e.target.href) return;
             e.stopPropagation();
@@ -88,7 +103,17 @@ const TextareaLog = ({ view, model, value = "" }) => {
             app.connection.emit({ type: "devtoolsnystvscode", server: view.id, path: path.join("/") });
           }}
         >
-          <div className={className} dangerouslySetInnerHTML={{ __html: log }} />
+          <div
+            className={[className, model.collapsedLines && !expanded && "mr-10 overflow-hidden"]
+              .filter(Boolean)
+              .join(" ")}
+            dangerouslySetInnerHTML={{
+              __html:
+                model.collapsedLines && !expanded
+                  ? parseLog((rawLog.current || "").split("\n").filter(Boolean).slice(-model.collapsedLines).join("\n"))
+                  : log,
+            }}
+          />
         </Wrapper>
       </code>
     </div>

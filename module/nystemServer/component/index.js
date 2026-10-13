@@ -24,7 +24,7 @@ const Index = () => (
         <Inserter match="/popup.html" source="/server/extension" />
         <Inserter match="/" source="/server/overview" />
         <Inserter match="/menu" source="/settings/menu" />
-        <Wrapper className="px-6">
+        <Wrapper className="px-3">
           <Inserter match="/server/*" />
           <Inserter match="/host/*" />
           <Inserter match="/settings/*" />

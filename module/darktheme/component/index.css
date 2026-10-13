@@ -29,3 +29,7 @@ textarea {
   padding-top: 0.25rem !important;
   padding-bottom: 0.25rem !important;
 }
+.textInputDefault {
+  width: 100%;
+  margin-bottom: 0.25rem;
+}

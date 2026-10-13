@@ -7,7 +7,8 @@
     { "id": "host", "text": "Host", "type": "multilinetext" },
     { "id": "path", "text": "Path", "type": "text", "length": "100" },
     { "type": "int", "id": "port", "text": "Port" },
-    { "id": "showinoverview", "text": "In overview", "type": "boolean", "mandatory": false }
+    { "id": "showinoverview", "text": "In overview", "type": "boolean", "mandatory": false },
+    { "id": "autostart", "text": "Autostart", "type": "boolean", "mandatory": false }
   ],
   "machinename": "server",
   "storage": "data",
@@ -271,15 +272,9 @@
       "format": "input",
       "item": [
         {
-          "type": "viewLink",
-          "format": "link",
-          "text": "Git workspace",
-          "href": "/server/git/{id}",
-          "className": ["px-3", "py-1", "text-blue-400", "hover:text-blue-300"]
-        },
-        {
           "category": "view",
           "type": "style",
+          "className": ["max-w-4xl", "py-3", "space-y-4"],
           "item": [
             {
               "category": "view",
@@ -333,25 +328,49 @@
               ],
               "typeClass": "defaultWithoutPadding",
               "stateStore": "byUrl"
+            },
+            {
+              "category": "view",
+              "type": "style",
+              "className": ["rounded-lg", "border", "border-gray-700", "bg-gray-900", "p-4"],
+              "item": [
+                {
+                  "category": "view",
+                  "type": "style",
+                  "className": ["flex", "items-center", "gap-4", "mb-2"],
+                  "item": [
+                    {
+                      "category": "contentTypeField",
+                      "type": "text",
+                      "id": "name",
+                      "format": "view",
+                      "renderAs": "h2",
+                      "className": ["flex-1", "text-lg", "font-semibold", "text-gray-100"]
+                    },
+                    {
+                      "type": "viewLink",
+                      "format": "link",
+                      "text": "Git workspace",
+                      "href": "/server/git/{id}",
+                      "className": ["text-sm", "text-blue-400", "hover:text-blue-300"]
+                    }
+                  ]
+                },
+                { "id": "name", "type": "text", "category": "contentTypeField", "mandatory": true },
+                { "id": "host", "type": "multilinetext", "category": "contentTypeField" },
+                { "category": "contentTypeField", "type": "int", "id": "port", "classNameInput": ["w-32"] },
+                { "id": "path", "type": "text", "category": "contentTypeField", "mandatory": true },
+                { "category": "contentTypeField", "type": "boolean", "id": "showinoverview", "text": "In overview" },
+                { "category": "contentTypeField", "type": "boolean", "id": "autostart", "text": "Autostart" },
+                {
+                  "type": "viewButton",
+                  "category": "view",
+                  "btnType": "primary",
+                  "className": ["flex", "gap-2", "mt-4", "sm:pl-35"]
+                }
+              ]
             }
-          ],
-          "className": ["p-3", "max-w-4xl"]
-        },
-        {
-          "type": "bootstrap",
-          "category": "view",
-          "row": true,
-          "format": "view",
-          "item": [
-            { "category": "contentTypeField", "type": "text", "id": "name", "format": "view", "renderAs": "h4" },
-            { "id": "name", "type": "text", "category": "contentTypeField", "mandatory": true },
-            { "id": "host", "type": "multilinetext", "category": "contentTypeField" },
-            { "category": "contentTypeField", "type": "int", "id": "port" },
-            { "id": "path", "type": "text", "category": "contentTypeField", "mandatory": true },
-            { "category": "contentTypeField", "type": "boolean", "id": "showinoverview", "text": "In overview" },
-            { "type": "viewButton", "category": "view" }
-          ],
-          "className": ["px-4"]
+          ]
         }
       ]
     },

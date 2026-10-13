@@ -1,12 +1,13 @@
 import React, { useEffect, useRef, useState } from "react";
 import "./index.css";
 
+const textClassName =
+  "appearance-none block bg-black text-grey-darker border border-gray-800 rounded py-1 px-3 outline-none";
 const byType = {
-  text:
-    "appearance-none block bg-black text-grey-darker border border-gray-800 rounded py-1 px-3 outline-none",
-  password:
-    "appearance-none block bg-black text-grey-darker border border-gray-800 rounded py-1 px-3 outline-none",
-  checkbox: "m-4",
+  text: textClassName,
+  password: textClassName,
+  number: textClassName,
+  checkbox: "mt-2",
 };
 
 const Input = ({ type, value, ...props }, parentRef) => {
@@ -46,7 +47,7 @@ const Input = ({ type, value, ...props }, parentRef) => {
       if (props.selectAllOnFocus) ref.current.select();
       if (props.onFocus) return props.onFocus(ev);
     },
-    className: `${byType[type]} ${className}`,
+    className: [byType[type], className].filter(Boolean).join(" "),
     type,
     value: val,
     focus: undefined,

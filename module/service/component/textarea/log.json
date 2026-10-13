@@ -14,6 +14,16 @@
       "type": "gridselect",
       "id": "className",
       "text": "Class"
+    },
+    {
+      "type": "int",
+      "id": "collapsedLines",
+      "text": "Collapsed lines"
+    },
+    {
+      "type": "text",
+      "id": "errorField",
+      "text": "Error field"
     }
   ]
 }

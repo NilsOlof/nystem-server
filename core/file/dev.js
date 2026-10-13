@@ -112,6 +112,16 @@ export default async (app) => {
     if (started) return;
     started = true;
 
+    if (process.argv.includes("--client=nystem-server")) {
+      process.send({ type: "startClient" });
+      return;
+    }
+
+    if (process.argv.includes("--client=self")) {
+      app.event("startClient");
+      return;
+    }
+
     const { spawn } = await import("node:child_process");
     const { platform } = await import("node:os");
 

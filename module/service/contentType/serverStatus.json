@@ -8,6 +8,9 @@
     { "type": "text", "text": "basepath", "id": "basepath" },
     { "type": "boolean", "id": "running", "text": "Running" },
     { "type": "textarea", "id": "log", "text": "Log" },
+    { "type": "textarea", "id": "clientLog", "text": "Client log" },
+    { "type": "boolean", "id": "clientRunning", "text": "Client running" },
+    { "type": "boolean", "id": "clientError", "text": "Client error" },
     { "type": "textarea", "id": "deployLog", "text": "Deploy log" },
     { "type": "boolean", "id": "deployRunning", "text": "Deploy running" },
     { "type": "textarea", "id": "commitLog", "text": "Commit log" },
@@ -607,6 +610,28 @@
           "format": "setBaseViewValue",
           "fromField": "_id",
           "toField": "_id"
+        },
+        {
+          "category": "contentTypeField",
+          "type": "textarea",
+          "id": "clientLog",
+          "format": "log",
+          "event": "clientLog",
+          "collapsedLines": 1,
+          "errorField": "clientError",
+          "className": ["bg-black", "text-gray-400", "px-3", "py-2"],
+          "wrapperClass": [
+            "flex",
+            "flex-col-reverse",
+            "max-h-[376px]",
+            "overflow-auto",
+            "min-h-[2.25rem]",
+            "bg-black",
+            "border-b",
+            "border-gray-700",
+            "scrollbar",
+            "scrollbar-dark"
+          ]
         },
         {
           "category": "contentTypeField",
