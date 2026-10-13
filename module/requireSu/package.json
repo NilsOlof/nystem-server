@@ -1,9 +1,0 @@
-{
-  "type": "module",
-  "dependencies": {
-    "sudo-prompt": "*"
-  },
-  "scripts": {
-    "worker": "sudo node module/requireSu/worker.js"
-  }
-}

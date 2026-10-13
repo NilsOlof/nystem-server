@@ -1,8 +1,5 @@
 import { platform } from "node:os";
-import { dirname } from "node:path";
-import { fileURLToPath } from "node:url";
-
-const __dirname = dirname(fileURLToPath(import.meta.url));
+import proxy from "./proxy.js";
 
 export default (app) => {
   const hostname = platform();
@@ -23,8 +20,7 @@ export default (app) => {
   });
 
   app.on("start", async () => {
-    console.log("[router] request worker start", { path: `${__dirname}/proxy.js` });
-    await app.event("requireSu.start", { path: `${__dirname}/proxy.js` });
+    await proxy(app);
 
     app.database.server.on("delete", async (query) => {
       if (query.oldData) {

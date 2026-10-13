@@ -59,21 +59,8 @@ export default async (ev) => {
         xfwd: true,
         proxyTimeout: 30000,
       });
-      let lastError = 0;
-      let suppressed = 0;
       const proxyError = (error, req, res) => {
-        if (Date.now() - lastError >= 5000) {
-          console.error("[router] proxy error", {
-            host,
-            target: ip + ":" + port,
-            url: req.url,
-            message: error.message,
-            code: error.code,
-            suppressed,
-          });
-          lastError = Date.now();
-          suppressed = 0;
-        } else suppressed++;
+        console.error(`${host} -> ${port} Down`);
 
         if (!res || res.destroyed || res.writableEnded) return;
         // Only replay reads, before sending any upstream response. Uploads and other
@@ -148,7 +135,7 @@ export default async (ev) => {
         proxyReq.once("close", () => socket.off("close", abort));
       });
       routes.set(getHost(host), { ip, port, agent, proxy });
-      console.log("[router] route added", { host, port, ip });
+      console.log(`[router] route added ${host} -> ${ip}:${port}`);
     });
   });
 
