@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useRef } from "react";
-import { Wrapper, Icon } from "nystem-components";
+import { Wrapper, Icon, ContentTypeRender } from "nystem-components";
 import app from "nystem";
 
-const TextareaLog = ({ view, model, value = "" }) => {
+const TextareaLog = ({ view, model, path, value = "" }) => {
   const [log, setLog] = useState("");
   const [expanded, setExpanded] = useState(false);
   const [error, setError] = useState(Boolean(view.value[model.errorField]));
@@ -67,7 +67,8 @@ const TextareaLog = ({ view, model, value = "" }) => {
   return (
     <div className={model.event ? "relative bg-black" : ""}>
       {model.event && (
-        <div className="absolute right-2 top-1.5 z-10 flex gap-1">
+        <div className="absolute right-2 top-1.5 z-10 flex gap-1 opacity-70 transition-opacity hover:opacity-100">
+          {model.item && (!model.collapsedLines || expanded) && <ContentTypeRender path={path} items={model.item} />}
           <button
             type="button"
             className={`rounded bg-gray-800 px-2 py-1 text-xs text-gray-200 hover:bg-gray-700 ${model.collapsedLines && !expanded ? "invisible" : ""}`}

@@ -64,7 +64,7 @@ const GitDiff = ({ model, view }) => {
             {action === "stage" ? "Stage file" : "Unstage file"}
           </Button>
         )}
-        {!readOnly && !edit && selected?.side === "unstaged" && selected.code !== "?" && !selected.original && (
+        {!readOnly && !edit && selected?.side === "unstaged" && !selected.original && (
           <Button
             size="xs"
             type="danger"
@@ -72,7 +72,7 @@ const GitDiff = ({ model, view }) => {
             aria-disabled={busy || !preview || selected.conflict}
             onClick={() => !busy && preview && act("discard", [selected])}
           >
-            Discard file
+            {selected.code === "?" ? "Delete file" : "Discard file"}
           </Button>
         )}
       </div>

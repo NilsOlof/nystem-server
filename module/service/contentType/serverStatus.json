@@ -619,6 +619,20 @@
           "event": "clientLog",
           "collapsedLines": 1,
           "errorField": "clientError",
+          "item": [
+            {
+              "category": "contentTypeField",
+              "type": "boolean",
+              "id": "clientRunning",
+              "format": "button",
+              "text": "pause",
+              "falseText": "play",
+              "btnType": "danger",
+              "falseBtnType": "primary",
+              "size": "xs",
+              "className": ["px-2", "py-1"]
+            }
+          ],
           "className": ["bg-black", "text-gray-400", "px-3", "py-2"],
           "wrapperClass": [
             "flex",
@@ -652,7 +666,8 @@
             "scrollbar-dark"
           ],
           "event": "log"
-        }
+        },
+        { "category": "view", "type": "viewButton", "format": "autoSave" }
       ]
     },
     {

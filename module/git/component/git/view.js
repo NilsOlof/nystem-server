@@ -236,7 +236,13 @@ const GitView = ({ model, view, path }) => {
     if (activity.current) return;
     if (
       action === "discard" &&
-      !window.confirm(hunk === undefined ? "Discard the unstaged changes in this file?" : "Discard this hunk?")
+      !window.confirm(
+        hunk !== undefined
+          ? "Discard this hunk?"
+          : targets.some((file) => file.code === "?")
+            ? "Delete this new file permanently?"
+            : "Discard the unstaged changes in this file?",
+      )
     )
       return;
     const focused =

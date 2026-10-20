@@ -15,17 +15,12 @@ export default (app) => {
       const chdate = item._chdate;
       let pos = dbArray.length - 1;
 
-      if (chdate)
-        while (
-          pos >= 0 &&
-          (!dbArray[pos]._chdate || dbArray[pos]._chdate > chdate)
-        )
-          pos -= 1;
+      if (chdate) while (pos >= 0 && (!dbArray[pos]._chdate || dbArray[pos]._chdate > chdate)) pos -= 1;
 
       if (pos === dbArray.length - 1) dbArray.push(item);
       else dbArray.splice(pos + 1, 0, item);
 
-      collection.event("saveStorage");
+      collection.event("saveStorage", { id: item._id });
     };
 
     let searchCache = {};
@@ -37,16 +32,14 @@ export default (app) => {
     });
 
     collection.on("search", 2000, (query) => {
-      const inCache =
-        allInCache || searchCache[getKey({ ...query, data: undefined })];
+      const inCache = allInCache || searchCache[getKey({ ...query, data: undefined })];
 
       return { ...query, inCache };
     });
     collection.on("search", -1000, (query) => {
       if (!query.data || allInCache) return;
 
-      allInCache =
-        query.count > query.searchTotal && query.searchTotal === query.total;
+      allInCache = query.count > query.searchTotal && query.searchTotal === query.total;
 
       query.data.forEach(insertItem);
 

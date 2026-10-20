@@ -5,7 +5,12 @@ export default (app) => {
 
   app.on("init", 500, () => {
     app.storage = app.addeventhandler(
-      { at: "window.chrome.storage" },
+      {
+        at: "window.chrome.storage",
+        getCollection: app.storage.getCollection,
+        setCollection: app.storage.setCollection,
+        clearCollection: app.storage.clearCollection,
+      },
       [
         "clear",
         "getItem",
@@ -130,6 +135,7 @@ export default (app) => {
     });
     app.storage.on("clear", async () => {
       await clear();
+      await app.storage.clearCollection();
     });
 
     const memstore = {};

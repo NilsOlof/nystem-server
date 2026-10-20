@@ -1,4 +1,4 @@
-import { realpath } from "node:fs/promises";
+import { realpath, unlink } from "node:fs/promises";
 import { dirname, join } from "node:path";
 import { git, status, diff, editFile, history, historyCommit } from "./repository.js";
 import watch from "./watch.js";
@@ -134,9 +134,11 @@ export default (app) => {
                   );
                 }
                 if (query.action === "discard") {
-                  if (selected.some((file) => file.code === "?" || file.original))
-                    throw new Error("Discard is unavailable for untracked or renamed files");
-                  await git(cwd, ["restore", "--worktree", "--", ...paths]);
+                  if (selected.some((file) => file.original))
+                    throw new Error("Discard is unavailable for renamed files");
+                  for (const file of selected)
+                    if (file.code === "?") await unlink(join(cwd, file.path));
+                    else await git(cwd, ["restore", "--worktree", "--", file.path]);
                 }
               }
               reply.files = await status(cwd);

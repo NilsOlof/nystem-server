@@ -169,7 +169,7 @@ export default async (app) => {
         app.connection.emit({ type: "login", id, user: session });
       });
 
-    const sessionTimeout = 1000 * 60 * 60 * 24 * (app.settings.sessionTimeout || 14);
+    const sessionTimeout = 1000 * 60 * 60 * 24 * (app.settings.sessionTimeout || 60);
     if (app.settings.sessionTimeout !== -1)
       setInterval(
         () => {

@@ -5,9 +5,12 @@ const devStartingIfno = `
 <html lang="en">
   <head>
     <script>
-      setTimeout(() => {
-        window.location.reload();
-      }, 2000);
+      const check = () =>
+        fetch(window.location.href, { cache: "no-store" }).then(
+          (response) => (response.ok ? window.location.reload() : setTimeout(check, 200)),
+          () => setTimeout(check, 200),
+        );
+      check();
     </script>
     </head>
   <body><h1>Dev environment starting...</h1></body>

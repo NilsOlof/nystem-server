@@ -7,7 +7,7 @@ export default (app) => {
     });
 
     collection.on("delete", -200, (query) => {
-      if (!query.data) return;
+      if (!query.data || !query.oldData) return;
       const { dbArray, dbIndex } = db;
       delete dbIndex[query.id];
       const pos = dbArray.indexOf(query.oldData);

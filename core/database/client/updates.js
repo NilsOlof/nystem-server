@@ -6,8 +6,7 @@ export default (app) => {
     let timer03;
     let timer20;
 
-    const timeoutTimes = (app.settings.database &&
-      app.settings.database.updateFrequency) || [300, 2000];
+    const timeoutTimes = (app.settings.database && app.settings.database.updateFrequency) || [300, 2000];
 
     const updateEvent = () => {
       clearTimeout(timer03);
@@ -60,37 +59,32 @@ export default (app) => {
       delete db.dbIndex[id];
     };
 
-    collection.on("update", ({ ids, offline }) => {
-      if (offline) return;
+    collection.on("update", (query) => {
+      if (query.offline) return;
 
-      if (ids && ids.length < 500) {
-        ids.forEach(delItem);
+      if (query.ids && query.ids.length < 500) {
+        query.ids.forEach(delItem);
 
         return;
       }
 
       db.dbArray = [];
       db.dbIndex = {};
+      return { ...query, cacheCleared: true };
     });
 
-    collection.on("update", -1000, ({ ids }) => {
-      Object.values(updateSearch).forEach((query) =>
-        collection.search({ ...query, data: false, onData: false }),
-      );
+    collection.on("update", -1000, ({ ids, offline, cacheCleared }) => {
+      Object.values(updateSearch).forEach((query) => collection.search({ ...query, data: false, onData: false }));
 
-      const updateGetIds = ids
-        ? ids.filter((id) => updateGet[id])
-        : Object.keys(updateGet);
+      const updateGetIds = ids ? ids.filter((id) => updateGet[id]) : Object.keys(updateGet);
 
       updateGetIds.forEach((id) => {
         Object.values(updateGet[id]).forEach((callbackId) =>
-          collection
-            .get({ id })
-            .then((query) => updateGet[id][callbackId](query)),
+          collection.get({ id }).then((query) => updateGet[id][callbackId](query)),
         );
       });
 
-      collection.event("saveStorage");
+      if (!offline) collection.event("saveStorage", { ids, cacheCleared });
     });
 
     collection.on("updates", 1000, () => {

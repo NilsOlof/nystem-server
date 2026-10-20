@@ -10,6 +10,9 @@ export default (app) => {
       "setItemMem",
       "removeItemMem",
       "setItemDebounce",
+      "getCollection",
+      "setCollection",
+      "clearCollection",
     ],
     "storage",
   );
@@ -23,10 +26,7 @@ export default (app) => {
       val = await nystemCache.match(val).then((req) => req && req.json());
     }
 
-    return {
-      ...data,
-      value: val && (val[0] === "[" || val[0] === "{") ? JSON.parse(val) : val,
-    };
+    return { ...data, value: val && (val[0] === "[" || val[0] === "{") ? JSON.parse(val) : val };
   });
 
   app.storage.on("setItem", async ({ id, value }) => {
@@ -38,10 +38,7 @@ export default (app) => {
     )
       return;
 
-    value =
-      value === undefined || typeof value === "string"
-        ? value
-        : JSON.stringify(value);
+    value = value === undefined || typeof value === "string" ? value : JSON.stringify(value);
 
     try {
       window.localStorage.setItem(id, value);
@@ -54,11 +51,7 @@ export default (app) => {
         new Response(value, {
           status: 200,
           statusText: "Dbcache",
-          headers: new Headers({
-            "content-type": `application/json`,
-            date: new Date(),
-            etag: "dbdata",
-          }),
+          headers: new Headers({ "content-type": `application/json`, date: new Date(), etag: "dbdata" }),
         }),
       );
       window.localStorage.setItem(id, `nystemCache${id}`);
@@ -77,15 +70,74 @@ export default (app) => {
   app.storage.on("removeItem", ({ id }) => {
     window.localStorage.removeItem(id);
   });
+
+  let idbClosed = false;
+  const idb = new Promise((resolve, reject) => {
+    const request = window.indexedDB.open("nystem", 1);
+    request.onupgradeneeded = () => {
+      request.result.createObjectStore("record");
+      request.result.createObjectStore("order");
+    };
+    request.onsuccess = () => {
+      request.result.onversionchange = () => {
+        request.result.close();
+        idbClosed = true;
+      };
+      resolve(request.result);
+    };
+    request.onerror = () => reject(request.error);
+  });
+
+  const transaction = async (mode, action) => {
+    const tx = (await idb).transaction(["record", "order"], mode);
+    const result = action(tx);
+    await new Promise((resolve, reject) => {
+      tx.oncomplete = resolve;
+      tx.onerror = () => reject(tx.error);
+      tx.onabort = () => reject(tx.error);
+    });
+    return result;
+  };
+
+  app.storage.on("getCollection", async (data) => {
+    const [records, order] = await transaction("readonly", (tx) => [
+      tx.objectStore("record").getAll(IDBKeyRange.bound([data.id], [data.id, []])),
+      tx.objectStore("order").get(data.id),
+    ]);
+    const byId = Object.fromEntries(records.result.map((item) => [item._id, item]));
+
+    return { ...data, value: (order.result || []).map((_id) => byId[_id]).filter(Boolean) };
+  });
+
+  app.storage.on("setCollection", (data) => {
+    const { id, put, remove, order } = data;
+    if (idbClosed || (app.settings.noLoggedOutStorage && !app.session.user)) return { ...data, skipped: true };
+
+    return transaction("readwrite", (tx) => {
+      const record = tx.objectStore("record");
+      put.forEach((item) => record.put(item, [id, item._id]));
+      remove.forEach((_id) => record.delete([id, _id]));
+      if (order !== undefined) tx.objectStore("order").put(order, id);
+    });
+  });
+
   app.storage.on("clear", () => {
     window.localStorage.clear();
+    return app.storage.clearCollection();
+  });
+
+  app.storage.on("clearCollection", () => {
+    if (idbClosed) return;
+
+    return transaction("readwrite", (tx) => {
+      tx.objectStore("record").clear();
+      tx.objectStore("order").clear();
+    });
   });
 
   const memstore = {};
 
-  app.storage.on("getItemMem", (data) =>
-    Object.assign(data, { value: memstore[data.id] }),
-  );
+  app.storage.on("getItemMem", (data) => Object.assign(data, { value: memstore[data.id] }));
 
   app.storage.on("setItemMem", ({ id, value }) => {
     memstore[id] = value;

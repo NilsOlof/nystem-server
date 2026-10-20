@@ -118,7 +118,7 @@ const start = async function (app) {
       update({ clientRunning: false });
     });
 
-    update({ clientLog: "", clientRunning: true, clientError: false });
+    update({ basepath: path, clientLog: "", clientRunning: true, clientError: false });
   };
 
   const assertCanStart = (basepath) => {
@@ -135,6 +135,7 @@ const start = async function (app) {
 
   const startServer = async (id) => {
     if (servers.has(id)) return;
+    clearTimeout(clients.get(id)?.stopTimer);
 
     logs[id] = logs[id] || "";
     const runningServer = { restartRequested: false, service: false, stopRequested: false };
@@ -182,7 +183,8 @@ const start = async function (app) {
       });
 
       service.on("exit", async (query) => {
-        clients.get(id)?.event("stop");
+        const client = clients.get(id);
+        if (client) client.stopTimer = setTimeout(() => client.event("stop"), 30000);
         if (servers.get(id) !== runningServer) return;
 
         servers.delete(id);
@@ -207,12 +209,19 @@ const start = async function (app) {
   };
 
   app.database.serverStatus.on("save", ({ data, oldData = {} }) => {
-    const { _id, running } = data;
-    if (running === oldData.running) return;
+    const { _id, running, clientRunning, basepath } = data;
+    if (running === oldData.running && clientRunning === oldData.clientRunning) return;
 
     setTimeout(() => {
       app.connection.broadcast({ type: "databaseUpdate", contentType: "serverStatus", ids: [_id] });
     });
+
+    if (clientRunning !== oldData.clientRunning) {
+      if (clientRunning) startClient(_id, basepath);
+      else clients.get(_id)?.event("stop");
+    }
+
+    if (running === oldData.running) return;
 
     const runningServer = servers.get(_id);
     if (running) {
@@ -291,7 +300,9 @@ const start = async function (app) {
   };
 
   app.on("startClient", async () => {
-    startClient((await getStatusByPath(app.__dirname))._id, app.__dirname);
+    const { data = [] } = await app.database.server.search({ role });
+    const servers = await Promise.all(data.map((server) => app.event("serverPath", server)));
+    startClient(findServerByPath(app.fs, servers, app.__dirname)._id, app.__dirname);
   });
 
   app.file.on(["get", "post"], 800, async ({ id, url, headers, method }) => {

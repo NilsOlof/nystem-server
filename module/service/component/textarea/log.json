@@ -24,6 +24,11 @@
       "type": "text",
       "id": "errorField",
       "text": "Error field"
+    },
+    {
+      "text": "Fields",
+      "id": "item",
+      "type": "viewCreator"
     }
   ]
 }
