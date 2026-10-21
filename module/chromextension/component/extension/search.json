@@ -1,21 +1,8 @@
 {
   "text": "Search",
   "item": [
-    {
-      "id": "field",
-      "text": "Search field",
-      "type": "text"
-    },
-    {
-      "id": "extract",
-      "text": "Extract val for search",
-      "type": "text"
-    },
-    {
-      "text": "If no search result",
-      "id": "item",
-      "type": "viewCreator",
-      "expanded": true
-    }
+    { "id": "field", "text": "Search field", "type": "text" },
+    { "id": "extract", "text": "Extract val for search", "type": "text" },
+    { "text": "If no search result", "id": "item", "type": "viewCreator", "expanded": true }
   ]
 }

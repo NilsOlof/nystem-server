@@ -1,0 +1,6 @@
+{
+  "item": [
+    { "type": "text", "id": "field", "text": "Search statistic", "default": "searchTotal" },
+    { "type": "boolean", "id": "clearOnZero", "text": "Clear badge at zero" }
+  ]
+}

@@ -34,9 +34,13 @@ export default (app) => {
       reqs[id] = { body: "", token: readToken(headers?.cookie), headers };
     });
 
-    app.file.on("post", async ({ id, data, closed }) => {
+    app.file.on("post", async ({ id, data, closed, abort }) => {
       const req = reqs[id];
       if (req === undefined) return;
+      if (abort) {
+        delete reqs[id];
+        return;
+      }
 
       if (data) {
         req.body += data.toString();

@@ -10,5 +10,6 @@
     "512": "icon/512.png"
   },
   "manifest_version": 3,
-  "permissions": ["storage"]
+  "permissions": ["storage"],
+  "host_permissions": ["http://{domain}/*", "https://{domain}/*"]
 }

@@ -77,6 +77,7 @@ const DatabaseSearch = ({ view, model, path, children }) => {
 
     const options = {
       position: 0,
+      random: model.random,
       exact,
       sortby: sortby && sortby.map((item) => item.id),
       reverse,
@@ -107,7 +108,7 @@ const DatabaseSearch = ({ view, model, path, children }) => {
       view.off("setSearch", onSearch);
       view.off("change", -10, onChange);
     };
-  }, [count, exact, path, sortby, subView, view]);
+  }, [count, exact, path, sortby, subView, view, model.random]);
 
   return children || null;
 };

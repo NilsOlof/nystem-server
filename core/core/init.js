@@ -73,26 +73,30 @@ const app = {
 app.__dirname = app.__dirname.replace(/\\/g, "/");
 app.waitInLine = await app.require("./client/waitInLine");
 
+// Writes to the same file are chained; overlapping fs.writeFile calls can leave a longer write's tail behind.
+const fileWrites = {};
 app.writeFileChanged = (fileName, data) =>
-  new Promise((resolve, reject) => {
-    function save(destdata) {
-      Promise.resolve(data).then(async (data) => {
-        if (data !== destdata) {
-          if (!destdata) await fs.ensureFile(fileName);
-          fs.writeFile(fileName, data, (err) => {
-            if (err) reject(err);
-            else resolve();
-          });
-        } else resolve();
-      });
-    }
+  (fileWrites[fileName] = (fileWrites[fileName] || Promise.resolve())
+    .catch(() => {})
+    .then(
+      () =>
+        new Promise((resolve, reject) => {
+          function save(destdata) {
+            Promise.resolve(data).then(async (data) => {
+              if (data !== destdata) {
+                if (!destdata) await fs.ensureFile(fileName);
+                fs.writeFile(fileName, data, (err) => {
+                  if (err) reject(err);
+                  else resolve();
+                });
+              } else resolve();
+            });
+          }
 
-    if (fs.existsSync(fileName))
-      fs.readFile(fileName, "utf8", (err, data) =>
-        err ? reject(err) : save(data),
-      );
-    else save();
-  });
+          if (fs.existsSync(fileName)) fs.readFile(fileName, "utf8", (err, data) => (err ? reject(err) : save(data)));
+          else save();
+        }),
+    ));
 
 app.readFile = (fileName) =>
   new Promise((resolve, reject) => {

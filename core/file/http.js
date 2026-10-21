@@ -172,11 +172,15 @@ export default async (app) => {
     },
   );
 
-  app.file.on("response", -1000, ({ id, data, closed, abort }) => {
+  app.file.on("response", -1000, (query) => {
+    const { id, data, closed, abort } = query;
     if (!responses[id]) return;
 
-    if (data) responses[id].res.write(data);
-    if (closed) responses[id].res.end();
-    if (abort) responses[id].res.abort();
+    const { res } = responses[id];
+    const full = data && !res.write(data);
+    if (closed) res.end();
+    // ServerResponse has no abort(); destroying it cuts the transfer so the client sees an incomplete response.
+    if (abort) res.destroy();
+    if (full) return { ...query, drain: new Promise((resolve) => res.once("drain", resolve)) };
   });
 };

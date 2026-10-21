@@ -3,8 +3,9 @@ import { fileURLToPath } from "node:url";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
-export default async (app) => {
+export default async (app, extensionPath = `${app.__dirname}/files/extension`) => {
   const { fs } = app;
+  const manifestPath = `${extensionPath}/manifest.json`;
 
   const getPart = (path) => fs.readFile(`${__dirname}/manifest/${path}.json`, "utf-8");
 
@@ -24,16 +25,11 @@ export default async (app) => {
     return d2;
   };
 
-  const manifest = parts.reduce(mergeKey, {});
-  manifest.host_permissions = [
-    ...new Set([
-      ...(manifest.host_permissions || []),
-      `http${app.settings.client.secure ? "s" : ""}://${app.settings.client.domain}/*`,
-    ]),
-  ];
-
+  await fs.ensureFile(manifestPath);
   await fs.writeFile(
-    `${app.__dirname}/files/extension/manifest.json`,
-    JSON.stringify(manifest, null, "  ").replace(/"\{name\}"/g, `"${app.settings.client.name}"`),
+    manifestPath,
+    JSON.stringify(parts.reduce(mergeKey, {}), null, "  ")
+      .replaceAll("{name}", app.settings.client.name)
+      .replaceAll("{domain}", app.settings.client.domain),
   );
 };

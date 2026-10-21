@@ -1,16 +1,14 @@
+import { useEffect } from "react";
+import app from "nystem";
+
 const ExtensionIcon = (props) => {
-  const { action } = window.chrome;
   const { color, text, icon, canvas } = props.model || props;
-  if (!action) return null;
-  if (icon) action.setIcon({ path: icon });
-  if (color) action.setBadgeBackgroundColor({ color }); // [190, 190, 190, 230]
-  if (text) action.setBadgeText({ text });
-  if (canvas) {
-    const canvasContext = canvas.getContext("2d");
-    action.setIcon({
-      imageData: canvasContext.getImageData(0, 0, canvas.width, canvas.height),
-    });
-  }
+  useEffect(() => {
+    const update = () => app.event("extensionIcon", { color, text, icon, canvas }).catch(console.error);
+    app.on(["login", "logout"], update);
+    update();
+    return () => app.off(["login", "logout"], update);
+  }, [color, text, icon, canvas]);
   return null;
 };
 export default ExtensionIcon;

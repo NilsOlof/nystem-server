@@ -32,12 +32,8 @@
       ],
       "itemExpanded": true
     },
-    {
-      "id": "count",
-      "text": "Count",
-      "type": "int",
-      "default": 200
-    },
+    { "id": "count", "text": "Count", "type": "int", "default": 200 },
+    { "id": "random", "text": "Sort randomly", "type": "boolean" },
     {
       "text": "Sort by",
       "id": "sortby",

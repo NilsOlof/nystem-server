@@ -1,0 +1,7 @@
+{
+  "item": [
+    { "id": "text", "text": "Text", "type": "text" },
+    { "id": "icon", "text": "Icon path", "type": "text" },
+    { "id": "color", "text": "Color", "type": "text" }
+  ]
+}

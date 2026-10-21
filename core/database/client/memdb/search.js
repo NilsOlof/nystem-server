@@ -244,7 +244,13 @@ export default (app) => {
 
       query.searchTotal = result.length;
 
-      if (sortBy)
+      if (query.random) {
+        if (result === dbArray) result = [...result];
+        for (let index = result.length - 1; index > 0; index--) {
+          const random = Math.floor(Math.random() * (index + 1));
+          [result[index], result[random]] = [result[random], result[index]];
+        }
+      } else if (sortBy)
         sortByFunc(
           result,
           sortBy.map((key, index) => ({

@@ -1,11 +1,75 @@
 import http from "node:http";
-import { dirname } from "node:path";
+import { dirname, relative } from "node:path";
+import { crc32, deflateRawSync } from "node:zlib";
 import { fileURLToPath } from "node:url";
+import buildBackground from "./buildBackground.js";
+import writeSettings from "./settings.js";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
 export default function (app) {
   if (!app.settings.chromextension) return;
+
+  app.file.on("get", 950, async ({ id, url }) => {
+    if (url !== "/files/extension") return;
+
+    await app.event("extensionBuild");
+    const extPath = `${app.__dirname}/files/extension`;
+    const entries = await app.fs.readdir(extPath, { recursive: true, withFileTypes: true });
+    const local = [];
+    const central = [];
+    let offset = 0;
+    for (const entry of entries.filter((entry) => entry.isFile())) {
+      const name = Buffer.from(relative(extPath, `${entry.parentPath}/${entry.name}`).replaceAll("\\", "/"));
+      const contents = await app.fs.readFile(`${entry.parentPath}/${entry.name}`);
+      const data = deflateRawSync(contents);
+      const header = Buffer.alloc(46);
+      header.writeUInt32LE(0x02014b50, 0);
+      header.writeUInt16LE(20, 4);
+      header.writeUInt16LE(20, 6);
+      header.writeUInt16LE(0x0800, 8);
+      header.writeUInt16LE(8, 10);
+      header.writeUInt16LE(0x21, 14);
+      header.writeUInt32LE(crc32(contents), 16);
+      header.writeUInt32LE(data.length, 20);
+      header.writeUInt32LE(contents.length, 24);
+      header.writeUInt16LE(name.length, 28);
+      header.writeUInt32LE(offset, 42);
+      const localHeader = Buffer.concat([Buffer.from([0x50, 0x4b, 0x03, 0x04]), header.subarray(6, 32)]);
+      local.push(localHeader, name, data);
+      central.push(header, name);
+      offset += localHeader.length + name.length + data.length;
+    }
+    const directory = Buffer.concat(central);
+    const end = Buffer.alloc(22);
+    end.writeUInt32LE(0x06054b50, 0);
+    end.writeUInt16LE(central.length / 2, 8);
+    end.writeUInt16LE(central.length / 2, 10);
+    end.writeUInt32LE(directory.length, 12);
+    end.writeUInt32LE(offset, 16);
+
+    await app.file.event("response", {
+      id,
+      data: Buffer.concat([...local, directory, end]),
+      closed: true,
+      headers: {
+        "content-type": "application/zip",
+        "content-disposition": `attachment; filename="${app.settings.client.name.toLowerCase()}-extension.zip"`,
+        "cache-control": "no-store",
+      },
+    });
+    return {};
+  });
+
+  if (!app.settings.debug) {
+    const copyBuild = async () => {
+      await app.fs.emptyDir(`${app.__dirname}/files/extension`);
+      await app.fs.copy(`${app.__dirname}/build/extension`, `${app.__dirname}/files/extension`);
+      await writeSettings(app, `${app.__dirname}/files/extension`, false);
+    };
+    app.on("extensionBuild", copyBuild);
+    return;
+  }
 
   const fetch = (url) =>
     new Promise((resolve, reject) => {
@@ -51,22 +115,22 @@ export default function (app) {
   const jsModulePath = (path) => path.replace(/\.(?:jsx|ts|tsx)$/i, ".js");
   const localPath = (path) => jsModulePath(pathWithSlash(path).split("?")[0]);
 
-  const getImports = (contents) => {
+  const getImports = (contents, fromPath) => {
     const importexp =
-      /(?:import\s+(?:[^"']*?\s+from\s*)?|import\s*\(|export\s+[^"']*?\s+from\s*)["']([^"']+)["']/gim;
+      /(?:import\s*(?:[^"'`;]*?\bfrom\s*)?|import\s*\(\s*|export\s*[^"'`;]*?\bfrom\s*)["'`]([^"'`]+)["'`]/gim;
     let match = importexp.exec(contents);
     const result = [];
     while (match != null) {
       const path = match[1];
-      if (path.startsWith("/") && !path.startsWith("/@")) result.push(path);
+      if ((path.startsWith("/") && !path.startsWith("/@")) || path.startsWith("."))
+        result.push(new URL(path, `${host}${fromPath}`).pathname);
       match = importexp.exec(contents);
     }
     return result;
   };
 
   const getCssImports = (contents) => {
-    const importexp =
-      /^\s*import\s+["']([^"']+\.css(?:\?[^"']*)?)["'];?\s*$/gim;
+    const importexp = /^\s*import\s+["']([^"']+\.css(?:\?[^"']*)?)["'];?\s*$/gim;
     let match = importexp.exec(contents);
     const result = [];
     while (match != null) {
@@ -94,12 +158,8 @@ export default function (app) {
   const copyCssFiles = async (paths) => {
     await Promise.all(
       [...new Set(paths)].map(async (path) => {
-        const served = (
-          await fetch(`${host}${pathWithSlash(path)}`)
-        ).toString();
-        const match = served.match(
-          /const __vite__css = ((?:"(?:\\.|[^"\\])*")|(?:'(?:\\.|[^'\\])*'))/,
-        );
+        const served = (await fetch(`${host}${pathWithSlash(path)}`)).toString();
+        const match = served.match(/const __vite__css = ((?:"(?:\\.|[^"\\])*")|(?:'(?:\\.|[^'\\])*'))/);
         const contents = match ? JSON.parse(match[1]) : served;
         await fs.ensureFile(`${extPath}${path}`);
         await fs.writeFile(`${extPath}${path}`, contents);
@@ -119,20 +179,17 @@ export default function (app) {
         (_, quote, path) => `${quote}${localPath(path)}${quote}`,
       )
       .replace(/^\s*import\s+["'][^"']+\.css(?:\?[^"']*)?["'];?\s*$/gm, "")
-      .replace(
-        /\nimport \* as RefreshRuntime from "\/@react-refresh";[\s\S]*?(?=\n\/\/# sourceMappingURL=|\n$)/gim,
-        "",
-      )
+      .replace(/import \* as RefreshRuntime from "\/@react-refresh";[\s\S]*?(?=\n\/\/# sourceMappingURL=|$)/g, "")
       .replace(
         /\n\s*const currentExports = __vite_react_currentExports;[\s\S]*?(?=\n\/\/# sourceMappingURL=|\n$)/gim,
         "",
       )
+      .replace(/if \(import\.meta\.hot\) import\.meta\.hot\.send\("nystem:component-load", [^\n]*?\);/g, "")
       .replace(/\$RefreshSig\$\(\)/g, "(() => {})")
       .replace(/^\s*\$RefreshReg\$\([^;]+;\s*$/gm, "")
       .replace(
         /^\s*import\s+([\w$]+)\s+from\s+["']([^"']+\.json)(?:\?[^"']*)?["'];?\s*$/gm,
-        (_, name, path) =>
-          `const ${name} = await fetch("${localPath(path)}").then((response) => response.json());`,
+        (_, name, path) => `import ${name} from "${localPath(path)}.js";`,
       );
 
   const copyFiles = async (paths) => {
@@ -148,22 +205,23 @@ export default function (app) {
       const contents = targetPath.endsWith(".json")
         ? await fs.readFile(`${app.__dirname}/web${targetPath}`)
         : await fetch(`${host}${pathWithSlash(path)}`);
-      const moduleContents = targetPath.endsWith(".js")
-        ? Buffer.from(extensionModule(contents.toString()))
-        : contents;
-      files.set(targetPath, moduleContents);
+      const moduleContents =
+        targetPath === "/src/settings.json"
+          ? Buffer.from('export { default } from "/settings.js";\n')
+          : targetPath.endsWith(".js")
+            ? Buffer.from(extensionModule(contents.toString()))
+            : targetPath.endsWith(".json")
+              ? Buffer.from(`export default ${contents.toString()};\n`)
+              : contents;
+      files.set(targetPath.endsWith(".json") ? `${targetPath}.js` : targetPath, moduleContents);
 
       if (targetPath.endsWith(".js")) {
         getCssImports(contents.toString()).forEach((importPath) => {
           cssFiles.add(resolveCssPath(importPath, targetPath));
         });
-        getImports(contents.toString()).forEach((importPath) => {
+        getImports(contents.toString(), targetPath).forEach((importPath) => {
           const targetImportPath = localPath(importPath);
-          if (
-            !targetImportPath.endsWith(".css") &&
-            !files.has(targetImportPath)
-          )
-            pending.push(importPath);
+          if (!targetImportPath.endsWith(".css") && !files.has(targetImportPath)) pending.push(importPath);
         });
       }
     }
@@ -207,9 +265,7 @@ export default function (app) {
 
     await Promise.all(writes);
 
-    const cssLinks = [...cssFiles]
-      .map((path) => `<link rel="stylesheet" href="${path}">`)
-      .join("\n");
+    const cssLinks = [...cssFiles].map((path) => `<link rel="stylesheet" href="${path}">`).join("\n");
 
     if (!cssLinks) return withoutInlineScripts;
     if (withoutInlineScripts.includes("</head>"))
@@ -217,93 +273,22 @@ export default function (app) {
     return `${cssLinks}\n${withoutInlineScripts}`;
   };
 
-  const backgroundScript = (bundle) => `(() => {
-  const noop = () => {};
-  let document = globalThis.document;
-  const makeElement = (tagName = "div") => {
-    const nodeName = tagName.toUpperCase();
-    return {
-      tagName: nodeName,
-      nodeName,
-      nodeType: 1,
-      style: {},
-      children: [],
-      childNodes: [],
-      parentNode: null,
-      ownerDocument: document,
-      textContent: "",
-      appendChild(child) {
-        this.children.push(child);
-        this.childNodes.push(child);
-        child.parentNode = this;
-        return child;
-      },
-      removeChild(child) {
-        this.children = this.children.filter((item) => item !== child);
-        this.childNodes = this.childNodes.filter((item) => item !== child);
-        child.parentNode = null;
-        return child;
-      },
-      setAttribute: noop,
-      removeAttribute: noop,
-      addEventListener: noop,
-      removeEventListener: noop,
-      getContext: () => null,
-    };
-  };
-  document = document || {
-    nodeType: 9,
-    nodeName: "#document",
-    createElement: makeElement,
-    createTextNode: (text) => ({ nodeType: 3, nodeName: "#text", textContent: text, ownerDocument: document }),
-    getElementById: () => null,
-    querySelector: () => null,
-    addEventListener: noop,
-    removeEventListener: noop,
-  };
-  document.defaultView = globalThis;
-  document.body = document.body || makeElement("body");
-  document.documentElement = document.documentElement || makeElement("html");
-  globalThis.window = globalThis.window || {
-    addEventListener: noop,
-    removeEventListener: noop,
-  };
-  globalThis.document = document;
-  const navigator = globalThis.navigator || { platform: "" };
-  const location = globalThis.location || { protocol: "chrome-extension:", host: "", pathname: "/" };
-  globalThis.window.document = document;
-  globalThis.window.navigator = navigator;
-  globalThis.window.location = location;
-})();
-${bundle}
-`;
-
-  const serviceWorkerScript = () => `${backgroundScript("")}
-globalThis.chrome?.runtime?.onInstalled?.addListener?.(() => {});
-`;
-
   const update = async () => {
     console.log("Update extension");
     clearTimeout(timer);
+    await fs.ensureDir(extPath);
+    await writeSettings(app, extPath);
 
     const indexHtml = (await fetch(host)).toString();
-    if (indexHtml.includes("Dev environment starting...")) return "starting";
 
     const includePaths = getIncludes(indexHtml).filter(
       (path) => !path.includes("manifest.json") && !path.startsWith("/@"),
     );
     const { files, cssFiles } = await copyFiles(includePaths);
-    const bundle = [...files.values()].reduce(
-      (result, contents) => `${result}\n${contents}`,
-      "",
-    );
+    const bundle = [...files.values()].reduce((result, contents) => `${result}\n${contents}`, "");
 
-    const features = JSON.parse(
-      await fs.readFile(`${__dirname}/features.json`, "utf-8"),
-    );
-    const entrypoints = features.filter((item) =>
-      ["popup", "background", "content", "devtools"].includes(item),
-    );
+    const features = JSON.parse(await fs.readFile(`${__dirname}/features.json`, "utf-8"));
+    const entrypoints = features.filter((item) => ["popup", "background", "content", "devtools"].includes(item));
 
     await Promise.all(
       entrypoints.map(async (filename) => {
@@ -314,54 +299,45 @@ globalThis.chrome?.runtime?.onInstalled?.addListener?.(() => {});
         }
 
         if (["background"].includes(filename)) {
+          const background = app.settings.debug
+            ? await buildBackground(`${app.__dirname}/web`)
+            : await fs.readFile(`${app.__dirname}/build/extension/background.js`, "utf8");
           await fs.writeFile(
-            `${extPath}/${filename}.js`,
-            serviceWorkerScript(),
+            `${extPath}/background.js`,
+            `import __EXTENSION_CLIENT_SETTINGS__ from "./settings.js";\n${background}`,
           );
           return;
         }
 
         if (["devtools"].includes(filename)) {
+          const { script = "" } = await app.event("extensionDevtools");
           await fs.writeFile(
             `${extPath}/devtoolsinit.js`,
-            `chrome.devtools.panels.create("${name}","icon/32.png","devtools.html", (panel)=>{});`,
+            `chrome.devtools.panels.create("${name}","icon/32.png","devtools.html", (panel)=>{});\n${script}`,
           );
-          await fs.writeFile(
-            `${extPath}/devtoolsinit.html`,
-            `<script src="devtoolsinit.js"></script>`,
-          );
+          await fs.writeFile(`${extPath}/devtoolsinit.html`, `<script src="devtoolsinit.js"></script>`);
         }
 
-        await fs.writeFile(
-          `${extPath}/${filename}.html`,
-          await extensionPageHtml(indexHtml, filename, cssFiles),
-        );
+        await fs.writeFile(`${extPath}/${filename}.html`, await extensionPageHtml(indexHtml, filename, cssFiles));
       }),
     );
-
-    return "updated";
   };
 
   const compileAndCopy = async () => {
-    const status = await update();
-    if (status !== "updated") {
-      setTimeout(compileAndCopy, status === "starting" ? 10000 : 5000);
-      return;
-    }
+    await fs.emptyDir(extPath);
+    await update();
     const manifest = await app.require("./manifest", true);
     await manifest(app);
-    [16, 24, 32, 48, 128, 512].forEach((size) => {
-      fetch(`${host}/icon/${size}.png`).then((buffer) => {
-        fs.outputFile(`${extPath}/icon/${size}.png`, buffer);
-      });
-    });
+    await Promise.all(
+      [16, 24, 32, 48, 128, 512].map(async (size) => {
+        await fs.outputFile(`${extPath}/icon/${size}.png`, await fetch(`${host}/icon/${size}.png`));
+      }),
+    );
   };
 
-  app.on("start", () => {
-    setTimeout(compileAndCopy, 1000);
-  });
+  app.on("extensionBuild", compileAndCopy);
 
-  if (app.settings.debug)
+  if (app.settings.debug === "hhhå")
     app.on("debugModeFileChange", (event) => {
       const parts = event.path.split("/");
       if (!["component", "style", "contentType"].includes(parts[3])) return;

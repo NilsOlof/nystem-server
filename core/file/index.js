@@ -131,6 +131,13 @@ export default async (app) => {
     });
   });
 
+  const streams = new Map();
+  app.file.on("response", 50, ({ id, abort, close }) => {
+    if (!abort && !close) return;
+    streams.get(id)?.destroy();
+    streams.delete(id);
+  });
+
   app.file.on("pipeFile", ({ fullPath, id, secure, type, error }) => {
     if (!fullPath || error) {
       app.file.event("response", {
@@ -153,15 +160,20 @@ export default async (app) => {
     });
 
     const fileStream = fs.createReadStream(fullPath);
+    streams.set(id, fileStream);
     fileStream.on("error", (err) => {
       console.log(err);
+      if (streams.delete(id)) app.file.event("response", { id, abort: true });
     });
 
-    fileStream.on("data", (data) => {
-      app.file.event("response", { id, data });
+    fileStream.on("data", async (data) => {
+      fileStream.pause();
+      const { drain } = await app.file.event("response", { id, data });
+      await drain;
+      fileStream.resume();
     });
     fileStream.on("end", () => {
-      app.file.event("response", { id, closed: true });
+      if (streams.delete(id)) app.file.event("response", { id, closed: true });
     });
   });
 };

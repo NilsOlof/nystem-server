@@ -126,8 +126,8 @@ export default async (app) => {
       }
     };
 
-    let data =
-      load(`${path}0.json`) || load(`${path}1.json`) || load(`${path}.json`);
+    resave = false;
+    let data = load(`${path}0.json`) || load(`${path}1.json`) || load(`${path}.json`);
 
     if (!data) {
       console.log(`ev load ${path} deFaultVal`);
