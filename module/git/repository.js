@@ -87,9 +87,22 @@ export const status = async (cwd) => {
     const path = entries[i].slice(3);
     const original = /[RC]/.test(code) ? entries[++i] : undefined;
     const conflict = code.includes("U") || ["AA", "DD"].includes(code);
-    if (code[0] !== " " && code !== "??") files.push({ path, original, side: "staged", code: code[0], conflict });
+    if (code[0] !== " " && code !== "??")
+      files.push({
+        path,
+        original: /[RC]/.test(code[0]) ? original : undefined,
+        side: "staged",
+        code: code[0],
+        conflict,
+      });
     if (code[1] !== " " || code === "??")
-      files.push({ path, original, side: "unstaged", code: code === "??" ? "?" : code[1], conflict });
+      files.push({
+        path,
+        original: /[RC]/.test(code[1]) ? original : undefined,
+        side: "unstaged",
+        code: code === "??" ? "?" : code[1],
+        conflict,
+      });
   }
   return files.sort((a, b) => a.path.localeCompare(b.path));
 };

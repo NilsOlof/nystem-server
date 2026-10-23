@@ -7,6 +7,7 @@ export default (app) => {
   const { connection } = app;
   let socket;
   let lastMessage;
+  let probe;
   connection.state = () => ({
     readyState: socket?.readyState,
     reconnect: timer === -1 ? "opening" : timer ? "scheduled" : "idle",
@@ -20,7 +21,7 @@ export default (app) => {
     new Promise((resolve) => {
       if (!data.noCallback) {
         data.callbackClient = app.uuid();
-        callbacks[data.callbackClient] = resolve;
+        callbacks[data.callbackClient] = { resolve, type: data.type };
       } else resolve();
 
       callback(new Array(JSON.stringify(data)));
@@ -31,13 +32,14 @@ export default (app) => {
     lastMessage = Date.now();
     message = res + message;
     res = "";
+    if (message === "{}") return;
 
     try {
       const data = JSON.parse(message);
 
       if (callbacks[data.callbackClient]) {
         try {
-          callbacks[data.callbackClient](data);
+          callbacks[data.callbackClient].resolve(data);
         } catch (e) {
           console.log("err", callbacks[data.callbackClient], e);
         }
@@ -53,6 +55,7 @@ export default (app) => {
     if (socket && socket.readyState < 2) return;
     timer = -1;
     let connectionCheck = false;
+    let stableTimer;
     let closed = false;
     const sendSocket = emitSocket((message) => webSocket.send(message));
 
@@ -69,11 +72,19 @@ export default (app) => {
       if (closed) return;
       closed = true;
       clearTimeout(openingTimeout);
+      clearTimeout(stableTimer);
       clearInterval(connectionCheck);
-      if (connectionCheck) connection.off("emit", sendSocket);
-      if (timer === -1) timer = false;
       webSocket.close();
-      connection.event("connection", { error, connected: false });
+      if (timer === -1) timer = false;
+      if (!timer) setOpenTimer(0, Math.min(60, delay * 2 || add));
+      if (connectionCheck) {
+        connection.off("emit", sendSocket);
+        Object.entries(callbacks).forEach(([callbackClient, { resolve, type }]) => {
+          delete callbacks[callbackClient];
+          resolve({ type, error: "Connection lost", offline: true });
+        });
+        connection.event("connection", { error, connected: false });
+      }
       if (error) connection.event("error", { error });
     };
 
@@ -93,10 +104,38 @@ export default (app) => {
       clearTimeout(timer);
       app.event("clientLog", { message: "Socket open" });
       timer = false;
+      stableTimer = setTimeout(() => (delay = 0), 30000);
+      lastMessage = Date.now();
       connection.on("emit", sendSocket);
 
       connection.event("connection", { connected: true });
-      connectionCheck = setInterval(() => webSocket.send("{}"), 15000);
+      let pingSent = 0;
+      let buffered = 0;
+      connectionCheck = setInterval(() => {
+        if (lastMessage < pingSent) {
+          if (Date.now() - pingSent < 30000 || webSocket.bufferedAmount < buffered) {
+            buffered = webSocket.bufferedAmount;
+            return;
+          }
+          app.event("clientLog", { message: "Socket heartbeat timed out" });
+          webSocket.onerror(new Error("Socket heartbeat timed out"));
+          return;
+        }
+        pingSent = Date.now();
+        buffered = webSocket.bufferedAmount;
+        webSocket.send("{}");
+      }, 15000);
+
+      probe = () => {
+        const sent = Date.now();
+        const probeBuffered = webSocket.bufferedAmount;
+        webSocket.send("{}");
+        setTimeout(() => {
+          if (lastMessage >= sent || webSocket.bufferedAmount < probeBuffered) return;
+          app.event("clientLog", { message: "Socket probe timed out" });
+          webSocket.onerror(new Error("Socket probe timed out"));
+        }, 3000);
+      };
     };
 
     webSocket.onmessage = (message) => {
@@ -110,24 +149,32 @@ export default (app) => {
   const add = app.settings.debug ? 1 : 3;
 
   const setOpenTimer = (e, setDelay = 0) => {
-    if (connection.connected || document.visibilityState !== "visible") return;
-    if (timer === -1) return;
+    if (socket?.readyState === WebSocket.OPEN || document.visibilityState !== "visible") return;
+    if (timer === -1) return app.event("clientLog", { message: "Reconnect skipped, socket still opening" });
 
     delay = setDelay;
+    const wait = delay ? 500 * delay * (1 + Math.random()) : 300;
+    app.event("clientLog", { message: `Reconnect in ${Math.round(wait / 100) / 10}s` });
     clearTimeout(timer);
-    timer = setTimeout(openconnection, 1000 * delay || 300);
+    timer = setTimeout(openconnection, wait);
   };
 
-  document.addEventListener("visibilitychange", setOpenTimer);
-  window.addEventListener("focus", setOpenTimer);
+  const wake = (e) => {
+    if (document.visibilityState !== "visible") return;
+    if (socket?.readyState === WebSocket.OPEN) probe();
+    else setOpenTimer(e);
+  };
 
-  connection.on("connection", ({ connected, fallback }) => {
-    if (fallback) return;
-    if (connected === true && delay !== 0) delay = 0;
-    if (connected !== false || timer) return;
+  document.addEventListener("visibilitychange", wake);
+  ["focus", "pageshow", "online", "offline"].forEach((event) => window.addEventListener(event, wake));
 
-    setOpenTimer(0, delay > 50 ? delay : delay + add);
+  let networkType = navigator.connection?.type;
+  navigator.connection?.addEventListener("change", (e) => {
+    if (navigator.connection.type === networkType) return;
+    networkType = navigator.connection.type;
+    wake(e);
   });
+
   openconnection();
 
   connection.connected = false;

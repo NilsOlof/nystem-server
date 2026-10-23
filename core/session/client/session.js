@@ -3,9 +3,7 @@ export default (app) => {
   const { session } = app;
 
   const goto = (path, push) =>
-    push
-      ? window.history.pushState({}, "", path)
-      : window.history.replaceState({}, "", path);
+    push ? window.history.pushState({}, "", path) : window.history.replaceState({}, "", path);
 
   app.on("init", -1, async () => {
     function loginEvent(user) {
@@ -16,36 +14,24 @@ export default (app) => {
         // eslint-disable-next-line no-empty
       } catch (e) {}
       session.user = user;
-      if (typeof session.user.role === "string")
-        session.user.role = [session.user.role];
+      if (typeof session.user.role === "string") session.user.role = [session.user.role];
       app.event("login", user);
     }
 
-    session.on("login", ({ sessionid, ...data }) =>
-      app.connection.emit({
-        type: "login",
-        sessionid,
-        data,
-      }),
-    );
+    session.on("login", ({ sessionid, ...data }) => app.connection.emit({ type: "login", sessionid, data }));
 
-    app.connection.on(
-      ["emit", "login"],
-      -10,
-      async ({ type, user, error, redirectURL, sessionid }) => {
-        if (type !== "login") return;
+    app.connection.on(["emit", "login"], -10, async ({ type, user, error, redirectURL, sessionid, offline }) => {
+      if (type !== "login" || offline) return;
 
-        if (user) {
-          if (!error) {
-            if (redirectURL) goto(redirectURL, true);
-            loginEvent(user);
-          }
-        } else if (session.user && sessionid === session.user?.sessionid)
-          session.logout();
+      if (user) {
+        if (!error) {
+          if (redirectURL) goto(redirectURL, true);
+          loginEvent(user);
+        }
+      } else if (session.user && sessionid === session.user?.sessionid) session.logout();
 
-        return { type, user, error };
-      },
-    );
+      return { type, user, error };
+    });
 
     const reload = ({ key, id }) => {
       if ((key || id) !== `session`) return;
@@ -74,8 +60,8 @@ export default (app) => {
     if (userStore) {
       if (app.connection.connected) await session.login(userStore);
 
-      app.connection.on("connection", ({ connected }) => {
-        if (connected && session.user) session.login(session.user);
+      app.connection.on("connection", 50, async ({ connected }) => {
+        if (connected && session.user) await session.login(session.user);
       });
     }
   });
