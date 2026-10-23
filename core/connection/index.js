@@ -301,7 +301,7 @@ export default async (app) => {
         parseWebSocketFrames(
           connectionState,
           async (output) => {
-            if (output === "{}") return;
+            if (output === "{}") return sendWebSocketFrame(socket, "{}", 0x1);
 
             let query;
             try {

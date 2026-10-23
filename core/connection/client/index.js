@@ -199,21 +199,6 @@ export default (app) => {
 
   if (app.settings.waitOnConnect) app.on("loaded", 1000, () => connection.event("connection", { wait: true }));
 
-  if (app.settings.debug) {
-    let state = "notconnected";
-    let reloadPending = false;
-    connection.on("connection", ({ connected, fallback }) => {
-      if (fallback) return;
-
-      if (state === "disconnected" && connected && !reloadPending) {
-        reloadPending = true;
-        setTimeout(() => window.location.reload(), 0);
-      }
-      if (connected) state = "connected";
-      else if (state === "connected") state = "disconnected";
-    });
-  }
-
   httpsfallback(app);
   devtools(app);
 
