@@ -18,9 +18,14 @@ export default (app) => {
       app.event("login", user);
     }
 
-    session.on("login", ({ sessionid, ...data }) => app.connection.emit({ type: "login", sessionid, data }));
+    session.on("login", async ({ sessionid, ...data }) => {
+      const query = { type: "login", sessionid, data };
+      const response = await app.connection.emit(query);
+      if (response === query) return { type: "login", error: "Connection lost", offline: true };
+      return app.connection.event("login", response);
+    });
 
-    app.connection.on(["emit", "login"], -10, async ({ type, user, error, redirectURL, sessionid, offline }) => {
+    app.connection.on("login", -10, async ({ type, user, error, redirectURL, sessionid, offline }) => {
       if (type !== "login" || offline) return;
 
       if (user) {
@@ -28,7 +33,7 @@ export default (app) => {
           if (redirectURL) goto(redirectURL, true);
           loginEvent(user);
         }
-      } else if (session.user && sessionid === session.user?.sessionid) session.logout();
+      } else if (!error && session.user && sessionid === session.user.sessionid) session.logout();
 
       return { type, user, error };
     });
@@ -57,12 +62,10 @@ export default (app) => {
     const { value: userStore } = await app.storage.getItem({ id: `session` });
     session.user = userStore;
 
-    if (userStore) {
-      if (app.connection.connected) await session.login(userStore);
+    app.connection.on("connection", 50, async ({ connected }) => {
+      if (connected && session.user) await session.login(session.user);
+    });
 
-      app.connection.on("connection", 50, async ({ connected }) => {
-        if (connected && session.user) await session.login(session.user);
-      });
-    }
+    if (app.connection.connected && session.user) await session.login(session.user);
   });
 };
