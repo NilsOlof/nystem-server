@@ -60,6 +60,8 @@ const DevtoolsAssistant = ({ model }) => {
       });
       if (replyOrigin !== site) return reply(requestId, { error: error || "The reply came from another site" });
       if (readers[requester] !== grant) return reply(requestId, { error: "Assistant reads were stopped" });
+      if (new Blob([JSON.stringify(data) || ""]).size > 5 * 1024 * 1024)
+        return reply(requestId, { error: "The result is larger than 5 MB; narrow the query" });
 
       const rows = Array.isArray(data) ? data.length : Number(Boolean(data));
       reads = [{ requestId, login, action, contentType, query, rows, error }, ...reads].slice(0, 20);

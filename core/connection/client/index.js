@@ -105,10 +105,7 @@ export default (app) => {
       clearTimeout(timer);
       app.event("clientLog", { message: "Socket open" });
       timer = false;
-      stableTimer = setTimeout(() => {
-        delay = 0;
-        failedOpens = 0;
-      }, 30000);
+      stableTimer = setTimeout(() => (delay = 0), 30000);
       lastMessage = Date.now();
       connection.on("emit", sendSocket);
 
@@ -143,7 +140,9 @@ export default (app) => {
     };
 
     webSocket.onmessage = (message) => {
-      if (!closed) receiveSocket(message.data);
+      if (closed) return;
+      failedOpens = 0;
+      receiveSocket(message.data);
     };
   };
 

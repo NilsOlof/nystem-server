@@ -2,6 +2,7 @@ import { randomBytes } from "node:crypto";
 
 const cookieName = "requesttoken";
 const maxIdle = 1000 * 60 * 60 * 24;
+const maxTokens = 10000;
 
 export default (app) => {
   app.on("start", (app) => {
@@ -81,8 +82,14 @@ export default (app) => {
       }
 
       const headers = {};
-      let { token } = req;
+      let token = tokens[req.token] && req.token;
       if ((req.body === "{}" || ["login", "receive"].includes(event?.type)) && !token) {
+        const active = Object.keys(tokens);
+        if (active.length >= maxTokens) {
+          const oldest = active.reduce((a, b) => (tokens[a].used <= tokens[b].used ? a : b));
+          delete queues[tokens[oldest].requestId];
+          delete tokens[oldest];
+        }
         token = randomBytes(32).toString("hex");
         tokens[token] = { requestId: id };
         queues[id] = { messages: [] };

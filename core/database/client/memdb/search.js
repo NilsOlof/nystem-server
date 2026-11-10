@@ -148,7 +148,7 @@ export default (app) => {
               value = value.substring(1);
             }
 
-            if (exact) oneSearchValue.push(createRegExp(`^${value}$`));
+            if (exact) oneSearchValue.push(createRegExp(value, undefined, true));
             else if (value instanceof Array) {
               oneSearchValue.push(createRegExp(value.join("|")));
             } else if (!value) oneSearchValue.push("false");
@@ -168,9 +168,15 @@ export default (app) => {
       return { searchField, searchValue, searchInvert };
     }
 
-    function createRegExp(expression, id) {
+    function createRegExp(expression, id, exact) {
       if (fieldByType[id] === "boolean") return expression;
-      return new RegExp(expression.toString().replace(/\*/g, "\\*"), "i");
+      const text = expression.toString();
+      const anchor = (pattern) => (exact ? `^${pattern}$` : pattern);
+      try {
+        return new RegExp(anchor(text.replace(/\*/g, "\\*")), "i");
+      } catch {
+        return new RegExp(anchor(text.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")), "i");
+      }
     }
 
     function search(query) {
