@@ -409,7 +409,7 @@ export default async (app) => {
 
   app.connection.on("emit", (data) => {
     if (clients[data.id]) clients[data.id].emit(data);
-    else return { ...data, missing: true };
+    else if (data.missing !== false) return { ...data, missing: true };
   });
 
   app.connection.on("broadcast", (data) => {

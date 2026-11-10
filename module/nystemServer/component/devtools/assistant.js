@@ -50,7 +50,13 @@ const DevtoolsAssistant = ({ model }) => {
         contentType,
         ...(action === "get"
           ? { id }
-          : { filter, sortby, reverse, count: Math.min(Math.max(count, 1) || 20, 100), position }),
+          : {
+              filter,
+              sortby,
+              reverse,
+              count: Math.min(Math.max(count, 1) || 20, 100),
+              position: Math.max(Number(position), 0) || 0,
+            }),
       });
       if (replyOrigin !== site) return reply(requestId, { error: error || "The reply came from another site" });
       if (readers[requester] !== grant) return reply(requestId, { error: "Assistant reads were stopped" });

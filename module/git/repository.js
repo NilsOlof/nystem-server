@@ -73,6 +73,8 @@ export const locked = async (cwd) =>
 export const unlock = async (cwd) => {
   const lock = await indexLock(cwd);
   const { ino, mtimeMs } = await lstat(lock);
+  const sameLock = (info) => info.ino === ino && info.mtimeMs === mtimeMs;
+  const changed = new Error("Another Git command took the index lock; it was left in place");
   const running = await execute("pgrep", ["-x", "git"]).then(
     () => true,
     (error) => {
@@ -81,13 +83,13 @@ export const unlock = async (cwd) => {
     },
   );
   if (running) throw new Error("A Git command is still running; wait for it to finish");
+  if (!sameLock(await lstat(lock))) throw changed;
   const stale = `${lock}.${randomUUID()}.stale`;
   await rename(lock, stale);
-  const moved = await lstat(stale);
-  if (moved.ino !== ino || moved.mtimeMs !== mtimeMs) {
+  if (!sameLock(await lstat(stale))) {
     await link(stale, lock);
     await rm(stale);
-    throw new Error("Another Git command took the index lock; it was left in place");
+    throw changed;
   }
   await rm(stale);
 };

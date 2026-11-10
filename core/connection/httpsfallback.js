@@ -37,7 +37,8 @@ export default (app) => {
 
     app.connection.on("emit", (data) => {
       const queue = queues[data.id];
-      if (!queue || Date.now() - queue.received > 60000) return;
+      if (!queue?.received || Date.now() - queue.received > 60000) return;
+      if (queue.messages.length >= 1000) queue.messages.shift();
       queue.messages.push(data);
       queue.wake?.();
       return { ...data, missing: false };
@@ -72,11 +73,6 @@ export default (app) => {
       if (!closed) return;
       delete reqs[id];
 
-      if (req.body === "{}") {
-        app.file.event("response", { id, data: "{}", closed: true });
-        return;
-      }
-
       let event;
       try {
         event = JSON.parse(req.body);
@@ -86,7 +82,7 @@ export default (app) => {
 
       const headers = {};
       let { token } = req;
-      if (["login", "receive"].includes(event?.type) && !token) {
+      if ((req.body === "{}" || ["login", "receive"].includes(event?.type)) && !token) {
         token = randomBytes(32).toString("hex");
         tokens[token] = { requestId: id };
         queues[id] = { messages: [] };
@@ -94,6 +90,11 @@ export default (app) => {
         headers["Set-Cookie"] = `${cookieName}=${token}; Path=/; HttpOnly; SameSite=Strict${secure ? "; Secure" : ""}`;
       }
       if (token) tokens[token].used = Date.now();
+
+      if (req.body === "{}") {
+        app.file.event("response", { id, headers, data: "{}", closed: true });
+        return;
+      }
 
       if (event?.type === "receive") {
         const queue = queues[tokens[token].requestId];
