@@ -366,14 +366,9 @@ const start = async (app) => {
     return query;
   });
 
-  app.connection.on("serverCommit", async (query) => {
-    await app.session.add(query);
-    if (query.session?.role !== role || !query.serverId || operations.has(query.serverId)) return query;
-
-    const id = query.serverId;
+  const commit = async (id) => {
     const publish = (line, running) => publishTask(id, `${line}\n`, running, "Commit");
 
-    operations.set(id, true);
     let directory;
     let committed = false;
     let pushing = false;
@@ -455,6 +450,7 @@ const start = async (app) => {
             `Codex returned an invalid commit message${codex.stderr ? `: ${codex.stderr.slice(-500)}` : ""}`,
           );
       } catch (error) {
+        console.error("nystemServer: Codex commit message generation failed", error);
         await publish(
           `Codex failed: ${error.stderr?.trim().split("\n").pop() || error.message}\nAsking Claude Haiku to write the commit message...`,
           true,
@@ -511,6 +507,7 @@ const start = async (app) => {
       if (push.stderr.trim()) await publish(push.stderr.trimEnd(), true);
       await publish("Push complete", false);
     } catch (error) {
+      console.error("nystemServer: Commit task failed", error);
       if (error.stdout?.trim()) await publish(error.stdout.trimEnd(), true);
       if (error.stderr?.trim()) await publish(error.stderr.trimEnd(), true);
       if (pushing) {
@@ -523,6 +520,78 @@ const start = async (app) => {
       if (directory) await rm(directory, { recursive: true, force: true });
       operations.delete(id);
     }
+  };
+
+  app.connection.on("serverCommit", async (query) => {
+    await app.session.add(query);
+    if (query.session?.role !== role || !query.serverId || operations.has(query.serverId)) return query;
+
+    operations.set(query.serverId, true);
+    commit(query.serverId);
+    return query;
+  });
+
+  const devtoolsPanels = new Map();
+  const devtoolsReads = new Map();
+
+  app.connection.on("devtoolsAssistantPanel", async (query) => {
+    await app.session.add(query);
+    if (query.session?.role !== role) return query;
+    if (query.origin) devtoolsPanels.set(query.id, query.origin);
+    else devtoolsPanels.delete(query.id);
+    return query;
+  });
+
+  app.connection.on("disconnect", (id) => {
+    devtoolsPanels.delete(id);
+    devtoolsReads.forEach((read) => {
+      if (read.panel === id) read.resolve({ error: "The DevTools panel was closed" });
+    });
+  });
+
+  app.connection.on("devtoolsAssistantRead", async (query) => {
+    await app.session.add(query);
+    const { data: user } =
+      query.session?.role === role
+        ? await app.database[query.session.contentType].get({ id: query.session._id, role })
+        : {};
+    if (!user) return { ...query, error: "A super account is required" };
+
+    const site = URL.parse(query.site)?.origin;
+    const requestId = app.uuid();
+    let panel;
+    for (const [id, origin] of devtoolsPanels)
+      if (!panel && origin === site) {
+        const { missing } = await app.connection.emit({
+          type: "devtoolsAssistantRead",
+          id,
+          requestId,
+          requester: query.id,
+          login: user.login,
+          site,
+          action: query.action,
+          contentType: query.contentType,
+          query: query.query,
+        });
+        if (missing) devtoolsPanels.delete(id);
+        else panel = id;
+      }
+    if (!panel) return { ...query, error: `Open the Nystem server DevTools panel on ${query.site}` };
+
+    const result = await new Promise((resolve) => {
+      devtoolsReads.set(requestId, { panel, resolve });
+      setTimeout(() => resolve({ error: "No answer from the DevTools panel" }), 3 * 60 * 1000);
+    });
+    devtoolsReads.delete(requestId);
+    if (result.error) console.error("nystemServer: Assistant read failed", site, query.contentType, result.error);
+    return { ...query, ...result };
+  });
+
+  app.connection.on("devtoolsAssistantResult", (query) => {
+    const read = devtoolsReads.get(query.requestId);
+    if (read?.panel !== query.id) return query;
+    const { data, total, searchTotal, error } = query;
+    read.resolve({ data, total, searchTotal, error });
     return query;
   });
 

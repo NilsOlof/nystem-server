@@ -1,8 +1,8 @@
 import { execFile } from "node:child_process";
 import { promisify } from "node:util";
 import { createHash, randomUUID } from "node:crypto";
-import { readFile, lstat, readlink, realpath, writeFile, rename, rm } from "node:fs/promises";
-import { join, relative, sep, isAbsolute } from "node:path";
+import { readFile, link, lstat, readlink, realpath, writeFile, rename, rm } from "node:fs/promises";
+import { join, relative, resolve, sep, isAbsolute } from "node:path";
 
 const execute = promisify(execFile);
 export const editFile = async (app, cwd, file, query) => {
@@ -60,6 +60,36 @@ export const git = async (cwd, args, input) => {
   });
   process.child.stdin.end(input);
   return (await process).stdout;
+};
+const indexLock = async (cwd) => resolve(cwd, (await git(cwd, ["rev-parse", "--git-path", "index.lock"])).trim());
+export const locked = async (cwd) =>
+  lstat(await indexLock(cwd)).then(
+    () => true,
+    (error) => {
+      if (error.code === "ENOENT") return false;
+      throw error;
+    },
+  );
+export const unlock = async (cwd) => {
+  const lock = await indexLock(cwd);
+  const { ino, mtimeMs } = await lstat(lock);
+  const running = await execute("pgrep", ["-x", "git"]).then(
+    () => true,
+    (error) => {
+      if (error.code === 1) return false;
+      throw error;
+    },
+  );
+  if (running) throw new Error("A Git command is still running; wait for it to finish");
+  const stale = `${lock}.${randomUUID()}.stale`;
+  await rename(lock, stale);
+  const moved = await lstat(stale);
+  if (moved.ino !== ino || moved.mtimeMs !== mtimeMs) {
+    await link(stale, lock);
+    await rm(stale);
+    throw new Error("Another Git command took the index lock; it was left in place");
+  }
+  await rm(stale);
 };
 export const history = async (cwd) =>
   (await git(cwd, ["log", "--all", "--topo-order", "--max-count=200", "--format=%H%x00%P%x00%D%x00%s%x00%an%x00%at"]))

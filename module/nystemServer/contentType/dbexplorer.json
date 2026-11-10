@@ -23,6 +23,11 @@
           ],
           "item": [
             {
+              "type": "devtools",
+              "format": "assistant",
+              "className": ["mb-3", "p-2", "rounded", "border", "border-gray-700", "text-sm"]
+            },
+            {
               "type": "database",
               "format": "search",
               "count": 20,

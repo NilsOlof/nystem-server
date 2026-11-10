@@ -85,7 +85,8 @@ export default (app) => {
         });
         connection.event("connection", { error, connected: false });
       }
-      if (error) connection.event("error", { error });
+      failedOpens++;
+      if (failedOpens >= 3) connection.event("error", { error });
     };
 
     webSocket.onerror = (error) => {
@@ -104,7 +105,10 @@ export default (app) => {
       clearTimeout(timer);
       app.event("clientLog", { message: "Socket open" });
       timer = false;
-      stableTimer = setTimeout(() => (delay = 0), 30000);
+      stableTimer = setTimeout(() => {
+        delay = 0;
+        failedOpens = 0;
+      }, 30000);
       lastMessage = Date.now();
       connection.on("emit", sendSocket);
 
@@ -146,6 +150,7 @@ export default (app) => {
   const url = `ws${app.settings.secure ? "s" : ""}://${app.settings.domain}`;
   let delay = 0;
   let timer;
+  let failedOpens = 0;
   const add = app.settings.debug ? 1 : 3;
 
   const setOpenTimer = (e, setDelay = 0) => {

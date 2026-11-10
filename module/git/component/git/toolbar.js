@@ -2,8 +2,20 @@ import React, { useContext, useEffect, useState } from "react";
 import { Button, ContentTypeRender, Input, Wrapper, Icon } from "nystem-components";
 import { GitContext } from "../../client/context";
 const GitToolbar = ({ model, path }) => {
-  const { search, setSearch, busy, edit, error, branch, branches, switchBranch, openHistory, historyOpen } =
-    useContext(GitContext);
+  const {
+    search,
+    setSearch,
+    busy,
+    edit,
+    error,
+    branch,
+    branches,
+    switchBranch,
+    openHistory,
+    historyOpen,
+    locked,
+    removeLock,
+  } = useContext(GitContext);
   const [loading, setLoading] = useState(false);
   useEffect(() => {
     if (!busy) {
@@ -48,6 +60,17 @@ const GitToolbar = ({ model, path }) => {
       >
         <Icon title={false} aria-hidden="true" icon="code-branch" className={["h-4", "w-4"]} />
       </Button>
+      {locked && (
+        <Button
+          size="xs"
+          type="warning"
+          title="Git left index.lock behind. Removes it when no Git command is running."
+          aria-disabled={busy}
+          onClick={removeLock}
+        >
+          Remove stale lock
+        </Button>
+      )}
       <div className="flex-grow">
         <ContentTypeRender path={path} items={model.actions || []} />
       </div>

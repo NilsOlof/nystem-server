@@ -20,7 +20,7 @@ const DevtoolsView = () => {
         return;
       }
 
-      callbacks[message.devtoolsId](message);
+      callbacks[message.devtoolsId]({ ...message, origin: sender.origin });
       delete callbacks[message.devtoolsId];
     };
 
@@ -36,7 +36,7 @@ const DevtoolsView = () => {
         setTimeout(() => {
           if (!callbacks[query.devtoolsId]) return;
 
-          callbacks[query.devtoolsId](query);
+          callbacks[query.devtoolsId]({ ...query, error: "timeout" });
           delete callbacks[query.devtoolsId];
         }, 4000);
 

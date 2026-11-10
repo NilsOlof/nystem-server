@@ -31,7 +31,11 @@ export default (app) => {
   };
 
   app.connection.on("connection", 60, ({ connected, fallback }) => {
-    if (!connected || fallback) return;
+    if (fallback) return;
+    if (!connected) {
+      if (state === "connected") state = "notconnected";
+      return;
+    }
 
     if (state === "fallback") app.connection.off("emit", onEmit);
     state = "connected";

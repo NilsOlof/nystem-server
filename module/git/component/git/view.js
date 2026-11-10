@@ -27,6 +27,7 @@ const GitView = ({ model, view, path }) => {
   const [search, setSearch] = useState("");
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
+  const [locked, setLocked] = useState(false);
   const [refreshPending, setRefreshPending] = useState(false);
   const activity = useRef(0);
   const requests = useRef(Promise.resolve());
@@ -79,7 +80,8 @@ const GitView = ({ model, view, path }) => {
     setBusy(true);
     setError("");
     try {
-      const { files, branch, branches } = await request({ action: "status" });
+      const { files, branch, branches, locked } = await request({ action: "status" });
+      setLocked(locked);
       setFiles(files);
       setBranch(branch);
       setBranches(branches || []);
@@ -201,9 +203,25 @@ const GitView = ({ model, view, path }) => {
       setPreview(null);
       setBranch(response.branch);
       setBranches(response.branches);
+      setLocked(response.locked);
       setFiles(response.files);
       setSelected(response.files[0] || null);
       if (historyOpen) setHistory((await request({ action: "history" })).commits);
+    } catch (error) {
+      setError(error.message);
+    } finally {
+      finish();
+    }
+  };
+  const removeLock = async () => {
+    if (activity.current) return;
+    activity.current++;
+    setBusy(true);
+    setError("");
+    try {
+      const response = await request({ action: "unlock" });
+      setLocked(response.locked);
+      setFiles(response.files);
     } catch (error) {
       setError(error.message);
     } finally {
@@ -308,6 +326,8 @@ const GitView = ({ model, view, path }) => {
         branch,
         branches,
         switchBranch,
+        locked,
+        removeLock,
         selected,
         setSelected: (selected) => {
           if (!edit) setSelected(selected);

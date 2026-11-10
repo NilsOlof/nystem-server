@@ -1,6 +1,6 @@
 import { realpath, unlink } from "node:fs/promises";
 import { dirname, join } from "node:path";
-import { git, status, diff, editFile, history, historyCommit } from "./repository.js";
+import { git, status, diff, editFile, history, historyCommit, locked, unlock } from "./repository.js";
 import watch from "./watch.js";
 
 export default (app) => {
@@ -58,8 +58,9 @@ export default (app) => {
             delete reply.value;
             return reply;
           }
+          if (query.action === "unlock") await unlock(cwd);
           const files = await status(cwd);
-          if (["status", "switch"].includes(query.action)) {
+          if (["status", "switch", "unlock"].includes(query.action)) {
             reply.branches = (await git(cwd, ["for-each-ref", "--format=%(refname:short)", "refs/heads"]))
               .trim()
               .split("\n")
@@ -71,6 +72,7 @@ export default (app) => {
             }
             reply.branch = (await git(cwd, ["branch", "--show-current"])).trim();
             reply.files = query.action === "switch" ? await status(cwd) : files;
+            reply.locked = await locked(cwd);
           } else {
             const requested = ["diff", "read", "save"].includes(query.action)
               ? [{ path: query.path, side: query.side }]
