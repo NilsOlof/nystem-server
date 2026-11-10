@@ -30,6 +30,28 @@ export default (app) => {
     }
   };
 
+  const receive = async () => {
+    while (state === "fallback") {
+      try {
+        const response = await fetch(url, {
+          method: "post",
+          credentials: "include",
+          body: JSON.stringify({ type: "receive" }),
+          signal: AbortSignal.timeout(35000),
+        });
+        const { messages = [] } = await response.json();
+        for (const message of messages) app.connection.event(message.type, message);
+      } catch (error) {
+        app.event("clientLog", { message: "Fallback receive failed", error: error.message });
+        if (state !== "fallback") return;
+        state = "notconnected";
+        app.connection.off("emit", onEmit);
+        app.connection.event("connection", { connected: false, fallback: true });
+        return;
+      }
+    }
+  };
+
   app.connection.on("connection", 60, ({ connected, fallback }) => {
     if (fallback) return;
     if (!connected) {
@@ -64,5 +86,6 @@ export default (app) => {
     state = "fallback";
     app.connection.on("emit", onEmit);
     app.connection.event("connection", { connected: true, fallback: true });
+    receive();
   });
 };

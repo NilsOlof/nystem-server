@@ -86,7 +86,7 @@ export default (app) => {
         connection.event("connection", { error, connected: false });
       }
       failedOpens++;
-      if (failedOpens >= 3) connection.event("error", { error });
+      if (error && failedOpens >= 3) connection.event("error", { error });
     };
 
     webSocket.onerror = (error) => {

@@ -8,6 +8,8 @@ export default (app) => {
     const reqs = {};
     // Random secret token in the cookie, mapped to the request id here so a client can't pick one
     const tokens = {};
+    const queues = {};
+    const cancelPolls = new Map();
 
     const maxSizeAnonymous = app.settings.maxMessageSizeAnonymous || 1024 * 1024;
     const maxSizeLoggedIn = app.settings.maxMessageSize || 512 * 1024 * 1024;
@@ -15,7 +17,11 @@ export default (app) => {
     setInterval(
       () => {
         const limit = Date.now() - maxIdle;
-        Object.keys(tokens).forEach((token) => tokens[token].used < limit && delete tokens[token]);
+        Object.keys(tokens).forEach((token) => {
+          if (tokens[token].used >= limit) return;
+          delete queues[tokens[token].requestId];
+          delete tokens[token];
+        });
       },
       1000 * 60 * 60,
     );
@@ -28,6 +34,18 @@ export default (app) => {
       const token = item?.substring(cookieName.length + 1);
       return token && tokens[token] ? token : undefined;
     };
+
+    app.connection.on("emit", (data) => {
+      const queue = queues[data.id];
+      if (!queue || Date.now() - queue.received > 60000) return;
+      queue.messages.push(data);
+      queue.wake?.();
+      return { ...data, missing: false };
+    });
+
+    app.file.on("response", ({ id, close, abort }) => {
+      if (close || abort) cancelPolls.get(id)?.();
+    });
 
     app.file.on("post", async ({ id, url = "", headers }) => {
       if (!url.startsWith("/httpsfallback")) return;
@@ -68,13 +86,42 @@ export default (app) => {
 
       const headers = {};
       let { token } = req;
-      if (event?.type === "login" && !token) {
+      if (["login", "receive"].includes(event?.type) && !token) {
         token = randomBytes(32).toString("hex");
         tokens[token] = { requestId: id };
+        queues[id] = { messages: [] };
         const secure = app.settings.client.secure || req.headers?.["x-forwarded-proto"] === "https";
         headers["Set-Cookie"] = `${cookieName}=${token}; Path=/; HttpOnly; SameSite=Strict${secure ? "; Secure" : ""}`;
       }
       if (token) tokens[token].used = Date.now();
+
+      if (event?.type === "receive") {
+        const queue = queues[tokens[token].requestId];
+        queue.wake?.();
+        queue.received = Date.now();
+        const respond = () => {
+          cancelPolls.get(id)?.();
+          queue.received = Date.now();
+          const messages = queue.messages.splice(0);
+          app.file.event("response", {
+            id,
+            headers,
+            data: JSON.stringify({ type: "receive", messages }),
+            closed: true,
+          });
+        };
+        if (queue.messages.length) respond();
+        else {
+          const timer = setTimeout(respond, 25000);
+          queue.wake = respond;
+          cancelPolls.set(id, () => {
+            clearTimeout(timer);
+            queue.wake = undefined;
+            cancelPolls.delete(id);
+          });
+        }
+        return;
+      }
 
       const query = app.connection.fromClient(event, token ? tokens[token].requestId : id);
       if (!query) {
@@ -82,7 +129,10 @@ export default (app) => {
         return;
       }
       const result = await app.connection.event(query.type, query);
-      if (query.type === "logout" && token) delete tokens[token];
+      if (query.type === "logout" && token) {
+        delete queues[tokens[token].requestId];
+        delete tokens[token];
+      }
 
       app.file.event("response", { id, headers, data: JSON.stringify(result), closed: true });
     });

@@ -16,13 +16,9 @@ export default (app) => {
         const listnerId = app.uuid();
 
         const ev = (query) => {
-          if (["save", "login"].includes(data.on) && !app.settings.debug)
-            return;
+          if (["save", "login"].includes(data.on) && !app.settings.debug) return;
 
-          window.postMessage(
-            { ...data, listnerId, query, nystem: "from" },
-            "*",
-          );
+          window.postMessage({ ...data, listnerId, query, nystem: "from" }, "*");
         };
 
         listners[listnerId] = ev;

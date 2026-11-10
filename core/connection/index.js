@@ -1,5 +1,11 @@
 /* eslint-disable no-bitwise */
 import { createHash } from "node:crypto";
+import { promisify } from "node:util";
+import zlib from "node:zlib";
+
+const deflateRaw = promisify(zlib.deflateRaw);
+const inflateRaw = promisify(zlib.inflateRaw);
+const deflateTail = Buffer.from([0x00, 0x00, 0xff, 0xff]);
 
 export default async (app) => {
   app.connection = app.addeventhandler({}, ["emit", "broadcast", "count"]);
@@ -25,7 +31,27 @@ export default async (app) => {
   // Message size limits, small until the connection has logged in (uploads are sent as one message)
   const maxSizeAnonymous = app.settings.maxMessageSizeAnonymous || 1024 * 1024;
   const maxSizeLoggedIn = app.settings.maxMessageSize || 512 * 1024 * 1024;
+  const compressMinSize = app.settings.websocketCompressMinSize || 1024;
   const high64 = (buffer, secondByte) => (secondByte & 0x7f) === 127 && buffer.readUInt32BE(2) !== 0;
+
+  const allowedOrigin = (req) => {
+    if (!app.settings.websocketCheckOrigin) return true;
+    const { origin, host } = req.headers;
+    if (!origin) return true;
+    if (origin === "file://") return true;
+    let originHost;
+    try {
+      originHost = new URL(origin).host;
+    } catch (e) {
+      return false;
+    }
+    return [
+      host,
+      app.settings.client.domain,
+      `${app.settings.client.domain}:${app.settings.port}`,
+      ...(app.settings.allowedOrigins || []),
+    ].includes(originHost);
+  };
 
   // Behind a local proxy the real client is the last x-forwarded-for entry (the one the proxy added)
   const clientIp = (req, socket) => {
@@ -43,11 +69,12 @@ export default async (app) => {
   app.connection.ip = (id) => clients[id]?.ip;
 
   const parseWebSocketFrames = (connectionState, onTextMessage, sendFrame) => {
-    let { buffer, currentMessageFragments, currentMessageOpcode } = connectionState;
+    let { buffer, currentMessageFragments, currentMessageOpcode, currentMessageCompressed } = connectionState;
 
     while (buffer.length >= 2) {
       const firstByte = buffer.readUInt8(0);
       const fin = (firstByte & 0x80) !== 0; // FIN bit
+      const compressed = (firstByte & 0x40) !== 0; // RSV1, permessage-deflate
       const opcode = firstByte & 0x0f; // Opcode (last 4 bits)
 
       const secondByte = buffer.readUInt8(1);
@@ -114,7 +141,7 @@ export default async (app) => {
           // End of fragmented message
           if (currentMessageOpcode === 0x1) {
             // Text
-            onTextMessage(currentMessageFragments.toString("utf8"));
+            onTextMessage(currentMessageFragments, currentMessageCompressed);
           } else if (currentMessageOpcode === 0x2) {
             // Binary
             // onBinaryMessage(currentMessageFragments);
@@ -135,7 +162,7 @@ export default async (app) => {
         if (fin) {
           // Non-fragmented message
           if (opcode === 0x1) {
-            onTextMessage(payloadData.toString("utf8"));
+            onTextMessage(payloadData, compressed);
           } else if (opcode === 0x2) {
             // onBinaryMessage(payloadData);
           }
@@ -143,6 +170,7 @@ export default async (app) => {
           // Start of a fragmented message
           currentMessageFragments = payloadData;
           currentMessageOpcode = opcode;
+          currentMessageCompressed = compressed;
         }
       } else if (opcode === 0x8) {
         // Connection Close Frame
@@ -173,17 +201,18 @@ export default async (app) => {
     connectionState.buffer = buffer;
     connectionState.currentMessageFragments = currentMessageFragments;
     connectionState.currentMessageOpcode = currentMessageOpcode;
+    connectionState.currentMessageCompressed = currentMessageCompressed;
 
     return connectionState; // Return the updated state
   };
 
-  const sendWebSocketFrame = (socket, payload, opcode, mask) => {
+  const sendWebSocketFrame = (socket, payload, opcode, mask, compressed) => {
     if (mask) console.log("Masssssk!!!");
     const payloadBuffer = typeof payload === "string" ? Buffer.from(payload, "utf8") : payload;
     const payloadLength = payloadBuffer.length;
 
-    // First byte: FIN (1) | RSV (000) | Opcode (4 bits)
-    const firstByte = 0x80 | opcode; // FIN is always set for non-fragmented messages
+    // First byte: FIN (1) | RSV1 (compressed) | RSV2-3 (00) | Opcode (4 bits)
+    const firstByte = 0x80 | (compressed ? 0x40 : 0) | opcode; // FIN is always set for non-fragmented messages
 
     // Second byte: Mask (1) | Payload Length (7 bits)
     let secondByte = mask ? 0x80 : 0x00;
@@ -231,30 +260,16 @@ export default async (app) => {
       fullFrame = Buffer.concat([fullFrame, payloadBuffer]);
     }
 
-    if (socket.readyState === "open") socket.write(fullFrame);
+    if (socket.readyState !== "open" || !socket.writable || socket.writableEnded || socket.destroyed) return;
+    socket.write(fullFrame);
   };
 
   app.on("start", () => {
     app.file.on("socket", ({ id, req, socket }) => {
-      if (app.settings.websocketCheckOrigin && req.headers.origin && req.headers.origin !== "file://") {
-        let originHost;
-        try {
-          originHost = new URL(req.headers.origin).host;
-        } catch {
-          // A malformed Origin cannot match the configured domains.
-        }
-        if (
-          ![
-            req.headers.host,
-            app.settings.client.domain,
-            `${app.settings.client.domain}:${app.settings.port}`,
-            ...(app.settings.allowedOrigins || []),
-          ].includes(originHost)
-        ) {
-          console.log("WebSocket origin refused", req.headers.origin);
-          socket.end("HTTP/1.1 403 Forbidden\r\n\r\n");
-          return;
-        }
+      if (!allowedOrigin(req)) {
+        console.log("WebSocket origin refused", req.headers.origin);
+        socket.end("HTTP/1.1 403 Forbidden\r\n\r\n");
+        return;
       }
 
       const key = req.headers["sec-websocket-key"];
@@ -262,6 +277,8 @@ export default async (app) => {
       sha1.update(`${key}258EAFA5-E914-47DA-95CA-C5AB0DC85B11`);
       const acceptKey = sha1.digest("base64");
       if (!socket.writable) return;
+
+      const deflate = req.headers["sec-websocket-extensions"]?.includes("permessage-deflate");
 
       socket.write(
         // eslint-disable-next-line prefer-template
@@ -271,8 +288,28 @@ export default async (app) => {
           "Sec-WebSocket-Accept: " +
           acceptKey +
           "\r\n" +
+          (deflate
+            ? "Sec-WebSocket-Extensions: permessage-deflate; server_no_context_takeover; client_no_context_takeover\r\n"
+            : "") +
           "\r\n",
       );
+
+      // Compression is async, the queue keeps messages in order
+      let sending = Promise.resolve();
+      const send = (payload) => {
+        sending = sending.then(async () => {
+          const data = Buffer.from(payload, "utf8");
+          const compress = deflate && data.length >= compressMinSize;
+          sendWebSocketFrame(
+            socket,
+            compress ? (await deflateRaw(data, { finishFlush: zlib.constants.Z_SYNC_FLUSH })).subarray(0, -4) : data,
+            0x1,
+            false,
+            compress,
+          );
+        });
+      };
+      let receiving = Promise.resolve();
 
       const requestId = app.uuid();
 
@@ -280,11 +317,7 @@ export default async (app) => {
 
       connectedCount++;
 
-      clients[requestId] = {
-        id: requestId,
-        ip: clientIp(req, socket),
-        emit: (data) => sendWebSocketFrame(socket, JSON.stringify(data), 0x1),
-      };
+      clients[requestId] = { id: requestId, ip: clientIp(req, socket), emit: (data) => send(JSON.stringify(data)) };
 
       const connectionState = {
         buffer: Buffer.alloc(0),
@@ -293,15 +326,44 @@ export default async (app) => {
         shouldClose: false, // Flag to signal closure from parseFrames
         maxSize: maxSizeAnonymous,
       };
+      let idleTimer;
+      const resetIdle = () => {
+        clearTimeout(idleTimer);
+        idleTimer = setTimeout(() => socket.destroy(), 120000);
+      };
+      resetIdle();
       socket.on("data", (wsData) => {
+        resetIdle();
         if (connectionState.shouldClose) return;
         connectionState.buffer = Buffer.concat([connectionState.buffer, wsData]);
 
         // Call the parser with the connection's state
         parseWebSocketFrames(
           connectionState,
-          async (output) => {
-            if (output === "{}") return sendWebSocketFrame(socket, "{}", 0x1);
+          async (data, compressed) => {
+            const decoded = receiving.then(() =>
+              compressed
+                ? inflateRaw(Buffer.concat([data, deflateTail]), {
+                    finishFlush: zlib.constants.Z_SYNC_FLUSH,
+                    maxOutputLength: connectionState.maxSize,
+                  }).catch(() => null)
+                : data,
+            );
+            receiving = decoded;
+            const inflated = await decoded;
+            if (!inflated) {
+              sendWebSocketFrame(socket, Buffer.from([0x03, 0xf1]), 0x8, false); // Close frame with 1009 message too big
+              connectionState.shouldClose = true;
+              socket.end();
+              return;
+            }
+            const output = inflated.toString("utf8");
+
+            // Heartbeat, answered so the client can detect a dead link
+            if (output === "{}") {
+              send("{}");
+              return;
+            }
 
             let query;
             try {
@@ -318,7 +380,7 @@ export default async (app) => {
               connectionState.maxSize = session ? maxSizeLoggedIn : maxSizeAnonymous;
             }
             // Remove callbackid in future
-            if (result.callbackClient || result.callbackid) sendWebSocketFrame(socket, JSON.stringify(result), 0x1);
+            if (result.callbackClient || result.callbackid) send(JSON.stringify(result));
           },
           (payload, opcode, mask) => sendWebSocketFrame(socket, payload, opcode, mask),
         );
@@ -332,7 +394,11 @@ export default async (app) => {
       socket.on("abort", () => {
         app.file.event("load", { id, request: { abort: true } });
       });
-      socket.on("end", () => {
+      socket.on("error", (error) => {
+        if (!["ECONNRESET", "EPIPE"].includes(error.code)) console.log("WebSocket error", error);
+      });
+      socket.on("close", () => {
+        clearTimeout(idleTimer);
         connectedCount--;
         if (app.settings.debug) console.log("Client closed");
         delete clients[requestId];
