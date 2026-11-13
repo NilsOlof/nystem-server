@@ -1,5 +1,5 @@
 import { spawn } from "node:child_process";
-import { randomBytes, timingSafeEqual } from "node:crypto";
+import { createHash, randomBytes, timingSafeEqual } from "node:crypto";
 import { homedir } from "node:os";
 import { setTimeout as delay } from "node:timers/promises";
 import { resolveProjectPath, findServerByPath } from "./projectPath.js";
@@ -90,6 +90,62 @@ const start = async function (app) {
   const logs = {};
   const servers = new Map();
   const clients = new Map();
+  const projectIcons = `${app.__dirname}/files/project-icons`;
+  const readProjectIcon = (id) =>
+    app.fs.readFile(`${projectIcons}/${id}.png`).catch((error) => {
+      if (error.code !== "ENOENT") console.error("service: Could not read project icon", error);
+    });
+  const saveProjectIconStatus = (id, data) =>
+    app.database.serverStatus.save({
+      data: { _id: id, projectIcon: createHash("sha256").update(data).digest("hex") },
+      fields: true,
+      role,
+    });
+
+  app.file.on("get", async ({ id, url }) => {
+    const match = url?.match(/^\/project-icon\/([a-f0-9]+)\.png(?:\?v=[a-f0-9]+)?$/);
+    if (!match) return;
+    const data = await readProjectIcon(match[1]);
+    app.file.event("response", {
+      id,
+      data: data || "",
+      statusCode: data ? 200 : 404,
+      headers: { "Content-Type": "image/png", "Cache-Control": "no-cache" },
+      closed: true,
+    });
+    return {};
+  });
+
+  const refreshProjectIcon = async (id, path, isRunning) => {
+    try {
+      const { port, host } = JSON.parse(await app.fs.readFile(`${path}/data/host.json`, "utf8"));
+      if (!port) return;
+      const url = new URL("http://127.0.0.1/icon/32.png");
+      if (host && host !== "*") url.hostname = host;
+      url.port = port;
+
+      for (let attempt = 0; attempt < 30 && isRunning(); attempt++) {
+        const data = await fetch(url, { signal: AbortSignal.timeout(1000), redirect: "error" })
+          .then(async (response) => {
+            if (response.ok && response.headers.get("content-type")?.startsWith("image/png"))
+              return Buffer.from(await response.arrayBuffer());
+            await response.body?.cancel();
+          })
+          .catch(() => undefined);
+        if (!isRunning()) return;
+        if (data?.subarray(0, 8).equals(Buffer.from("89504e470d0a1a0a", "hex"))) {
+          if (data.equals((await readProjectIcon(id)) || Buffer.alloc(0)) || !isRunning()) return;
+          await app.fs.ensureDir(projectIcons);
+          await app.fs.writeFile(`${projectIcons}/${id}.png`, data);
+          await saveProjectIconStatus(id, data);
+          return;
+        }
+        await delay(1000);
+      }
+    } catch (error) {
+      if (error.code !== "ENOENT") console.error("service: Could not refresh project icon", id, error);
+    }
+  };
 
   const startClient = (id, path) => {
     if (clients.has(id)) return;
@@ -193,7 +249,10 @@ const start = async function (app) {
       });
 
       if (runningServer.stopRequested) service.event("stop");
-      else update({ running: true, code: null });
+      else {
+        update({ running: true, code: null });
+        refreshProjectIcon(id, path, () => servers.get(id) === runningServer && !runningServer.stopRequested);
+      }
     } catch (error) {
       if (servers.get(id) !== runningServer) return;
 
@@ -209,8 +268,10 @@ const start = async function (app) {
   };
 
   app.database.serverStatus.on("save", ({ data, oldData = {} }) => {
-    const { _id, running, clientRunning, basepath } = data;
-    if (running === oldData.running && clientRunning === oldData.clientRunning) return;
+    if (!data) return;
+    const { _id, running, clientRunning, basepath, projectIcon } = data;
+    if (running === oldData.running && clientRunning === oldData.clientRunning && projectIcon === oldData.projectIcon)
+      return;
 
     setTimeout(() => {
       app.connection.broadcast({ type: "databaseUpdate", contentType: "serverStatus", ids: [_id] });
@@ -347,7 +408,14 @@ const start = async function (app) {
   });
 
   const { data = [] } = await app.database.server.search({ role });
-  for (const { _id, autostart } of data) if (autostart) await startServer(_id);
+  for (const server of data || []) {
+    const icon = await readProjectIcon(server._id);
+    if (icon) await saveProjectIconStatus(server._id, icon);
+    const { basepath } = await app.event("serverPath", server);
+    if (findServerByPath(app.fs, [{ basepath: app.__dirname }], basepath))
+      refreshProjectIcon(server._id, app.__dirname, () => true);
+    else if (server.autostart) await startServer(server._id);
+  }
 };
 
 export default (app) => {

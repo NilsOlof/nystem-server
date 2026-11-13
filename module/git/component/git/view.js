@@ -2,15 +2,20 @@ import React, { useCallback, useEffect, useLayoutEffect, useRef, useState } from
 import app from "nystem";
 import { ContentTypeRender, Wrapper } from "nystem-components";
 import GitHistory from "./history";
+import GitFileBrowser from "./fileBrowser";
 import { GitContext } from "../../client/context";
 
 const GitView = ({ model, view, path }) => {
   const [taskLog, setTaskLog] = useState({ open: false, action: "" });
+  const [fileBrowserOpen, setFileBrowserOpen] = useState(false);
+  const fileViewer = useRef({ dirty: false, busy: false });
   const showTaskLog = useCallback(
     (open, action) => {
       setTaskLog({ open, action });
-      if (open) setHistoryOpen(false);
-      else app.connection.emit({ type: "serverTaskClear", serverId: view.id, action });
+      if (open) {
+        setHistoryOpen(false);
+        if (!fileViewer.current.dirty && !fileViewer.current.busy) setFileBrowserOpen(false);
+      } else app.connection.emit({ type: "serverTaskClear", serverId: view.id, action });
     },
     [view.id],
   );
@@ -175,7 +180,14 @@ const GitView = ({ model, view, path }) => {
       setHistoryOpen(false);
       return;
     }
-    if (activity.current || edit) return;
+    if (
+      activity.current ||
+      edit ||
+      fileViewer.current.busy ||
+      (fileViewer.current.dirty && !window.confirm("Discard unsaved changes?"))
+    )
+      return;
+    setFileBrowserOpen(false);
     setHistoryOpen(true);
     setHistory(null);
     activity.current++;
@@ -322,6 +334,13 @@ const GitView = ({ model, view, path }) => {
         showTaskLog,
         openHistory,
         historyOpen,
+        fileBrowserOpen,
+        toggleFileBrowser: () => {
+          if (fileViewer.current.busy || (fileViewer.current.dirty && !window.confirm("Discard unsaved changes?")))
+            return;
+          setFileBrowserOpen(!fileBrowserOpen);
+          if (!fileBrowserOpen) setHistoryOpen(false);
+        },
         files,
         branch,
         branches,
@@ -357,6 +376,8 @@ const GitView = ({ model, view, path }) => {
             historySelected={historySelected}
             setHistorySelected={setHistorySelected}
           />
+        ) : fileBrowserOpen ? (
+          <GitFileBrowser key={view.id} request={request} fileViewer={fileViewer} />
         ) : (
           <ContentTypeRender path={path} items={model.item.slice(1)} />
         )}

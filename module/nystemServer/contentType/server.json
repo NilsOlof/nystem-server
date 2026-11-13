@@ -483,11 +483,18 @@
                       "className": ["font-mono", "text-xs", "text-gray-300", "tabular-nums"]
                     },
                     {
-                      "id": "showinoverview",
-                      "type": "boolean",
-                      "category": "contentTypeField",
-                      "format": "view",
-                      "className": ["inline-block", "w-4", "h-4", "text-blue-400"]
+                      "type": "style",
+                      "item": [
+                        {
+                          "id": "showinoverview",
+                          "type": "boolean",
+                          "category": "contentTypeField",
+                          "format": "input",
+                          "nolabel": true,
+                          "classNameInput": ["size-4", "cursor-pointer", "accent-blue-500"]
+                        },
+                        { "category": "view", "type": "viewButton", "format": "autoSave" }
+                      ]
                     },
                     {
                       "type": "viewLink",
@@ -691,72 +698,87 @@
           "item": [
             {
               "category": "view",
-              "type": "viewList",
+              "type": "style",
+              "format": "pinnedServers",
               "item": [
                 {
                   "category": "view",
-                  "type": "style",
+                  "type": "viewList",
                   "item": [
                     {
                       "category": "view",
-                      "type": "bootstrap",
-                      "format": "panel",
-                      "header": [
+                      "type": "style",
+                      "item": [
                         {
                           "category": "view",
-                          "type": "style",
-                          "item": [
+                          "type": "bootstrap",
+                          "format": "panel",
+                          "header": [
                             {
                               "category": "view",
-                              "type": "bootstrap",
-                              "format": "panelToggle",
+                              "type": "style",
                               "item": [
                                 {
-                                  "category": "contentTypeField",
-                                  "type": "text",
-                                  "id": "name",
-                                  "renderAs": "div",
-                                  "className": [""]
+                                  "category": "view",
+                                  "type": "bootstrap",
+                                  "format": "panelToggle",
+                                  "item": [
+                                    {
+                                      "category": "view",
+                                      "type": "viewInView",
+                                      "contentType": "serverStatus",
+                                      "view": "projectIcon",
+                                      "format": "empty",
+                                      "viewId": "{_id}"
+                                    },
+                                    {
+                                      "category": "contentTypeField",
+                                      "type": "text",
+                                      "id": "name",
+                                      "renderAs": "div",
+                                      "className": [""]
+                                    }
+                                  ],
+                                  "icon": true,
+                                  "className": ["flex", "items-center", "content-center", "py-1", "", "flex-grow"]
+                                },
+                                {
+                                  "category": "view",
+                                  "type": "viewInView",
+                                  "contentType": "serverStatus",
+                                  "view": "control",
+                                  "className": [""],
+                                  "format": "empty",
+                                  "viewId": "{_id}"
                                 }
                               ],
-                              "icon": true,
-                              "className": ["flex", "items-center", "content-center", "py-1", "", "flex-grow"]
-                            },
+                              "format": "onOverHandle",
+                              "className": ["flex", "items-center"]
+                            }
+                          ],
+                          "item": [
                             {
                               "category": "view",
                               "type": "viewInView",
                               "contentType": "serverStatus",
-                              "view": "control",
-                              "className": [""],
-                              "format": "empty",
-                              "viewId": "{_id}"
+                              "view": "status",
+                              "viewId": "{_id}",
+                              "format": "empty"
                             }
                           ],
-                          "format": "onOverHandle",
-                          "className": ["flex", "items-center"]
+                          "className": ["server-overview-row"],
+                          "typeClass": "defaultWithoutPadding"
                         }
                       ],
-                      "item": [
-                        {
-                          "category": "view",
-                          "type": "viewInView",
-                          "contentType": "serverStatus",
-                          "view": "status",
-                          "viewId": "{_id}",
-                          "format": "empty"
-                        }
-                      ],
-                      "className": ["server-overview-row"],
-                      "typeClass": "defaultWithoutPadding"
+                      "className": [""],
+                      "format": "gitPanel"
                     }
                   ],
-                  "className": [""],
-                  "format": "gitPanel"
+                  "renderFormat": "div",
+                  "headerFields": [],
+                  "className": ["p-3", "max-w-4xl", "server-overview-list"]
                 }
-              ],
-              "renderFormat": "div",
-              "headerFields": [],
-              "className": ["p-3", "max-w-4xl", "server-overview-list"]
+              ]
             },
             {
               "category": "view",
@@ -944,12 +966,26 @@
               "format": "toolbar",
               "item": [
                 {
-                  "category": "contentTypeField",
-                  "type": "text",
-                  "id": "name",
-                  "format": "view",
-                  "renderAs": "span",
-                  "className": ["text-xl", "font-bold", "text-white"]
+                  "type": "style",
+                  "className": ["flex", "items-center"],
+                  "item": [
+                    {
+                      "category": "view",
+                      "type": "viewInView",
+                      "contentType": "serverStatus",
+                      "view": "projectIcon",
+                      "format": "empty",
+                      "viewId": "{_id}"
+                    },
+                    {
+                      "category": "contentTypeField",
+                      "type": "text",
+                      "id": "name",
+                      "format": "view",
+                      "renderAs": "span",
+                      "className": ["text-xl", "font-bold", "text-white"]
+                    }
+                  ]
                 }
               ],
               "className": [

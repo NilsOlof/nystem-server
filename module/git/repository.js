@@ -1,7 +1,7 @@
 import { execFile } from "node:child_process";
 import { promisify } from "node:util";
 import { createHash, randomUUID } from "node:crypto";
-import { readFile, link, lstat, readlink, realpath, writeFile, rename, rm } from "node:fs/promises";
+import { readFile, link, lstat, readlink, realpath, writeFile, rename, rm, unlink } from "node:fs/promises";
 import { join, relative, resolve, sep, isAbsolute } from "node:path";
 
 const execute = promisify(execFile);
@@ -24,6 +24,10 @@ export const editFile = async (app, cwd, file, query) => {
   const token = createHash("sha256").update(buffer).digest("hex");
   if (query.action === "read") return { value, token };
   if (token !== query.token) throw new Error("The file changed on disk. Cancel and reopen it before saving");
+  if (query.action === "delete") {
+    await unlink(absolute);
+    return;
+  }
   if (typeof query.value !== "string" || Buffer.byteLength(query.value) > 2 * 1024 * 1024)
     throw new Error("File must be text smaller than 2 MB");
   const prettier = await import(app.nodePath("prettier"));
@@ -36,6 +40,7 @@ export const editFile = async (app, cwd, file, query) => {
     !ignored && (inferredParser || options?.parser)
       ? await prettier.format(query.value, { ...options, filepath: absolute })
       : query.value;
+  if (query.action === "format") return { value: formatted, token };
   if (
     createHash("sha256")
       .update(await readFile(absolute))

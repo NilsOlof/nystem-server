@@ -13,6 +13,8 @@ const GitToolbar = ({ model, path }) => {
     switchBranch,
     openHistory,
     historyOpen,
+    fileBrowserOpen,
+    toggleFileBrowser,
     locked,
     removeLock,
   } = useContext(GitContext);
@@ -59,6 +61,18 @@ const GitToolbar = ({ model, path }) => {
         onClick={openHistory}
       >
         <Icon title={false} aria-hidden="true" icon="code-branch" className={["h-4", "w-4"]} />
+      </Button>
+      <Button
+        size="xs"
+        type={fileBrowserOpen ? "primary" : "default"}
+        title="Project files"
+        aria-label="Project files"
+        aria-pressed={fileBrowserOpen}
+        disabled={Boolean(edit)}
+        className={["inline-flex", "h-8", "w-8", "items-center", "justify-center"]}
+        onClick={toggleFileBrowser}
+      >
+        <Icon title={false} aria-hidden="true" icon="folder" className={["h-4", "w-4"]} />
       </Button>
       {locked && (
         <Button

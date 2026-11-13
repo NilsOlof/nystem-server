@@ -17,9 +17,12 @@
     { "type": "boolean", "id": "commitRunning", "text": "Commit running" },
     { "type": "textarea", "id": "taskLog", "text": "Build and deploy log" },
     { "type": "boolean", "id": "taskRunning", "text": "Build or deploy running" },
-    { "type": "text", "id": "taskAction", "text": "Current task" }
+    { "type": "text", "id": "taskAction", "text": "Current task" },
+    { "type": "text", "id": "projectIcon", "text": "Project icon" },
+    { "type": "boolean", "id": "appleApp", "text": "Apple app available" }
   ],
   "views": [
+    { "name": "projectIcon", "item": [{ "category": "view", "type": "viewImage", "format": "projectIcon" }] },
     {
       "name": "control",
       "item": [
@@ -34,6 +37,7 @@
                   "category": "view",
                   "type": "style",
                   "item": [
+                    { "category": "view", "type": "viewButton", "format": "pinServer" },
                     {
                       "category": "view",
                       "type": "viewLink",

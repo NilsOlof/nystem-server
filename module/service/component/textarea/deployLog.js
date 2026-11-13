@@ -76,6 +76,23 @@ const TextareaDeployLog = ({ model, view, path, value = "" }) => {
               { action: "Git status", text: "Git status", icon: "brands-git-alt", type: "serverGitStatus" },
               { action: "Commit", text: "Commit and push staged changes", icon: "code-commit", type: "serverCommit" },
               { action: "Deploy", text: "Deploy", icon: "rocket", type: "serverDeploy" },
+              {
+                action: "Commit and deploy",
+                text: "Commit and deploy",
+                icon: "code-commit",
+                deployIcon: "rocket",
+                type: "serverCommitAndDeploy",
+              },
+              ...(view.value.appleApp
+                ? [
+                    {
+                      action: "Install Apple apps",
+                      text: "Install Apple apps",
+                      icon: "mobile-screen",
+                      type: "serverInstallAppleApps",
+                    },
+                  ]
+                : []),
             ].map((task) => (
               <Tooltip key={task.action} text={task.text}>
                 <button
@@ -90,7 +107,7 @@ const TextareaDeployLog = ({ model, view, path, value = "" }) => {
                         : "closed"
                   }
                   disabled={running && action !== task.action}
-                  className={`inline-flex items-center justify-center h-8 w-8 rounded text-white ${running && action === task.action ? "bg-red-600 hover:bg-red-500" : showLog && taskLog.action === task.action ? "bg-blue-600 hover:bg-blue-500" : "bg-gray-600 hover:bg-gray-500"}`}
+                  className={`inline-flex items-center justify-center h-8 rounded text-white ${task.deployIcon ? "gap-1 px-2" : "w-8"} ${running && action === task.action ? "bg-red-600 hover:bg-red-500" : showLog && taskLog.action === task.action ? "bg-blue-600 hover:bg-blue-500" : "bg-gray-600 hover:bg-gray-500"}`}
                   onClick={() => {
                     if (showLog && taskLog.action === task.action) showTaskLog(false, task.action);
                     else {
@@ -100,6 +117,12 @@ const TextareaDeployLog = ({ model, view, path, value = "" }) => {
                   }}
                 >
                   <Icon title={false} aria-hidden="true" icon={task.icon} className={["h-4", "w-4"]} />
+                  {task.deployIcon && (
+                    <>
+                      <span aria-hidden="true">+</span>
+                      <Icon title={false} aria-hidden="true" icon={task.deployIcon} className={["h-4", "w-4"]} />
+                    </>
+                  )}
                 </button>
               </Tooltip>
             ))}

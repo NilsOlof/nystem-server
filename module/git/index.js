@@ -2,6 +2,7 @@ import { realpath, unlink } from "node:fs/promises";
 import { dirname, join } from "node:path";
 import { git, status, diff, editFile, history, historyCommit, locked, unlock } from "./repository.js";
 import watch from "./watch.js";
+import { browseFiles } from "./browseFiles.js";
 
 export default (app) => {
   const busy = new Map();
@@ -27,6 +28,21 @@ export default (app) => {
           /* Git resolves worktrees and repositories without a .git directory. */
         }
         const cwd = (await git(sourcePath, ["rev-parse", "--show-toplevel"])).trim();
+        if (
+          [
+            "browseFiles",
+            "previewFile",
+            "folderSize",
+            "saveBrowserFile",
+            "formatBrowserFile",
+            "deleteBrowserFile",
+          ].includes(query.action)
+        ) {
+          Object.assign(reply, await browseFiles(app, cwd, query));
+          delete reply.value;
+          delete reply.session;
+          return reply;
+        }
         if (query.action === "watch") {
           await subscribe(query, cwd);
           delete reply.session;

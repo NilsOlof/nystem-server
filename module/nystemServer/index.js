@@ -4,6 +4,7 @@ import { homedir, tmpdir } from "node:os";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { promisify } from "node:util";
+import { findAppleProject, installAppleApps } from "./appleApps.js";
 import { summarizeStagedDiff } from "./commitDiff.js";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
@@ -40,6 +41,12 @@ const start = async (app) => {
   const operations = new Map();
   const taskLogs = new Map();
   const taskSaves = new Map();
+  const canInstallAppleApps =
+    process.platform === "darwin" &&
+    (await runFile("xcrun", ["--find", "devicectl"]).then(
+      () => true,
+      () => false,
+    ));
 
   const publishTask = (id, output, running, action, clear = false) => {
     const log = clear ? "" : `${taskLogs.get(`${id}:${action}`) || ""}${output}`.slice(-100000);
@@ -129,8 +136,16 @@ const start = async (app) => {
   };
 
   const syncServerStatus = async (server) => {
-    const { runbasepath } = await app.event("serverPath", server);
-    await app.database.serverStatus.save({ data: { _id: server._id, basepath: runbasepath }, fields: true, role });
+    const { basepath, runbasepath } = await app.event("serverPath", server);
+    await app.database.serverStatus.save({
+      data: {
+        _id: server._id,
+        basepath: runbasepath,
+        appleApp: canInstallAppleApps && Boolean(findAppleProject(basepath)),
+      },
+      fields: true,
+      role,
+    });
   };
 
   app.database.server.on("save", -950, async ({ data }) => {
@@ -294,12 +309,8 @@ const start = async (app) => {
     return query;
   });
 
-  app.connection.on("serverDeploy", async (query) => {
-    await app.session.add(query);
-    if (query.session?.role !== role || !query.serverId || operations.has(query.serverId)) return query;
-
-    const id = query.serverId;
-    operations.set(id, true);
+  const deploy = async (id, action) => {
+    const publish = (output, running = true) => publishTask(id, output, running, action);
     let wasRunning = false;
     let stopped = false;
     let basepath;
@@ -308,16 +319,13 @@ const start = async (app) => {
       if (!wasRunning || !stopped) return;
       const { stdout: branch } = await runFile("git", ["branch", "--show-current"], { cwd: basepath });
       if (branch.trim() !== "develop") {
-        await publishTask(
-          id,
+        await publish(
           `Server left stopped: current branch is ${branch.trim() || "detached HEAD"}; restart requires develop.\n`,
-          true,
-          "Deploy",
         );
         return;
       }
       await app.event("serverRestart", { serverId: id });
-      await publishTask(id, "Server restart requested (it was running before deployment).\n", true, "Deploy");
+      await publish("Server restart requested (it was running before deployment).\n");
     };
     try {
       const { data: server } = await app.database.server.get({ id, role });
@@ -332,42 +340,90 @@ const start = async (app) => {
       const { data: status } = await app.database.serverStatus.get({ id, role });
       wasRunning = Boolean(status?.running);
 
-      await publishTask(id, `\nStopping server ${server.name || id} before deployment...\n`, true, "Deploy");
+      await publish(`\nStopping server ${server.name || id} before deployment...\n`);
       if (!(await app.event("serverStop", { serverId: id })).stopped)
         throw new Error("Server shutdown was not confirmed; deployment cancelled");
       stopped = true;
-      await publishTask(id, "Server stopped.\n", true, "Deploy");
-      await publishTask(id, `$ npm run deploy in ${runbasepath}\n`, true, "Deploy");
+      await publish("Server stopped.\n");
+      await publish(`$ npm run deploy in ${runbasepath}\n`);
       const deployment = runProgram("npm", ["run", "deploy"], runbasepath);
       operations.set(id, deployment);
-      deployment.on("data", ({ data }) => publishTask(id, data, true, "Deploy"));
+      deployment.on("data", ({ data }) => publish(data));
       deployment.on("exit", async ({ code }) => {
         try {
-          await publishTask(id, `\n[Deployment command exited: ${code}]\n`, true, "Deploy");
+          if (code !== 0) console.error("nystemServer: Deployment command exited", code);
+          await publish(`\n[Deployment command exited: ${code}]\n`);
           await restoreServer();
         } catch (error) {
-          await publishTask(id, `Server could not be restored: ${error.message}\n`, true, "Deploy");
+          console.error("nystemServer: Server could not be restored", error);
+          await publish(`Server could not be restored: ${error.message}\n`);
         } finally {
           operations.delete(id);
-          await publishTask(id, "", false, "Deploy");
+          await publish("", false);
         }
       });
     } catch (error) {
       try {
-        await publishTask(id, `Deployment could not start: ${error.message}\n`, true, "Deploy");
+        console.error("nystemServer: Deployment could not start", error);
+        await publish(`Deployment could not start: ${error.message}\n`);
         await restoreServer();
       } catch (error) {
-        await publishTask(id, `Server could not be restored: ${error.message}\n`, true, "Deploy");
+        console.error("nystemServer: Server could not be restored", error);
+        await publish(`Server could not be restored: ${error.message}\n`);
       } finally {
         operations.delete(id);
-        await publishTask(id, "", false, "Deploy");
+        await publish("", false);
       }
     }
+  };
+
+  app.connection.on("serverDeploy", async (query) => {
+    await app.session.add(query);
+    if (query.session?.role !== role || !query.serverId || operations.has(query.serverId)) return query;
+
+    operations.set(query.serverId, true);
+    await deploy(query.serverId, "Deploy");
     return query;
   });
 
-  const commit = async (id) => {
-    const publish = (line, running) => publishTask(id, `${line}\n`, running, "Commit");
+  app.connection.on("serverInstallAppleApps", async (query) => {
+    await app.session.add(query);
+    if (query.session?.role !== role || !canInstallAppleApps || !query.serverId || operations.has(query.serverId))
+      return query;
+
+    const id = query.serverId;
+    const action = "Install Apple apps";
+    operations.set(id, true);
+    const publish = (output, running = true) => publishTask(id, output, running, action);
+    const run = (program, args, cwd) =>
+      new Promise((resolve, reject) => {
+        const command = runProgram(program, args, cwd);
+        let stderr = "";
+        command.on("data", ({ data, type }) => {
+          if (type === "error") stderr = `${stderr}${data}`.slice(-8000);
+          publish(data);
+        });
+        command.on("exit", ({ code }) => {
+          if (code === 0) resolve();
+          else reject(Object.assign(new Error(`${program} exited with ${code ?? "a signal"}`), { stderr }));
+        });
+      });
+
+    installAppleApps(app, id, role, runFile, run, publish)
+      .then(() => "Installation complete.\n")
+      .catch((error) => {
+        console.error("nystemServer: Apple app installation failed", error);
+        return `Installation failed: ${error.message}\n`;
+      })
+      .then((output) => {
+        operations.delete(id);
+        return publish(output, false);
+      });
+    return query;
+  });
+
+  const commit = async (id, action, deployAfterCommit) => {
+    const publish = (line, running) => publishTask(id, `${line}\n`, running, action);
 
     let directory;
     let committed = false;
@@ -386,6 +442,8 @@ const start = async (app) => {
       if (!files.length) throw new Error("Nothing is staged to commit");
       const { stdout: branch } = await runFile("git", ["branch", "--show-current"], options);
       if (!branch.trim()) throw new Error("Cannot commit from a detached HEAD");
+      if (deployAfterCommit && branch.trim() !== "develop")
+        throw new Error(`Commit and deploy requires develop; current branch is ${branch.trim()}`);
       const { stdout: head } = await runFile("git", ["rev-parse", "HEAD"], options);
       const { stdout: tree } = await runFile("git", ["write-tree"], options);
       const diff = await summarizeStagedDiff(sourcePath);
@@ -505,7 +563,8 @@ const start = async (app) => {
       });
       if (push.stdout.trim()) await publish(push.stdout.trimEnd(), true);
       if (push.stderr.trim()) await publish(push.stderr.trimEnd(), true);
-      await publish("Push complete", false);
+      await publish("Push complete", deployAfterCommit);
+      return true;
     } catch (error) {
       console.error("nystemServer: Commit task failed", error);
       if (error.stdout?.trim()) await publish(error.stdout.trimEnd(), true);
@@ -517,19 +576,29 @@ const start = async (app) => {
         await publish(`Commit succeeded, but push could not start: ${error.message}`, false);
       } else await publish(`Commit failed: ${error.message}`, false);
     } finally {
-      if (directory) await rm(directory, { recursive: true, force: true });
-      operations.delete(id);
+      if (directory)
+        await rm(directory, { recursive: true, force: true }).catch((error) =>
+          console.error("nystemServer: Could not remove commit message workspace", error),
+        );
     }
   };
 
-  app.connection.on("serverCommit", async (query) => {
+  const startCommit = async (query, deployAfterCommit) => {
     await app.session.add(query);
     if (query.session?.role !== role || !query.serverId || operations.has(query.serverId)) return query;
 
-    operations.set(query.serverId, true);
-    commit(query.serverId);
+    const id = query.serverId;
+    operations.set(id, true);
+    const action = deployAfterCommit ? "Commit and deploy" : "Commit";
+    commit(id, action, deployAfterCommit).then((committed) => {
+      if (committed && deployAfterCommit) return deploy(id, action);
+      operations.delete(id);
+    });
     return query;
-  });
+  };
+
+  app.connection.on("serverCommit", (query) => startCommit(query, false));
+  app.connection.on("serverCommitAndDeploy", (query) => startCommit(query, true));
 
   const devtoolsPanels = new Map();
   const devtoolsReads = new Map();
